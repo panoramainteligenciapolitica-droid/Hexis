@@ -65,6 +65,8 @@ header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); borde
 h1 { font-family: var(--font-display); font-weight: 700; font-size: 26px; letter-spacing: .3px; margin: 0; text-wrap: balance; }
 .sync { font-size: 13px; color: var(--muted); white-space: nowrap; }
 h1 .ego { color: var(--accent); }
+h1 { display: flex; align-items: center; }
+h1 .logo { width: 1.15em; height: 1.15em; flex: none; margin-right: 0.22em; }
 .tagline { font-size: 13px; color: var(--muted); margin-top: 1px; }
 .cout { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 6px; margin: 10px 0 4px; }
 .cbox { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--surface-2); min-width: 0; }
@@ -246,6 +248,7 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .login.hide { display: none; }
 .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px 18px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
 .login-card h1 { font-family: var(--font-display); font-size: 44px; margin: 0; line-height: 1; }
+.login-card h1 .logo { width: 52px; height: 52px; }
 .login-card .tagline { margin: 6px 0 16px; font-size: 15px; }
 .login-card .field { margin-bottom: 10px; }
 .login-card .row-btns { margin-top: 6px; }
@@ -259,7 +262,7 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 <body>
 <div id="login" class="login hide" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
   <div class="login-card">
-    <h1 id="lgTitle">Hex<span class="ego">is</span></h1>
+    <h1 id="lgTitle"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><g style="stroke: var(--accent)" stroke-width="4.2" stroke-linecap="round"><line x1="62.61" y1="21.68" x2="63.83" y2="18.94" opacity="0.35"></line><line x1="70.88" y1="27.09" x2="73.30" y2="24.44" opacity="0.39"></line><line x1="77.04" y1="34.83" x2="80.68" y2="32.79" opacity="0.43"></line><line x1="80.44" y1="44.12" x2="85.11" y2="43.21" opacity="0.46"></line><line x1="80.74" y1="54.00" x2="86.05" y2="54.69" opacity="0.50"></line><line x1="77.92" y1="63.47" x2="83.27" y2="66.06" opacity="0.54"></line><line x1="72.26" y1="71.58" x2="76.94" y2="76.13" opacity="0.58"></line><line x1="64.33" y1="77.49" x2="67.62" y2="83.80" opacity="0.62"></line><line x1="54.94" y1="80.60" x2="56.17" y2="88.21" opacity="0.66"></line><line x1="45.06" y1="80.60" x2="43.73" y2="88.79" opacity="0.69"></line><line x1="35.67" y1="77.49" x2="31.57" y2="85.37" opacity="0.73"></line><line x1="27.74" y1="71.58" x2="20.95" y2="78.17" opacity="0.77"></line><line x1="22.08" y1="63.47" x2="13.02" y2="67.85" opacity="0.81"></line><line x1="19.26" y1="54.00" x2="8.70" y2="55.37" opacity="0.85"></line><line x1="19.56" y1="44.12" x2="8.53" y2="41.98" opacity="0.89"></line><line x1="22.96" y1="34.83" x2="12.65" y2="29.05" opacity="0.92"></line><line x1="29.12" y1="27.09" x2="20.75" y2="17.92" opacity="0.96"></line><line x1="37.39" y1="21.68" x2="32.10" y2="9.80" opacity="1.00"></line></g><g style="fill: var(--ink)"><rect x="38.5" y="35" width="7" height="30" rx="2"></rect><rect x="54.5" y="35" width="7" height="30" rx="2"></rect><rect x="38.5" y="47.5" width="23" height="5" rx="1.5"></rect></g></svg>Hex<span class="ego">is</span></h1>
     <p class="tagline">O corpo que se constrói pela prática · treino, cardio e dieta</p>
     <form id="loginForm" novalidate>
       <div class="field"><label for="lgEmail">E-mail</label><input id="lgEmail" type="email" autocomplete="email" inputmode="email" required></div>
@@ -272,7 +275,7 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 </div>
 <header class="top">
   <div class="top-inner">
-    <div class="brand"><div><h1>Hex<span class="ego">is</span></h1><div class="tagline">O corpo que se constrói pela prática · treino, cardio e dieta</div></div><div class="brandr"><span class="sync" id="sync">Carregando…</span><div class="acct" id="acct"></div></div></div>
+    <div class="brand"><div><h1><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><g style="stroke: var(--accent)" stroke-width="4.2" stroke-linecap="round"><line x1="62.61" y1="21.68" x2="63.83" y2="18.94" opacity="0.35"></line><line x1="70.88" y1="27.09" x2="73.30" y2="24.44" opacity="0.39"></line><line x1="77.04" y1="34.83" x2="80.68" y2="32.79" opacity="0.43"></line><line x1="80.44" y1="44.12" x2="85.11" y2="43.21" opacity="0.46"></line><line x1="80.74" y1="54.00" x2="86.05" y2="54.69" opacity="0.50"></line><line x1="77.92" y1="63.47" x2="83.27" y2="66.06" opacity="0.54"></line><line x1="72.26" y1="71.58" x2="76.94" y2="76.13" opacity="0.58"></line><line x1="64.33" y1="77.49" x2="67.62" y2="83.80" opacity="0.62"></line><line x1="54.94" y1="80.60" x2="56.17" y2="88.21" opacity="0.66"></line><line x1="45.06" y1="80.60" x2="43.73" y2="88.79" opacity="0.69"></line><line x1="35.67" y1="77.49" x2="31.57" y2="85.37" opacity="0.73"></line><line x1="27.74" y1="71.58" x2="20.95" y2="78.17" opacity="0.77"></line><line x1="22.08" y1="63.47" x2="13.02" y2="67.85" opacity="0.81"></line><line x1="19.26" y1="54.00" x2="8.70" y2="55.37" opacity="0.85"></line><line x1="19.56" y1="44.12" x2="8.53" y2="41.98" opacity="0.89"></line><line x1="22.96" y1="34.83" x2="12.65" y2="29.05" opacity="0.92"></line><line x1="29.12" y1="27.09" x2="20.75" y2="17.92" opacity="0.96"></line><line x1="37.39" y1="21.68" x2="32.10" y2="9.80" opacity="1.00"></line></g><g style="fill: var(--ink)"><rect x="38.5" y="35" width="7" height="30" rx="2"></rect><rect x="54.5" y="35" width="7" height="30" rx="2"></rect><rect x="38.5" y="47.5" width="23" height="5" rx="1.5"></rect></g></svg>Hex<span class="ego">is</span></h1><div class="tagline">O corpo que se constrói pela prática · treino, cardio e dieta</div></div><div class="brandr"><span class="sync" id="sync">Carregando…</span><div class="acct" id="acct"></div></div></div>
     <nav class="tabs" aria-label="Seções">
       <a href="#perfil" data-tab="perfil">Perfil</a>
       <a href="#objetivo" data-tab="objetivo">Objetivo</a>
