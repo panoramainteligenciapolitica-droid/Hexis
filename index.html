@@ -237,6 +237,8 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .pfgrid > .field:not(.checks) { display: flex; flex-direction: column; justify-content: flex-end; }
 .warm { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--new); background: color-mix(in srgb, var(--new) 8%, var(--surface)); border-radius: 0 8px 8px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
 .warm.day { margin: 0 0 12px; }
+.donebar { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.donebar .btn { flex: 1 1 0; min-height: 48px; font-size: 17px; }
 .obsh { font-size: 13px; color: var(--muted); font-weight: 600; margin: 10px 0 4px; display: flex; align-items: center; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
 .tag { min-height: 34px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .08s; }
@@ -2117,10 +2119,11 @@ function exCard(d, p, entry, W) {
     (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") +
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
-    '<div class="row-btns"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
+    '<div class="row-btns" style="margin-top:8px"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
     '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
     '<textarea data-note="' + d.k + '" rows="1" aria-label="Outra observação de ' + esc(d.n) + '" placeholder="Outra observação (o app também lê o texto)">' + esc(entry ? entry.nota : "") + "</textarea>" +
-    '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div></article>";
+    '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div>" +
+    '<div class="row-btns donebar"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button></div></article>';
 }
 
 // ----- Render: Próxima semana -----
