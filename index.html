@@ -237,6 +237,8 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .pfgrid > .field:not(.checks) { display: flex; flex-direction: column; justify-content: flex-end; }
 .warm { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--new); background: color-mix(in srgb, var(--new) 8%, var(--surface)); border-radius: 0 8px 8px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
 .warm.day { margin: 0 0 12px; }
+.nhint { font-size: 13px; color: var(--fix); margin-top: 4px; font-weight: 600; }
+.nhint:empty { display: none; }
 table.sets tr.prow td { padding-top: 0; }
 table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .pbtn { margin-top: 0; min-height: 32px; padding: 2px 10px; border: 1px dashed var(--line); border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
@@ -629,7 +631,8 @@ function setsStr(sets) { return sets.map(s => fmt(s.kg) + "×" + s.reps + (s.par
 function parcCredit(x) { return x && Array.isArray(x.parc) ? x.parc.reduce((a, p) => a + Math.max(0, Math.min(99, +p || 0)) / 100, 0) * 0.5 : 0; }
 
 // Transição: o que a semana w ensinou para a semana w+1
-function transition(def, st, pres, rec, w, curW) {
+function transition(def, st, pres, rec, w, curW, notes) {
+  const nf = notes || {};
   const s = Object.assign({}, st);
   s.prevLoad = st.load; s.how = "";
   const neutral = pres.deload || pres.festas;
@@ -661,6 +664,35 @@ function transition(def, st, pres, rec, w, curW) {
   const progress = st.lastMetric == null || metric > st.lastMetric * 1.005;
   const done = "Semana " + w + ": " + setsStr(sets);
   if (neutral) { s.action = "keep"; s.why = done + ". Semana leve: sem mudança de carga."; return s; }
+  const obs = noteTxt(nf);
+  if (nf.dor) {
+    s.dorCount = (st.dorCount || 0) + 1;
+    const base = st.mode === "topset" ? st.heavy : st.load;
+    s.mode = "normal"; s.load = anyBelow ? rnd(base * 0.9, def.step) : base; s.tr = ps.map(x => x.lo);
+    s.action = anyBelow ? "down" : "keep";
+    s.why = done + ". Observação: " + obs + ". A carga não sobe" + (anyBelow ? " e cai 10% (" + fmt(s.load) + " kg)" : "") + "; faça só o que não doer." + (s.dorCount >= 2 ? " É a " + s.dorCount + "ª semana com dor: troque por uma variação que não doa e, se continuar, procure avaliação." : "");
+    return s;
+  }
+  s.dorCount = 0;
+  if (nf.ajuda) {
+    s.action = "keep"; s.tr = st.tr || ps.map(x => x.tr);
+    s.why = done + ". Observação: " + obs + ". Repetições com ajuda não valem para subir carga: repetir carga e alvo com técnica limpa.";
+    return s;
+  }
+  if ((nf.equip || nf.cansaco || nf.tempo) && !allTop && (anyBelow || !progress)) {
+    s.action = "keep"; s.tr = st.tr || ps.map(x => x.tr);
+    s.why = done + ". Observação: " + obs + ". Semana fora do normal: não conta como estagnação nem queda; repetir a prescrição.";
+    return s;
+  }
+  if (nf.facil && !anyBelow && st.mode !== "reset") {
+    const base = st.mode === "topset" ? st.heavy : st.load;
+    const saltos = allTop ? 2 : 1;
+    s.load = rnd(base + (def.bw && base === 0 ? 2.5 : def.inc) * saltos, def.step);
+    s.lastMetric = Math.max(metric, st.lastMetric || 0);
+    s.mode = "normal"; s.stall = 0; s.below = 0; s.tr = ps.map(x => (x.kind === "over" ? 6 : x.lo));
+    s.action = "up"; s.why = done + ". Observação: fácil. Subir " + fmt(s.load - base) + " kg" + (saltos > 1 ? " (2 saltos)" : "") + ".";
+    return s;
+  }
   s.lastMetric = Math.max(metric, st.lastMetric || 0);
   if (st.mode === "reset") {
     if (anyBelow) { s.action = "fix"; s.why = done + ": abaixo da faixa. Repetir esta fase da onda."; s.how = howFor("reset", def, s); return s; }
@@ -798,9 +830,73 @@ function replay(records, W, curW, settings, sl) {
     const pres = {};
     for (const d of EX) pres[d.k] = prescribe(d, states[d.k], w, flags);
     weeks[w] = { pres, flags };
-    if (w < W) for (const d of EX) states[d.k] = transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW);
+    if (w < W) for (const d of EX) states[d.k] = transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW, noteFlags(records, w, d));
   }
   return weeks;
+}
+// ===== Observações: o app lê palavras-chave e ajusta a semana seguinte =====
+const NOTE_PARTS = [
+  ["ombro", /ombro/, ["Peito", "Ombro anterior", "Ombro lateral", "Ombro posterior", "Tríceps"]],
+  ["cotovelo", /cotovelo/, ["Bíceps", "Tríceps"]],
+  ["punho", /punho|pulso/, ["Bíceps", "Tríceps"]],
+  ["joelho", /joelho|patela/, ["Quadríceps", "Posteriores de coxa"]],
+  ["lombar", /lombar|coluna|costas baixa|parte baixa das costas/, ["Lombar", "Posteriores de coxa", "Glúteos", "Costas"]],
+  ["quadril", /quadril|virilha/, ["Glúteos", "Adutores", "Quadríceps"]],
+  ["pescoço", /pesco[cç]o|cervical|trap[eé]zio/, ["Costas", "Ombro posterior", "Ombro lateral"]],
+  ["tornozelo", /tornozelo|calcanhar|tend[aã]o de aquiles/, ["Panturrilha"]],
+  ["peito", /peitoral|\bpeito\b/, ["Peito"]]
+];
+function readNote(txt) {
+  const f = {};
+  if (!txt || !String(txt).trim()) return f;
+  let t = " " + String(txt).toLowerCase().normalize("NFC") + " ";
+  // negações: "sem dor", "não doeu", "nenhum incômodo", "não estava cansado"
+  t = t.replace(/\b(sem|n[aã]o|nenhum[a]?|zero|nada de)\s+((estava|estou|senti|sinto|tive|tenho|teve|houve|deu|ficou|foi|muito|mais|nenhuma?|qualquer)\s+){0,2}(dor\w*|doeu|doendo|inc[oô]modo\w*|cansad\w*|cansa[cç]o|problema\w*|f[aá]cil|ajuda)/g, " ");
+  if (/(^|[^a-zà-ú])(dor(es)?|doeu|doendo|doi|dói|doí|doía|dolorid\w*|inc[oô]mod\w*|fisgada|pontada|lesion\w*|les[aã]o|machuc\w*|travou|inflama\w*|tendinite|formigament\w*)(?![a-zà-ú])/.test(t)) {
+    f.dor = true; f.parts = NOTE_PARTS.filter(p => p[1].test(t)).map(p => p[0]);
+  }
+  if (/((m[aá]quina|aparelho|equipamento|banco|polia|cabo|barra|halter\w*|anilha\w*)\W+(\w+\W+){0,3}(ocupad\w*|quebrad\w*|diferente|estragad\w*|em manuten[cç][aã]o))|troquei (de |a |o )?(m[aá]quina|aparelho|exerc[ií]cio)|outra (m[aá]quina|academia)|academia (cheia|lotada)|sem (a )?m[aá]quina/.test(t)) f.equip = true;
+  if (/(cansad\w*|cansa[cç]o|exaust\w*|sem energia|pouca energia|fraqu\w*|dormi (mal|pouco)|sono ruim|n[aã]o dormi|sem dormir|gripad\w*|resfriad\w*|doente|febre|ressaca|estressad\w*|jejum|sem comer|pouco carbo\w*|indisposi\w*|enjoo|enjoad\w*)/.test(t)) f.cansaco = true;
+  if (/(sem tempo|com pressa|na pressa|corrido|atrasad\w*|cortei|encurtei|faltou tempo)/.test(t)) f.tempo = true;
+  if (/(com ajuda|ajuda d[oa]|roubei|roubando|rouband\w*|embalo|impulso|meia amplitude|amplitude curta|amplitude reduzida|t[eé]cnica ruim|perdi a t[eé]cnica|sem controle)/.test(t)) f.ajuda = true;
+  if (/(f[aá]cil|leve demais|muito leve|sobrou muito|sobraram muitas|dava (pra|para) mais|podia mais|poderia mais|daria mais)/.test(t)) f.facil = true;
+  return f;
+}
+// Junta a observação do exercício e a do dia (a do dia vale para dor só quando diz onde dói)
+function noteFlags(records, w, def) {
+  const doc = records[wkKey(w) + "-" + def.d];
+  if (!doc) return {};
+  const ex = readNote(doc.ex && doc.ex[def.k] ? doc.ex[def.k].nota : "");
+  const day = readNote(doc.nota);
+  const f = Object.assign({}, ex);
+  if (day.cansaco) f.cansaco = true;
+  if (day.tempo) f.tempo = true;
+  if (day.dor && day.parts && day.parts.some(p => (NOTE_PARTS.find(x => x[0] === p) || [0, 0, []])[2].includes(def.m))) { f.dor = true; f.parts = day.parts; f.dorDia = true; }
+  return f;
+}
+function noteTxt(f) {
+  const a = [];
+  if (f.dor) a.push("dor" + (f.parts && f.parts.length ? " (" + f.parts.join(", ") + ")" : ""));
+  if (f.ajuda) a.push("repetições com ajuda ou técnica ruim");
+  if (f.equip) a.push("equipamento diferente");
+  if (f.cansaco) a.push("cansaço ou dia ruim");
+  if (f.tempo) a.push("treino corrido");
+  if (f.facil) a.push("fácil");
+  return a.join(", ");
+}
+// O que a observação muda na semana seguinte (texto para o aviso abaixo do campo)
+function noteEffect(f, scope) {
+  if (scope === "dia") {
+    const a = [];
+    if (f.dor) a.push(f.parts && f.parts.length ? "dor (" + f.parts.join(", ") + "): nos exercícios dessa região a carga não sobe na próxima semana" : "dor: diga onde dói (ex.: ombro, joelho, lombar) para o app ajustar os exercícios certos");
+    if (f.cansaco || f.tempo) a.push((f.cansaco ? "cansaço" : "treino corrido") + ": resultado abaixo do previsto hoje não conta como estagnação");
+    return a.length ? "O app entendeu: " + a.join("; ") + "." : "";
+  }
+  if (f.dor) return "O app entendeu: dor" + (f.parts && f.parts.length ? " (" + f.parts.join(", ") + ")" : "") + ". Na próxima semana a carga não sobe (e cai 10% se ficou abaixo da faixa). Se repetir, o app sugere trocar o exercício.";
+  if (f.ajuda) return "O app entendeu: repetições com ajuda ou técnica ruim. Elas não valem para subir carga: a próxima semana repete carga e alvo.";
+  if (f.equip || f.cansaco || f.tempo) return "O app entendeu: " + noteTxt(f) + ". Se ficou abaixo do previsto, não conta como estagnação; se foi bem, segue a progressão normal.";
+  if (f.facil) return "O app entendeu: fácil. A carga sobe na próxima semana (2 saltos se você também bateu o topo da faixa).";
+  return "";
 }
 function recOf(records, w, def) { const doc = records[wkKey(w) + "-" + def.d]; return doc && doc.ex ? doc.ex[def.k] : null; }
 function weekStruggle(wk, records, w) {
@@ -1558,6 +1654,7 @@ Object.assign(GLOSS, {
 
 GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
 GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
+GLOSS.observacoes = ["Observações que ajustam o treino", "<p>O app lê as observações do exercício e do dia e ajusta a semana seguinte. Abaixo do campo aparece o que ele entendeu.</p><ul><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 function glossEntry(key) {
@@ -1714,7 +1811,7 @@ function renderDay(wk) {
   h += '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
   for (const d of defs) h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W);
   h += cardioCard(W, day);
-  h += '<div class="panel"><h2>Observações do dia</h2><textarea id="dayNote" data-daynote="1" rows="3" placeholder="Sono, energia, dores, ajustes de máquina…">' + esc(doc ? doc.nota : "") + "</textarea></div>";
+  h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><textarea id="dayNote" data-daynote="1" rows="3" placeholder="Sono, energia, dores (diga onde), máquina ocupada…">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(readNote(doc ? doc.nota : ""), "dia")) + "</div></div>";
   document.getElementById("dayView").innerHTML = h;
 }
 // Aquecimento: séries leves antes da primeira válida (não contam para volume nem progressão)
@@ -1791,7 +1888,8 @@ function exCard(d, p, entry, W) {
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
-    '<textarea data-note="' + d.k + '" rows="1" placeholder="Observação deste exercício">' + esc(entry ? entry.nota : "") + "</textarea></article>";
+    '<textarea data-note="' + d.k + '" rows="1" placeholder="Observação: dor, fácil, com ajuda, máquina diferente…">' + esc(entry ? entry.nota : "") + "</textarea>" +
+    '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(readNote(entry ? entry.nota : ""), "ex")) + "</div></article>";
 }
 
 // ----- Render: Próxima semana -----
@@ -2399,6 +2497,7 @@ document.addEventListener("input", ev => {
     const def = EXBY[el.dataset.note]; const pres = currentPres(def.k);
     const entry = entryFor(app.week, def.d, def.k, pres, true);
     entry.nota = el.value; touch(def.d);
+    const nh = document.getElementById("nh-" + def.k); if (nh) nh.textContent = noteEffect(readNote(el.value), "ex");
   } else if (el.dataset.cardio) {
     const c = cardioEntry(app.week, app.day); const f = el.dataset.cardio;
     if (f === "nota") c.nota = el.value;
@@ -2408,6 +2507,7 @@ document.addEventListener("input", ev => {
     updateCardioOut(c, cardioPlan(app.week));
   } else if (el.dataset.daynote) {
     const doc = getDoc(app.week, app.day, true); doc.nota = el.value; touch(app.day);
+    const nh = document.getElementById("nh-day"); if (nh) nh.textContent = noteEffect(readNote(el.value), "dia");
   }
 });
 document.addEventListener("change", ev => { const el = ev.target; if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
