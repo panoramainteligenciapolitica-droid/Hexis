@@ -237,6 +237,39 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .pfgrid > .field:not(.checks) { display: flex; flex-direction: column; justify-content: flex-end; }
 .warm { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--new); background: color-mix(in srgb, var(--new) 8%, var(--surface)); border-radius: 0 8px 8px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
 .warm.day { margin: 0 0 12px; }
+.obsh { font-size: 13px; color: var(--muted); font-weight: 600; margin: 10px 0 4px; display: flex; align-items: center; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.tag { min-height: 34px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .08s; }
+.tag:active { transform: scale(.95); }
+.tag[aria-pressed="true"] { background: color-mix(in srgb, var(--fix) 82%, #000); border-color: color-mix(in srgb, var(--fix) 82%, #000); color: #fff; font-weight: 600; }
+.tag.own { border-style: dashed; }
+.tag.own[aria-pressed="true"] { border-style: solid; }
+.tag.cat { font-weight: 600; }
+.tag.cat.has { border-color: var(--fix); color: var(--fix); background: color-mix(in srgb, var(--fix) 10%, var(--surface)); }
+.tag.cat[aria-expanded="true"] { border-color: var(--ink); }
+.tag .tn { display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 9px; background: var(--fix); color: #fff; font-size: 12px; line-height: 18px; text-align: center; }
+.tag.on { background: color-mix(in srgb, var(--fix) 82%, #000); border-color: color-mix(in srgb, var(--fix) 82%, #000); color: #fff; font-weight: 600; }
+.subtags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; padding: 8px; border-radius: 10px; background: color-mix(in srgb, var(--fix) 6%, var(--surface)); border: 1px solid color-mix(in srgb, var(--fix) 25%, var(--line)); }
+.tagsel { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
+.execrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.exec { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+table.sets .exec input, .exec input { flex: none; width: 72px; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font: inherit; font-size: 15px; color: var(--ink); }
+.parcwrap { flex: 1 1 auto; }
+.parcwrap .parc { margin-top: 0; }
+table.sets tr.rrow td { padding: 2px 0 10px; border-bottom: 1px solid var(--line); }
+.rest { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; padding: 6px 8px; border-radius: 10px; background: color-mix(in srgb, var(--deload) 7%, var(--surface)); }
+.rest .rl { font-size: 13px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; margin-right: 2px; }
+.rbtn { min-height: 32px; min-width: 44px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .08s; }
+.rbtn:active { transform: scale(.95); }
+.rbtn.prev { border-color: var(--deload); border-style: dashed; }
+.rbtn[aria-pressed="true"] { background: color-mix(in srgb, var(--deload) 80%, #000); border-color: color-mix(in srgb, var(--deload) 80%, #000); border-style: solid; color: #fff; font-weight: 700; }
+.rq { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.rq.ok { color: var(--up); background: color-mix(in srgb, var(--up) 12%, transparent); }
+.rq.mid { color: var(--down); background: color-mix(in srgb, var(--down) 12%, transparent); }
+.rq.lo { color: var(--new); background: color-mix(in srgb, var(--new) 12%, transparent); }
+.rq.hi { color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, transparent); }
+.tag.add { border-style: dashed; color: var(--muted); background: transparent; }
+.tagform { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 0 0 8px; background: var(--surface-2); display: grid; gap: 8px; }
 .nhint { font-size: 13px; color: var(--fix); margin-top: 4px; font-weight: 600; }
 .nhint:empty { display: none; }
 table.sets tr.prow td { padding-top: 0; }
@@ -381,6 +414,11 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <h2>Calorias do cardio por semana<button class="info" type="button" data-info="cardiokcal" aria-label="Explicar: calorias do cardio por semana">i</button></h2>
       <p class="lead">Estimativa do gasto da esteira somado na semana.</p>
       <div class="chartbox"><canvas id="chCardioKcal" aria-label="Gráfico: Calorias do cardio por semana"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Tempo de treino e recuperação<button class="info" type="button" data-info="tempotreino" aria-label="Explicar: tempo de treino">i</button></h2>
+      <p class="lead">Duração média dos treinos registrados em cada semana (musculação + cardio) contra o seu limite diário. No toque, a recuperação média entre as séries.</p>
+      <div class="chartbox"><canvas id="chTempo" aria-label="Gráfico: tempo de treino por semana"></canvas></div>
     </div>
     <div class="panel">
       <h2>Séries por músculo na semana<button class="info" type="button" data-info="musculo" aria-label="Explicar: séries por músculo na semana">i</button></h2>
@@ -665,12 +703,14 @@ function transition(def, st, pres, rec, w, curW, notes) {
   const done = "Semana " + w + ": " + setsStr(sets);
   if (neutral) { s.action = "keep"; s.why = done + ". Semana leve: sem mudança de carga."; return s; }
   const obs = noteTxt(nf);
+  const used = Math.max(...sets.map(x => x.kg));
   if (nf.dor) {
     s.dorCount = (st.dorCount || 0) + 1;
-    const base = st.mode === "topset" ? st.heavy : st.load;
-    s.mode = "normal"; s.load = anyBelow ? rnd(base * 0.9, def.step) : base; s.tr = ps.map(x => x.lo);
-    s.action = anyBelow ? "down" : "keep";
-    s.why = done + ". Observação: " + obs + ". A carga não sobe" + (anyBelow ? " e cai 10% (" + fmt(s.load) + " kg)" : "") + "; faça só o que não doer." + (s.dorCount >= 2 ? " É a " + s.dorCount + "ª semana com dor: troque por uma variação que não doa e, se continuar, procure avaliação." : "");
+    const base = nf.fixa ? used : st.mode === "topset" ? st.heavy : st.load;
+    const cai = anyBelow || nf.forte;
+    s.mode = "normal"; s.load = cai ? rnd(base * 0.9, def.step) : base; s.tr = ps.map(x => x.lo);
+    s.action = cai ? "down" : "keep";
+    s.why = done + ". Observação: " + obs + (nf.forte ? " (forte)" : "") + ". A carga não sobe" + (cai ? " e cai 10% (" + fmt(s.load) + " kg)" : "") + "; faça só o que não doer." + (s.dorCount >= 2 || nf.forte ? " Troque por uma variação que não doa e, se continuar, procure avaliação." : "");
     return s;
   }
   s.dorCount = 0;
@@ -679,9 +719,31 @@ function transition(def, st, pres, rec, w, curW, notes) {
     s.why = done + ". Observação: " + obs + ". Repetições com ajuda não valem para subir carga: repetir carga e alvo com técnica limpa.";
     return s;
   }
-  if ((nf.equip || nf.cansaco || nf.tempo) && !allTop && (anyBelow || !progress)) {
+  if (nf.fixa) {
+    const top = sets.every((x, i) => x.reps >= p(i).hi) && sets.length >= ps.length;
+    const low = sets.some((x, i) => x.reps < p(i).lo);
+    s.fixed = true; s.mode = "normal"; s.below = 0;
+    s.lastMetric = Math.max(metric, st.lastMetric || 0);
+    if (top || (nf.facil && !low)) {
+      s.load = rnd(used + def.inc, def.step); s.stall = 0; s.tr = ps.map(x => x.lo); s.action = "up";
+      s.why = done + ". Carga fixa da máquina: " + (top ? "bateu o topo da faixa" : "foi fácil") + " com " + fmt(used) + " kg. Suba para a próxima placa (cerca de " + fmt(s.load) + " kg) e registre o peso real.";
+    } else if (low) {
+      s.load = used; s.tr = ps.map(x => x.lo); s.action = "keep";
+      s.why = done + ". Carga fixa da máquina: " + fmt(used) + " kg é a placa disponível e ficou abaixo da faixa. Manter essa placa e buscar " + ps[0].lo + " repetições; não conta como queda.";
+    } else {
+      s.load = used; s.stall = progress ? 0 : (st.stall || 0) + 1; s.tr = sets.map((x, i) => Math.min(p(i).hi, x.reps + 1)); s.action = "reps";
+      s.why = done + ". Carga fixa da máquina: manter " + fmt(used) + " kg e buscar +1 repetição por série até o topo da faixa; depois, a próxima placa.";
+    }
+    return s;
+  }
+  if (nf.pesada && allTop) {
+    s.action = "keep"; s.tr = ps.map(x => x.hi); s.lastMetric = Math.max(metric, st.lastMetric || 0);
+    s.why = done + ". Observação: carga pesada demais. Bateu o topo, mas consolidar " + fmt(st.load) + " kg mais uma semana antes de subir.";
+    return s;
+  }
+  if ((nf.equip || nf.cansaco || nf.tempo || nf.descCurto) && !allTop && (anyBelow || !progress)) {
     s.action = "keep"; s.tr = st.tr || ps.map(x => x.tr);
-    s.why = done + ". Observação: " + obs + ". Semana fora do normal: não conta como estagnação nem queda; repetir a prescrição.";
+    s.why = done + ". " + (nf.descCurto && !(nf.equip || nf.cansaco || nf.tempo) ? "Descanso" : "Observação") + ": " + obs + ". Semana fora do normal: não conta como estagnação nem queda; repetir a prescrição" + (nf.descCurto ? " e descansar o previsto" : "") + ".";
     return s;
   }
   if (nf.facil && !anyBelow && st.mode !== "reset") {
@@ -860,17 +922,62 @@ function readNote(txt) {
   if (/(sem tempo|com pressa|na pressa|corrido|atrasad\w*|cortei|encurtei|faltou tempo)/.test(t)) f.tempo = true;
   if (/(com ajuda|ajuda d[oa]|roubei|roubando|rouband\w*|embalo|impulso|meia amplitude|amplitude curta|amplitude reduzida|t[eé]cnica ruim|perdi a t[eé]cnica|sem controle)/.test(t)) f.ajuda = true;
   if (/(f[aá]cil|leve demais|muito leve|sobrou muito|sobraram muitas|dava (pra|para) mais|podia mais|poderia mais|daria mais)/.test(t)) f.facil = true;
+  if (/(placa fixa|placas fixas|carga fixa|peso fixo|peso predefinido|pesos predefinidos|sem ajuste|n[aã]o (tem|tinha|deu|d[aá]) (pra |para )?ajustar|n[aã]o tem (essa|esse|a|o) (carga|peso)|pr[oó]xima placa|pino)/.test(t)) f.fixa = true;
+  for (const c of userTags()) if (c.ef && c.ef !== "nada" && c.txt && t.includes(" " + c.txt.toLowerCase()) ) applyEf(f, c.ef);
+  return f;
+}
+// Blocos de observação: os do app e os criados pelo usuário (com o efeito que ele escolheu)
+// Temas com sub-seleções
+const CAP = x => x.charAt(0).toUpperCase() + x.slice(1);
+const T_DOR = { id: "dor", lb: "Dor", sub: [["dor", "Sem detalhe"], ["dor:leve", "Leve"], ["dor:forte", "Forte"]].concat(NOTE_PARTS.map(p => ["dor:" + p[0], CAP(p[0])])) };
+const T_DOR_DIA = { id: "dor", lb: "Dor", sub: NOTE_PARTS.map(p => ["dor:" + p[0], CAP(p[0])]) };
+const T_EXEC = { id: "exec", lb: "Execução", sub: [["exec:ajuda", "Com ajuda"], ["exec:embalo", "Roubei / embalo"], ["exec:amplitude", "Meia amplitude"], ["exec:tecnica", "Técnica ruim"]] };
+const T_CARGA = { id: "carga", lb: "Carga", sub: [["carga:fixa", "Fixa, sem ajuste"], ["carga:facil", "Fácil"], ["carga:pesada", "Pesada demais"]] };
+const T_EQUIP = { id: "equip", lb: "Equipamento", sub: [["equip:ocupada", "Máquina ocupada"], ["equip:diferente", "Máquina diferente"], ["equip:quebrada", "Quebrada"], ["equip:troca", "Troquei o exercício"]] };
+const T_EQUIP_DIA = { id: "equip", lb: "Academia", sub: [["equip:cheia", "Cheia"], ["equip:outra", "Outra academia"]] };
+const T_DISP = { id: "disp", lb: "Disposição", sub: [["disp:cansaco", "Cansaço"], ["disp:sono", "Dormi mal"], ["disp:doente", "Gripado ou doente"], ["disp:fome", "Sem comer"], ["disp:estresse", "Estresse"]] };
+const T_TEMPO = { id: "tempo", lb: "Tempo", sub: [["tempo:corrido", "Treino corrido"], ["tempo:cortei", "Cortei séries"]] };
+const TREE_EX = [T_DOR, T_EXEC, T_CARGA, T_EQUIP, T_DISP, T_TEMPO];
+const TREE_DIA = [T_DISP, T_TEMPO, T_DOR_DIA, T_EQUIP_DIA];
+const TAG_LABEL = (() => { const m = {}; [T_DOR, T_DOR_DIA, T_EXEC, T_CARGA, T_EQUIP, T_EQUIP_DIA, T_DISP, T_TEMPO].forEach(c => c.sub.forEach(([id, lb]) => { m[id] = id === "dor" ? "Dor" : c.id === "dor" ? "Dor: " + lb.toLowerCase() : c.id === "equip" && c.lb === "Academia" ? "Academia " + lb.toLowerCase() : lb; })); return m; })();
+const OLD_TAGS = { dor: "dor", ajuda: "exec:ajuda", facil: "carga:facil", fixa: "carga:fixa", cansaco: "disp:cansaco", tempo: "tempo:corrido", equip: "equip:diferente" };
+const TAG_EFS = [["nada", "Só registrar"], ["dor", "Dor"], ["ajuda", "Com ajuda"], ["facil", "Fácil"], ["fixa", "Carga fixa"], ["cansaco", "Dia ruim"]];
+function userTags() { return (typeof app !== "undefined" && app.settings && Array.isArray(app.settings.tags)) ? app.settings.tags : []; }
+function applyEf(f, ef) { if (ef === "dor") { f.dor = true; f.parts = f.parts || []; } else if (ef && ef !== "nada") f[ef] = true; }
+function tagFlags(tags) {
+  const f = {};
+  for (let t of Array.isArray(tags) ? tags : []) {
+    if (t.startsWith("c:")) { const c = userTags().find(x => x.id === t); if (c) applyEf(f, c.ef); continue; }
+    t = OLD_TAGS[t] || t;
+    if (t === "dor" || t === "dor:leve") { f.dor = true; f.parts = f.parts || []; }
+    else if (t === "dor:forte") { f.dor = true; f.forte = true; f.parts = f.parts || []; }
+    else if (t.startsWith("dor:")) { f.dor = true; f.parts = (f.parts || []).concat([t.slice(4)]); }
+    else if (t.startsWith("exec:")) f.ajuda = true;
+    else if (t === "carga:fixa") f.fixa = true;
+    else if (t === "carga:facil") f.facil = true;
+    else if (t === "carga:pesada") f.pesada = true;
+    else if (t.startsWith("equip:")) f.equip = true;
+    else if (t.startsWith("disp:")) f.cansaco = true;
+    else if (t.startsWith("tempo:")) f.tempo = true;
+  }
+  return f;
+}
+function mergeFlags(a, b) {
+  const f = Object.assign({}, a, b);
+  if ((a && a.parts) || (b && b.parts)) f.parts = [...new Set([].concat((a && a.parts) || [], (b && b.parts) || []))];
   return f;
 }
 // Junta a observação do exercício e a do dia (a do dia vale para dor só quando diz onde dói)
 function noteFlags(records, w, def) {
   const doc = records[wkKey(w) + "-" + def.d];
   if (!doc) return {};
-  const ex = readNote(doc.ex && doc.ex[def.k] ? doc.ex[def.k].nota : "");
-  const day = readNote(doc.nota);
+  const e = doc.ex && doc.ex[def.k];
+  const ex = mergeFlags(readNote(e ? e.nota : ""), tagFlags(e ? e.tags : []));
+  const day = mergeFlags(readNote(doc.nota), tagFlags(doc.tags));
   const f = Object.assign({}, ex);
   if (day.cansaco) f.cansaco = true;
   if (day.tempo) f.tempo = true;
+  Object.assign(f, restFlags(e, def));
   if (day.dor && day.parts && day.parts.some(p => (NOTE_PARTS.find(x => x[0] === p) || [0, 0, []])[2].includes(def.m))) { f.dor = true; f.parts = day.parts; f.dorDia = true; }
   return f;
 }
@@ -882,6 +989,9 @@ function noteTxt(f) {
   if (f.cansaco) a.push("cansaço ou dia ruim");
   if (f.tempo) a.push("treino corrido");
   if (f.facil) a.push("fácil");
+  if (f.fixa) a.push("carga fixa da máquina");
+  if (f.pesada) a.push("carga pesada demais");
+  if (f.descCurto) a.push("descanso médio de " + fmtSec(f.desc) + ", abaixo dos " + fmtSec(f.descPrev) + " previstos");
   return a.join(", ");
 }
 // O que a observação muda na semana seguinte (texto para o aviso abaixo do campo)
@@ -892,11 +1002,67 @@ function noteEffect(f, scope) {
     if (f.cansaco || f.tempo) a.push((f.cansaco ? "cansaço" : "treino corrido") + ": resultado abaixo do previsto hoje não conta como estagnação");
     return a.length ? "O app entendeu: " + a.join("; ") + "." : "";
   }
-  if (f.dor) return "O app entendeu: dor" + (f.parts && f.parts.length ? " (" + f.parts.join(", ") + ")" : "") + ". Na próxima semana a carga não sobe (e cai 10% se ficou abaixo da faixa). Se repetir, o app sugere trocar o exercício.";
+  if (f.dor) return "O app entendeu: dor" + (f.forte ? " forte" : "") + (f.parts && f.parts.length ? " (" + f.parts.join(", ") + ")" : "") + ". " + (f.forte ? "Na próxima semana a carga cai 10% e o app sugere trocar por uma variação que não doa." : "Na próxima semana a carga não sobe (e cai 10% se ficou abaixo da faixa). Se repetir, o app sugere trocar o exercício.");
   if (f.ajuda) return "O app entendeu: repetições com ajuda ou técnica ruim. Elas não valem para subir carga: a próxima semana repete carga e alvo.";
   if (f.equip || f.cansaco || f.tempo) return "O app entendeu: " + noteTxt(f) + ". Se ficou abaixo do previsto, não conta como estagnação; se foi bem, segue a progressão normal.";
+  if (f.pesada) return "O app entendeu: carga pesada demais. Mesmo batendo o topo da faixa, a carga fica uma semana a mais antes de subir.";
+  if (f.fixa) return "O app entendeu: carga fixa da máquina. Vale o peso que você usou: a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa." + (f.facil ? " (Fácil: sobe já para a próxima placa.)" : "");
   if (f.facil) return "O app entendeu: fácil. A carga sobe na próxima semana (2 saltos se você também bateu o topo da faixa).";
   return "";
+}
+// Descanso previsto em segundos (bi-set: o descanso do par)
+function restSec(def) {
+  const parse = r => { r = String(r || ""); let m = /(\d+(?:[,.]\d+)?)\s*(?:–|-)?\s*\d*\s*min/.exec(r); if (m) return +m[1].replace(",", ".") * 60; m = /(\d+)\s*s\b/.exec(r); return m ? +m[1] : null; };
+  let v = parse(def.rest);
+  if (v == null && /bi-set/i.test(def.rest)) { const day = EX.filter(x => x.d === def.d); const nx = day[day.indexOf(def) + 1]; v = nx ? parse(nx.rest) : null; }
+  return v == null ? 90 : v;
+}
+const REST_OPTS = [30, 45, 60, 90, 120, 150, 180, 240];
+const EXEC_DEF = 40; // segundos por série quando não registrado
+function fmtSec(sec) { if (sec == null) return "—"; sec = Math.round(sec); const m = Math.floor(sec / 60), r = sec % 60; return m ? m + ":" + String(r).padStart(2, "0") : r + " s"; }
+// Recuperação entre duas séries: força estimada da seguinte ÷ da anterior (com o RIR, se anotado)
+// (normalizada pelo previsto: back-off mais leve ou com mais folga já é esperado)
+function recov(a, b, pa, pb) {
+  const kgA = a && a.kg != null && a.kg !== "" ? +a.kg : pa && pa.kg, kgB = b && b.kg != null && b.kg !== "" ? +b.kg : pb && pb.kg;
+  if (!(a && +a.reps > 0 && b && +b.reps > 0) || !(kgA > 0) || !(kgB > 0)) return null;
+  const mA = pa && pa.rir ? mid(pa.rir) : 0, mB = pb && pb.rir ? mid(pb.rir) : 0;
+  const ra = a.rir != null && a.rir !== "" ? +a.rir : mA, rb = b.rir != null && b.rir !== "" ? +b.rir : mB;
+  const real = e1(kgB, +b.reps + rb) / e1(kgA, +a.reps + ra);
+  const plan = pa && pb && pa.kg > 0 && pb.kg > 0 ? e1(pb.kg, pb.tr + mB) / e1(pa.kg, pa.tr + mA) : 1;
+  return real / plan;
+}
+function recovTxt(r) { return r == null ? "" : Math.round(r * 100) + "% · " + (r >= 0.95 ? "boa" : r >= 0.9 ? "regular" : "incompleta"); }
+// Descanso médio do exercício e se foi curto (abaixo de 75% do previsto)
+function restFlags(e, def) {
+  const ds = (e && e.sets ? e.sets : []).slice(0, -1).map(x => x && +x.desc).filter(x => x > 0);
+  if (!ds.length) return {};
+  const avg = ds.reduce((a, b) => a + b, 0) / ds.length, prev = restSec(def);
+  return { desc: avg, descPrev: prev, descCurto: avg < prev * 0.75 };
+}
+// Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado
+function dayTime(W, day, wk) {
+  const defs = EX.filter(d => d.d === day), doc = getDoc(W, day, false);
+  let prev = 5 * 60, reg = 5 * 60, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [];
+  defs.forEach((d, idx) => {
+    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d);
+    const warm = (warmPlan(d) || []).length;
+    prev += warm * 45 + n * EXEC_DEF + (n - 1) * rs + (idx ? 90 : 0);
+    const e = doc && doc.ex ? doc.ex[d.k] : null;
+    if (!e || e.st === "nao") return;
+    const sets = (e.sets || []).filter(x => x && +x.reps > 0);
+    if (!sets.length && e.st !== "feito") return;
+    nReg++;
+    const m = Math.max(sets.length, e.st === "feito" ? n : 0);
+    reg += warm * 45 + (idx ? 90 : 0);
+    for (let i = 0; i < m; i++) {
+      const x = (e.sets || [])[i] || {};
+      if (+x.exec > 0) reg += +x.exec; else { reg += EXEC_DEF; regEst = true; }
+      if (i < m - 1) { if (+x.desc > 0) { reg += +x.desc; restSum += +x.desc; restN++; restPrevSum += rs; } else { reg += rs; regEst = true; } }
+      if (i < m - 1) { const r = recov(x, (e.sets || [])[i + 1], p.sets[Math.min(i, n - 1)], p.sets[Math.min(i + 1, n - 1)]); if (r != null) recs.push(r); }
+    }
+  });
+  const c = doc && doc.cardio && doc.cardio.st === "feito" ? (doc.cardio.min || 0) : 0;
+  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c };
 }
 function recOf(records, w, def) { const doc = records[wkKey(w) + "-" + def.d]; return doc && doc.ex ? doc.ex[def.k] : null; }
 function weekStruggle(wk, records, w) {
@@ -1654,7 +1820,11 @@ Object.assign(GLOSS, {
 
 GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
 GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
-GLOSS.observacoes = ["Observações que ajustam o treino", "<p>O app lê as observações do exercício e do dia e ajusta a semana seguinte. Abaixo do campo aparece o que ele entendeu.</p><ul><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
+GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (Dor, Execução, Carga, Equipamento, Disposição, Tempo) e escolha as opções dele; o que estiver marcado aparece em roxo, e tocar tira. Também dá para escrever no campo de texto. Com <b>+ palavra-chave</b> você cria um bloco seu e escolhe o efeito dele. Abaixo aparece o que o app entendeu.</p><ul><li><b>Carga fixa, sem ajuste</b> (máquinas de placas fixas): vale o peso que você usou, mesmo diferente do previsto. Não conta como queda; a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa.</li><li><b>Carga pesada demais</b>: mesmo batendo o topo, a carga fica mais uma semana antes de subir.</li><li><b>Dor forte</b>: a carga cai 10% e o app sugere trocar o exercício.</li><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
+GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos.</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
+GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
+GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
+GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 function glossEntry(key) {
@@ -1684,7 +1854,7 @@ function closeInfo() {
 const app = {
   db: null, P: null, isOwner: false, records: {}, body: {}, baseline: null, settings: {},
   perfil: null, perfilLoaded: false, pfDraft: null, pfDirty: false, pfRendered: false, plan: null, fases: [], startLoads: null, weekTouched: false,
-  dirty: new Set(), saving: new Set(), timers: {}, parcOpen: new Set(),
+  dirty: new Set(), saving: new Set(), timers: {}, parcOpen: new Set(), tagOpen: {}, tagForm: null,
   tab: "semana", week: 1, day: "A", curW: 1, charts: {}, deferRender: false, fullYear: false, loaded: false
 };
 function todayStr() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
@@ -1737,7 +1907,10 @@ function updateHints(k) {
     if (ik) ik.placeholder = g.kg == null ? "kg" : fmt(g.kg);
     const ir = document.querySelector('[data-set="' + k + "|" + i + '|reps"]');
     if (ir) ir.placeholder = g.reps;
+    const rb = document.getElementById("rest-" + k + "-" + i);
+    if (rb) rb.innerHTML = restHtml(def, i, entry && entry.sets ? entry.sets[i] : null, entry, pres);
   });
+  updateDayTime();
 }
 // "Feito": completa as séries em branco com o previsto (já ajustado pelas séries anteriores)
 function fillDone(def, pres, entry) {
@@ -1811,7 +1984,8 @@ function renderDay(wk) {
   h += '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
   for (const d of defs) h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W);
   h += cardioCard(W, day);
-  h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><textarea id="dayNote" data-daynote="1" rows="3" placeholder="Sono, energia, dores (diga onde), máquina ocupada…">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(readNote(doc ? doc.nota : ""), "dia")) + "</div></div>";
+  h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
+  h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
   document.getElementById("dayView").innerHTML = h;
 }
 // Aquecimento: séries leves antes da primeira válida (não contam para volume nem progressão)
@@ -1841,6 +2015,61 @@ function parcHtml(k, i, arr) {
     arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
     [25, 50, 75].map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + '" aria-label="Adicionar parcial de ' + v + '%">+' + v + "%</button>").join("") + "</div>";
 }
+// Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido
+function tagsHtml(scope, k, selected) {
+  const sel = new Set((Array.isArray(selected) ? selected : []).map(t => OLD_TAGS[t] || t));
+  const tree = scope === "dia" ? TREE_DIA : TREE_EX;
+  const key = scope === "dia" ? "dia" : k;
+  const open = app.tagOpen[key];
+  const lbOf = id => TAG_LABEL[id] || (userTags().find(c => c.id === id) || {}).txt || id;
+  let h = '<div class="tags" role="group" aria-label="Temas de observação">' + tree.map(c => {
+    const n = c.sub.filter(x => sel.has(x[0])).length;
+    return '<button type="button" class="tag cat' + (n ? " has" : "") + '" aria-expanded="' + (open === c.id) + '" data-tagcat="' + key + "|" + c.id + '">' + esc(c.lb) + (n ? ' <span class="tn">' + n + "</span>" : "") + ' <span aria-hidden="true">' + (open === c.id ? "▴" : "▾") + "</span></button>";
+  }).join("") + userTags().map(c => '<button type="button" class="tag own" aria-pressed="' + sel.has(c.id) + '" data-tag="' + key + "|" + esc(c.id) + '">' + esc(c.txt) + "</button>").join("") +
+    '<button type="button" class="tag add" data-tagnew="' + key + '" aria-expanded="' + (app.tagForm === key) + '">+ palavra-chave</button></div>';
+  const cat = tree.find(c => c.id === open);
+  if (cat) h += '<div class="subtags" role="group" aria-label="' + esc(cat.lb) + '">' + cat.sub.map(([id, lb]) => '<button type="button" class="tag" aria-pressed="' + sel.has(id) + '" data-tag="' + key + "|" + esc(id) + '">' + esc(lb) + "</button>").join("") + "</div>";
+  const chosen = [...sel].filter(id => !id.startsWith("c:") && TAG_LABEL[id]);
+  if (chosen.length) h += '<div class="tagsel">' + chosen.map(id => '<button type="button" class="tag on" data-tag="' + key + "|" + esc(id) + '" aria-label="Tirar ' + esc(lbOf(id)) + '">' + esc(lbOf(id)) + " ×</button>").join("") + "</div>";
+  if (app.tagForm === key) h += '<div class="tagform"><div class="field"><label for="tgTxt-' + key + '">Nova palavra-chave</label><input id="tgTxt-' + key + '" type="text" maxlength="30" placeholder="ex.: banco quebrado"></div>' +
+    '<div class="field"><label for="tgEf-' + key + '">O que ela faz no treino</label><select id="tgEf-' + key + '">' + TAG_EFS.map(e => '<option value="' + e[0] + '">' + e[1] + "</option>").join("") + "</select></div>" +
+    '<div class="row-btns"><button type="button" class="btn small primary" data-tagadd="' + key + '">Adicionar</button><button type="button" class="btn small" data-tagnew="' + key + '">Cancelar</button></div>' +
+    (userTags().length ? '<div class="tags">' + userTags().map(c => '<button type="button" class="tag own" data-tagdel="' + esc(c.id) + '" aria-label="Apagar a palavra-chave ' + esc(c.txt) + '">' + esc(c.txt) + " · " + esc((TAG_EFS.find(e => e[0] === c.ef) || ["", "Só registrar"])[1]) + " ×</button>").join("") + '</div><p class="muted" style="font-size:12px;margin:4px 0 0">Toque numa palavra sua para apagá-la. Ela também é reconhecida quando escrita no texto.</p>' : "") + "</div>";
+  return h;
+}
+function exFlags(entry, def) { const f = mergeFlags(readNote(entry ? entry.nota : ""), tagFlags(entry ? entry.tags : [])); return def ? Object.assign(f, restFlags(entry, def)) : f; }
+function dayFlags(doc) { return mergeFlags(readNote(doc ? doc.nota : ""), tagFlags(doc ? doc.tags : [])); }
+function refreshTags(key) {
+  const day = app.day, W = app.week;
+  if (key === "dia") {
+    const doc = getDoc(W, day, false);
+    const box = document.getElementById("tg-dia"); if (box) box.innerHTML = tagsHtml("dia", "dia", doc ? doc.tags : []);
+    const nh = document.getElementById("nh-day"); if (nh) nh.textContent = noteEffect(dayFlags(doc), "dia");
+  } else {
+    const def = EXBY[key]; const entry = entryFor(W, def.d, key, currentPres(key), false);
+    const box = document.getElementById("tg-" + key); if (box) box.innerHTML = tagsHtml("ex", key, entry ? entry.tags : []);
+    const nh = document.getElementById("nh-" + key); if (nh) nh.textContent = noteEffect(exFlags(entry, def), "ex");
+  }
+}
+// Descanso entre a série i e a seguinte: tempos fixos; o previsto fica marcado
+function restHtml(d, i, v, entry, p) {
+  const prev = restSec(d), cur = v && +v.desc > 0 ? +v.desc : null;
+  const near = REST_OPTS.reduce((a, b) => Math.abs(b - prev) < Math.abs(a - prev) ? b : a, REST_OPTS[0]);
+  const r = entry && entry.sets ? recov(entry.sets[i], entry.sets[i + 1], p.sets[i], p.sets[i + 1]) : null;
+  const q = cur == null ? "" : cur < prev * 0.75 ? '<span class="rq lo">curto</span>' : cur > prev * 1.5 ? '<span class="rq hi">longo</span>' : '<span class="rq ok">no previsto</span>';
+  return '<div class="rest"><span class="rl">Descanso' + (i === 0 ? infoBtn("descanso_reg") : "") + "</span>" + REST_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === near ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-rest="' + d.k + "|" + i + "|" + sec + '" aria-label="Descanso de ' + fmtSec(sec) + (sec === near ? " (previsto)" : "") + '">' + (sec === 240 ? "4:00+" : fmtSec(sec)) + "</button>").join("") + q +
+    (r != null ? '<span class="rq ' + (r >= 0.95 ? "ok" : r >= 0.9 ? "mid" : "lo") + '">Recuperação ' + recovTxt(r) + "</span>" : "") + "</div>";
+}
+function dayTimeHtml(W, day, wk) {
+  const t = dayTime(W, day, wk), max = num((app.perfil || {}).tempoMax) || 120;
+  const totPrev = t.prev + t.cardioPrev, totReg = t.reg + t.cardio;
+  return '<h2>Tempo do treino' + infoBtn("tempotreino") + '</h2><div class="tiles">' +
+    tile("Previsto", totPrev + " min", "musculação " + t.prev + " + cardio " + t.cardioPrev + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
+    tile("Registrado", t.nReg ? "~" + totReg + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + t.cardio + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
+    tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * 0.75 ? " · curto" : t.restAvg > t.restPrev * 1.5 ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
+    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= 0.95 ? "boa entre as séries" : t.rec >= 0.9 ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") + "</div>";
+}
+function updateDayTime() { const el = document.getElementById("dayTime"); if (!el || app.tab !== "semana") return; const wk = computeWeeks(app.week)[app.week]; el.innerHTML = dayTimeHtml(app.week, app.day, wk); }
 function exCard(d, p, entry, W) {
   const A = ACT[p.action] || ACT.keep;
   const st = entry ? entry.st : null;
@@ -1875,7 +2104,8 @@ function exCard(d, p, entry, W) {
     return '<tr><td class="lbl"><b>' + lbl + "</b>" + lblInfo + (s.cluster ? " · 2 blocos" + infoBtn("cluster") : "") + '<div class="tgt">Previsto: ' + esc(prevTxt) + " (faixa " + s.lo + "–" + s.hi + ")" + (i === 0 ? infoBtn("faixa") : "") + '</div><div class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '">' + esc(g.note) + '</div><div class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + "</div></td>" +
       '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + esc(d.n) + " " + lbl + ' carga feita em kg" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '" placeholder="' + (g.kg == null ? "kg" : fmt(g.kg)) + '"></td>' +
       '<td><input type="number" inputmode="numeric" step="1" aria-label="' + esc(d.n) + " " + lbl + ' repetições feitas" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '" placeholder="' + g.reps + '"></td>' +
-      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>" + '<tr class="prow"><td colspan="4"><div id="parc-' + d.k + "-" + i + '">' + parcHtml(d.k, i, v.parc) + "</div></td></tr>";
+      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>" + '<tr class="prow"><td colspan="4"><div class="execrow"><label class="exec">Execução <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + '|exec" value="' + (v.exec == null ? "" : v.exec) + '" placeholder="seg"> s</label>' + (i === 0 ? infoBtn("tempoexec") : "") + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" +
+      (i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "");
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
@@ -1888,8 +2118,9 @@ function exCard(d, p, entry, W) {
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
-    '<textarea data-note="' + d.k + '" rows="1" placeholder="Observação: dor, fácil, com ajuda, máquina diferente…">' + esc(entry ? entry.nota : "") + "</textarea>" +
-    '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(readNote(entry ? entry.nota : ""), "ex")) + "</div></article>";
+    '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
+    '<textarea data-note="' + d.k + '" rows="1" aria-label="Outra observação de ' + esc(d.n) + '" placeholder="Outra observação (o app também lê o texto)">' + esc(entry ? entry.nota : "") + "</textarea>" +
+    '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div></article>";
 }
 
 // ----- Render: Próxima semana -----
@@ -2025,6 +2256,18 @@ function renderProgress() {
   if (agg.some(x => x.cardio.paceCor != null)) pcDs.push({ label: "Corrida", data: agg.map(x => x.cardio.paceCor == null ? null : Math.round(x.cardio.paceCor * 100) / 100), borderColor: css("--series-2"), backgroundColor: css("--series-2"), borderWidth: 2, pointRadius: 4, spanGaps: true });
   mkChart("chPace2", { type: "line", data: { labels, datasets: pcDs }, options: cpz });
   mkChart("chCardioKcal", { type: "bar", data: { labels, datasets: [{ data: agg.map(x => x.cardio.kcal), backgroundColor: css("--series-1"), borderRadius: 4, maxBarThickness: 36 }] }, options: c4 });
+  // tempo de treino e recuperação por semana
+  const maxT = num((app.perfil || {}).tempoMax) || 120;
+  const tw = [];
+  for (let w2 = 1; w2 <= lastW; w2++) {
+    const ds = DAYS.map(dd => dayTime(w2, dd.id, weeks[w2])).filter(t => t.nReg > 0);
+    const recs = ds.map(t => t.rec).filter(r => r != null);
+    tw.push({ min: ds.length ? Math.round(ds.reduce((a, t) => a + t.reg + t.cardio, 0) / ds.length) : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, rest: ds.map(t => t.restAvg).filter(x => x != null) });
+  }
+  const cTm = chartBase();
+  cTm.scales.y.beginAtZero = true; cTm.scales.y.ticks.callback = v => v + " min";
+  cTm.plugins.tooltip.callbacks = { label: c => c.datasetIndex === 0 ? "Treino médio: " + (c.parsed.y == null ? "—" : c.parsed.y + " min") + (tw[c.dataIndex].rec != null ? " · recuperação " + Math.round(tw[c.dataIndex].rec * 100) + "%" : "") + (tw[c.dataIndex].rest.length ? " · descanso " + fmtSec(tw[c.dataIndex].rest.reduce((a, b) => a + b, 0) / tw[c.dataIndex].rest.length) : "") : "Limite: " + maxT + " min" };
+  mkChart("chTempo", { data: { labels, datasets: [{ type: "bar", label: "Treino médio", data: tw.map(x => x.min), backgroundColor: css("--series-1"), borderRadius: 4, maxBarThickness: 36 }, { type: "line", label: "Limite", data: tw.map(() => maxT), borderColor: css("--series-2"), borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 }] }, options: cTm });
   // séries por músculo na semana
   const ml = Object.keys(cur.musP);
   document.getElementById("musLead").textContent = "Séries diretas planejadas e feitas na semana " + W + ".";
@@ -2447,6 +2690,36 @@ document.addEventListener("click", ev => {
   if (b.dataset.day) { app.day = b.dataset.day; renderWeek(); return; }
   if (b.dataset.deload) { app.settings["deload" + app.week] = b.dataset.deload; saveSettings(); render(); return; }
   if (b.id === "rangeBtn") { app.fullYear = !app.fullYear; b.setAttribute("aria-pressed", String(app.fullYear)); b.textContent = app.fullYear ? "Ver o início" : "Ver o plano todo"; renderGoal(); return; }
+  if (b.dataset.tagcat) { const [key, cat] = b.dataset.tagcat.split("|"); app.tagOpen[key] = app.tagOpen[key] === cat ? null : cat; refreshTags(key); return; }
+  if (b.dataset.tag) {
+    const cut = b.dataset.tag.indexOf("|"), key = b.dataset.tag.slice(0, cut), id = b.dataset.tag.slice(cut + 1);
+    const toggle = arr => { const t = new Set((arr || []).map(x => OLD_TAGS[x] || x)); if (t.has(id)) t.delete(id); else t.add(id); return [...t]; };
+    if (key === "dia") {
+      const doc = getDoc(app.week, app.day, true); doc.tags = toggle(doc.tags); touch(app.day); refreshTags("dia");
+      EX.filter(x => x.d === app.day).forEach(x => { const nh = document.getElementById("nh-" + x.k); if (nh) nh.textContent = noteEffect(mergeFlags(exFlags(entryFor(app.week, x.d, x.k, currentPres(x.k), false), x), noteFlags(app.records, app.week, x)), "ex"); });
+    } else { const def = EXBY[key]; const pres = currentPres(key); const entry = entryFor(app.week, def.d, key, pres, true); entry.tags = toggle(entry.tags); if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir })); touch(def.d); refreshTags(key); }
+    return;
+  }
+  if (b.dataset.tagnew) { const key = b.dataset.tagnew; app.tagForm = app.tagForm === key ? null : key; refreshTags(key); if (app.tagForm) { const i = document.getElementById("tgTxt-" + key); if (i) i.focus(); } return; }
+  if (b.dataset.tagadd) {
+    const key = b.dataset.tagadd; const txt = (document.getElementById("tgTxt-" + key).value || "").trim().toLowerCase().slice(0, 30); const ef = document.getElementById("tgEf-" + key).value;
+    if (!txt) { document.getElementById("tgTxt-" + key).focus(); return; }
+    app.settings.tags = userTags().filter(c => c.txt !== txt).concat([{ id: "c:" + Date.now().toString(36), txt, ef }]);
+    app.tagForm = null; saveSettings(); renderWeek(); return;
+  }
+  if (b.dataset.tagdel) { app.settings.tags = userTags().filter(c => c.id !== b.dataset.tagdel); saveSettings(); renderWeek(); return; }
+  if (b.dataset.rest) {
+    const [rk, ri, rsec] = b.dataset.rest.split("|");
+    const def = EXBY[rk]; const pres = currentPres(rk);
+    const entry = entryFor(app.week, def.d, rk, pres, true);
+    while (entry.sets.length <= +ri) entry.sets.push({ kg: null, reps: null, rir: null });
+    entry.sets[+ri].desc = +entry.sets[+ri].desc === +rsec ? null : +rsec;
+    if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir }));
+    touch(def.d);
+    const box = document.getElementById("rest-" + rk + "-" + ri); if (box) box.innerHTML = restHtml(def, +ri, entry.sets[+ri], entry, pres);
+    const nh = document.getElementById("nh-" + rk); if (nh) nh.textContent = noteEffect(exFlags(entry, def), "ex");
+    updateDayTime(); return;
+  }
   if (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel) {
     const [pk, pi, pv] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
     const def = EXBY[pk]; const pres = currentPres(pk);
@@ -2497,7 +2770,7 @@ document.addEventListener("input", ev => {
     const def = EXBY[el.dataset.note]; const pres = currentPres(def.k);
     const entry = entryFor(app.week, def.d, def.k, pres, true);
     entry.nota = el.value; touch(def.d);
-    const nh = document.getElementById("nh-" + def.k); if (nh) nh.textContent = noteEffect(readNote(el.value), "ex");
+    const nh = document.getElementById("nh-" + def.k); if (nh) nh.textContent = noteEffect(exFlags(entry, def), "ex");
   } else if (el.dataset.cardio) {
     const c = cardioEntry(app.week, app.day); const f = el.dataset.cardio;
     if (f === "nota") c.nota = el.value;
@@ -2507,7 +2780,7 @@ document.addEventListener("input", ev => {
     updateCardioOut(c, cardioPlan(app.week));
   } else if (el.dataset.daynote) {
     const doc = getDoc(app.week, app.day, true); doc.nota = el.value; touch(app.day);
-    const nh = document.getElementById("nh-day"); if (nh) nh.textContent = noteEffect(readNote(el.value), "dia");
+    const nh = document.getElementById("nh-day"); if (nh) nh.textContent = noteEffect(dayFlags(doc), "dia");
   }
 });
 document.addEventListener("change", ev => { const el = ev.target; if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
@@ -2536,7 +2809,14 @@ document.getElementById("bodyForm").addEventListener("submit", async ev => {
   finally { btn.disabled = false; }
 });
 let settingsSaving = false;
-async function saveSettings() { if (!app.db || app.P == null || settingsSaving) return; settingsSaving = true; try { await app.db.doc(app.P + "meta/ajustes").set(JSON.parse(JSON.stringify(app.settings))); } catch (e) { } finally { settingsSaving = false; } }
+let settingsPending = false;
+async function saveSettings() {
+  if (!app.db || app.P == null) return;
+  if (settingsSaving) { settingsPending = true; return; }
+  settingsSaving = true;
+  try { await app.db.doc(app.P + "meta/ajustes").set(JSON.parse(JSON.stringify(app.settings))); } catch (e) { }
+  finally { settingsSaving = false; if (settingsPending) { settingsPending = false; saveSettings(); } }
+}
 
 // ----- Tema: redesenhar gráficos -----
 try { new MutationObserver(() => { if (app.tab !== "semana") render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }); } catch (e) { }
