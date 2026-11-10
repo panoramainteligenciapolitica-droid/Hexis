@@ -239,6 +239,9 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .warm.day { margin: 0 0 12px; }
 .donebar { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .donebar .btn { flex: 1 1 0; min-height: 48px; font-size: 17px; }
+.tcard { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: -4px 4px 12px; padding: 8px 10px; border: 1px dashed color-mix(in srgb, var(--deload) 45%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--deload) 5%, var(--bg)); }
+.tcard .rl { width: 100%; font-size: 13px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; }
+.ordtag { display: inline-flex; align-items: center; margin: 6px 0; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--fix); background: color-mix(in srgb, var(--fix) 12%, transparent); }
 .obsh { font-size: 13px; color: var(--muted); font-weight: 600; margin: 10px 0 4px; display: flex; align-items: center; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
 .tag { min-height: 34px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .08s; }
@@ -663,7 +666,7 @@ function prescribe(def, st, w, flags) {
   let action = st.action, why = st.why;
   if (deload) { action = "deload"; why = "Semana de deload: metade das séries, mesma carga, 3 repetições sobrando. Nenhuma mudança de carga conta nesta semana."; }
   else if (festas && action !== "fix" && action !== "down") { action = "festas"; why = "Semana de festas: 1/3 a menos de séries com a mesma carga. " + (st.why || ""); }
-  return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def).length };
+  return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def).length, ordemHist: st.ordemHist || [] };
 }
 
 function setsStr(sets) { return sets.map(s => fmt(s.kg) + "×" + s.reps + (s.parc && s.parc.length ? "+" + s.parc.length + "p" : "")).join(", "); }
@@ -672,6 +675,21 @@ function parcCredit(x) { return x && Array.isArray(x.parc) ? x.parc.reduce((a, p
 
 // Transição: o que a semana w ensinou para a semana w+1
 function transition(def, st, pres, rec, w, curW, notes) {
+  const s = transitionCore(def, st, pres, rec, w, curW, notes);
+  const o = notes && notes.ordem;
+  if (o && rec && rec.st === "feito") {
+    const sets = (rec.sets || []).filter(x => x && x.reps > 0 && x.kg != null && x.kg !== "").map(x => ({ kg: +x.kg, reps: +x.reps, parc: Array.isArray(x.parc) ? x.parc : [] }));
+    const m = sets.length ? metricOf(def, sets) : null;
+    const exp = (pres.sets || []).filter(x => x.kg > 0).map(x => e1(x.kg, x.tr));
+    const delta = m != null && exp.length ? m / Math.max(...exp) - 1 : null;
+    s.ordemHist = (st.ordemHist || []).concat([{ w, pos: o.pos, prev: o.prev, d: delta }]);
+    const dTxt = delta != null ? "desempenho " + (delta >= 0 ? "+" : "−") + fmt(Math.abs(Math.round(delta * 1000) / 10)) + "% contra o previsto" : "";
+    if (/Ordem trocada/.test(s.why || "")) { if (dTxt) s.why += " " + dTxt.charAt(0).toUpperCase() + dTxt.slice(1) + "."; }
+    else s.why = (s.why || "") + " Ordem: feito em " + o.pos + "º lugar (previsto " + o.prev + "º)" + (dTxt ? ", " + dTxt : "") + ".";
+  }
+  return s;
+}
+function transitionCore(def, st, pres, rec, w, curW, notes) {
   const nf = notes || {};
   const s = Object.assign({}, st);
   s.prevLoad = st.load; s.how = "";
@@ -743,9 +761,10 @@ function transition(def, st, pres, rec, w, curW, notes) {
     s.why = done + ". Observação: carga pesada demais. Bateu o topo, mas consolidar " + fmt(st.load) + " kg mais uma semana antes de subir.";
     return s;
   }
-  if ((nf.equip || nf.cansaco || nf.tempo || nf.descCurto) && !allTop && (anyBelow || !progress)) {
+  const tarde = nf.ordem && nf.ordem.pos > nf.ordem.prev;
+  if ((nf.equip || nf.cansaco || nf.tempo || nf.descCurto || tarde) && !allTop && (anyBelow || !progress)) {
     s.action = "keep"; s.tr = st.tr || ps.map(x => x.tr);
-    s.why = done + ". " + (nf.descCurto && !(nf.equip || nf.cansaco || nf.tempo) ? "Descanso" : "Observação") + ": " + obs + ". Semana fora do normal: não conta como estagnação nem queda; repetir a prescrição" + (nf.descCurto ? " e descansar o previsto" : "") + ".";
+    s.why = done + ". " + (nf.equip || nf.cansaco || nf.tempo ? "Observação" : tarde && !nf.descCurto ? "Ordem trocada" : "Descanso") + ": " + obs + ". Semana fora do normal: não conta como estagnação nem queda; repetir a prescrição" + (nf.descCurto ? " e descansar o previsto" : "") + (tarde ? " na ordem da ficha" : "") + ".";
     return s;
   }
   if (nf.facil && !anyBelow && st.mode !== "reset") {
@@ -980,6 +999,8 @@ function noteFlags(records, w, def) {
   if (day.cansaco) f.cansaco = true;
   if (day.tempo) f.tempo = true;
   Object.assign(f, restFlags(e, def));
+  const ord = dayOrder(doc, def.d)[def.k];
+  if (ord && ord.pos !== ord.prev) f.ordem = ord;
   if (day.dor && day.parts && day.parts.some(p => (NOTE_PARTS.find(x => x[0] === p) || [0, 0, []])[2].includes(def.m))) { f.dor = true; f.parts = day.parts; f.dorDia = true; }
   return f;
 }
@@ -994,6 +1015,7 @@ function noteTxt(f) {
   if (f.fixa) a.push("carga fixa da máquina");
   if (f.pesada) a.push("carga pesada demais");
   if (f.descCurto) a.push("descanso médio de " + fmtSec(f.desc) + ", abaixo dos " + fmtSec(f.descPrev) + " previstos");
+  if (f.ordem && f.ordem.pos > f.ordem.prev) a.push("feito em " + f.ordem.pos + "º lugar, previsto " + f.ordem.prev + "º");
   return a.join(", ");
 }
 // O que a observação muda na semana seguinte (texto para o aviso abaixo do campo)
@@ -1055,7 +1077,7 @@ function dayTime(W, day, wk) {
     if (!sets.length && e.st !== "feito") return;
     nReg++;
     const m = Math.max(sets.length, e.st === "feito" ? n : 0);
-    reg += warm * 45 + (idx ? 90 : 0);
+    reg += warm * 45 + (idx ? (+e.trans > 0 ? +e.trans : 90) : 0);
     for (let i = 0; i < m; i++) {
       const x = (e.sets || [])[i] || {};
       if (+x.exec > 0) reg += +x.exec; else { reg += EXEC_DEF; regEst = true; }
@@ -1065,6 +1087,17 @@ function dayTime(W, day, wk) {
   });
   const c = doc && doc.cardio && doc.cardio.st === "feito" ? (doc.cardio.min || 0) : 0;
   return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c };
+}
+// Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha
+function dayOrder(doc, day) {
+  const defs = EX.filter(x => x.d === day), out = {};
+  if (!doc || !doc.ex) return out;
+  const done = defs.map((d, i) => ({ d, i, e: doc.ex[d.k] })).filter(x => x.e && x.e.st === "feito");
+  const t = x => Date.parse(x.e.doneAt || x.e.startAt || "") || Infinity;
+  if (done.filter(x => t(x) !== Infinity).length < 2) return out;
+  const real = done.slice().sort((a, b) => t(a) - t(b) || a.i - b.i);
+  done.forEach((x, prev) => { out[x.d.k] = { pos: real.indexOf(x) + 1, prev: prev + 1 }; });
+  return out;
 }
 function recOf(records, w, def) { const doc = records[wkKey(w) + "-" + def.d]; return doc && doc.ex ? doc.ex[def.k] : null; }
 function weekStruggle(wk, records, w) {
@@ -1827,6 +1860,8 @@ GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do in
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
 GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
+GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um exercício e começar o seguinte: trocar de máquina, ajustar o banco, beber água. O tracejado marca 1:30, o valor usado quando você não registra.</p><p>Entra no tempo registrado do treino.</p>"];
+GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 function glossEntry(key) {
@@ -1984,7 +2019,8 @@ function renderDay(wk) {
   h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
   h += '<div class="row-btns" style="margin:0 0 12px"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button>' + infoBtn("diatodo") + "</div>";
   h += '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
-  for (const d of defs) h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W);
+  app.dayOrd = dayOrder(doc, day);
+  defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
   h += cardioCard(W, day);
   h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
   h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
@@ -2064,14 +2100,31 @@ function restHtml(d, i, v, entry, p) {
 }
 function dayTimeHtml(W, day, wk) {
   const t = dayTime(W, day, wk), max = num((app.perfil || {}).tempoMax) || 120;
+  const ord = Object.entries(dayOrder(getDoc(W, day, false), day)).sort((a, b) => a[1].pos - b[1].pos);
+  const trocas = ord.filter(([, o]) => o.pos !== o.prev).length;
   const totPrev = t.prev + t.cardioPrev, totReg = t.reg + t.cardio;
   return '<h2>Tempo do treino' + infoBtn("tempotreino") + '</h2><div class="tiles">' +
     tile("Previsto", totPrev + " min", "musculação " + t.prev + " + cardio " + t.cardioPrev + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
     tile("Registrado", t.nReg ? "~" + totReg + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + t.cardio + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * 0.75 ? " · curto" : t.restAvg > t.restPrev * 1.5 ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
-    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= 0.95 ? "boa entre as séries" : t.rec >= 0.9 ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") + "</div>";
+    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= 0.95 ? "boa entre as séries" : t.rec >= 0.9 ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") + "</div>" +
+    (ord.length >= 2 ? '<p class="lead" style="margin-top:8px">Ordem feita' + infoBtn("ordem") + ": " + ord.map(([k]) => esc(EXBY[k].n.split(" (")[0])).join(" → ") + (trocas ? " · " + trocas + " fora da ordem da ficha" : " · igual à ficha") + "</p>" : "");
 }
 function updateDayTime() { const el = document.getElementById("dayTime"); if (!el || app.tab !== "semana") return; const wk = computeWeeks(app.week)[app.week]; el.innerHTML = dayTimeHtml(app.week, app.day, wk); }
+// O que o app aprendeu sobre trocar a ordem deste exercício
+function ordemLine(p) {
+  const h = (p.ordemHist || []).filter(x => x.d != null);
+  if (!h.length) return "";
+  const grp = (arr, txt) => arr.length ? txt + " " + arr.length + "×: " + (v => (v >= 0 ? "+" : "−") + fmt(Math.abs(Math.round(v * 1000) / 10)) + "%")(arr.reduce((a, x) => a + x.d, 0) / arr.length) : "";
+  const parts = [grp(h.filter(x => x.pos > x.prev), "mais tarde"), grp(h.filter(x => x.pos < x.prev), "mais cedo")].filter(Boolean);
+  return '<div class="old">Ordem trocada · ' + parts.join(" · ") + " no desempenho" + infoBtn("ordem") + "</div>";
+}
+// Intervalo entre exercícios (troca de máquina, ajuste, água): fica no exercício que começa depois
+const TRANS_OPTS = [60, 90, 120, 180, 240, 300, 420];
+function transHtml(d, entry) {
+  const cur = entry && +entry.trans > 0 ? +entry.trans : null;
+  return '<div class="tcard" id="tc-' + d.k + '"><span class="rl">Intervalo até o próximo exercício' + infoBtn("intervalo") + "</span>" + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === 90 ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + "</div>";
+}
 function exCard(d, p, entry, W) {
   const A = ACT[p.action] || ACT.keep;
   const st = entry ? entry.st : null;
@@ -2116,7 +2169,8 @@ function exCard(d, p, entry, W) {
   return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
     '<div class="card-h"><div><h3>' + esc(d.n) + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
-    (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") +
+    (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") + ordemLine(p) +
+    ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns" style="margin-top:8px"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
@@ -2711,6 +2765,15 @@ document.addEventListener("click", ev => {
     app.tagForm = null; saveSettings(); renderWeek(); return;
   }
   if (b.dataset.tagdel) { app.settings.tags = userTags().filter(c => c.id !== b.dataset.tagdel); saveSettings(); renderWeek(); return; }
+  if (b.dataset.trans) {
+    const [tk, tsec] = b.dataset.trans.split("|");
+    const def = EXBY[tk]; const pres = currentPres(tk);
+    const entry = entryFor(app.week, def.d, tk, pres, true);
+    entry.trans = +entry.trans === +tsec ? null : +tsec;
+    touch(def.d);
+    const box = document.getElementById("tc-" + tk); if (box) box.outerHTML = transHtml(def, entry);
+    updateDayTime(); return;
+  }
   if (b.dataset.rest) {
     const [rk, ri, rsec] = b.dataset.rest.split("|");
     const def = EXBY[rk]; const pres = currentPres(rk);
@@ -2749,7 +2812,7 @@ document.addEventListener("click", ev => {
   if (!k) return;
   const def = EXBY[k]; const pres = currentPres(k);
   const entry = entryFor(app.week, def.d, k, pres, true);
-  if (b.dataset.done) { if (entry.st === "feito") entry.st = null; else { entry.st = "feito"; fillDone(def, pres, entry); } }
+  if (b.dataset.done) { if (entry.st === "feito") { entry.st = null; delete entry.doneAt; } else { entry.st = "feito"; entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); } }
   else if (b.dataset.skip) { entry.st = entry.st === "nao" ? null : "nao"; }
   else { const last = entry.sets[entry.sets.length - 1] || { kg: pres.load, reps: pres.sets[0].tr }; entry.sets.push({ kg: last.kg, reps: last.reps, rir: null }); }
   touch(def.d);
@@ -2766,6 +2829,7 @@ document.addEventListener("input", ev => {
     while (entry.sets.length <= +i) entry.sets.push({ kg: null, reps: null, rir: null });
     const v = el.value === "" ? null : Number(el.value);
     entry.sets[+i][f] = v;
+    if (v != null && !entry.startAt && (f === "kg" || f === "reps")) entry.startAt = new Date().toISOString();
     if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(s => ({ kg: s.kg, reps: s.tr, faixa: [s.lo, s.hi], rir: s.rir }));
     touch(def.d);
     updateHints(k);
