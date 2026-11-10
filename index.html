@@ -262,31 +262,51 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .clk .clks, .clk .clkt { flex: 1 1 0; width: 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
 .clk .clkt { position: relative; z-index: 1; font-size: 14px; }
 .clk .btn { flex: none; white-space: nowrap; }
-.clk .clkn { font-size: 19px; font-weight: 800; }
+.clk .clkn { flex: none; position: relative; z-index: 1; font-size: 19px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.clk .clkn small { font-size: 12px; font-weight: 600; color: var(--muted); }
 .clk .btn, .clk .info { position: relative; z-index: 1; }
 .clk .clkfill { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.clk.run.ex { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
-.clk.run.ex .clkfill { background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 16%, transparent) 0 10px, transparent 10px 20px); background-size: 28.28px 28.28px; animation: clkmove 1.2s linear infinite; }
-@keyframes clkmove { to { background-position: 28.28px 0; } }
-.clk.run.rs { border-color: var(--deload); background: var(--surface); }
-.clk.run.rs .clkfill { right: auto; width: calc(var(--p, 0) * 100%); background: color-mix(in srgb, var(--deload) 20%, transparent); transition: width .5s linear; }
-.clk.run.rs.ok { border-color: var(--up); }
+.clk.run.ex { border-color: var(--accent); background: var(--surface); color: var(--accent); }
+.clk.run .clkt, .clk.run .clks { color: var(--ink); }
+.clkanim .clkfill { right: auto; width: calc(var(--p, 0) * 100%); }
+.clk.run.ex .clkfill { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.clk.run.ex .clkfill::before, .clk.run.ex.over .clkfill::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 22%, transparent) 0 8px, transparent 8px 16px); background-size: 22.63px 22.63px; animation: clkmove 1s linear infinite; }
+.clk.run.ex.over .clkfill { width: 100%; }
+@keyframes clkmove { to { background-position: 22.63px 0; } }
+.clk.run.rs { border-color: var(--deload); background: var(--surface); color: var(--deload); }
+.clk.run.rs .clkfill { background: color-mix(in srgb, var(--deload) 22%, transparent); }
+.clk.run.rs.ok { border-color: var(--up); color: var(--up); }
 .clk.run.rs.ok .clkfill { background: color-mix(in srgb, var(--up) 26%, transparent); }
-.clk.run.rs.ok .clkt b::after { content: " cumprido · pode ir"; color: var(--up); }
+.clk.run.rs.ok .clkt b { display: none; }
+.clk.run.rs.ok .clkt::before { content: "✓ Pode ir"; font-weight: 800; color: var(--up); }
+.clkanim:not(.over):not(.ok) .clkfill::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 26px; background: linear-gradient(90deg, transparent, color-mix(in srgb, currentColor 45%, transparent)); animation: clkbeat 1s ease-in-out infinite; }
+@keyframes clkbeat { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
 .clk.wait { border: 1px dashed var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
-@media (prefers-reduced-motion: reduce) { .clk.run.ex .clkfill { animation: none; } .clk.run.rs .clkfill { transition: none; } }
+.clkring { width: 28px; height: 28px; flex: none; position: relative; z-index: 1; }
+.clkring .rb { fill: none; stroke: currentColor; opacity: .18; stroke-width: 3.5; }
+.clkring .rf { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; }
+.clkring .rh { stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.clkring .rc { fill: currentColor; }
+@media (prefers-reduced-motion: reduce) { .clk.run.ex .clkfill::before, .clkanim .clkfill::after { animation: none; } }
 .rq.meas { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.tcard .trun { width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.tcard .trun { position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: var(--surface); font-size: 14px; font-variant-numeric: tabular-nums; color: var(--deload); }
+.tcard .trun > span:last-child { position: relative; z-index: 1; color: var(--ink); }
+.tcard .trun .clkfill { position: absolute; inset: 0; background: color-mix(in srgb, var(--deload) 18%, transparent); }
+.tcard .trun.ok { color: var(--up); } .tcard .trun.ok .clkfill { background: color-mix(in srgb, var(--up) 22%, transparent); }
 .tcard.run { border-style: solid; border-color: var(--deload); }
 .savebar.only-clk .inner { display: none; }
 body.clk-on .wrap { padding-bottom: 200px; }
 #clkbar { border-bottom: 1px solid var(--line); }
-.clkb { max-width: 760px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
+.clkb { position: relative; max-width: 760px; margin: 0 auto; padding: 10px 16px 8px; display: flex; align-items: center; gap: 8px; }
+.clkb.exec { color: var(--accent); } .clkb.rest, .clkb.trans { color: var(--deload); } .clkb.ok { color: var(--up); }
+.clkline { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: color-mix(in srgb, currentColor 15%, transparent); overflow: hidden; }
+.clkline .clkfill { position: absolute; top: 0; bottom: 0; left: 0; background: currentColor; }
+.clkline.over .clkfill { width: 100%; }
 .clksee { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; background: none; border: 0; padding: 0; text-align: left; color: var(--ink); cursor: pointer; font: inherit; }
 .clkph { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .clknm { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .clkbig { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
-.clkb.exec .clkbig { color: var(--accent); } .clkb.rest .clkbig, .clkb.trans .clkbig { color: var(--deload); }
+.clkbig { color: currentColor; }
 .clkb.ask, .clkask { background: color-mix(in srgb, var(--new) 10%, var(--surface)); }
 .clkask { padding: 0 16px 10px; font-size: 14px; }
 .clkask > * { max-width: 728px; margin-left: auto; margin-right: auto; }
@@ -302,6 +322,31 @@ table.sets tr.ue td { border-bottom: 0; }
 table.sets tr.ue td:not(.lbl) { vertical-align: bottom; }
 table.sets tr.ud td .side { margin-top: 0; }
 .execrow.uparc { margin-top: 4px; }
+.verdict { margin: 4px 0 12px; padding: 10px 12px; border-radius: 10px; font-size: 15px; background: var(--surface-2); border-left: 4px solid var(--muted); }
+.verdict.up { border-left-color: var(--up); background: color-mix(in srgb, var(--up) 9%, var(--surface)); }
+.verdict.lo { border-left-color: var(--down); background: color-mix(in srgb, var(--down) 9%, var(--surface)); }
+.verdict.mid { border-left-color: var(--accent); }
+ul.dirs { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 8px; }
+ul.dirs li { padding: 10px 12px 10px 34px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); position: relative; font-size: 14px; line-height: 1.45; }
+ul.dirs li::before { position: absolute; left: 11px; top: 9px; font-weight: 800; }
+ul.dirs li.d-up::before { content: "▲"; color: var(--up); } ul.dirs li.d-lo::before { content: "▼"; color: var(--down); }
+ul.dirs li.d-warn::before { content: "!"; color: var(--new); left: 15px; } ul.dirs li.d-info::before { content: "•"; color: var(--accent); left: 14px; }
+.sxl { display: grid; gap: 8px; margin-bottom: 14px; }
+.sxe { padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; }
+.sxh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.sst { font-size: 12px; font-weight: 700; white-space: nowrap; color: var(--muted); }
+.sst.ok { color: var(--up); } .sst.no { color: var(--down); } .sst.mid { color: var(--new); }
+.prow2 { display: flex; align-items: center; gap: 8px; margin: 6px 0 4px; }
+.pbar { position: relative; flex: 1; height: 8px; border-radius: 4px; background: var(--surface-2); }
+.pbar::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: var(--muted); opacity: .5; }
+.pbar span { position: absolute; top: 0; bottom: 0; width: calc(var(--v) * 50%); border-radius: 4px; }
+.pbar span.pos { left: 50%; background: var(--up); } .pbar span.neg { right: 50%; background: var(--down); }
+.pv { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 52px; text-align: right; font-size: 13px; }
+.pv.up { color: var(--up); } .pv.lo { color: var(--down); }
+.sxs { margin-top: 3px; line-height: 1.5; }
+.sm { display: inline-block; margin: 0 4px 2px 0; padding: 1px 7px; border-radius: 999px; font-size: 13px; font-variant-numeric: tabular-nums; background: var(--surface-2); }
+.sm.hi { background: color-mix(in srgb, var(--up) 16%, transparent); } .sm.lo { background: color-mix(in srgb, var(--down) 16%, transparent); } .sm.short { background: color-mix(in srgb, var(--new) 16%, transparent); }
+.sxn { margin-top: 6px; font-weight: 700; } .sxn.up { color: var(--up); } .sxn.dn { color: var(--down); }
 .execrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .exec { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
 table.sets .exec input, .exec input { flex: none; width: 72px; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font: inherit; font-size: 15px; color: var(--ink); }
@@ -374,6 +419,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <a href="#perfil" data-tab="perfil">Perfil</a>
       <a href="#objetivo" data-tab="objetivo">Objetivo</a>
       <a href="#semana" data-tab="semana">Semana</a>
+      <a href="#resumo" data-tab="resumo">Resumo do dia</a>
       <a href="#proxima" data-tab="proxima">Próxima semana</a>
       <a href="#progresso" data-tab="progresso">Progresso</a>
       <a href="#corpo" data-tab="corpo">Corpo e dieta</a>
@@ -418,6 +464,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     <div id="wkBanner"></div>
     <div class="days" id="days"></div>
     <div id="dayView"></div>
+  </section>
+
+  <section class="view" id="v-resumo">
+    <div id="resumoView"></div>
   </section>
 
   <section class="view" id="v-proxima">
@@ -1903,7 +1953,9 @@ Object.assign(GLOSS, {
 GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
 GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
 GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (Dor, Execução, Carga, Equipamento, Disposição, Tempo) e escolha as opções dele; o que estiver marcado aparece em roxo, e tocar tira. Também dá para escrever no campo de texto. Com <b>+ palavra-chave</b> você cria um bloco seu e escolhe o efeito dele. Abaixo aparece o que o app entendeu.</p><ul><li><b>Carga fixa, sem ajuste</b> (máquinas de placas fixas): vale o peso que você usou, mesmo diferente do previsto. Não conta como queda; a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa.</li><li><b>Carga pesada demais</b>: mesmo batendo o topo, a carga fica mais uma semana antes de subir.</li><li><b>Dor forte</b>: a carga cai 10% e o app sugere trocar o exercício.</li><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
-GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
+GLOSS.resumo = ["Resumo do dia", "<p>Análise do que você anotou no dia contra o que estava planejado.</p><p><b>Desempenho</b>: para cada exercício, compara a sua melhor série com a melhor série prevista pela força estimada (carga e repetições juntas, com as parciais contando como fração de repetição). No peso do corpo, compara o total de repetições. O número do dia é a média dos exercícios.</p><p>Até 2,5% abaixo conta como <b>no previsto</b>; 2% acima ou mais, <b>acima</b>.</p><p>Os <b>direcionamentos</b> saem dos seus registros: descanso, recuperação, RIR, parciais, dor, ordem, lados, tempo e cardio. Em cada exercício aparece a carga da próxima vez, já recalculada com o treino de hoje.</p>"];
+GLOSS.volume = ["Volume", "<p>Soma de carga × repetições de todas as séries feitas. Compara com o mesmo cálculo das séries previstas.</p><p>Serve para ver se o dia rendeu o trabalho total planejado; o desempenho de cada exercício mostra a força.</p>"];
+GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A barra enche até o tempo previsto (execução estimada pelas repetições, descanso e intervalo da ficha) e o ponteiro dá uma volta por minuto.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
 GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
@@ -2077,6 +2129,7 @@ function renderDay(wk) {
   defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
   h += cardioCard(W, day);
   h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
+  h += '<div class="row-btns" style="margin:4px 0 14px"><a class="btn" href="#resumo">📋 Ver o resumo do dia</a></div>';
   h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
   document.getElementById("dayView").innerHTML = h;
 }
@@ -2180,7 +2233,7 @@ function transHtml(d, entry) {
   const cur = entry && +entry.trans > 0 ? +entry.trans : null;
   const defs = EX.filter(x => x.d === d.d), pv = defs[defs.indexOf(d) - 1], c = app.clk;
   const run = c && c.ph === "trans" && c.W === app.week && pv && c.k === pv.k;
-  const runTxt = run ? '<div class="trun">⏱ ' + (c.fixed != null ? "Intervalo corrigido: <b>" + clkFmt(c.fixed) + "</b>" : 'Intervalo rodando: <b data-clkt>' + clkFmt(clkEl()) + "</b>") + " · fica anotado no exercício que você começar</div>" : "";
+  const runTxt = run ? '<div class="trun' + (c.fixed != null ? "" : " clkanim") + '"><span class="clkfill"></span>' + (c.fixed != null ? "⏱ " : clkRing()) + "<span>" + (c.fixed != null ? "Intervalo corrigido: <b>" + clkFmt(c.fixed) + "</b>" : 'Intervalo rodando: <b data-clkt>' + clkFmt(clkEl()) + "</b>") + " · fica anotado no exercício que você começar</span></div>" : "";
   const meas = cur != null && !TRANS_OPTS.includes(cur) ? '<span class="rq ok">⏱ ' + clkFmt(cur) + " cronometrado</span>" : "";
   return '<div class="tcard' + (run ? " run" : "") + '" id="tc-' + d.k + '"><span class="rl">Intervalo até o próximo exercício' + infoBtn("intervalo") + "</span>" + runTxt + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === 90 ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + meas + "</div>";
 }
@@ -2720,6 +2773,7 @@ function render() {
   if (document.activeElement && document.activeElement.matches && document.activeElement.matches("main input, main textarea, main select") && (app.tab === "semana" || (app.tab === "perfil" && !app.pfRendered) || (app.tab === "objetivo" && !app.objRendered))) { app.deferRender = true; return; }
   app.deferRender = false;
   if (app.tab === "semana") renderWeek();
+  else if (app.tab === "resumo") renderResumo();
   else if (app.tab === "proxima") renderNext();
   else if (app.tab === "progresso") renderProgress();
   else if (app.tab === "corpo") renderGoal();
@@ -2731,7 +2785,7 @@ function routeFromHash() {
   let h = (location.hash || "").replace("#", "");
   if (h !== "perfil") app.pfRendered = false;
   if (h !== "objetivo") app.objRendered = false;
-  setTab(["perfil", "objetivo", "semana", "proxima", "progresso", "corpo", "plano"].includes(h) ? h : "semana");
+  setTab(["perfil", "objetivo", "semana", "resumo", "proxima", "progresso", "corpo", "plano"].includes(h) ? h : "semana");
 }
 
 // ----- Exercício unilateral: dados de cada lado -----
@@ -2858,7 +2912,8 @@ function clkGo(W, m, j, side) {
   const msgs = clkHandoff(W, m, j, side);
   const { def, entry } = clkCtx(W, m);
   if (!entry.startAt) { entry.startAt = new Date().toISOString(); touchW(W, def.d); }
-  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: [], ph: "exec", t0: Date.now(), ack: 0 };
+  const sp = clkCtx(W, m).pres.sets, tr = (sp[Math.min(j, sp.length - 1)] || {}).tr || 10;
+  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: [], ph: "exec", exp: Math.max(20, Math.min(75, tr * 4)), t0: Date.now(), ack: 0 };
   clkSave(); clkRefresh();
   if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
 }
@@ -2867,8 +2922,8 @@ function clkAfterExec(c, t0) {
   const { def, pres, entry } = clkCtx(c.W, c.k);
   if (isUni(def) && c.side) { const done = (c.done || []).concat(c.side), other = c.side === "e" ? "d" : "e"; if (!done.includes(other)) { app.clk = Object.assign({}, c, { side: other, done, t0, ack: 0, ask: false, fixOpen: false, waitSide: true }); return; } }
   if (c.i < pres.sets.length - 1) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "rest", prev: restSec(def), t0, ack: 0 };
-  else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", t0, ack: 0 };
-  else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado."); }
+  else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", prev: 90, t0, ack: 0 };
+  else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado. Veja a aba Resumo do dia."); }
 }
 function clkStop() {
   const c = app.clk; if (!c || c.ph !== "exec") return;
@@ -2886,8 +2941,8 @@ function clkOnDone(W, k) {
     if (c.ph === "trans") return;
     let t0 = c.t0;
     if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= CLK_EXEC_MAX) clkRecord(W, k, c.i, "exec", el, c.side); t0 = Date.now(); } }
-    app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", t0, ack: 0 };
-  } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", t0: Date.now(), ack: 0 };
+    app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", prev: 90, t0, ack: 0 };
+  } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", prev: 90, t0: Date.now(), ack: 0 };
   else return;
   if (!clkLeft(W, def.d, k)) app.clk = null;
   clkSave();
@@ -2926,7 +2981,23 @@ function clkAct(a) {
     clkSave(); clkRefresh(); clkToast("Tempo corrigido para " + clkFmt(s) + "."); return;
   }
 }
-function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); }
+function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); clkAnim(); }
+// Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos
+function clkRing() { return '<svg class="clkring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rb" cx="18" cy="18" r="15"/><circle class="rf" cx="18" cy="18" r="15" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 18 18)"/><line class="rh" x1="18" y1="18" x2="18" y2="7"/><circle class="rc" cx="18" cy="18" r="2"/></svg>'; }
+function clkPlan(c) { return c.ph === "exec" ? (c.waitSide ? 0 : c.exp || EXEC_DEF) : c.ph === "rest" ? c.prev || 90 : 90; }
+let clkRaf = null;
+const clkRM = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+function clkFrame() {
+  clkRaf = null;
+  const c = app.clk; if (!c) return;
+  const el = clkEl(), plan = clkPlan(c), p = plan ? Math.min(1, el / plan) : 0;
+  let sec = el % 60; if (clkRM.matches) sec = Math.floor(sec);
+  document.querySelectorAll(".clkanim").forEach(x => { x.style.setProperty("--p", p.toFixed(4)); x.classList.toggle(c.ph === "exec" ? "over" : "ok", plan > 0 && el >= plan); });
+  document.querySelectorAll(".clkring .rf").forEach(x => x.setAttribute("stroke-dasharray", sec.toFixed(2) + " 60"));
+  document.querySelectorAll(".clkring .rh").forEach(x => x.setAttribute("transform", "rotate(" + (sec * 6).toFixed(1) + " 18 18)"));
+  if (!document.hidden) clkRaf = requestAnimationFrame(clkFrame);
+}
+function clkAnim() { if (!clkRaf && app.clk && !document.hidden) clkRaf = requestAnimationFrame(clkFrame); }
 // Barra embaixo de cada série (unilateral: um lado, troca, o outro lado)
 function clkSetHtml(d, i, v, uni) {
   const c = app.clk;
@@ -2934,8 +3005,8 @@ function clkSetHtml(d, i, v, uni) {
   const id = "tb-" + d.k + "-" + i;
   const lado = s => s === "e" ? " · esquerdo" : s === "d" ? " · direito" : "";
   if (on && c.ph === "exec" && c.waitSide) return '<div class="clk wait" id="' + id + '"><span class="clkt"><b>Troca de lado</b> <span class="muted" data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="side">▶ Iniciar lado ' + (c.side === "e" ? "esquerdo" : "direito") + "</button></div>";
-  if (on && c.ph === "exec") return '<div class="clk run ex" id="' + id + '"><span class="clkfill"></span><span class="clkt"><b>Execução</b>' + lado(c.side) + ' <span class="clkn" data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop">⏸ Parar e registrar</button></div>';
-  if (on && c.ph === "rest") { const el = clkEl(); return '<div class="clk run rs' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Descanso</b> <span class="clkn" data-clkt>' + clkFmt(el) + '</span> <span class="muted">/ ' + clkFmt(c.prev) + '</span></span><button type="button" class="btn small primary" data-clk="next">▶ Próxima série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>'; }
+  if (on && c.ph === "exec") return '<div class="clk run ex clkanim" id="' + id + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Execução</b>' + lado(c.side) + '</span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span><small> / ~' + clkFmt(c.exp || EXEC_DEF) + '</small></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar e registrar a execução">⏸ Parar</button></div>';
+  if (on && c.ph === "rest") { const el = clkEl(); return '<div class="clk run rs clkanim' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="next" aria-label="Anotar o descanso e começar a próxima série">▶ Próxima</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>'; }
   const L = (v && v.lados) || {};
   const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") : v && +v.exec > 0 ? clkFmt(v.exec) + " execução" : "";
   const ds = v && +v.desc > 0 ? clkFmt(v.desc) + " descanso" : "";
@@ -2954,7 +3025,8 @@ function clkBar() {
   const btns = c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
-  let h = '<div class="clkb ' + c.ph + (c.ask ? " ask" : "") + '"><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(clkName(c.k)) + '</span></button><span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  const pl0 = clkPlan(c);
+  let h = '<div class="clkb ' + c.ph + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(clkName(c.k)) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
   if (c.ask) {
     const plan = c.ph === "exec" ? EXEC_DEF : c.ph === "rest" ? c.prev : 90;
     h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +
@@ -2967,10 +3039,145 @@ function clkTick() {
   const c = app.clk; if (!c) return;
   const el = clkEl(), t = clkFmt(el);
   document.querySelectorAll("[data-clkt]").forEach(x => { if (x.textContent !== t) x.textContent = t; });
-  if (c.ph === "rest" && c.prev) document.querySelectorAll(".clk.rs").forEach(x => { x.style.setProperty("--p", Math.min(1, el / c.prev).toFixed(3)); x.classList.toggle("ok", el >= c.prev); });
+  clkAnim();
   if (c.fixed == null && !c.ask && Math.floor(el / CLK_ALERT) > (c.ack || 0)) { c.ask = true; clkSave(); clkBar(); clkBeep(); }
 }
 function clkDock() { const sb = document.querySelector(".savebar"); if (!sb) return; const sem = app.tab === "semana"; sb.classList.toggle("hide", !sem && !app.clk); sb.classList.toggle("only-clk", !sem); document.body.classList.toggle("clk-on", !!app.clk); }
+// ----- Resumo do dia: análise pós-treino contra o planejado -----
+function sumNext(p, np) {
+  if (!np || !np.sets || !np.sets.length) return null;
+  const s0 = np.sets[0], c0 = p.sets[0];
+  if (np.action === "deload") return { dir: "eq", txt: "semana de deload: metade das séries, mesma carga" };
+  if (s0.kg == null) return { dir: "eq", txt: "escolha a carga na primeira série" };
+  const txt = fmt(s0.kg) + " kg × " + s0.tr + (np.sets.length > 1 && np.sets[1].kg !== s0.kg ? " · depois " + fmt(np.sets[1].kg) + " kg" : "");
+  if (c0.kg != null && s0.kg > c0.kg + 0.01) return { dir: "up", txt: txt + " (▲ +" + fmt(Math.round((s0.kg - c0.kg) * 100) / 100) + " kg)" };
+  if (c0.kg != null && s0.kg < c0.kg - 0.01) return { dir: "dn", txt: txt + " (▼ −" + fmt(Math.round((c0.kg - s0.kg) * 100) / 100) + " kg)" };
+  const more = np.sets.some((s, i) => p.sets[i] && s.tr > p.sets[i].tr);
+  return { dir: more ? "up" : "eq", txt: txt + (more ? " (mesma carga, ▲ mais reps)" : " (mantém)") };
+}
+function sumEx(W, day, wk, nx) {
+  const doc = getDoc(W, day, false), ord = dayOrder(doc, day);
+  return EX.filter(d => d.d === day).map(d => {
+    const p = wk.pres[d.k], e = doc && doc.ex ? doc.ex[d.k] : null, n = p.sets.length;
+    const ps = i => p.sets[Math.min(i, n - 1)];
+    const sets = (e && e.sets ? e.sets : []).map((x, i) => x && +x.reps > 0 ? { i, kg: x.kg == null || x.kg === "" ? ps(i).kg : +x.kg, reps: +x.reps, rir: x.rir == null || x.rir === "" ? null : +x.rir, parc: Array.isArray(x.parc) ? x.parc : [], exec: +x.exec > 0 ? +x.exec : null, lados: x.lados } : null).filter(Boolean);
+    const withKg = sets.filter(x => x.kg != null);
+    const ton = withKg.reduce((a, x) => a + x.kg * x.reps, 0);
+    const tonPrev = sets.length && sets.every(x => ps(x.i).kg != null) ? sets.reduce((a, x) => a + ps(x.i).kg * ps(x.i).tr, 0) : null;
+    let perf = null;
+    if (sets.length) {
+      const bw = d.bw && sets.every(x => x.kg === 0);
+      if (bw) perf = sets.reduce((a, x) => a + x.reps + parcCredit(x), 0) / sets.reduce((a, x) => a + ps(x.i).tr, 0) - 1;
+      else if (withKg.length && withKg.every(x => ps(x.i).kg != null)) perf = Math.max(...withKg.map(x => e1(x.kg, x.reps + parcCredit(x)))) / Math.max(...withKg.map(x => e1(ps(x.i).kg, ps(x.i).tr))) - 1;
+    }
+    const marks = sets.map(x => { const s = ps(x.i), kg = x.kg; if (kg != null && s.kg != null && belowSet({ kg, reps: x.reps }, s)) return "lo"; if (x.reps >= s.hi && (kg == null || s.kg == null || kg >= s.kg - 0.01)) return "hi"; if (x.reps < s.tr && (kg == null || s.kg == null || kg >= s.kg - 0.01)) return "short"; return "ok"; });
+    const rs = sets.filter(x => x.rir != null);
+    const rf = restFlags(e, d), fl = e ? exFlags(e, d) : {};
+    const ex = sets.filter(x => x.exec);
+    return {
+      d, p, e, st: e ? e.st : null, n, sets, ton, tonPrev, perf, marks,
+      rir: rs.length ? rs.reduce((a, x) => a + x.rir, 0) / rs.length : null, rirPrev: rs.length ? rs.reduce((a, x) => a + mid(ps(x.i).rir), 0) / rs.length : null,
+      fail: rs.filter(x => x.rir === 0 && mid(ps(x.i).rir) >= 1.5).length, easy: rs.filter(x => x.rir >= mid(ps(x.i).rir) + 2).length,
+      rest: rf.desc || null, restPrev: restSec(d), exec: ex.length ? ex.reduce((a, x) => a + x.exec, 0) / ex.length : null,
+      parc: sets.filter(x => x.parc.length).length, flags: fl, ord: ord[d.k] || null,
+      uni: isUni(d) && sets.some(x => x.lados) ? uniLine(e).replace(/<[^>]+>/g, "").replace(/^Lados: /, "").replace(/i$/, "") : "",
+      next: nx ? sumNext(p, nx.pres[d.k]) : null
+    };
+  });
+}
+function pctTxt(x) { return x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "") + fmt(Math.abs(Math.round(x * 1000) / 10)) + "%"; }
+function kgTxt(x) { return Math.round(x).toLocaleString("pt-BR") + " kg"; }
+function daySummaryHtml(W, day) {
+  const weeks = computeWeeks(Math.min(W + 1, MAXW)), wk = weeks[W], nx = W < MAXW ? weeks[W + 1] : null;
+  const dd = DAYS.find(x => x.id === day), doc = getDoc(W, day, false);
+  const rows = sumEx(W, day, wk, nx);
+  const t = dayTime(W, day, wk), max = num((app.perfil || {}).tempoMax) || 120;
+  const req = rows.filter(r => !r.d.opt || r.st === "feito" || r.sets.length);
+  const feitos = req.filter(r => r.st === "feito"), nao = req.filter(r => r.st === "nao"), pend = req.filter(r => r.st !== "feito" && r.st !== "nao");
+  const setsDone = req.reduce((a, r) => a + r.sets.length, 0), setsPrev = req.filter(r => r.st !== "nao").reduce((a, r) => a + r.n, 0);
+  const tonR = rows.filter(r => r.tonPrev != null), ton = tonR.reduce((a, r) => a + r.ton, 0), tonPrev = tonR.reduce((a, r) => a + r.tonPrev, 0);
+  const pr = rows.filter(r => r.perf != null), perf = pr.length ? pr.reduce((a, r) => a + r.perf, 0) / pr.length : null;
+  const c = doc && doc.cardio || {}, pl = cardioPlan(W);
+  const dateStr = isoDate(dayDate(W, day)), past = dateStr <= todayStr();
+  const peso = app.body[dateStr] && app.body[dateStr].peso;
+  const head = '<h2>' + esc(dd.nome) + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + " · " + esc(dd.titulo) + "</h2>";
+  if (!setsDone && c.st !== "feito" && !feitos.length) return head + '<div class="panel"><p class="lead">Nada registrado neste dia ainda.</p><p class="muted">O resumo aparece conforme você anota as séries em <a href="#semana">Semana</a>.</p></div>';
+  // veredito
+  const vcls = perf == null ? "mid" : perf >= 0.02 ? "up" : perf <= -0.025 ? "lo" : "mid";
+  const vtxt = perf == null ? "Desempenho sem base de comparação" : perf >= 0.02 ? "Acima do previsto" : perf <= -0.025 ? "Abaixo do previsto" : "No previsto";
+  let h = head + '<div class="verdict ' + vcls + '"><b>' + vtxt + "</b>" + (perf != null ? " · desempenho " + pctTxt(perf) + " contra o planejado" : "") + " · " + setsDone + " de " + setsPrev + " séries" + infoBtn("resumo") + "</div>";
+  const totReg = t.reg + t.cardio, totPrev = t.prev + t.cardioPrev;
+  const starts = rows.map(r => Date.parse((r.e && r.e.startAt) || "")).filter(x => x > 0), ends = rows.map(r => Date.parse((r.e && r.e.doneAt) || "")).filter(x => x > 0);
+  const relogio = starts.length && ends.length ? Math.round((Math.max(...ends) - Math.min(...starts)) / 60000) : null;
+  h += '<div class="tiles">' +
+    tile("Exercícios", feitos.length + " de " + req.length, (nao.length ? nao.length + " não feito" + (nao.length > 1 ? "s" : "") : "nenhum pulado") + (pend.length ? " · " + pend.length + " em aberto" : "")) +
+    tile("Séries", setsDone + " de " + setsPrev, setsDone >= setsPrev ? "todas feitas" : "faltaram " + (setsPrev - setsDone)) +
+    tile("Volume", tonPrev ? kgTxt(ton) : "—", tonPrev ? Math.round(ton / tonPrev * 100) + "% do previsto (" + kgTxt(tonPrev) + ")" : "carga × repetições", "volume") +
+    tile("Desempenho", perf == null ? "—" : pctTxt(perf), perf == null ? "anote carga e reps" : "melhor série contra a prevista, média dos exercícios", "resumo") +
+    tile("Tempo", t.nReg ? "~" + totReg + " min" : "—", "previsto " + totPrev + " min" + (relogio != null && relogio > 0 ? " · relógio " + relogio + " min de musculação" : "") + (totReg > max ? " · passou do limite" : ""), "tempotreino") +
+    tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) : "sem descansos anotados", "descanso_reg") +
+    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= 0.95 ? "boa entre as séries" : t.rec >= 0.9 ? "regular" : "incompleta") : "precisa de 2 séries seguidas", "recuperacao") +
+    tile("Cardio", c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : c.st === "nao" ? "não feito" : "—", c.st === "feito" ? (paceOf(c) ? "pace " + paceFmt(paceOf(c)) + " /km · " : "") + "previsto " + pl.min + " min" : "previsto " + pl.min + " min") +
+    (peso ? tile("Peso do dia", fmt(peso) + " kg", "pesagem registrada") : "") + "</div>";
+  // direcionamentos
+  const dir = [], nm = r => esc(r.d.n.split(" (")[0]);
+  const list = (arr, f) => arr.map(f).join(", ");
+  if (pend.length && past) dir.push(["warn", "Em aberto: " + list(pend, nm) + ". Marque ✓ Feito ou ✗ Não fiz para o app fechar o dia."]);
+  if (nao.length) { const semNota = nao.filter(r => !(r.e && (r.e.nota || (r.e.tags || []).length))); dir.push(["info", "Não feito: " + list(nao, nm) + "." + (semNota.length ? " Se foi por dor, máquina ocupada ou falta de tempo, anote na observação de " + list(semNota, nm) + ": o app trata cada caso de um jeito." : "")]); }
+  const lo = pr.filter(r => r.perf <= -0.025).sort((a, b) => a.perf - b.perf), hi = pr.filter(r => r.perf >= 0.04).sort((a, b) => b.perf - a.perf);
+  if (lo.length) {
+    const why = [];
+    if (t.restAvg != null && t.restAvg < t.restPrev * 0.75) why.push("o descanso ficou curto");
+    if (t.rec != null && t.rec < 0.9) why.push("a recuperação entre séries foi incompleta");
+    if (lo.some(r => r.ord && r.ord.pos > r.ord.prev)) why.push("parte deles foi feita mais tarde que na ficha");
+    if (rows.some(r => r.flags.cansaco)) why.push("você anotou cansaço");
+    dir.push(["lo", "Abaixo do previsto: " + list(lo, r => nm(r) + " (" + pctTxt(r.perf) + ")") + "." + (why.length ? " Possível causa: " + why.join("; ") + "." : "") + " A próxima carga de cada um está logo abaixo."]);
+  }
+  if (hi.length) dir.push(["up", "Acima do previsto: " + list(hi, r => nm(r) + " (" + pctTxt(r.perf) + ")") + "." + (hi.some(r => r.next && r.next.dir === "up") ? " A carga sobe na próxima." : "")]);
+  if (t.restAvg != null && t.restAvg < t.restPrev * 0.75) dir.push(["warn", "Descanso médio de " + fmtSec(t.restAvg) + " contra " + fmtSec(t.restPrev) + " previstos. Descanso curto derruba as reps das séries seguintes: nos exercícios compostos, espere o tempo previsto."]);
+  else if (t.restAvg != null && t.restAvg > t.restPrev * 1.5) dir.push(["info", "Descanso médio de " + fmtSec(t.restAvg) + ", bem acima dos " + fmtSec(t.restPrev) + " previstos. Não atrapalha o resultado, mas alonga o treino."]);
+  if (t.rec != null && t.rec < 0.9) dir.push(["warn", "Recuperação entre séries de " + Math.round(t.rec * 100) + "%: as séries seguintes renderam bem menos que o previsto. Descanse um pouco mais entre elas."]);
+  const fail = rows.filter(r => r.fail), failN = fail.reduce((a, r) => a + r.fail, 0);
+  if (failN >= 2) dir.push(["warn", failN + " séries foram até a falha (RIR 0) quando o previsto era sobrar 2 ou mais: " + list(fail, nm) + ". Ir à falha cansa mais e derruba as séries seguintes; guarde as repetições previstas."]);
+  const easy = rows.filter(r => r.easy && !r.flags.dor), easyN = easy.reduce((a, r) => a + r.easy, 0);
+  if (easyN >= 2) dir.push(["info", easyN + " séries terminaram com bem mais folga que o previsto: " + list(easy, nm) + ". Se foi fácil mesmo, marque Carga → Fácil na observação para o app subir mais rápido."]);
+  const parc = rows.filter(r => r.parc);
+  if (parc.length) dir.push(["info", "Parciais em " + (pn => pn + (pn > 1 ? " séries" : " série"))(parc.reduce((a, r) => a + r.parc, 0)) + ": " + list(parc, nm) + ". O app conta cada parcial como fração de repetição; muitas parciais indicam carga no limite."]);
+  const dor = rows.filter(r => r.flags.dor);
+  if (dor.length) dir.push(["lo", "Dor anotada em " + list(dor, nm) + ". A carga da próxima já leva isso em conta. Se a dor continuar, troque o exercício por outro do mesmo músculo."]);
+  const asym = rows.filter(r => r.uni && /(\d+)% mais forte/.test(r.uni) && +/(\d+)% mais forte/.exec(r.uni)[1] >= 10);
+  if (asym.length) dir.push(["warn", "Diferença entre os lados: " + list(asym, r => nm(r) + " (" + esc(r.uni.split(" · ")[0]) + ")") + ". Comece pelo lado mais fraco e repita no outro o mesmo número de repetições."]);
+  const fora = rows.filter(r => r.ord && r.ord.pos !== r.ord.prev && r.perf != null);
+  if (fora.length) dir.push(["info", "Fora da ordem da ficha: " + list(fora, r => nm(r) + " (" + r.ord.pos + "º em vez de " + r.ord.prev + "º, " + pctTxt(r.perf) + ")") + ". O app guarda esse efeito para as próximas trocas."]);
+  if (t.nReg && totReg > max) dir.push(["warn", "Treino e cardio somaram ~" + totReg + " min, acima do seu limite de " + max + " min." + (t.restAvg != null && t.restAvg > t.restPrev * 1.3 ? " O que mais pesou foi o descanso." : "")]);
+  else if (t.nReg && t.reg > t.prev + 15) dir.push(["info", "A musculação levou ~" + (t.reg - t.prev) + " min a mais que o previsto."]);
+  if (c.st === "feito" && c.min != null && c.min < pl.min - 2) dir.push(["info", "Cardio: " + fmt(Math.round(c.min)) + " de " + pl.min + " min previstos."]);
+  else if (c.st !== "feito" && past && feitos.length) dir.push(["info", c.st === "nao" ? "Cardio marcado como não feito." : "Cardio não registrado. Se fez, anote em Semana para entrar no gasto do dia."]);
+  if (!dir.length) dir.push(["up", "Tudo dentro do planejado. Mantenha o ritmo: a próxima carga de cada exercício está logo abaixo."]);
+  h += '<h2>Direcionamentos</h2><ul class="dirs">' + dir.map(([k, x]) => '<li class="d-' + k + '">' + x + "</li>").join("") + "</ul>";
+  // exercício por exercício
+  h += '<h2>Exercício por exercício</h2><div class="sxl">' + rows.filter(r => !r.d.opt || r.st || r.sets.length).map(r => {
+    const stc = r.st === "feito" ? "ok" : r.st === "nao" ? "no" : r.sets.length ? "mid" : "";
+    const stt = r.st === "feito" ? "feito" : r.st === "nao" ? "não feito" : r.sets.length ? "em aberto" : "sem registro";
+    const bar = r.perf == null ? "" : '<div class="pbar" role="img" aria-label="Desempenho ' + pctTxt(r.perf) + ' contra o previsto"><span class="' + (r.perf >= 0 ? "pos" : "neg") + '" style="--v:' + Math.min(1, Math.abs(r.perf) / 0.1).toFixed(3) + '"></span></div><span class="pv ' + (r.perf >= 0.02 ? "up" : r.perf <= -0.025 ? "lo" : "") + '">' + pctTxt(r.perf) + "</span>";
+    const feito = r.sets.map((x, j) => '<span class="sm ' + r.marks[j] + '">' + (x.kg == null ? "" : fmt(x.kg) + "×") + x.reps + (x.parc.length ? "+" + x.parc.length + "p" : "") + "</span>").join("");
+    const prev = r.p.sets.map(s => (s.kg == null ? "" : fmt(s.kg) + "×") + s.tr).join(" · ");
+    const det = [r.rir != null ? "RIR médio " + fmt(Math.round(r.rir * 10) / 10) + " (prev " + fmt(Math.round(r.rirPrev * 10) / 10) + ")" : "", r.rest ? "descanso " + fmtSec(r.rest) + " (prev " + fmtSec(r.restPrev) + ")" : "", r.exec ? "execução " + clkFmt(r.exec) : "", r.tonPrev ? "volume " + kgTxt(r.ton) + " (" + Math.round(r.ton / r.tonPrev * 100) + "%)" : "", r.uni ? "lados: " + esc(r.uni) : "", r.ord && r.ord.pos !== r.ord.prev ? "feito em " + r.ord.pos + "º (ficha: " + r.ord.prev + "º)" : ""].filter(Boolean).join(" · ");
+    return '<div class="sxe"><div class="sxh"><b>' + nm(r) + '</b><span class="sst ' + stc + '">' + stt + (r.sets.length ? " · " + r.sets.length + "/" + r.n : "") + "</span></div>" +
+      (bar ? '<div class="prow2">' + bar + "</div>" : "") +
+      (r.sets.length ? '<div class="sxs"><span class="muted">Feito:</span> ' + feito + "</div>" : "") +
+      '<div class="sxs muted">Previsto: ' + prev + "</div>" + (det ? '<div class="sxs muted">' + det + "</div>" : "") +
+      (r.next ? '<div class="sxn ' + r.next.dir + '">Próxima: ' + esc(r.next.txt) + "</div>" : "") + "</div>";
+  }).join("") + "</div>";
+  if (doc && doc.nota) h += '<div class="panel"><b>Nota do dia:</b> ' + esc(doc.nota) + "</div>";
+  return h;
+}
+function renderResumo() {
+  const W = app.week, box = document.getElementById("resumoView"); if (!box) return;
+  const nav = '<div class="weekbar"><button class="iconbtn" data-rswk="-1" aria-label="Semana anterior"' + (W <= 1 ? " disabled" : "") + '>‹</button><div class="weektitle"><div class="wk">Semana ' + W + '</div><div class="sub">' + weekLabel(W) + '</div></div><button class="iconbtn" data-rswk="1" aria-label="Próxima semana"' + (W >= MAXW ? " disabled" : "") + ">›</button></div>" +
+    '<div class="days">' + DAYS.map(d => { const st = dayStatus(W, d.id); return '<button class="daybtn" data-rsday="' + d.id + '" aria-pressed="' + (app.day === d.id) + '"><span class="dn">' + d.nome + " " + dayDate(W, d.id).getUTCDate() + '</span><span class="dl">' + d.id + '</span><span class="ds" title="' + st.t + '">' + st.s + "</span></button>"; }).join("") + "</div>";
+  box.innerHTML = nav + daySummaryHtml(W, app.day);
+}
 // ----- Edição e salvamento -----
 function currentPres(k) { const weeks = computeWeeks(app.week); return weeks[app.week].pres[k]; }
 function touch(day) {
@@ -3044,6 +3251,8 @@ document.addEventListener("click", ev => {
   if (b.id === "wkPrev" && app.week > 1) { app.week--; app.weekTouched = true; render(); return; }
   if (b.id === "wkNext" && app.week < MAXW) { app.week++; app.weekTouched = true; render(); return; }
   if (b.dataset.day) { app.day = b.dataset.day; renderWeek(); return; }
+  if (b.dataset.rsday) { app.day = b.dataset.rsday; app.dayTouched = true; renderResumo(); return; }
+  if (b.dataset.rswk) { const nw = app.week + +b.dataset.rswk; if (nw >= 1 && nw <= MAXW) { app.week = nw; app.weekTouched = true; renderResumo(); } return; }
   if (b.dataset.deload) { app.settings["deload" + app.week] = b.dataset.deload; saveSettings(); render(); return; }
   if (b.id === "rangeBtn") { app.fullYear = !app.fullYear; b.setAttribute("aria-pressed", String(app.fullYear)); b.textContent = app.fullYear ? "Ver o início" : "Ver o plano todo"; renderGoal(); return; }
   if (b.dataset.tagcat) { const [key, cat] = b.dataset.tagcat.split("|"); app.tagOpen[key] = app.tagOpen[key] === cat ? null : cat; refreshTags(key); return; }
@@ -3339,7 +3548,7 @@ clkLoad();
 updateQW();
 routeFromHash();
 connect();
-clkBar(); setInterval(clkTick, 500);
+clkBar(); clkAnim(); setInterval(clkTick, 500);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) clkTick(); });
 </script>
 </body>
