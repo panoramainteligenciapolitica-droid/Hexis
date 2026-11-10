@@ -237,6 +237,14 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .pfgrid > .field:not(.checks) { display: flex; flex-direction: column; justify-content: flex-end; }
 .warm { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--new); background: color-mix(in srgb, var(--new) 8%, var(--surface)); border-radius: 0 8px 8px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
 .warm.day { margin: 0 0 12px; }
+table.sets tr.prow td { padding-top: 0; }
+table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
+.pbtn { margin-top: 0; min-height: 32px; padding: 2px 10px; border: 1px dashed var(--line); border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.parc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; }
+.parc .plbl { color: var(--muted); font-weight: 600; display: inline-flex; align-items: center; }
+.pchip, .padd { min-height: 32px; padding: 2px 9px; border-radius: 999px; font: inherit; font-size: 13px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pchip { border: 1px solid var(--fix); background: color-mix(in srgb, var(--fix) 14%, var(--surface)); color: var(--ink); font-weight: 600; }
+.padd { border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
 .rmtab .cin { width: 100%; min-width: 64px; height: 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font-size: 16px; }
 .rmtab .rm { font-weight: 700; white-space: nowrap; }
 .rmtab .s1 { font-size: 12px; color: var(--muted); }
@@ -616,7 +624,9 @@ function prescribe(def, st, w, flags) {
   return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def).length };
 }
 
-function setsStr(sets) { return sets.map(s => fmt(s.kg) + "×" + s.reps).join(", "); }
+function setsStr(sets) { return sets.map(s => fmt(s.kg) + "×" + s.reps + (s.parc && s.parc.length ? "+" + s.parc.length + "p" : "")).join(", "); }
+// Parciais valem meia repetição na fração feita (ex.: 50% = 0,25): contam para o progresso, não para a faixa
+function parcCredit(x) { return x && Array.isArray(x.parc) ? x.parc.reduce((a, p) => a + Math.max(0, Math.min(99, +p || 0)) / 100, 0) * 0.5 : 0; }
 
 // Transição: o que a semana w ensinou para a semana w+1
 function transition(def, st, pres, rec, w, curW) {
@@ -631,7 +641,7 @@ function transition(def, st, pres, rec, w, curW) {
   }
   if (status === "nao") { if (def.opt) { s.action = "keep"; s.why = "Opcional, não feito: sem mudança."; return s; } return missed(def, s, w); }
   s.missed = 0;
-  const sets = (rec.sets || []).filter(x => x && x.reps > 0 && x.kg != null && x.kg !== "").map(x => ({ kg: +x.kg, reps: +x.reps, rir: x.rir }));
+  const sets = (rec.sets || []).filter(x => x && x.reps > 0 && x.kg != null && x.kg !== "").map(x => ({ kg: +x.kg, reps: +x.reps, rir: x.rir, parc: Array.isArray(x.parc) ? x.parc : [] }));
   if (!sets.length) { s.action = "keep"; s.why = "Semana " + w + ": marcado como feito sem números. Manter a prescrição."; return s; }
   if (st.load == null) {
     s.load = Math.max(...sets.map(x => x.kg));
@@ -730,7 +740,7 @@ function suggestSets(def, pres, entry) {
     const a = act[j], pj = pres.sets[j];
     if (pj.kg == null) return s;
     const kgA = a.kg == null || a.kg === "" ? pj.kg : +a.kg;
-    const rirA = a.rir != null && a.rir !== "" ? +a.rir : mid(pj.rir);
+    const rirA = a.rir != null && a.rir !== "" ? +a.rir : (Array.isArray(a.parc) && a.parc.length ? 0 : mid(pj.rir));
     const rirT = mid(p.rir);
     if (kgA === 0 || p.kg === 0) {
       if (+a.reps < pj.tr) { s.reps = Math.max(1, +a.reps); s.dir = -1; s.note = "▼ Série anterior: " + a.reps + " de " + pj.tr + " reps. Alvo desta: " + s.reps + "."; }
@@ -753,7 +763,7 @@ function suggestSets(def, pres, entry) {
     return s;
   });
 }
-function metricOf(def, sets) { if (def.bw && sets.every(x => x.kg === 0)) return sets.reduce((a, x) => a + x.reps, 0); return Math.max(...sets.map(x => e1(x.kg, x.reps))); }
+function metricOf(def, sets) { if (def.bw && sets.every(x => x.kg === 0)) return sets.reduce((a, x) => a + x.reps + parcCredit(x), 0); return Math.max(...sets.map(x => e1(x.kg, x.reps + parcCredit(x)))); }
 function missed(def, s, w) {
   s.missed = (s.missed || 0) + 1;
   if (s.missed >= 2 && s.load != null) { s.load = rnd(s.load * 0.95, def.step); s.action = "down"; s.why = "Duas semanas seguidas sem fazer: retomar com 5% a menos (" + fmt(s.load) + " kg)."; s.missed = 0; }
@@ -1547,6 +1557,7 @@ Object.assign(GLOSS, {
 
 
 GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
+GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 function glossEntry(key) {
@@ -1576,7 +1587,7 @@ function closeInfo() {
 const app = {
   db: null, P: null, isOwner: false, records: {}, body: {}, baseline: null, settings: {},
   perfil: null, perfilLoaded: false, pfDraft: null, pfDirty: false, pfRendered: false, plan: null, fases: [], startLoads: null, weekTouched: false,
-  dirty: new Set(), saving: new Set(), timers: {},
+  dirty: new Set(), saving: new Set(), timers: {}, parcOpen: new Set(),
   tab: "semana", week: 1, day: "A", curW: 1, charts: {}, deferRender: false, fullYear: false, loaded: false
 };
 function todayStr() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
@@ -1724,6 +1735,15 @@ function warmHtml(d, p) {
   const txt = L > 0 ? plan.map(([f, r]) => fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r).join(" · ") : (plan.length > 1 ? plan.length + " séries leves" : "1 série leve") + " (" + plan.map(([f]) => Math.round(f * 100) + "%").join(", ") + " da carga do dia)";
   return '<div class="warm"><b>Aquecimento</b> <span class="muted">(não conta)</span>: ' + txt + infoBtn("aquecimento") + "</div>";
 }
+// Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
+function parcHtml(k, i, arr) {
+  arr = Array.isArray(arr) ? arr : [];
+  const open = arr.length || app.parcOpen.has(k + "|" + i);
+  if (!open) return '<button class="pbtn" type="button" data-parcopen="' + k + "|" + i + '">+ parciais</button>';
+  return '<div class="parc"><span class="plbl">Parciais' + infoBtn("parciais") + "</span>" +
+    arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
+    [25, 50, 75].map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + '" aria-label="Adicionar parcial de ' + v + '%">+' + v + "%</button>").join("") + "</div>";
+}
 function exCard(d, p, entry, W) {
   const A = ACT[p.action] || ACT.keep;
   const st = entry ? entry.st : null;
@@ -1758,7 +1778,7 @@ function exCard(d, p, entry, W) {
     return '<tr><td class="lbl"><b>' + lbl + "</b>" + lblInfo + (s.cluster ? " · 2 blocos" + infoBtn("cluster") : "") + '<div class="tgt">Previsto: ' + esc(prevTxt) + " (faixa " + s.lo + "–" + s.hi + ")" + (i === 0 ? infoBtn("faixa") : "") + '</div><div class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '">' + esc(g.note) + '</div><div class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + "</div></td>" +
       '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + esc(d.n) + " " + lbl + ' carga feita em kg" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '" placeholder="' + (g.kg == null ? "kg" : fmt(g.kg)) + '"></td>' +
       '<td><input type="number" inputmode="numeric" step="1" aria-label="' + esc(d.n) + " " + lbl + ' repetições feitas" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '" placeholder="' + g.reps + '"></td>' +
-      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>";
+      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>" + '<tr class="prow"><td colspan="4"><div id="parc-' + d.k + "-" + i + '">' + parcHtml(d.k, i, v.parc) + "</div></td></tr>";
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
@@ -2329,6 +2349,28 @@ document.addEventListener("click", ev => {
   if (b.dataset.day) { app.day = b.dataset.day; renderWeek(); return; }
   if (b.dataset.deload) { app.settings["deload" + app.week] = b.dataset.deload; saveSettings(); render(); return; }
   if (b.id === "rangeBtn") { app.fullYear = !app.fullYear; b.setAttribute("aria-pressed", String(app.fullYear)); b.textContent = app.fullYear ? "Ver o início" : "Ver o plano todo"; renderGoal(); return; }
+  if (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel) {
+    const [pk, pi, pv] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
+    const def = EXBY[pk]; const pres = currentPres(pk);
+    if (b.dataset.parcopen) { app.parcOpen.add(pk + "|" + pi); }
+    else {
+      const entry = entryFor(app.week, def.d, pk, pres, true);
+      while (entry.sets.length <= +pi) entry.sets.push({ kg: null, reps: null, rir: null });
+      const set = entry.sets[+pi];
+      set.parc = Array.isArray(set.parc) ? set.parc : [];
+      if (b.dataset.parcadd) {
+        set.parc.push(+pv);
+        if (set.rir == null || set.rir === "") { set.rir = 0; const sel = document.querySelector('[data-set="' + pk + "|" + pi + '|rir"]'); if (sel) sel.value = "0"; }
+      } else set.parc.splice(+pv, 1);
+      app.parcOpen.add(pk + "|" + pi);
+      if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir }));
+      touch(def.d); updateHints(pk);
+    }
+    const box = document.getElementById("parc-" + pk + "-" + pi);
+    const entry2 = entryFor(app.week, def.d, pk, pres, false);
+    if (box) box.innerHTML = parcHtml(pk, +pi, entry2 && entry2.sets && entry2.sets[+pi] ? entry2.sets[+pi].parc : []);
+    return;
+  }
   const k = b.dataset.done || b.dataset.skip || b.dataset.addset;
   if (!k) return;
   const def = EXBY[k]; const pres = currentPres(k);
