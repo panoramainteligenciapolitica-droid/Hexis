@@ -233,6 +233,8 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .pfsave { position: sticky; bottom: 8px; z-index: 5; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(0,0,0,.08); }
 .pfsave .muted { font-size: 14px; }
 .pfgrid > .field:not(.checks) { display: flex; flex-direction: column; justify-content: flex-end; }
+.warm { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--new); background: color-mix(in srgb, var(--new) 8%, var(--surface)); border-radius: 0 8px 8px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.warm.day { margin: 0 0 12px; }
 .rmtab .cin { width: 100%; min-width: 64px; height: 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font-size: 16px; }
 .rmtab .rm { font-weight: 700; white-space: nowrap; }
 .rmtab .s1 { font-size: 12px; color: var(--muted); }
@@ -1541,6 +1543,7 @@ Object.assign(GLOSS, {
 });
 
 
+GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 function glossEntry(key) {
@@ -1694,10 +1697,29 @@ function renderDay(wk) {
   let h = '<div class="dayhead"><h2>' + esc(D.titulo) + '</h2><span class="meta">' + D.nome + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + infoBtn("dias") + "</span></div>";
   h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
   h += '<div class="row-btns" style="margin:0 0 12px"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button>' + infoBtn("diatodo") + "</div>";
+  h += '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
   for (const d of defs) h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W);
   h += cardioCard(W, day);
   h += '<div class="panel"><h2>Observações do dia</h2><textarea id="dayNote" data-daynote="1" rows="3" placeholder="Sono, energia, dores, ajustes de máquina…">' + esc(doc ? doc.nota : "") + "</textarea></div>";
   document.getElementById("dayView").innerHTML = h;
+}
+// Aquecimento: séries leves antes da primeira válida (não contam para volume nem progressão)
+const WARM_BY = { "Tríceps": ["Peito", "Ombro anterior"], "Ombro lateral": ["Peito", "Ombro anterior"], "Bíceps": ["Costas"], "Ombro posterior": ["Costas"], "Glúteos": ["Quadríceps", "Posteriores de coxa"], "Adutores": ["Quadríceps", "Glúteos"], "Lombar": ["Posteriores de coxa", "Glúteos"], "Peito": ["Ombro anterior"] };
+function warmPlan(d) {
+  if (d.t === "core" || d.bw || d.opt) return null;
+  const day = EX.filter(x => x.d === d.d), idx = day.indexOf(d);
+  const before = day.slice(0, idx).filter(x => x.t !== "core");
+  if (!before.length) return d.sc === "top" || d.lo <= 8 ? [[0.5, 8], [0.7, 5], [0.85, 2]] : [[0.5, 10], [0.75, 5]];
+  const groups = before.map(x => x.m);
+  if (groups.includes(d.m) || (WARM_BY[d.m] || []).some(g => groups.includes(g))) return null;
+  return d.t === "comp" ? [[0.5, 8], [0.75, 4]] : [[0.5, 12]];
+}
+function warmHtml(d, p) {
+  const plan = warmPlan(d); if (!plan) return "";
+  const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load;
+  const st = d.step || 1;
+  const txt = L > 0 ? plan.map(([f, r]) => fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r).join(" · ") : (plan.length > 1 ? plan.length + " séries leves" : "1 série leve") + " (" + plan.map(([f]) => Math.round(f * 100) + "%").join(", ") + " da carga do dia)";
+  return '<div class="warm"><b>Aquecimento</b> <span class="muted">(não conta)</span>: ' + txt + infoBtn("aquecimento") + "</div>";
 }
 function exCard(d, p, entry, W) {
   const A = ACT[p.action] || ACT.keep;
@@ -1743,7 +1765,7 @@ function exCard(d, p, entry, W) {
     '<div class="card-h"><div><h3>' + esc(d.n) + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
     (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine +
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
     '<textarea data-note="' + d.k + '" rows="1" placeholder="Observação deste exercício">' + esc(entry ? entry.nota : "") + "</textarea></article>";
