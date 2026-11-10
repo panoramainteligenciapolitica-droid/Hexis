@@ -258,6 +258,50 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 .tagsel { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
 .exmm { min-width: 58px; padding: 3px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent, var(--ink)); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: center; }
 .exmm:empty { display: none; }
+.clk { position: relative; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; margin: 0 0 4px; padding: 6px 8px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; font-size: 13px; }
+.clk .clks, .clk .clkt { flex: 1 1 0; width: 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.clk .clkt { position: relative; z-index: 1; font-size: 14px; }
+.clk .btn { flex: none; white-space: nowrap; }
+.clk .clkn { font-size: 19px; font-weight: 800; }
+.clk .btn, .clk .info { position: relative; z-index: 1; }
+.clk .clkfill { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.clk.run.ex { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.clk.run.ex .clkfill { background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 16%, transparent) 0 10px, transparent 10px 20px); background-size: 28.28px 28.28px; animation: clkmove 1.2s linear infinite; }
+@keyframes clkmove { to { background-position: 28.28px 0; } }
+.clk.run.rs { border-color: var(--deload); background: var(--surface); }
+.clk.run.rs .clkfill { right: auto; width: calc(var(--p, 0) * 100%); background: color-mix(in srgb, var(--deload) 20%, transparent); transition: width .5s linear; }
+.clk.run.rs.ok { border-color: var(--up); }
+.clk.run.rs.ok .clkfill { background: color-mix(in srgb, var(--up) 26%, transparent); }
+.clk.run.rs.ok .clkt b::after { content: " cumprido · pode ir"; color: var(--up); }
+.clk.wait { border: 1px dashed var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+@media (prefers-reduced-motion: reduce) { .clk.run.ex .clkfill { animation: none; } .clk.run.rs .clkfill { transition: none; } }
+.rq.meas { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.tcard .trun { width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.tcard.run { border-style: solid; border-color: var(--deload); }
+.savebar.only-clk .inner { display: none; }
+body.clk-on .wrap { padding-bottom: 200px; }
+#clkbar { border-bottom: 1px solid var(--line); }
+.clkb { max-width: 760px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
+.clksee { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; background: none; border: 0; padding: 0; text-align: left; color: var(--ink); cursor: pointer; font: inherit; }
+.clkph { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.clknm { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.clkbig { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
+.clkb.exec .clkbig { color: var(--accent); } .clkb.rest .clkbig, .clkb.trans .clkbig { color: var(--deload); }
+.clkb.ask, .clkask { background: color-mix(in srgb, var(--new) 10%, var(--surface)); }
+.clkask { padding: 0 16px 10px; font-size: 14px; }
+.clkask > * { max-width: 728px; margin-left: auto; margin-right: auto; }
+.clkask .row-btns { margin-top: 6px; }
+.clkfix { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.clkfix input { width: 92px; height: 36px; margin-left: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 8px; font: inherit; font-size: 16px; color: var(--ink); }
+.clktoast { max-width: 760px; margin: 0 auto; padding: 7px 16px; font-size: 13px; font-weight: 600; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.unitg, .unidif { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; font-size: 13px; }
+.unitg .rl, .unidif .rl { color: var(--muted); font-weight: 600; display: inline-flex; align-items: center; margin-right: 2px; }
+.unidif { margin: 6px 0 2px; }
+table.sets td .side { margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+table.sets tr.ue td { border-bottom: 0; }
+table.sets tr.ue td:not(.lbl) { vertical-align: bottom; }
+table.sets tr.ud td .side { margin-top: 0; }
+.execrow.uparc { margin-top: 4px; }
 .execrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .exec { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
 table.sets .exec input, .exec input { flex: none; width: 72px; height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font: inherit; font-size: 15px; color: var(--ink); }
@@ -512,7 +556,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     </div>
   </section>
 </main>
-<div class="savebar"><div class="inner"><span><span id="saveMsg" class="muted">Marque cada exercício como feito ou não feito.</span><button class="info" type="button" data-info="registrar" aria-label="Explicar: como registrar">i</button></span><span class="muted" id="saveWeek"></span></div></div>
+<div class="savebar"><div id="clkToast" class="clktoast hide" role="status"></div><div id="clkbar" class="hide"></div><div class="inner"><span><span id="saveMsg" class="muted">Marque cada exercício como feito ou não feito.</span><button class="info" type="button" data-info="registrar" aria-label="Explicar: como registrar">i</button></span><span class="muted" id="saveWeek"></span></div></div>
 <div id="pop" class="pop hide" role="dialog" aria-modal="true" aria-labelledby="popT">
   <div class="pop-card">
     <div class="pop-h"><h2 id="popT"></h2><button class="iconbtn" id="popX" type="button" aria-label="Fechar explicação">×</button></div>
@@ -1859,7 +1903,9 @@ Object.assign(GLOSS, {
 GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
 GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
 GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (Dor, Execução, Carga, Equipamento, Disposição, Tempo) e escolha as opções dele; o que estiver marcado aparece em roxo, e tocar tira. Também dá para escrever no campo de texto. Com <b>+ palavra-chave</b> você cria um bloco seu e escolhe o efeito dele. Abaixo aparece o que o app entendeu.</p><ul><li><b>Carga fixa, sem ajuste</b> (máquinas de placas fixas): vale o peso que você usou, mesmo diferente do previsto. Não conta como queda; a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa.</li><li><b>Carga pesada demais</b>: mesmo batendo o topo, a carga fica mais uma semana antes de subir.</li><li><b>Dor forte</b>: a carga cai 10% e o app sugere trocar o exercício.</li><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
-GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
+GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
+GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
+GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
 GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
@@ -1947,6 +1993,11 @@ function updateHints(k) {
     if (ik) ik.placeholder = g.kg == null ? "kg" : fmt(g.kg);
     const ir = document.querySelector('[data-set="' + k + "|" + i + '|reps"]');
     if (ir) ir.placeholder = g.reps;
+    ["e", "d"].forEach(n => {
+      const L = entry && entry.sets && entry.sets[i] && entry.sets[i].lados || {}, o = n === "e" ? "d" : "e";
+      const sk = document.querySelector('[data-set="' + k + "|" + i + "|kg|" + n + '"]'); if (sk) sk.placeholder = uniKg(L, o) != null ? fmt(uniKg(L, o)) : g.kg == null ? "kg" : fmt(g.kg);
+      const sr = document.querySelector('[data-set="' + k + "|" + i + "|reps|" + n + '"]'); if (sr) sr.placeholder = g.reps;
+    });
     const rb = document.getElementById("rest-" + k + "-" + i);
     if (rb) rb.innerHTML = restHtml(def, i, entry && entry.sets ? entry.sets[i] : null, entry, pres);
   });
@@ -2048,13 +2099,14 @@ function warmHtml(d, p) {
   return '<div class="warm"><b>Aquecimento</b> <span class="muted">(não conta)</span>: ' + txt + infoBtn("aquecimento") + "</div>";
 }
 // Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
-function parcHtml(k, i, arr) {
+function parcHtml(k, i, arr, side) {
   arr = Array.isArray(arr) ? arr : [];
-  const open = arr.length || app.parcOpen.has(k + "|" + i);
-  if (!open) return '<button class="pbtn" type="button" data-parcopen="' + k + "|" + i + '">+ parciais</button>';
-  return '<div class="parc"><span class="plbl">Parciais' + infoBtn("parciais") + "</span>" +
-    arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
-    [25, 50, 75].map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + '" aria-label="Adicionar parcial de ' + v + '%">+' + v + "%</button>").join("") + "</div>";
+  const sx = side ? "|" + side : "", lt = side === "e" ? " esq." : side === "d" ? " dir." : "";
+  const open = arr.length || app.parcOpen.has(k + "|" + i + sx);
+  if (!open) return '<button class="pbtn" type="button" data-parcopen="' + k + "|" + i + "|0" + sx + '">+ parciais' + lt + "</button>";
+  return '<div class="parc"><span class="plbl">Parciais' + lt + (side === "d" ? "" : infoBtn("parciais")) + "</span>" +
+    arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + sx + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
+    [25, 50, 75].map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + sx + '" aria-label="Adicionar parcial de ' + v + '%' + lt + '">+' + v + "%</button>").join("") + "</div>";
 }
 // Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido
 function tagsHtml(scope, k, selected) {
@@ -2098,7 +2150,7 @@ function restHtml(d, i, v, entry, p) {
   const near = REST_OPTS.reduce((a, b) => Math.abs(b - prev) < Math.abs(a - prev) ? b : a, REST_OPTS[0]);
   const r = entry && entry.sets ? recov(entry.sets[i], entry.sets[i + 1], p.sets[i], p.sets[i + 1]) : null;
   const q = cur == null ? "" : cur < prev * 0.75 ? '<span class="rq lo">curto</span>' : cur > prev * 1.5 ? '<span class="rq hi">longo</span>' : '<span class="rq ok">no previsto</span>';
-  return '<div class="rest"><span class="rl">Descanso' + (i === 0 ? infoBtn("descanso_reg") : "") + "</span>" + REST_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === near ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-rest="' + d.k + "|" + i + "|" + sec + '" aria-label="Descanso de ' + fmtSec(sec) + (sec === near ? " (previsto)" : "") + '">' + (sec === 240 ? "4:00+" : fmtSec(sec)) + "</button>").join("") + q +
+  return '<div class="rest"><span class="rl">Descanso' + (i === 0 ? infoBtn("descanso_reg") : "") + "</span>" + REST_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === near ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-rest="' + d.k + "|" + i + "|" + sec + '" aria-label="Descanso de ' + fmtSec(sec) + (sec === near ? " (previsto)" : "") + '">' + (sec === 240 ? "4:00+" : fmtSec(sec)) + "</button>").join("") + (cur != null && !REST_OPTS.includes(cur) ? '<span class="rq meas">⏱ ' + clkFmt(cur) + " cronometrado</span>" : "") + q +
     (r != null ? '<span class="rq ' + (r >= 0.95 ? "ok" : r >= 0.9 ? "mid" : "lo") + '">Recuperação ' + recovTxt(r) + "</span>" : "") + "</div>";
 }
 function dayTimeHtml(W, day, wk) {
@@ -2126,7 +2178,11 @@ function ordemLine(p) {
 const TRANS_OPTS = [60, 90, 120, 180, 240, 300, 420];
 function transHtml(d, entry) {
   const cur = entry && +entry.trans > 0 ? +entry.trans : null;
-  return '<div class="tcard" id="tc-' + d.k + '"><span class="rl">Intervalo até o próximo exercício' + infoBtn("intervalo") + "</span>" + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === 90 ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + "</div>";
+  const defs = EX.filter(x => x.d === d.d), pv = defs[defs.indexOf(d) - 1], c = app.clk;
+  const run = c && c.ph === "trans" && c.W === app.week && pv && c.k === pv.k;
+  const runTxt = run ? '<div class="trun">⏱ ' + (c.fixed != null ? "Intervalo corrigido: <b>" + clkFmt(c.fixed) + "</b>" : 'Intervalo rodando: <b data-clkt>' + clkFmt(clkEl()) + "</b>") + " · fica anotado no exercício que você começar</div>" : "";
+  const meas = cur != null && !TRANS_OPTS.includes(cur) ? '<span class="rq ok">⏱ ' + clkFmt(cur) + " cronometrado</span>" : "";
+  return '<div class="tcard' + (run ? " run" : "") + '" id="tc-' + d.k + '"><span class="rl">Intervalo até o próximo exercício' + infoBtn("intervalo") + "</span>" + runTxt + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === 90 ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + meas + "</div>";
 }
 function exCard(d, p, entry, W) {
   const A = ACT[p.action] || ACT.keep;
@@ -2153,17 +2209,20 @@ function exCard(d, p, entry, W) {
   const trav = (bm.travado || {})[d.k];
   const oldLine = base ? '<div class="old">Sua marca: ' + fmt(base.kg) + " kg × " + base.reps + " · 1RM ~" + fmt(Math.round(e1(base.kg, base.reps) * 10) / 10) + " kg" + infoBtn("fichaant") + "</div>" : "";
   const sug = suggestSets(d, p, entry);
+  const uni = isUni(d);
   const rows = p.sets.map((s, i) => {
     const v = entry && entry.sets && entry.sets[i] ? entry.sets[i] : { kg: null, reps: null, rir: null };
     const lbl = s.kind === "top" ? "Pesada" : s.kind === "back" ? "Back-off " + i : s.kind === "over" ? "Sobrecarga" : "Série " + (i + 1);
     const prevTxt = (s.kg == null ? "carga a definir" : (d.bw && s.kg === 0 ? "corporal" : fmt(s.kg) + " kg")) + " × " + s.tr + " · RIR " + rirTxt(s.rir);
     const g = sug[i];
     const lblInfo = s.kind === "top" ? infoBtn("top") : (s.kind === "back" && i === 1) ? infoBtn("backoff") : s.kind === "over" ? infoBtn("over") : "";
-    return '<tr><td class="lbl"><b>' + lbl + "</b>" + lblInfo + (s.cluster ? " · 2 blocos" + infoBtn("cluster") : "") + '<div class="tgt">Previsto: ' + esc(prevTxt) + " (faixa " + s.lo + "–" + s.hi + ")" + (i === 0 ? infoBtn("faixa") : "") + '</div><div class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '">' + esc(g.note) + '</div><div class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + "</div></td>" +
+    const head = "<b>" + lbl + "</b>" + lblInfo + (s.cluster ? " · 2 blocos" + infoBtn("cluster") : "") + '<div class="tgt">Previsto: ' + esc(prevTxt) + (uni ? " cada lado" : "") + " (faixa " + s.lo + "–" + s.hi + ")" + (i === 0 ? infoBtn("faixa") : "") + '</div><div class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '">' + esc(g.note) + '</div><div class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + "</div>";
+    const restRow = i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "";
+    if (uni) return uniRows(d, i, s, v, lbl, head, g) + restRow;
+    return '<tr><td class="lbl">' + head + "</td>" +
       '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + esc(d.n) + " " + lbl + ' carga feita em kg" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '" placeholder="' + (g.kg == null ? "kg" : fmt(g.kg)) + '"></td>' +
       '<td><input type="number" inputmode="numeric" step="1" aria-label="' + esc(d.n) + " " + lbl + ' repetições feitas" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '" placeholder="' + g.reps + '"></td>' +
-      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>" + '<tr class="prow"><td colspan="4"><div class="execrow"><label class="exec">Execução <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + '|exec" value="' + (v.exec == null ? "" : v.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + '" aria-live="polite">' + mmss(v.exec) + '</span></label>' + (i === 0 ? infoBtn("tempoexec") : "") + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" +
-      (i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "");
+      '<td><select aria-label="' + esc(d.n) + " " + lbl + ' repetições que sobraram" data-set="' + d.k + "|" + i + '|rir">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (v.rir != null && v.rir !== "" && +v.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td></tr>" + '<tr class="tbrow"><td colspan="4">' + clkSetHtml(d, i, v, false) + "</td></tr>" + '<tr class="prow"><td colspan="4"><div class="execrow"><label class="exec">Execução <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + '|exec" value="' + (v.exec == null ? "" : v.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + '" aria-live="polite">' + mmss(v.exec) + '</span></label>' + (i === 0 ? infoBtn("tempoexec") : "") + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
@@ -2174,7 +2233,7 @@ function exCard(d, p, entry, W) {
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
     (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") + ordemLine(p) +
     ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) +
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) + uniToggleHtml(d) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns" style="margin-top:8px"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
     '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
@@ -2649,7 +2708,7 @@ function setTab(tab) {
   app.tab = tab;
   document.querySelectorAll("nav.tabs a").forEach(a => a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false"));
   document.querySelectorAll("section.view").forEach(s => s.classList.toggle("on", s.id === "v-" + tab));
-  document.querySelector(".savebar").classList.toggle("hide", tab !== "semana");
+  clkDock();
   render();
 }
 function renderOnb() {
@@ -2675,6 +2734,243 @@ function routeFromHash() {
   setTab(["perfil", "objetivo", "semana", "proxima", "progresso", "corpo", "plano"].includes(h) ? h : "semana");
 }
 
+// ----- Exercício unilateral: dados de cada lado -----
+function uniDefault(def) { return /unilateral/i.test(def.n) || /cada (perna|braço|lado)/i.test(def.obs || ""); }
+function isUni(def) { const s = ((app.settings || {}).uni || {})[def.k]; return s != null ? !!s : uniDefault(def); }
+function uniSum(s, f) { const L = (s && s.lados) || {}; const v = ["e", "d"].map(n => L[n] && +L[n][f] > 0 ? +L[n][f] : 0); return v[0] + v[1] > 0 ? v[0] + v[1] : null; }
+function uniKg(L, n) { const x = L[n] || {}, o = L[n === "e" ? "d" : "e"] || {}; return x.kg != null && x.kg !== "" ? +x.kg : o.kg != null && o.kg !== "" ? +o.kg : null; }
+function uniScore(L, n, kgDef) { const x = L[n] || {}; if (!(+x.reps > 0)) return null; const kg = uniKg(L, n); return e1(kg != null ? kg : (kgDef || 0), +x.reps + (x.rir != null && x.rir !== "" ? +x.rir : 0) + parcCredit(x)); }
+// A série vale pelo lado mais fraco (empate: o que você marcou como mais difícil)
+function uniAgg(s) {
+  const L = s.lados || {};
+  const kgDef = s.kg != null && s.kg !== "" ? +s.kg : null;
+  s.exec = uniSum(s, "exec");
+  const se = uniScore(L, "e", kgDef), sd = uniScore(L, "d", kgDef);
+  let w = null;
+  if (se != null && sd != null) w = Math.abs(se - sd) < 1e-9 ? (s.dif === "d" ? "d" : "e") : se < sd ? "e" : "d";
+  else if (se != null) w = "e"; else if (sd != null) w = "d";
+  const kgAny = uniKg(L, "e") != null ? uniKg(L, "e") : uniKg(L, "d");
+  if (!w) { if (kgAny != null) s.kg = kgAny; s.reps = null; s.rir = null; s.parc = []; s.fraco = null; return; }
+  const x = L[w];
+  const kg = uniKg(L, w); if (kg != null) s.kg = kg;
+  s.reps = +x.reps; s.rir = x.rir != null && x.rir !== "" ? +x.rir : null; s.parc = Array.isArray(x.parc) ? x.parc.slice() : []; s.fraco = se != null && sd != null ? w : null;
+}
+function uniToggleHtml(d) {
+  const u = isUni(d);
+  return '<div class="unitg"><span class="rl">Execução' + infoBtn("unilateral") + '</span><button type="button" class="rbtn" aria-pressed="' + !u + '" data-uni="' + d.k + '|0">Bilateral</button><button type="button" class="rbtn" aria-pressed="' + u + '" data-uni="' + d.k + '|1">Unilateral (cada lado)</button></div>';
+}
+// Diferença entre os lados no exercício de hoje
+function uniLine(entry) {
+  const rows = (entry && entry.sets ? entry.sets : []).filter(s => s && s.lados);
+  const both = rows.map(s => [uniScore(s.lados, "e", s.kg), uniScore(s.lados, "d", s.kg)]).filter(r => r[0] != null && r[1] != null && r[0] > 0);
+  const difs = rows.filter(s => s.dif === "e" || s.dif === "d" || s.dif === "=");
+  const parts = [];
+  let pct = 0;
+  if (both.length) {
+    const r = both.reduce((a, x) => a + x[1] / x[0], 0) / both.length; pct = Math.round(Math.abs(r - 1) * 100);
+    parts.push(pct < 3 ? "força equilibrada" : (r > 1 ? "direito" : "esquerdo") + " ~" + pct + "% mais forte");
+  }
+  if (difs.length) {
+    const ne = difs.filter(s => s.dif === "e").length, nd = difs.filter(s => s.dif === "d").length;
+    parts.push(ne === nd ? (ne ? "dificuldade dividida" : "mesma dificuldade nos dois lados") : (ne > nd ? "esquerdo" : "direito") + " mais difícil em " + Math.max(ne, nd) + " de " + difs.length + (difs.length > 1 ? " séries" : " série"));
+  }
+  if (!parts.length) return "";
+  return '<div class="old">Lados: ' + parts.join(" · ") + (pct >= 10 ? " · comece pelo lado mais fraco" : "") + infoBtn("unilateral") + "</div>";
+}
+function uniDifHtml(k, i, dif) {
+  return '<div class="unidif"><span class="rl">Mais difícil</span>' + [["e", "Esquerdo"], ["=", "Igual"], ["d", "Direito"]].map(([v, t]) => '<button type="button" class="rbtn" aria-pressed="' + (dif === v) + '" data-unidif="' + k + "|" + i + "|" + v + '">' + t + "</button>").join("") + "</div>";
+}
+// Linhas da série unilateral: esquerdo e direito com carga, reps, RIR; depois execução, parciais e dificuldade
+function uniRows(d, i, s, v, lbl, head, g) {
+  const L = (v && v.lados) || {};
+  const nm = { e: "esquerdo", d: "direito" };
+  const cells = n => {
+    const x = L[n] || {}, o = n === "e" ? "d" : "e", ph = uniKg(L, o) != null ? fmt(uniKg(L, o)) : g.kg == null ? "kg" : fmt(g.kg);
+    return '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + esc(d.n) + " " + lbl + " lado " + nm[n] + ' carga em kg" data-set="' + d.k + "|" + i + "|kg|" + n + '" value="' + (x.kg == null ? "" : x.kg) + '" placeholder="' + ph + '"></td>' +
+      '<td><input type="number" inputmode="numeric" step="1" aria-label="' + esc(d.n) + " " + lbl + " lado " + nm[n] + ' repetições" data-set="' + d.k + "|" + i + "|reps|" + n + '" value="' + (x.reps == null ? "" : x.reps) + '" placeholder="' + g.reps + '"></td>' +
+      '<td><select aria-label="' + esc(d.n) + " " + lbl + " lado " + nm[n] + ' repetições que sobraram" data-set="' + d.k + "|" + i + "|rir|" + n + '">' + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (x.rir != null && x.rir !== "" && +x.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td>";
+  };
+  const ex = n => { const x = L[n] || {}; return '<label class="exec">' + (n === "e" ? "Esq." : "Dir.") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + " lado " + nm[n] + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec|" + n + '" value="' + (x.exec == null ? "" : x.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + "-" + n + '" aria-live="polite">' + mmss(x.exec) + "</span></label>"; };
+  return '<tr class="ue"><td class="lbl">' + head + '<div class="side">Esquerdo</div></td>' + cells("e") + "</tr>" +
+    '<tr class="ud"><td class="lbl"><div class="side">Direito</div></td>' + cells("d") + "</tr>" +
+    '<tr class="tbrow"><td colspan="4"><div id="tbw-' + d.k + "-" + i + '">' + clkSetHtml(d, i, v, true) + "</div></td></tr>" +
+    '<tr class="prow"><td colspan="4"><div class="execrow"><span class="exec">Execução</span>' + ex("e") + ex("d") + (i === 0 ? infoBtn("tempoexec") : "") + "</div>" +
+    '<div class="execrow uparc"><div id="parc-' + d.k + "-" + i + '-e" class="parcwrap">' + parcHtml(d.k, i, (L.e || {}).parc, "e") + '</div><div id="parc-' + d.k + "-" + i + '-d" class="parcwrap">' + parcHtml(d.k, i, (L.d || {}).parc, "d") + "</div></div>" +
+    '<div id="dif-' + d.k + "-" + i + '">' + uniDifHtml(d.k, i, v && v.dif) + "</div></td></tr>";
+}
+// ----- Cronômetro da série: execução → descanso → intervalo entre exercícios -----
+const CLK_KEY = "hexis.clk.v1", CLK_ALERT = 300, CLK_EXEC_MAX = 150;
+function clkLoad() { try { const s = localStorage.getItem(CLK_KEY); app.clk = s ? JSON.parse(s) : null; } catch (e) { app.clk = app.clk || null; } }
+function clkSave() { try { if (app.clk) localStorage.setItem(CLK_KEY, JSON.stringify(app.clk)); else localStorage.removeItem(CLK_KEY); } catch (e) { } }
+function clkEl() { const c = app.clk; return !c ? 0 : c.fixed != null ? c.fixed : Math.max(0, (Date.now() - c.t0) / 1000); }
+function clkFmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function parseMmss(t) { t = String(t == null ? "" : t).trim().replace(",", "."); if (!t) return null; const m = /^(\d+):(\d{1,2})$/.exec(t); if (m) return +m[1] * 60 + +m[2]; const n = Number(t); return isNaN(n) || n < 0 ? null : Math.round(n); }
+function clkCtx(W, k) { const def = EXBY[k]; const pres = computeWeeks(W)[W].pres[k]; return { def, pres, entry: entryFor(W, def.d, k, pres, true) }; }
+function touchW(W, day) { const id = docId(W, day); app.dirty.add(id); setSaveMsg("Alterações não salvas…"); clearTimeout(app.timers[id]); app.timers[id] = setTimeout(() => flush(id), 1200); }
+function clkRecord(W, k, i, field, sec, side) {
+  const { def, pres, entry } = clkCtx(W, k);
+  sec = Math.round(sec);
+  if (field === "trans") entry.trans = sec;
+  else {
+    while (entry.sets.length <= i) entry.sets.push({ kg: null, reps: null, rir: null });
+    if (side) { const s = entry.sets[i]; s.lados = s.lados || {}; s.lados[side] = s.lados[side] || {}; s.lados[side][field] = sec; if (field === "exec") s.exec = uniSum(s, "exec"); }
+    else entry.sets[i][field] = sec;
+  }
+  if (field !== "trans" && entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir }));
+  touchW(W, def.d);
+}
+// Exercícios do dia que ainda faltam (fora o atual)
+function clkLeft(W, day, k) { const doc = getDoc(W, day, false); return EX.filter(d => d.d === day && !d.opt && d.k !== k && !(doc && doc.ex[d.k] && (doc.ex[d.k].st === "feito" || doc.ex[d.k].st === "nao"))).length; }
+function clkName(k) { return EXBY[k].n.split(" (")[0]; }
+let clkAudio = null;
+function clkUnlock() { try { if (!clkAudio) { const A = window.AudioContext || window.webkitAudioContext; if (A) clkAudio = new A(); } if (clkAudio && clkAudio.state === "suspended") clkAudio.resume(); } catch (e) { } }
+function clkBeep() {
+  try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) { }
+  try { if (!clkAudio) return; const t = clkAudio.currentTime; [0, 0.3, 0.6].forEach(d => { const o = clkAudio.createOscillator(), g = clkAudio.createGain(); o.frequency.value = 880; g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.4, t + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.22); o.connect(g); g.connect(clkAudio.destination); o.start(t + d); o.stop(t + d + 0.25); }); } catch (e) { }
+}
+function clkToast(t) {
+  const el = document.getElementById("clkToast"); if (!el || !t) return;
+  el.textContent = t; el.classList.remove("hide"); clearTimeout(app.clkToastT); app.clkToastT = setTimeout(() => el.classList.add("hide"), 6000);
+}
+// Fecha a fase em andamento quando você começa a série (m, j) e anota o que couber
+function clkHandoff(W, m, j, side) {
+  const c = app.clk, msgs = [];
+  if (!c) return msgs;
+  if (c.W !== W || EXBY[c.k].d !== EXBY[m].d) return msgs;
+  const el = clkEl();
+  if (c.ph === "exec" && c.waitSide) { if (c.k === m && c.i === j) return msgs; }
+  else if (c.ph === "exec") {
+    if (c.k === m && c.i === j && (c.side || null) === (side || null)) return msgs;
+    if (el <= CLK_EXEC_MAX) { clkRecord(W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada"); }
+    else msgs.push("execução de " + clkFmt(el) + " não anotada (parecia esquecida)");
+  } else if (c.ph === "rest") {
+    if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
+    else if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
+  } else if (c.ph === "trans") {
+    if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
+    else if (j > 0) { clkRecord(W, m, j - 1, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
+  }
+  if (c.k !== m) { const pe = (getDoc(W, EXBY[c.k].d, false) || { ex: {} }).ex[c.k]; if (!pe || (pe.st !== "feito" && pe.st !== "nao")) msgs.push("lembre de marcar " + clkName(c.k) + " como feito"); }
+  return msgs;
+}
+function clkGo(W, m, j, side) {
+  clkUnlock();
+  const msgs = clkHandoff(W, m, j, side);
+  const { def, entry } = clkCtx(W, m);
+  if (!entry.startAt) { entry.startAt = new Date().toISOString(); touchW(W, def.d); }
+  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: [], ph: "exec", t0: Date.now(), ack: 0 };
+  clkSave(); clkRefresh();
+  if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
+}
+// Depois da execução: unilateral → o outro lado; série com descanso → descanso; última série → intervalo
+function clkAfterExec(c, t0) {
+  const { def, pres, entry } = clkCtx(c.W, c.k);
+  if (isUni(def) && c.side) { const done = (c.done || []).concat(c.side), other = c.side === "e" ? "d" : "e"; if (!done.includes(other)) { app.clk = Object.assign({}, c, { side: other, done, t0, ack: 0, ask: false, fixOpen: false, waitSide: true }); return; } }
+  if (c.i < pres.sets.length - 1) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "rest", prev: restSec(def), t0, ack: 0 };
+  else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", t0, ack: 0 };
+  else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado."); }
+}
+function clkStop() {
+  const c = app.clk; if (!c || c.ph !== "exec") return;
+  if (c.waitSide) return;
+  const el = clkEl();
+  clkRecord(c.W, c.k, c.i, "exec", el, c.side);
+  clkAfterExec(c, Date.now());
+  clkSave(); clkRefresh();
+}
+// "Feito" no cartão: o intervalo até o próximo exercício começa (do fim da última série, se cronometrada)
+function clkOnDone(W, k) {
+  const c = app.clk, def = EXBY[k];
+  const live = W === app.curW && isoDate(dayDate(W, def.d)) === todayStr();
+  if (c && c.W === W && c.k === k) {
+    if (c.ph === "trans") return;
+    let t0 = c.t0;
+    if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= CLK_EXEC_MAX) clkRecord(W, k, c.i, "exec", el, c.side); t0 = Date.now(); } }
+    app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", t0, ack: 0 };
+  } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", t0: Date.now(), ack: 0 };
+  else return;
+  if (!clkLeft(W, def.d, k)) app.clk = null;
+  clkSave();
+}
+// Anotou carga ou reps em outro exercício durante o intervalo: você já está no próximo
+function clkOnInput(W, k) {
+  const c = app.clk;
+  if (!c || c.ph !== "trans" || c.W !== W || c.k === k || EXBY[k].d !== c.day) return;
+  const e = (getDoc(W, c.day, false) || { ex: {} }).ex[k];
+  if (e && (e.st === "feito" || e.st === "nao" || +e.trans > 0)) return;
+  clkRecord(W, k, null, "trans", clkEl());
+  const msg = "Intervalo " + clkFmt(clkEl()) + " anotado em " + clkName(k) + ".";
+  app.clk = null; clkSave(); clkBar();
+  const box = document.getElementById("tc-" + k); if (box) box.outerHTML = transHtml(EXBY[k], e || clkCtx(W, k).entry);
+  const pv = document.querySelector(".tcard.run"); if (pv) { const pk = pv.id.slice(3); pv.outerHTML = transHtml(EXBY[pk], (getDoc(W, c.day, false) || { ex: {} }).ex[pk]); }
+  clkToast(msg); updateDayTime();
+}
+function clkAct(a) {
+  const c = app.clk;
+  if (a.startsWith("go|")) { const [, k, i, sd] = a.split("|"); clkGo(app.week, k, +i, sd || null); return; }
+  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
+  if (!c) return;
+  if (a === "stop") { clkStop(); return; }
+  if (a === "side") { if (c.waitSide) { c.waitSide = false; c.t0 = Date.now(); c.ack = 0; clkSave(); clkRefresh(); } return; }
+  if (a === "next") { clkGo(c.W, c.k, c.i + 1, null); return; }
+  if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
+  if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
+  if (a === "drop") { app.clk = null; clkSave(); clkRefresh(); clkToast("Tempo descartado."); return; }
+  if (a === "fix") { c.fixOpen = true; clkSave(); clkBar(); const i = document.getElementById("clkFixIn"); if (i) { i.focus(); i.select(); } return; }
+  if (a === "fixok") {
+    const s = parseMmss((document.getElementById("clkFixIn") || {}).value);
+    if (s == null || (c.ph !== "exec" && !(s > 0))) { const i = document.getElementById("clkFixIn"); if (i) i.focus(); return; }
+    if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
+    else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
+    else { c.fixed = s; c.ask = false; c.fixOpen = false; }
+    clkSave(); clkRefresh(); clkToast("Tempo corrigido para " + clkFmt(s) + "."); return;
+  }
+}
+function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); }
+// Barra embaixo de cada série (unilateral: um lado, troca, o outro lado)
+function clkSetHtml(d, i, v, uni) {
+  const c = app.clk;
+  const on = c && c.W === app.week && c.k === d.k && c.i === i;
+  const id = "tb-" + d.k + "-" + i;
+  const lado = s => s === "e" ? " · esquerdo" : s === "d" ? " · direito" : "";
+  if (on && c.ph === "exec" && c.waitSide) return '<div class="clk wait" id="' + id + '"><span class="clkt"><b>Troca de lado</b> <span class="muted" data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="side">▶ Iniciar lado ' + (c.side === "e" ? "esquerdo" : "direito") + "</button></div>";
+  if (on && c.ph === "exec") return '<div class="clk run ex" id="' + id + '"><span class="clkfill"></span><span class="clkt"><b>Execução</b>' + lado(c.side) + ' <span class="clkn" data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop">⏸ Parar e registrar</button></div>';
+  if (on && c.ph === "rest") { const el = clkEl(); return '<div class="clk run rs' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Descanso</b> <span class="clkn" data-clkt>' + clkFmt(el) + '</span> <span class="muted">/ ' + clkFmt(c.prev) + '</span></span><button type="button" class="btn small primary" data-clk="next">▶ Próxima série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>'; }
+  const L = (v && v.lados) || {};
+  const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") : v && +v.exec > 0 ? clkFmt(v.exec) + " execução" : "";
+  const ds = v && +v.desc > 0 ? clkFmt(v.desc) + " descanso" : "";
+  const sum = ex || ds ? '<span class="clks">⏱ ' + [ex, ds].filter(Boolean).join(" · ") + "</span>" : '<span class="clks muted">' + (uni ? "cronometra cada lado e o descanso" : "cronometra execução e descanso") + "</span>";
+  const first = uni ? (L.e && +L.e.exec > 0 && !(L.d && +L.d.exec > 0) ? "d" : "e") : "";
+  return '<div class="clk" id="' + id + '">' + sum + '<button type="button" class="btn small clkgo" data-clk="go|' + d.k + "|" + i + (first ? "|" + first : "") + '" aria-label="Iniciar o cronômetro da ' + (i + 1) + "ª série" + lado(first) + '">▶ ' + (ex ? "De novo" : uni ? "Iniciar " + (first === "d" ? "lado dir." : "lado esq.") : "Iniciar série") + "</button>" + (i === 0 ? infoBtn("cronometro") : "") + "</div>";
+}
+// Barra fixa embaixo da tela enquanto o cronômetro roda
+function clkBar() {
+  const box = document.getElementById("clkbar"); if (!box) return;
+  const c = app.clk;
+  if (!c || !EXBY[c.k]) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
+  box.classList.remove("hide"); clkDock();
+  const el = clkEl(), lado = c.side ? (c.side === "e" ? " · lado esquerdo" : " · lado direito") : "";
+  const lbl = c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
+  const btns = c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
+    : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
+    : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
+  let h = '<div class="clkb ' + c.ph + (c.ask ? " ask" : "") + '"><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(clkName(c.k)) + '</span></button><span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  if (c.ask) {
+    const plan = c.ph === "exec" ? EXEC_DEF : c.ph === "rest" ? c.prev : 90;
+    h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +
+      '<div class="row-btns"><button type="button" class="btn small" data-clk="keep">Continuar</button><button type="button" class="btn small no" data-clk="drop">Descartar</button><button type="button" class="btn small primary" data-clk="fix">Corrigir</button></div>' +
+      (c.fixOpen ? '<div class="clkfix"><label>Tempo certo <input id="clkFixIn" type="text" inputmode="numeric" value="' + plan + '" placeholder="1:30 ou 90" aria-label="Tempo certo em segundos ou minutos:segundos"></label><span class="exmm" id="clkFixMm">' + mmss(plan) + '</span><button type="button" class="btn small primary" data-clk="fixok">Salvar</button></div>' : "") + "</div>";
+  }
+  box.innerHTML = h;
+}
+function clkTick() {
+  const c = app.clk; if (!c) return;
+  const el = clkEl(), t = clkFmt(el);
+  document.querySelectorAll("[data-clkt]").forEach(x => { if (x.textContent !== t) x.textContent = t; });
+  if (c.ph === "rest" && c.prev) document.querySelectorAll(".clk.rs").forEach(x => { x.style.setProperty("--p", Math.min(1, el / c.prev).toFixed(3)); x.classList.toggle("ok", el >= c.prev); });
+  if (c.fixed == null && !c.ask && Math.floor(el / CLK_ALERT) > (c.ack || 0)) { c.ask = true; clkSave(); clkBar(); clkBeep(); }
+}
+function clkDock() { const sb = document.querySelector(".savebar"); if (!sb) return; const sem = app.tab === "semana"; sb.classList.toggle("hide", !sem && !app.clk); sb.classList.toggle("only-clk", !sem); document.body.classList.toggle("clk-on", !!app.clk); }
 // ----- Edição e salvamento -----
 function currentPres(k) { const weeks = computeWeeks(app.week); return weeks[app.week].pres[k]; }
 function touch(day) {
@@ -2768,6 +3064,20 @@ document.addEventListener("click", ev => {
     app.tagForm = null; saveSettings(); renderWeek(); return;
   }
   if (b.dataset.tagdel) { app.settings.tags = userTags().filter(c => c.id !== b.dataset.tagdel); saveSettings(); renderWeek(); return; }
+  if (b.dataset.clk) { clkAct(b.dataset.clk); return; }
+  if (b.dataset.uni) { const [uk, uv] = b.dataset.uni.split("|"); app.settings.uni = Object.assign({}, app.settings.uni || {}); app.settings.uni[uk] = uv === "1"; saveSettings(); renderWeek(); return; }
+  if (b.dataset.unidif) {
+    const [dk, di, dv] = b.dataset.unidif.split("|");
+    const def = EXBY[dk]; const pres = currentPres(dk);
+    const entry = entryFor(app.week, def.d, dk, pres, true);
+    while (entry.sets.length <= +di) entry.sets.push({ kg: null, reps: null, rir: null });
+    const set = entry.sets[+di]; set.dif = set.dif === dv ? null : dv; uniAgg(set);
+    if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir }));
+    touch(def.d);
+    const box = document.getElementById("dif-" + dk + "-" + di); if (box) box.innerHTML = uniDifHtml(dk, +di, set.dif);
+    const ul = document.getElementById("ul-" + dk); if (ul) ul.innerHTML = uniLine(entry);
+    updateHints(dk); return;
+  }
   if (b.dataset.trans) {
     const [tk, tsec] = b.dataset.trans.split("|");
     const def = EXBY[tk]; const pres = currentPres(tk);
@@ -2790,32 +3100,37 @@ document.addEventListener("click", ev => {
     updateDayTime(); return;
   }
   if (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel) {
-    const [pk, pi, pv] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
+    const [pk, pi, pv, ps] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
     const def = EXBY[pk]; const pres = currentPres(pk);
-    if (b.dataset.parcopen) { app.parcOpen.add(pk + "|" + pi); }
+    const okey = pk + "|" + pi + (ps ? "|" + ps : "");
+    if (b.dataset.parcopen) { app.parcOpen.add(okey); }
     else {
       const entry = entryFor(app.week, def.d, pk, pres, true);
       while (entry.sets.length <= +pi) entry.sets.push({ kg: null, reps: null, rir: null });
       const set = entry.sets[+pi];
-      set.parc = Array.isArray(set.parc) ? set.parc : [];
+      if (ps) { set.lados = set.lados || {}; set.lados[ps] = set.lados[ps] || {}; }
+      const tgt = ps ? set.lados[ps] : set;
+      tgt.parc = Array.isArray(tgt.parc) ? tgt.parc : [];
       if (b.dataset.parcadd) {
-        set.parc.push(+pv);
-        if (set.rir == null || set.rir === "") { set.rir = 0; const sel = document.querySelector('[data-set="' + pk + "|" + pi + '|rir"]'); if (sel) sel.value = "0"; }
-      } else set.parc.splice(+pv, 1);
-      app.parcOpen.add(pk + "|" + pi);
+        tgt.parc.push(+pv);
+        if (tgt.rir == null || tgt.rir === "") { tgt.rir = 0; const sel = document.querySelector('[data-set="' + pk + "|" + pi + "|rir" + (ps ? "|" + ps : "") + '"]'); if (sel) sel.value = "0"; }
+      } else tgt.parc.splice(+pv, 1);
+      if (ps) { uniAgg(set); const ul = document.getElementById("ul-" + pk); if (ul) ul.innerHTML = uniLine(entry); }
+      app.parcOpen.add(okey);
       if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(x => ({ kg: x.kg, reps: x.tr, faixa: [x.lo, x.hi], rir: x.rir }));
       touch(def.d); updateHints(pk);
     }
-    const box = document.getElementById("parc-" + pk + "-" + pi);
+    const box = document.getElementById("parc-" + pk + "-" + pi + (ps ? "-" + ps : ""));
     const entry2 = entryFor(app.week, def.d, pk, pres, false);
-    if (box) box.innerHTML = parcHtml(pk, +pi, entry2 && entry2.sets && entry2.sets[+pi] ? entry2.sets[+pi].parc : []);
+    const s2 = entry2 && entry2.sets && entry2.sets[+pi] ? entry2.sets[+pi] : {};
+    if (box) box.innerHTML = parcHtml(pk, +pi, ps ? ((s2.lados || {})[ps] || {}).parc : s2.parc, ps);
     return;
   }
   const k = b.dataset.done || b.dataset.skip || b.dataset.addset;
   if (!k) return;
   const def = EXBY[k]; const pres = currentPres(k);
   const entry = entryFor(app.week, def.d, k, pres, true);
-  if (b.dataset.done) { if (entry.st === "feito") { entry.st = null; delete entry.doneAt; } else { entry.st = "feito"; entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); } }
+  if (b.dataset.done) { if (entry.st === "feito") { entry.st = null; delete entry.doneAt; } else { entry.st = "feito"; entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); clkOnDone(app.week, k); clkBar(); } }
   else if (b.dataset.skip) { entry.st = entry.st === "nao" ? null : "nao"; }
   else { const last = entry.sets[entry.sets.length - 1] || { kg: pres.load, reps: pres.sets[0].tr }; entry.sets.push({ kg: last.kg, reps: last.reps, rir: null }); }
   touch(def.d);
@@ -2825,16 +3140,19 @@ document.addEventListener("input", ev => {
   const el = ev.target;
   if (el.id === "qwKg") { app.qwTyping = true; return; }
   if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; }
+  if (el.id === "clkFixIn") { const m = document.getElementById("clkFixMm"); if (m) m.textContent = mmss(parseMmss(el.value)); return; }
   if (el.dataset.set) {
-    const [k, i, f] = el.dataset.set.split("|");
+    const [k, i, f, sd] = el.dataset.set.split("|");
     const def = EXBY[k]; const pres = currentPres(k);
     const entry = entryFor(app.week, def.d, k, pres, true);
     while (entry.sets.length <= +i) entry.sets.push({ kg: null, reps: null, rir: null });
     const v = el.value === "" ? null : Number(el.value);
-    entry.sets[+i][f] = v;
+    if (sd) { const st = entry.sets[+i]; st.lados = st.lados || {}; st.lados[sd] = st.lados[sd] || {}; st.lados[sd][f] = v; uniAgg(st); const ul = document.getElementById("ul-" + k); if (ul) ul.innerHTML = uniLine(entry); }
+    else entry.sets[+i][f] = v;
+    if (v != null && (f === "kg" || f === "reps")) clkOnInput(app.week, k);
     if (v != null && !entry.startAt && (f === "kg" || f === "reps")) entry.startAt = new Date().toISOString();
     if (entry.st !== "feito" && entry.st !== "nao") entry.prev = pres.sets.map(s => ({ kg: s.kg, reps: s.tr, faixa: [s.lo, s.hi], rir: s.rir }));
-    if (f === "exec") { const mm = document.getElementById("exmm-" + k + "-" + i); if (mm) mm.textContent = mmss(v); }
+    if (f === "exec") { const mm = document.getElementById("exmm-" + k + "-" + i + (sd ? "-" + sd : "")); if (mm) mm.textContent = mmss(v); }
     touch(def.d);
     updateHints(k);
   } else if (el.dataset.note) {
@@ -3017,9 +3335,12 @@ async function startSession(session) {
 
 initBodyForm();
 initDates();
+clkLoad();
 updateQW();
 routeFromHash();
 connect();
+clkBar(); setInterval(clkTick, 500);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) clkTick(); });
 </script>
 </body>
 </html>
