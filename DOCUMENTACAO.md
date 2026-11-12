@@ -60,7 +60,7 @@ Cada aba é uma `<section class="view">`. Só a aba aberta fica visível.
 - `v-proxima`: Próxima semana
 - `v-progresso`: Progresso (gráficos)
 - `v-corpo`: Corpo e dieta
-- `v-diario`: Diário de substâncias e exames (registro pessoal)
+- `v-diario`: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames)
 - `v-plano`: Plano e regras
 
 Fora das abas ficam: o cabeçalho com o logo, o botão **Hoje** (`#hojeBtn`) e as subabas (`#subnav`), o painel flutuante Hoje (`#hoje`, com o treino do dia, os números principais e a pesagem diária), a barra de navegação de baixo (`#bnav`), a barra de salvar com o cronômetro (`.savebar`, `#clkbar`) e a janela de explicação (`#pop`).
@@ -74,7 +74,7 @@ A barra de baixo tem 5 grupos; cada grupo pode ter subabas no topo. Tudo sai da 
 | Início | Início |
 | Treino | Semana · Próxima semana |
 | Resumo | Resumo do dia |
-| Evolução | Progresso · Corpo e dieta · Diário |
+| Evolução | Progresso · Corpo e dieta · Hormônios |
 | Você | Perfil · Objetivo · Plano e regras |
 
 ## 3. Como os dados são guardados
@@ -87,13 +87,13 @@ Cada item é um documento separado, com um caminho:
 | `corpo/2026-11-10` | Pesagem e medidas de um dia |
 | `meta/perfil` | Perfil e Objetivo |
 | `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas e quais exercícios são unilaterais |
-| `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Diário: substância, aplicação e exame |
+| `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Hormônios e peptídeos: substância, aplicação e exame |
 | `fotos/2026-11-12-…` | Registro de uma foto: data, tipo (`treino` ou `evolucao`) e onde o arquivo está |
 
 Dentro de um dia, `ex` tem um registro por exercício:
 
-- `ex.A1 = { st, sets, nota, tags, trans, startAt, doneAt, prev, aq, aqT }`
-  - `st`: `"feito"`, `"nao"` ou vazio. `trans`: intervalo antes do exercício, em segundos. `startAt` e `doneAt`: horários usados para descobrir a ordem feita. `prev`: o que estava previsto quando o exercício foi feito. `aq`: séries de aquecimento marcadas. `aqT`: tempo do aquecimento, em segundos.
+- `ex.A1 = { st, sets, nota, tags, trans, startAt, doneAt, prev, aq, aqT, aqD }`
+  - `st`: `"feito"`, `"nao"` ou vazio. `trans`: intervalo antes do exercício, em segundos. `startAt` e `doneAt`: horários usados para descobrir a ordem feita. `prev`: o que estava previsto quando o exercício foi feito. `aq`: séries de aquecimento marcadas. `aqT`: tempo cronometrado do aquecimento (séries e trocas de peso), em segundos. `aqD`: descanso entre o fim do aquecimento e a 1ª série válida, em segundos (0 quando esse descanso já está dentro de `aqT`).
 - `sets[i] = { kg, reps, rir, parc, exec, desc, lados, dif }`
   - `parc`: repetições parciais, em % do movimento. `exec`: tempo de execução (s). `desc`: descanso depois da série (s).
   - `lados`: dados de cada lado (`e`, `d`) no exercício unilateral. `dif`: lado mais difícil.
@@ -126,7 +126,7 @@ Por isso corrigir um registro antigo corrige sozinho todas as semanas seguintes.
 
 ## 5. Parâmetros ajustáveis
 
-São 39 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
+São 43 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
 
 **Plano**
 
@@ -161,7 +161,9 @@ São 39 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `EXEC_DEF` | `40` | segundos de execução por série, quando não anotado |
 | `TRANS_DEF` | `90` | segundos de intervalo entre exercícios, quando não anotado |
 | `AQUEC_SEC` | `300` | aquecimento geral no começo do treino |
-| `WARM_SEC` | `45` | cada série de aquecimento do exercício (quando não foi cronometrada) |
+| `WARM_EXEC` | `20` | execução de uma série de aquecimento (carga leve ou poucas repetições) |
+| `WARM_PAUSA` | `[[0.6, 30], [1, 60]]` | pausa depois de uma série de aquecimento, pela fração da carga do dia: até 60%, só a troca de peso (30 s); acima, 1 min |
+| `WARM_ANTES` | `[[0.6, 60], [1, 120]]` | descanso entre a última série de aquecimento e a 1ª válida, pela fração da última: leve 1 min; pesada 2 min |
 | `CLK_WARM_MAX` | `900` | aquecimento acima de 15 min no cronômetro é tratado como esquecido |
 | `REST_OPTS` | `[30, 45, 60, 90, 120, 150, 180, 240]` | botões de descanso entre séries |
 | `TRANS_OPTS` | `[60, 90, 120, 180, 240, 300, 420]` | botões de intervalo entre exercícios |
@@ -179,6 +181,8 @@ São 39 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `CLK_EXEC_MAX` | `150` | execução acima de 2:30 é tratada como esquecida |
 | `FOTO_MAX` | `1280` | lado maior da foto enviada, em pixels (fotos maiores são reduzidas) |
 | `DJ_ATRAS` | `60, DJ_FRENTE = 30` | curva do diário: dias para trás e para a frente |
+| `DJ_EQUIL` | `5` | meias-vidas até o nível estabilizar com doses repetidas (e até a substância praticamente sair depois da última dose) |
+| `DJ_HT_ALERTA` | `54` | hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar |
 | `WAKE_KEY` | `"hexis.wake"` | preferência "tela acesa durante o cronômetro", guardada no aparelho |
 | `CLK_SEG_REP` | `4` | segundos por repetição, para a barra de execução |
 
@@ -266,7 +270,7 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | `transition()` | Transição: o que a semana w ensinou para a semana w+1 |
 | `transitionCore()` | Regras da progressão, na ordem em que valem: sem registro → não feito → carga nova → semana leve → dor → ajuda → carga fixa → pesada demais → semana fora do normal → fácil → reset em onda → topo da faixa → destrave funcionou → progrediu → abaixo da faixa → platô (destraves) |
 | `belowSet()` | Série abaixo do previsto: força da série feita < 97,5% da força exigida pelo piso da faixa na carga prevista |
-| `suggestSets()` | Ajuste fino entre séries do mesmo exercício (autorregulação por RIR, como no powerlifting) |
+| `suggestSets()` | Ajuste fino entre séries do mesmo exercício (autorregulação por RIR, como no powerlifting). A nota aparece sempre que a série anterior foi anotada: ▲ subir, ▼ baixar, ● manter |
 | `metricOf()` | Medida de desempenho do exercício: melhor força estimada entre as séries (peso do corpo: total de repetições) |
 | `missed()` | Exercício não feito: repete a prescrição; na 2ª semana seguida, volta com 5% a menos |
 | `howFor()` | Texto de como aplicar cada técnica de destrave |
@@ -312,6 +316,9 @@ Descanso previsto e feito, recuperação entre séries, duração do treino e or
 | `recovTxt()` | Recuperação em texto: 96% · boa |
 | `restFlags()` | Descanso médio do exercício e se foi curto (abaixo de 75% do previsto) |
 | `warmDone()` | Quantas séries de aquecimento foram marcadas (null = nenhuma marcação feita) |
+| `warmGap()` | Pausa em segundos depois de uma série de aquecimento feita com a fração f da carga (tab = WARM_PAUSA ou WARM_ANTES) |
+| `warmTime()` | Tempo do aquecimento de um exercício: serie = execuções e pausas entre elas; antes = descanso até a 1ª válida. marks = séries marcadas (null = todas) |
+| `pausaTxt()` | Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min |
 | `dayTime()` | Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado |
 | `dayOrder()` | Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha |
 | `recOf()` | Registro de um exercício em uma semana |
@@ -341,6 +348,7 @@ Campos do Perfil e do Objetivo e os cálculos que saem deles: gordura, metabolis
 | `OPT` | Opções de um campo de escolha, com a opção vazia na frente |
 | `PF_PERFIL` | Campos da aba Perfil, por seção: [chave, rótulo, tipo, opções] |
 | `PF_OBJ` | Campos da aba Objetivo |
+| `OWNER_PERFIL` | Perfil inicial do dono do app (usado só antes do primeiro salvamento) |
 | `OBJ_NOME` | Nome da fase conforme o objetivo |
 | `num` | Converte para número; vazio ou inválido vira null |
 | `r50` | Arredonda para múltiplos de 50 |
@@ -451,7 +459,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 | `dayStatus()` | Situação do dia: feito, parcial, não feito ou pendente |
 | `renderDay()` | Treino do dia: cartões dos exercícios, intervalos, cardio, tempo e observações do dia |
 | `warmPlan()` | Séries de aquecimento do exercício: [fração da carga, repetições]; nenhuma se o músculo já foi aquecido antes |
-| `warmHtml()` | Aquecimento do cartão, com controle próprio: cada série vira um botão de marcar e o bloco tem cronômetro |
+| `warmHtml()` | Aquecimento do cartão, com controle próprio: cada série é um botão de marcar, seguido da pausa indicada; o bloco tem cronômetro e a contagem do descanso antes da 1ª válida |
 | `parcHtml()` | Repetições parciais da série: chips (toque remove) e botões de 25/50/75% |
 | `tagsHtml()` | Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido |
 | `exFlags()` | Sinais das observações do exercício (texto, blocos e descanso) |
@@ -584,11 +592,12 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkStop()` | Para a execução, anota o tempo e passa para a fase seguinte |
 | `clkOnDone()` | "Feito" no cartão: o intervalo até o próximo exercício começa (do fim da última série, se cronometrada) |
 | `clkOnInput()` | Anotou carga ou reps em outro exercício durante o intervalo: você já está no próximo |
-| `clkAct()` | Trata os botões do cronômetro: go, stop, side, next, end, see, keep, drop, fix e fixok |
+| `clkAct()` | Trata os botões do cronômetro: go, warm, first, stop, side, next, end, see, keep, drop, fix e fixok |
 | `clkRefresh()` | Redesenha as barras do cronômetro |
 | `clkRing()` | Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos |
 | `clkPlan()` | Tempo previsto da fase atual, para a barra de progresso |
-| `clkWarmRec()` | Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas |
+| `clkWarmRec()` | Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas. antes = 0 quando o descanso até a 1ª válida já está dentro desse tempo |
+| `clkPreRec()` | Grava o descanso entre o fim do aquecimento e a 1ª série válida |
 | `clkWarm()` | Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando) |
 | `clkFrame()` | Um quadro da animação: enche a barra e gira o ponteiro |
 | `clkAnim()` | Liga a animação se houver cronômetro rodando |
@@ -673,26 +682,31 @@ Fotos do treino e de evolução, a imagem do resumo para compartilhar e a grava�
 | `fotoDel()` | Apagar foto: o primeiro toque pede confirmação no próprio botão; o segundo apaga |
 | `loadImg()` | Carrega uma imagem para desenhar no canvas |
 | `shareDraw()` | Desenha a imagem (1080 × 1350) com os números do dia e, se houver, a foto do treino no topo |
-| `sharePrep()` | 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou baixa. O envio precisa de um toque próprio para o celular permitir. |
-| `shareAct()` | Botões de compartilhar: preparar a prévia, fechar e enviar |
+| `sharePrep()` | 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou salva. O envio precisa de um toque próprio para o celular permitir. Salvar usa app.salvar, ligado na conexão; onde ele não existe, a saída é segurar o dedo sobre a imagem. |
+| `shareAct()` | Botões de compartilhar: preparar a prévia, fechar, enviar e salvar |
 
-### 23. Diário de substâncias e exames
+### 23. Hormônios e peptídeos
 
-A aba Diário: substâncias, aplicações, calendário, curva pela meia-vida informada e exames. O app só guarda e mostra; não sugere nada.
+A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, aplicações, calendário, controle de doses, curva pela meia-vida e exames.
 
 | Dado | O que guarda |
 | --- | --- |
 | `DJ_MARC` | Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra. |
+| `DJ_GRUPOS` | Grupos da referência: chave, título e a situação comum do grupo |
+| `DJ_REF` | Referência para estudo. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a bula traz um valor único (senão null) · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte |
 
 | Função | O que faz |
 | --- | --- |
+| `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
+| `djRefHtml()` | Painel da referência: um bloco recolhível por grupo, com um cartão por substância, mais as notas de leitura, exames e regras |
+| `djCtrlHtml()` | Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida |
 | `djList()` | Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome) |
 | `djLevel()` | Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue. |
 | `djNext()` | Próxima aplicação prevista: a última mais o intervalo informado (dias) |
 | `djCalHtml()` | Calendário do mês: ponto cheio = aplicação feita; ponto vazado = próxima prevista |
 | `djDelBtn()` | Botão de apagar com confirmação no segundo toque |
-| `renderDiario()` | Desenha a aba Diário: substâncias, calendário, aplicações, curva estimada e exames |
-| `djAct()` | Ações do diário: trocar o mês do calendário, apagar (com confirmação) e salvar substância, aplicação ou exame |
+| `renderDiario()` | Desenha a aba Hormônios e peptídeos: referência, substâncias, calendário, aplicações, controle de doses, curva estimada e exames |
+| `djAct()` | Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar substância, aplicação ou exame |
 
 ### 24. Edição e salvamento
 
@@ -723,20 +737,9 @@ Tudo o que acontece quando você toca ou digita, e a gravação dos dados.
 
 Login e ligação com o banco de dados: carrega os dados da pessoa e grava cada mudança.
 
-| Dado | O que guarda |
-| --- | --- |
-| `SB_URL`, `SB_KEY` | Endereço do projeto no Supabase e a chave pública (feita para ficar no navegador; quem protege os dados são as regras da tabela) |
-| `sb` | Cliente do Supabase (criado em connect) |
-
 | Função | O que faz |
 | --- | --- |
-| `makeDb()` | Mesma interface de coleções e documentos que o app usa: dados carregados de uma vez e gravados um a um |
-| `lgSay()` | Mensagem da tela de login |
-| `lgErr()` | Erro do login em português |
-| `showLogin()`, `hideLogin()` | Mostra e esconde a tela de login |
-| `lgGo()` | Entrar (criar = false) ou criar conta (criar = true) com e-mail e senha |
-| `connect()` | Liga no Supabase e espera a sessão: com login, abre os dados; sem login, mostra a tela de entrada |
-| `startSession()` | Sessão aberta: carrega os dados da pessoa e liga as telas |
+| `connect()` | Dono: dados na raiz (como antes). Outras pessoas: espaço privado data/users/<id>/app/, que nem o dono lê. |
 
 ### 26. Partida
 
@@ -811,9 +814,13 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run22` | Parcial com porcentagem livre, descanso previsto e tela acesa |
 | `run23` | Blocos do ano: semanas, ajuste de carga na troca de faixa, séries dos prioritários e semanas leves |
 | `run25` | Gráficos de execução, parciais, lados e descanso por exercício |
-| `run26` | Diário: substâncias, aplicações, curva, exames e apagar |
+| `run26` | Hormônios e peptídeos: substâncias, aplicações, curva, exames e apagar |
 | `run27` | Aquecimento: marcar séries, cronômetro e tempo do treino |
+| `run28` | Aquecimento: pausas indicadas, descanso antes da 1ª série (anotar, encerrar, corrigir) e tempo do treino |
+| `run29` | Ajuste de carga entre as séries: subir, baixar, manter e preenchimento ao marcar Feito |
+| `run30` | Referência de hormônios e peptídeos, cópia para o cadastro, controle de doses e alerta de hematócrito |
 | `tbudget` | Duração prevista de cada dia de treino |
+| `tbudget2` | Maior duração prevista de cada dia ao longo das 60 semanas |
 | `cmp.sh` | Compara a saída de todos os testes antes e depois de uma reorganização do código |
 | `inv.py` | Lista funções, textos e estilos sem uso |
 

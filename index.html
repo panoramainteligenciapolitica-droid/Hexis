@@ -310,7 +310,8 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 body.clk-on .wrap { padding-bottom: 200px; }
 #clkbar { border-bottom: 1px solid var(--line); }
 .clkb { position: relative; max-width: 760px; margin: 0 auto; padding: 10px 16px 8px; display: flex; align-items: center; gap: 8px; }
-.clkb.exec { color: var(--accent); } .clkb.rest, .clkb.trans { color: var(--deload); }
+.clkb.exec { color: var(--accent); } .clkb.rest, .clkb.pre, .clkb.trans { color: var(--deload); }
+.clkb .btn { flex: none; white-space: nowrap; }
 .clkline { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: color-mix(in srgb, currentColor 15%, transparent); overflow: hidden; }
 .clkline .clkfill { position: absolute; top: 0; bottom: 0; left: 0; background: currentColor; }
 .clkline.over .clkfill { width: 100%; }
@@ -461,6 +462,9 @@ input, select, textarea { transition: border-color .18s, box-shadow .18s, backgr
 .warm .wqrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
 .warm .clk.wq { display: inline-flex; margin: 0; padding: 3px 6px 3px 8px; flex: 1 1 180px; }
 .warm .clk.wq .clkn { flex: 1 1 auto; }
+.warm .clk.wq.pre .clkn { flex: none; }
+.warm .wqp { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.warm .wqd { margin: 6px 0 0; font-size: 13px; line-height: 1.35; }
 .hd-r { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .hojebtn { flex: none; min-height: 36px; padding: 4px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font: inherit; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color .18s, transform .1s; -webkit-tap-highlight-color: transparent; }
 .hojebtn:active { transform: scale(.94); }
@@ -491,6 +495,16 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
 .dot.c1 { background: var(--series-2); color: var(--series-2); } .dot.c2 { background: var(--up); color: var(--up); } .dot.c3 { background: var(--deload); color: var(--deload); } .dot.c4 { background: var(--new); color: var(--new); }
 .dot.nx { background: transparent; box-shadow: inset 0 0 0 2px currentColor; }
 .djleg { margin: 8px 0 12px; font-size: 13px; }
+.djr { margin: 10px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+.djr-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.djr dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0 0 6px; font-size: 14px; }
+.djr dt { color: var(--muted); } .djr dd { margin: 0; }
+.djr p { margin: 0 0 8px; font-size: 13px; line-height: 1.35; }
+.djsit { margin: 8px 0; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.djsit.no { color: var(--down); font-weight: 600; }
+.djn { margin: 8px 0 4px; padding-left: 18px; font-size: 14px; line-height: 1.4; }
+.djn li { margin-bottom: 6px; }
+#djRef details.pfsec { border-top: 1px solid var(--line); padding: 6px 0; }
 .verdict { margin: 4px 0 12px; padding: 10px 12px; border-radius: 10px; font-size: 15px; background: var(--surface-2); border-left: 4px solid var(--muted); }
 .verdict.up { border-left-color: var(--up); background: color-mix(in srgb, var(--up) 9%, var(--surface)); }
 .verdict.lo { border-left-color: var(--down); background: color-mix(in srgb, var(--down) 9%, var(--surface)); }
@@ -767,18 +781,27 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     <div id="fotosEvo"></div>
   </section>
 
-  <!-- Tela: Diário de substâncias e exames (registro pessoal) -->
+  <!-- Tela: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames) -->
   <section class="view" id="v-diario">
-    <div class="banner warn"><b>Registro pessoal, para estudo e acompanhamento.</b> Não é prescrição nem orientação de uso. O app não sugere substância, dose nem esquema: só guarda e mostra o que você anotar. Decisões sobre hormônios e peptídeos são suas e do seu médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: diário">i</button></div>
+    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> Não é prescrição nem orientação de uso. O app não sugere substância, dose nem esquema: a referência reúne dados de bula e de estudos publicados, e o resto é o que você anotar. Hormônios e peptídeos só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
+    <div class="panel">
+      <h2>Hormônios e peptídeos</h2>
+      <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (meia-vida, via e intervalo de bula), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
+    </div>
+    <div class="panel">
+      <h2>Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h2>
+      <p class="lead">Dados de bula e de estudos em humanos. Servem para entender o que você registra; não indicam o que usar nem quanto.</p>
+      <div id="djRef"></div>
+    </div>
     <div class="panel">
       <h2>Substâncias</h2>
       <div id="djSubs"></div>
-      <details class="pfsec sub"><summary><h3>Cadastrar substância</h3></summary>
+      <details class="pfsec sub" id="djSubForm"><summary><h3>Cadastrar substância</h3></summary>
         <div class="grid2">
           <div class="field wide"><label for="djSubNome">Nome</label><input id="djSubNome" type="text" autocomplete="off"></div>
           <div class="field"><label for="djSubUn">Unidade da dose</label><select id="djSubUn"><option>mg</option><option>mcg</option><option>UI</option><option>mL</option><option>g</option></select></div>
           <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
-          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="da bula"></div>
+          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="da bula ou da referência"></div>
           <div class="field"><label for="djSubInt">Intervalo, em dias<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
           <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação, concentração, quem prescreveu…"></div>
         </div>
@@ -802,6 +825,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div id="djApList"></div>
     </div>
     <div class="panel">
+      <h2>Controle de doses<button class="info" type="button" data-info="dj_ctrl" aria-label="Explicar: controle de doses">i</button></h2>
+      <div id="djCtrl"></div>
+    </div>
+    <div class="panel">
       <h2>Quantidade estimada no corpo<button class="info" type="button" data-info="dj_curva" aria-label="Explicar: curva estimada">i</button></h2>
       <p class="lead" id="djCurvaLead"></p>
       <div class="chartbox"><canvas id="chDj" aria-label="Gráfico: quantidade estimada de cada substância ao longo dos dias"></canvas></div>
@@ -820,6 +847,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div class="row-btns"><button type="button" class="btn primary" data-dj="addex">Salvar exame</button></div>
       <div class="muted" id="djExMsg" aria-live="polite"></div>
       <div id="djExTable"></div>
+      <div id="djExAlerta"></div>
       <div class="field" style="margin:12px 0 8px"><label for="djExSel">Evolução do marcador</label><select id="djExSel"></select></div>
       <div class="chartbox"><canvas id="chDjEx" aria-label="Gráfico: evolução do marcador escolhido"></canvas></div>
       <div class="tablewrap" id="djExHist"></div>
@@ -912,7 +940,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 //  20. Tela: Início
 //  21. Navegação e animações
 //  22. Fotos e compartilhar ......... fotos do treino e de evolução; imagem do resumo do dia
-//  23. Diário ....................... substâncias, aplicações, calendário, curva pela meia-vida e exames
+//  23. Hormônios e peptídeos ........ referência para estudo, substâncias, aplicações, calendário, controle de doses, curva e exames
 //  24. Edição e salvamento ........... cliques, digitação e gravação
 //  25. Conexão com o armazenamento
 //  26. Partida
@@ -956,7 +984,9 @@ const DELOAD_DIAS = 2;             // dias abaixo da faixa na semana 4 que ligam
 const EXEC_DEF = 40;               // segundos de execução por série, quando não anotado
 const TRANS_DEF = 90;              // segundos de intervalo entre exercícios, quando não anotado
 const AQUEC_SEC = 300;             // aquecimento geral no começo do treino
-const WARM_SEC = 45;               // cada série de aquecimento do exercício (quando não foi cronometrada)
+const WARM_EXEC = 20;              // execução de uma série de aquecimento (carga leve ou poucas repetições)
+const WARM_PAUSA = [[0.6, 30], [1, 60]];   // pausa depois de uma série de aquecimento, pela fração da carga do dia: até 60%, só a troca de peso (30 s); acima, 1 min
+const WARM_ANTES = [[0.6, 60], [1, 120]];  // descanso entre a última série de aquecimento e a 1ª válida, pela fração da última: leve 1 min; pesada 2 min
 const CLK_WARM_MAX = 900;          // aquecimento acima de 15 min no cronômetro é tratado como esquecido
 const REST_OPTS = [30, 45, 60, 90, 120, 150, 180, 240]; // botões de descanso entre séries
 const TRANS_OPTS = [60, 90, 120, 180, 240, 300, 420];   // botões de intervalo entre exercícios
@@ -970,6 +1000,8 @@ const CLK_ALERT = 300;             // avisa a cada 5 minutos rodando
 const CLK_EXEC_MAX = 150;          // execução acima de 2:30 é tratada como esquecida
 const FOTO_MAX = 1280;               // lado maior da foto enviada, em pixels (fotos maiores são reduzidas)
 const DJ_ATRAS = 60, DJ_FRENTE = 30; // curva do diário: dias para trás e para a frente
+const DJ_EQUIL = 5;                // meias-vidas até o nível estabilizar com doses repetidas (e até a substância praticamente sair depois da última dose)
+const DJ_HT_ALERTA = 54;           // hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar
 const WAKE_KEY = "hexis.wake";       // preferência "tela acesa durante o cronômetro", guardada no aparelho
 const CLK_SEG_REP = 4;             // segundos por repetição, para a barra de execução
 // Resumo do dia
@@ -1387,7 +1419,7 @@ function belowSet(x, p) {
 }
 // Meio de uma faixa [mín, máx]
 const mid = r => (r[0] + r[1]) / 2;
-// Ajuste fino entre séries do mesmo exercício (autorregulação por RIR, como no powerlifting)
+// Ajuste fino entre séries do mesmo exercício (autorregulação por RIR, como no powerlifting). A nota aparece sempre que a série anterior foi anotada: ▲ subir, ▼ baixar, ● manter
 function suggestSets(def, pres, entry) {
   const act = (entry && entry.sets) || [];
   const has = a => a && +a.reps > 0;
@@ -1403,6 +1435,7 @@ function suggestSets(def, pres, entry) {
     const rirT = mid(p.rir);
     if (kgA === 0 || p.kg === 0) {
       if (+a.reps < pj.tr) { s.reps = Math.max(1, +a.reps); s.dir = -1; s.note = "▼ Série anterior: " + a.reps + " de " + pj.tr + " reps. Alvo desta: " + s.reps + "."; }
+      else s.note = "● Série anterior no previsto: alvo mantido em " + p.tr + " reps.";
       return s;
     }
     const ratio = e1(kgA, +a.reps + rirA) / e1(pj.kg, pj.tr + mid(pj.rir));
@@ -1418,7 +1451,7 @@ function suggestSets(def, pres, entry) {
     } else if (+a.reps < pj.tr) {
       s.reps = Math.max(p.lo, Math.min(p.tr, repsAlt)); s.dir = -1;
       s.note = "● " + what + " Manter " + fmt(p.kg) + " kg; alvo desta: " + s.reps + " reps.";
-    }
+    } else s.note = "● Série anterior " + (ratio > 1.005 ? "um pouco acima do previsto, ainda sem margem para subir" : ratio < 0.995 ? "um pouco abaixo do previsto, dentro da margem" : "no previsto") + ": mantenha " + fmt(p.kg) + " kg × " + p.tr + ".";
     return s;
   });
 }
@@ -1630,24 +1663,36 @@ function restFlags(e, def) {
 }
 // Quantas séries de aquecimento foram marcadas (null = nenhuma marcação feita)
 function warmDone(e, n) { return e && Array.isArray(e.aq) ? e.aq.slice(0, n).filter(Boolean).length : null; }
+// Pausa em segundos depois de uma série de aquecimento feita com a fração f da carga (tab = WARM_PAUSA ou WARM_ANTES)
+function warmGap(f, tab) { return (tab.find(x => f <= x[0]) || tab[tab.length - 1])[1]; }
+// Tempo do aquecimento de um exercício: serie = execuções e pausas entre elas; antes = descanso até a 1ª válida. marks = séries marcadas (null = todas)
+function warmTime(plan, marks) {
+  let serie = 0, last = null;
+  (plan || []).forEach((x, i) => { if (marks && !marks[i]) return; if (last != null) serie += warmGap(last, WARM_PAUSA); serie += WARM_EXEC; last = x[0]; });
+  return { serie, antes: last == null ? 0 : warmGap(last, WARM_ANTES) };
+}
+// Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min
+function pausaTxt(sec) { return sec % 60 ? fmtSec(sec) : sec / 60 + " min"; }
 // Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado
 function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
   let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0;
   defs.forEach((d, idx) => {
     const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d);
-    const warm = (warmPlan(d) || []).length;
-    prev += warm * WARM_SEC + n * EXEC_DEF + (n - 1) * rs + (idx ? TRANS_DEF : 0);
-    aqPrev += warm * WARM_SEC; aqN += warm;
+    const plan = warmPlan(d) || [], warm = plan.length, wp = warmTime(plan);
+    prev += wp.serie + wp.antes + n * EXEC_DEF + (n - 1) * rs + (idx ? TRANS_DEF : 0);
+    aqPrev += wp.serie + wp.antes; aqN += warm;
     const e = doc && doc.ex ? doc.ex[d.k] : null;
     if (!e || e.st === "nao") return;
     const sets = (e.sets || []).filter(x => x && +x.reps > 0);
-    if (!sets.length && e.st !== "feito") return;
+    // conta quem tem série anotada, foi marcado como feito ou já fez o aquecimento (marcado ou cronometrado)
+    if (!sets.length && e.st !== "feito" && !(warm && (+e.aqT > 0 || warmDone(e, warm)))) return;
     nReg++;
     const m = Math.max(sets.length, e.st === "feito" ? n : 0);
-    // aquecimento: tempo cronometrado; senão, as séries marcadas; sem marcação nenhuma, supõe o previsto
-    const aq = warmDone(e, warm), aqS = +e.aqT > 0 ? +e.aqT : (aq == null ? warm : aq) * WARM_SEC;
-    if (warm && !(+e.aqT > 0) && aq == null) regEst = true;
+    // aquecimento: séries e pausas pelo cronômetro (senão, pelas séries marcadas; sem marcação, o previsto) + descanso antes da 1ª válida (cronometrado ou previsto)
+    const aq = warmDone(e, warm), wm = warmTime(plan, aq == null ? null : e.aq), cron = +e.aqT > 0;
+    const aqS = (cron ? +e.aqT : wm.serie) + (cron && e.aqD != null ? +e.aqD : wm.antes);
+    if (warm && !cron && aq == null) regEst = true;
     aqReg += aqS; aqDone += aq == null ? 0 : aq;
     reg += aqS + (idx ? (+e.trans > 0 ? +e.trans : TRANS_DEF) : 0);
     for (let i = 0; i < m; i++) {
@@ -2323,7 +2368,7 @@ const GLOSS = {
   carga: ["Carga da semana", "<p>A carga prevista para as séries de trabalho.</p><ul><li><b>▲ verde</b>: subiu, porque você bateu o topo da faixa.</li><li><b>▼ laranja</b>: desceu, porque ficou abaixo do previsto ou passou 2 semanas sem fazer.</li><li><b>●</b>: mesma carga.</li></ul>"],
   series: ["Séries × repetições", "<p>Quantas séries e a faixa de repetições de cada uma. Nos exercícios com série pesada aparece <b>1 × 6–8 + 2 × 8–10</b>: 1 pesada e 2 de back-off.</p><p><b>+1 série</b> ou <b>−1 série</b> mostram mudanças da semana: core extra, deload ou festas.</p>"],
   status: ["Situação da série", "<ul><li><b>✓</b> dentro do previsto.</li><li><b>●</b> menos repetições que o alvo, mas dentro da faixa.</li><li><b>▼</b> abaixo do previsto: conta como semana abaixo da faixa.</li><li><b>▲</b> chegou ao topo da faixa.</li></ul>"],
-  registrar: ["Como registrar", "<ul><li>Anote carga, repetições e, se quiser, o RIR de cada série.</li><li>Toque em <b>✓ Feito</b> ao terminar o exercício. Séries em branco são preenchidas com o previsto.</li><li>Se não fizer o exercício, toque em <b>✗ Não fiz</b>.</li></ul><p>Tudo é salvo sozinho. A próxima semana é calculada a partir desses registros.</p>"],
+  registrar: ["Como registrar", "<ul><li>Anote carga, repetições e, se quiser, o RIR de cada série.</li><li><b>Ajuste entre séries:</b> assim que você anota uma série, a linha abaixo do previsto da série seguinte compara o que você fez com o planejado e diz o que fazer: <b>▲</b> subir a carga, <b>▼</b> baixar (ou manter a carga com menos repetições) ou <b>●</b> manter. O campo da carga já vem com o valor ajustado.</li><li>Toque em <b>✓ Feito</b> ao terminar o exercício. Séries em branco são preenchidas com o previsto, já com esse ajuste.</li><li>Se não fizer o exercício, toque em <b>✗ Não fiz</b>.</li></ul><p>Tudo é salvo sozinho. A próxima semana é calculada a partir desses registros.</p>"],
   dias: ["Status dos dias", "<ul><li><b>✓</b> todos os exercícios feitos.</li><li><b>◐ 3/7</b> parcial: quantos de quantos.</li><li><b>✗</b> marcado como não feito.</li><li><b>○</b> pendente.</li></ul><p>Toque no dia para ver o treino.</p>"],
   proxima: ["Como a próxima semana é montada", "<ul><li><b>Topo da faixa em todas as séries</b>: sobe a carga.</li><li><b>Melhorou dentro da faixa</b>: mesma carga, +1 repetição.</li><li><b>Abaixo da faixa</b>: 1ª vez −5%; 2ª vez cluster; 3ª vez reset em onda.</li><li><b>Sem progresso</b>: destrave pelo número de @.</li><li><b>Não fez</b>: repete; 2 semanas sem fazer, volta com 5% a menos.</li></ul>"],
   feitos: ["Exercícios feitos por semana", "<p>Porcentagem dos exercícios da semana marcados como feitos. O exercício opcional não conta.</p>"],
@@ -2446,14 +2491,16 @@ Object.assign(GLOSS, {
 });
 
 
-GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão.</p><p><b>Controle próprio:</b> toque em cada série de aquecimento para marcar como feita e use <b>▶ Cronometrar</b> para medir o tempo do aquecimento. Se você começar a primeira série válida com o cronômetro do aquecimento rodando, ele é fechado e anotado sozinho.</p><p>O aquecimento entra no <b>tempo do treino</b>: o previsto considera 45 s por série; o registrado usa o tempo cronometrado ou, sem ele, as séries que você marcou.</p>"];
+GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p><b>Como fazer:</b> uma série atrás da outra, <b>sem descanso cheio</b>. A pausa indicada depois de cada série é só o tempo de trocar o peso: cerca de 30 s depois das leves (até 60% da carga do dia) e 1 min depois das mais pesadas. O descanso de verdade vem <b>depois da última</b>: 2 min antes da 1ª série válida (1 min quando o aquecimento é uma série leve só), para chegar inteiro nela.</p><p>Fique longe da falha: aquecimento que cansa atrapalha a série que vale. Elas <b>não contam</b> para volume nem para a progressão.</p><p><b>Controle próprio:</b> toque em cada série para marcar como feita. <b>▶ Cronometrar</b> mede o bloco inteiro, com as trocas de peso. Ao tocar <b>⏸ Terminei</b>, começa a contagem do descanso antes da 1ª série válida; ele é anotado quando você inicia a série. Se você iniciar a 1ª série com o cronômetro do aquecimento ainda rodando, o tempo todo é fechado e anotado junto.</p><p><b>Tudo isso conta no tempo do treino.</b> Previsto: 20 s por série, as pausas entre elas e o descanso antes da 1ª válida. Registrado: os tempos do cronômetro; sem cronômetro, a mesma conta só com as séries que você marcou.</p>"];
 GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps, toque +50% duas vezes e digite 30 no campo “outro %”. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
 GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (Dor, Execução, Carga, Equipamento, Disposição, Tempo) e escolha as opções dele; o que estiver marcado aparece em roxo, e tocar tira. Também dá para escrever no campo de texto. Com <b>+ palavra-chave</b> você cria um bloco seu e escolhe o efeito dele. Abaixo aparece o que o app entendeu.</p><ul><li><b>Carga fixa, sem ajuste</b> (máquinas de placas fixas): vale o peso que você usou, mesmo diferente do previsto. Não conta como queda; a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa.</li><li><b>Carga pesada demais</b>: mesmo batendo o topo, a carga fica mais uma semana antes de subir.</li><li><b>Dor forte</b>: a carga cai 10% e o app sugere trocar o exercício.</li><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
 GLOSS.resumo = ["Resumo do dia", "<p>Análise do que você anotou no dia contra o que estava planejado.</p><p><b>Desempenho</b>: para cada exercício, compara a sua melhor série com a melhor série prevista pela força estimada (carga e repetições juntas, com as parciais contando como fração de repetição). No peso do corpo, compara o total de repetições. O número do dia é a média dos exercícios.</p><p>Até 2,5% abaixo conta como <b>no previsto</b>; 2% acima ou mais, <b>acima</b>.</p><p>Os <b>direcionamentos</b> saem dos seus registros: descanso, recuperação, RIR, parciais, dor, ordem, lados, tempo e cardio. Em cada exercício aparece a carga da próxima vez, já recalculada com o treino de hoje.</p>"];
 GLOSS.volume = ["Volume", "<p>Soma de carga × repetições de todas as séries feitas. Compara com o mesmo cálculo das séries previstas.</p><p>Serve para ver se o dia rendeu o trabalho total planejado; o desempenho de cada exercício mostra a força.</p>"];
 GLOSS.fotos = ["Fotos", "<p><b>Foto do treino</b>: fica ligada ao dia e entra no topo da imagem de compartilhar.</p><p><b>Fotos de evolução</b>: tire sempre no mesmo lugar, com a mesma luz, distância e pose. O app mostra a primeira ao lado da mais recente.</p><p>As fotos são reduzidas antes de enviar e só a sua conta consegue abri-las. Para apagar, toque em Apagar e depois em Confirmar.</p>"];
-GLOSS.diario = ["Diário de substâncias e exames", "<p>Um caderno para registrar o que você usa e acompanhar exames. Tudo é digitado por você: o app não traz lista de substâncias, não sugere dose e não diz o que usar.</p><ul><li><b>Substâncias</b>: nome, unidade, via e, se quiser, a meia-vida e o intervalo entre aplicações.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida informada.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
-GLOSS.dj_mv = ["Meia-vida", "<p>Tempo para a quantidade da substância no corpo cair pela metade. Informe o valor que consta na bula ou na literatura da apresentação que você usa, em dias (12 horas = 0,5).</p><p>O app usa esse número só para desenhar a curva estimada. Sem ele, a substância não aparece na curva.</p>"];
+GLOSS.diario = ["Hormônios e peptídeos", "<p>Um caderno de controle e estudo. O app não diz o que usar, quanto nem por quanto tempo.</p><ul><li><b>Referência para estudo</b>: meia-vida, via e intervalo de bula das substâncias mais comuns, com a situação de cada uma no Brasil.</li><li><b>Substâncias</b>: as que você usa, com unidade, via, meia-vida e o intervalo da sua prescrição.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Controle de doses</b>: última aplicação, totais de 7 e 30 dias e o estimado hoje.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
+GLOSS.dj_ref = ["Referência para estudo", "<p>Cada cartão resume o que a bula ou um estudo em humanos informa sobre a substância. A linha <b>Fonte</b> diz de onde veio o número.</p><ul><li><b>Meia-vida</b>: tempo para a quantidade cair pela metade. Quando a fonte traz uma faixa, o app mostra a faixa e não escolhe um valor por você.</li><li><b>Equilíbrio e saída</b>: conta feita pelo app, de 5 meias-vidas.</li><li><b>Intervalo de bula</b>: o da indicação aprovada. Não é sugestão: o intervalo que vale é o da sua prescrição.</li></ul><p><b>Usar no cadastro</b> copia nome, unidade, via e, quando a bula traz um valor único, a meia-vida. Dose e intervalo ficam em branco.</p><p>Substâncias sem registro aparecem para você saber a situação delas, com o que existe publicado. O app não preenche número nenhum para elas.</p>"];
+GLOSS.dj_ctrl = ["Controle de doses", "<p>Resumo do que foi registrado em cada substância: a última aplicação, há quantos dias foi, a soma das doses nos últimos 7 e 30 dias e quanto ainda restaria hoje pela meia-vida informada.</p><p>É só a soma do que você anotou, na unidade da própria substância. Serve para conferir se o registrado bate com o prescrito.</p>"];
+GLOSS.dj_mv = ["Meia-vida", "<p>Tempo para a quantidade da substância no corpo cair pela metade. Informe o valor que consta na bula ou na literatura da apresentação que você usa, em dias (12 horas = 0,5). A Referência para estudo, no alto da aba, traz os valores de bula.</p><p>O app usa esse número só para desenhar a curva estimada. Sem ele, a substância não aparece na curva.</p>"];
 GLOSS.dj_int = ["Intervalo", "<p>De quantos em quantos dias a aplicação se repete, conforme a sua prescrição. Com ele, o calendário marca a próxima data prevista (última aplicação + intervalo).</p><p>É opcional e não cria lembrete com som.</p>"];
 GLOSS.dj_curva = ["Quantidade estimada no corpo", "<p>Para cada aplicação, o app considera a dose inteira no momento registrado e a reduz pela metade a cada meia-vida. A linha é a soma das aplicações.</p><p><b>É um modelo didático.</b> Não considera absorção, apresentação, peso nem metabolismo, e não corresponde ao nível no sangue. Só um exame mede isso.</p><p>A linha tracejada mostra o seu peso no mesmo período, para comparar as datas.</p>"];
 GLOSS.blocos = ["Blocos do ano", "<p>O treino é dividido em blocos. O primeiro tem 9 semanas. Quando ele termina, o app monta o seguinte sozinho, a partir das cargas e repetições que você registrou. Nada precisa ser recomeçado.</p><p>Para quem segue o plano anual, cada bloco acompanha a fase da dieta:</p><ul><li><b>Força</b> (calorias em manutenção): a série pesada dos compostos cai para 4 a 6 repetições e a carga é reajustada pela força estimada.</li><li><b>Hipertrofia</b> (ganho): o RIR começa em 3 e desce a cada semana, e os músculos prioritários ganham 1 série por semana.</li><li><b>Cutting</b>: volume menor, cargas mantidas e mais core.</li></ul><p>As <b>semanas leves</b> já vêm marcadas (metade das séries, mesma carga); dá para pular com um toque. Para os demais, o ciclo de 9 semanas se repete, com a checagem de recuperação na 5ª semana de cada bloco.</p><p>A lista dos blocos e suas datas fica em Plano e regras.</p>"];
@@ -2464,7 +2511,7 @@ GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercíc
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
-GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
+GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
 GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um exercício e começar o seguinte: trocar de máquina, ajustar o banco, beber água. O tracejado marca 1:30, o valor usado quando você não registra.</p><p>Entra no tempo registrado do treino.</p>"];
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
@@ -2680,15 +2727,18 @@ function warmPlan(d) {
   if (groups.includes(d.m) || (WARM_BY[d.m] || []).some(g => groups.includes(g))) return null;
   return d.t === "comp" ? [[0.5, 8], [0.75, 4]] : [[0.5, 12]];
 }
-// Aquecimento do cartão, com controle próprio: cada série vira um botão de marcar e o bloco tem cronômetro
+// Aquecimento do cartão, com controle próprio: cada série é um botão de marcar, seguido da pausa indicada; o bloco tem cronômetro e a contagem do descanso antes da 1ª válida
 function warmHtml(d, p, e) {
   const plan = warmPlan(d); if (!plan) return "";
   const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load, st = d.step || 1, c = app.clk;
-  const run = c && c.ph === "warm" && c.W === app.week && c.k === d.k, aq = (e && e.aq) || [];
-  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + "</button>").join("");
-  const tm = run ? '<span class="clk run rs clkanim wq"><span class="clkfill"></span>' + clkRing() + '<span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar e registrar o aquecimento">⏸ Parar</button></span>'
-    : '<button type="button" class="btn small clkgo" data-clk="warm|' + d.k + '" aria-label="Cronometrar o aquecimento">▶ ' + (e && +e.aqT > 0 ? "⏱ " + clkFmt(e.aqT) + " · de novo" : "Cronometrar") + "</button>";
-  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b> <span class="muted">(não conta para a progressão)</span>' + infoBtn("aquecimento") + '</div><div class="wqrow">' + chips + tm + "</div></div>";
+  const mine = c && c.W === app.week && c.k === d.k, run = mine && c.ph === "warm", pre = mine && c.ph === "pre", aq = (e && e.aq) || [], antes = warmTime(plan).antes;
+  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + '</button><span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span>").join("");
+  const feito = e && +e.aqT > 0 ? "⏱ " + clkFmt(e.aqT) + (+e.aqD > 0 ? " + " + clkFmt(e.aqD) + " de descanso" : "") + " · de novo" : "Cronometrar";
+  const tm = run ? '<span class="clk run rs clkanim wq"><span class="clkfill"></span>' + clkRing() + '<span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Terminei o aquecimento: anotar e contar o descanso">⏸ Terminei</button></span>'
+    : pre ? '<span class="clk run rs clkanim wq pre' + (clkEl() >= c.prev ? " ok" : "") + '" style="--p:' + Math.min(1, clkEl() / c.prev).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + "</span><small> / " + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="first" aria-label="Anotar o descanso e começar a 1ª série">▶ 1ª série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></span>'
+    : '<button type="button" class="btn small clkgo" data-clk="warm|' + d.k + '" aria-label="Cronometrar o aquecimento">▶ ' + feito + "</button>";
+  const dica = plan.length > 1 ? "Uma atrás da outra, sem descanso cheio: a pausa ao lado de cada série é só a troca de peso. Descanse " + pausaTxt(antes) + " depois da última." : "Série leve, longe da falha. Depois dela, " + pausaTxt(antes) + " de descanso e comece a 1ª série.";
+  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b> <span class="muted">(não conta para a progressão)</span>' + infoBtn("aquecimento") + '</div><div class="wqrow">' + chips + '</div><p class="wqd">' + dica + ' <span class="muted">As pausas entram no tempo do treino.</span></p><div class="wqrow">' + tm + "</div></div>";
 }
 // Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
 function parcHtml(k, i, arr, side) {
@@ -2760,7 +2810,7 @@ function dayTimeHtml(W, day, wk) {
     tile("Registrado", t.nReg ? "~" + totReg + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + t.cardio + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * REST_CURTO ? " · curto" : t.restAvg > t.restPrev * REST_LONGO ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
     tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") +
-    (t.aqN ? tile("Aquecimento", t.nReg ? "~" + Math.max(1, Math.round(t.aqReg / 60)) + " min" : "—", t.aqDone + " de " + t.aqN + " séries marcadas · previsto " + Math.round(t.aqPrev / 60) + " min", "aquecimento") : "") + "</div>" +
+    (t.aqN ? tile("Aquecimento", t.nReg ? "~" + Math.max(1, Math.round(t.aqReg / 60)) + " min" : "—", t.aqDone + " de " + t.aqN + " séries marcadas · previsto " + Math.round(t.aqPrev / 60) + " min, com pausas", "aquecimento") : "") + "</div>" +
     (ord.length >= 2 ? '<p class="lead" style="margin-top:8px">Ordem feita' + infoBtn("ordem") + ": " + ord.map(([k]) => esc(exShort(EXBY[k]))).join(" → ") + (trocas ? " · " + trocas + " fora da ordem da ficha" : " · igual à ficha") + "</p>" : "") + wakeHtml();
 }
 // Atualiza o painel de tempo sem redesenhar a tela
@@ -3505,8 +3555,12 @@ function clkHandoff(W, m, j, side) {
     if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
     else if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
   } else if (c.ph === "warm") {
-    if (el <= CLK_WARM_MAX) { clkWarmRec(W, c.k, el); msgs.push("aquecimento " + clkFmt(el) + " anotado"); }
+    // começou a série com o aquecimento rodando: o tempo todo (descanso incluído) fica no aquecimento
+    if (el <= CLK_WARM_MAX) { clkWarmRec(W, c.k, el, c.k === m ? 0 : null); msgs.push("aquecimento " + clkFmt(el) + " anotado"); }
     else msgs.push("aquecimento de " + clkFmt(el) + " não anotado (parecia esquecido)");
+    if (c.k === m) return msgs;
+  } else if (c.ph === "pre") {
+    if (c.k === m && j === 0) { clkPreRec(W, c.k, el); msgs.push("descanso antes da 1ª série " + clkFmt(el) + " anotado"); }
     if (c.k === m) return msgs;
   } else if (c.ph === "trans") {
     if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
@@ -3537,7 +3591,13 @@ function clkAfterExec(c, t0) {
 // Para a execução, anota o tempo e passa para a fase seguinte
 function clkStop() {
   const c = app.clk; if (!c) return;
-  if (c.ph === "warm") { clkWarmRec(c.W, c.k, clkEl()); app.clk = null; clkSave(); clkRefresh(); return; }
+  if (c.ph === "warm") {
+    // fim do aquecimento: anota o bloco e conta o descanso até a 1ª série válida (se ela ainda não foi feita)
+    clkWarmRec(c.W, c.k, clkEl());
+    const { def, entry } = ctx(c.k, null, c.W), s0 = (entry.sets || [])[0];
+    app.clk = s0 && +s0.reps > 0 ? null : { W: c.W, day: c.day, k: c.k, i: 0, side: null, ph: "pre", prev: warmTime(warmPlan(def)).antes, t0: Date.now(), ack: 0 };
+    clkSave(); clkRefresh(); return;
+  }
   if (c.ph !== "exec" || c.waitSide) return;
   const el = clkEl();
   clkRecord(c.W, c.k, c.i, "exec", el, c.side);
@@ -3573,17 +3633,18 @@ function clkOnInput(W, k) {
   const pv = document.querySelector(".tcard.run"); if (pv) { const pk = pv.id.slice(3); pv.outerHTML = transHtml(EXBY[pk], (getDoc(W, c.day, false) || { ex: {} }).ex[pk]); }
   clkToast(msg); updateDayTime();
 }
-// Trata os botões do cronômetro: go, stop, side, next, end, see, keep, drop, fix e fixok
+// Trata os botões do cronômetro: go, warm, first, stop, side, next, end, see, keep, drop, fix e fixok
 function clkAct(a) {
   const c = app.clk;
   if (a.startsWith("go|")) { const [, k, i, sd] = a.split("|"); clkGo(app.week, k, +i, sd || null); return; }
   if (a.startsWith("warm|")) { clkWarm(app.week, a.split("|")[1]); return; }
-  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
+  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" || c.ph === "pre" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
   if (!c) return;
   if (a === "stop") { clkStop(); return; }
   if (a === "side") { if (c.waitSide) { c.waitSide = false; c.t0 = Date.now(); c.ack = 0; clkSave(); clkRefresh(); } return; }
   if (a === "next") { clkGo(c.W, c.k, c.i + 1, null); return; }
-  if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
+  if (a === "first") { clkGo(c.W, c.k, 0, isUni(EXBY[c.k]) ? "e" : null); return; }
+  if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
   if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
   if (a === "drop") { app.clk = null; clkSave(); clkRefresh(); clkToast("Tempo descartado."); return; }
   if (a === "fix") { c.fixOpen = true; clkSave(); clkBar(); const i = document.getElementById("clkFixIn"); if (i) { i.focus(); i.select(); } return; }
@@ -3593,6 +3654,7 @@ function clkAct(a) {
     if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
     else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
     else if (c.ph === "warm") { clkWarmRec(c.W, c.k, s); app.clk = null; }
+    else if (c.ph === "pre") { clkPreRec(c.W, c.k, s); app.clk = null; }
     else { c.fixed = s; c.ask = false; c.fixOpen = false; }
     clkSave(); clkRefresh(); clkToast("Tempo corrigido para " + clkFmt(s) + "."); return;
   }
@@ -3603,19 +3665,22 @@ function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); clkAni
 function clkRing() { return '<svg class="clkring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rb" cx="18" cy="18" r="15"/><circle class="rf" cx="18" cy="18" r="15" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 18 18)"/><line class="rh" x1="18" y1="18" x2="18" y2="7"/><circle class="rc" cx="18" cy="18" r="2"/></svg>'; }
 // Tempo previsto da fase atual, para a barra de progresso
 function clkPlan(c) { return c.ph === "exec" ? (c.waitSide ? 0 : c.exp || EXEC_DEF) : c.prev || TRANS_DEF; }
-// Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas
-function clkWarmRec(W, k, sec) {
+// Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas. antes = 0 quando o descanso até a 1ª válida já está dentro desse tempo
+function clkWarmRec(W, k, sec, antes) {
   const { def, entry } = ctx(k, null, W), n = (warmPlan(def) || []).length;
   entry.aqT = Math.round(sec);
+  if (antes != null) entry.aqD = antes; else delete entry.aqD;
   if (warmDone(entry, n) == null || !warmDone(entry, n)) entry.aq = Array.from({ length: n }, () => true);
   touch(def.d, W);
 }
+// Grava o descanso entre o fim do aquecimento e a 1ª série válida
+function clkPreRec(W, k, sec) { const { def, entry } = ctx(k, null, W); entry.aqD = Math.round(sec); touch(def.d, W); }
 // Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando)
 function clkWarm(W, k) {
   clkUnlock();
   const msgs = clkHandoff(W, k, 0, null), { def, entry } = ctx(k, null, W);
   if (!entry.startAt) { entry.startAt = new Date().toISOString(); touch(def.d, W); }
-  app.clk = { W, day: def.d, k, i: 0, side: null, ph: "warm", prev: Math.max(WARM_SEC, (warmPlan(def) || []).length * WARM_SEC), t0: Date.now(), ack: 0 };
+  app.clk = { W, day: def.d, k, i: 0, side: null, ph: "warm", prev: warmTime(warmPlan(def)).serie, t0: Date.now(), ack: 0 };
   clkSave(); clkRefresh();
   if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
 }
@@ -3657,8 +3722,10 @@ function clkBar() {
   if (!c || !EXBY[c.k]) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
   box.classList.remove("hide"); clkDock();
   const el = clkEl(), lado = c.side ? (c.side === "e" ? " · lado esquerdo" : " · lado direito") : "";
-  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
-  const btns = c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>' : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
+  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "pre" ? "Descanso · até a série 1" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
+  const btns = c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Terminei</button>'
+    : c.ph === "pre" ? '<button type="button" class="btn small primary" data-clk="first">▶ Série 1</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
+    : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
@@ -3908,7 +3975,7 @@ function renderHome() {
     ["proxima", "Próxima semana", "O que sobe, o que segura e o motivo de cada mudança, antes de você chegar na academia."],
     ["progresso", "Progresso", "Força estimada, volume e tempo de treino semana a semana, exercício por exercício."],
     ["corpo", "Corpo e dieta", "Peso, gordura e medidas, com calorias, macros e cardio ajustados à meta."],
-    ["diario", "Diário", "Registro pessoal de substâncias, aplicações e exames, com calendário e curva pela meia-vida."],
+    ["diario", "Hormônios e peptídeos", "Controle de substâncias, doses e exames, com calendário, curva pela meia-vida e dados de bula para estudo."],
     ["perfil", "Perfil e objetivo", "Seus dados, medidas, cargas máximas e onde você quer chegar."],
     ["plano", "Plano e regras", "Como o app decide cada carga: tudo explicado, sem caixa-preta."]
   ];
@@ -3983,7 +4050,7 @@ const NAVG = [
   { id: "inicio", t: "Início", tabs: [["inicio", "Início"]], ic: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>' },
   { id: "treino", t: "Treino", tabs: [["semana", "Semana"], ["proxima", "Próxima semana"]], ic: '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12"/>' },
   { id: "resumo", t: "Resumo", tabs: [["resumo", "Resumo do dia"]], ic: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 11l2 2 4-4M8.5 17h7"/>' },
-  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo e dieta"], ["diario", "Diário"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
+  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo e dieta"], ["diario", "Hormônios"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
   { id: "voce", t: "Você", tabs: [["perfil", "Perfil"], ["objetivo", "Objetivo"], ["plano", "Plano e regras"]], ic: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>' }
 ];
 // Todas as abas
@@ -4161,7 +4228,8 @@ async function shareDraw(W, day) {
   T("Hexis · treino com método, um dia de cada vez", 72, 1312, 30, C.mut);
   return { cv, nome: "hexis-" + iso + ".png", titulo: dd.titulo };
 }
-// 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou baixa. O envio precisa de um toque próprio para o celular permitir.
+// 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou salva. O envio precisa de um toque próprio para o celular permitir.
+// Salvar usa app.salvar, ligado na conexão; onde ele não existe, a saída é segurar o dedo sobre a imagem.
 async function sharePrep() {
   const box = document.getElementById("shareBox"); if (!box) return;
   box.innerHTML = '<p class="muted">Montando a imagem…</p>';
@@ -4170,19 +4238,83 @@ async function sharePrep() {
     if (app.share && app.share.url) URL.revokeObjectURL(app.share.url);
     app.share = { file: new File([blob], r.nome, { type: "image/png" }), url: URL.createObjectURL(blob), titulo: r.titulo };
     const can = !!(navigator.canShare && navigator.canShare({ files: [app.share.file] }));
-    box.innerHTML = '<div class="panel sharep"><img src="' + app.share.url + '" alt="Prévia da imagem do resumo do dia"><div class="row-btns">' + (can ? '<button type="button" class="btn primary" data-share="send">Enviar para…</button>' : "") + '<a class="btn" href="' + app.share.url + '" download="' + r.nome + '">Baixar a imagem</a><button type="button" class="btn" data-share="close">Fechar</button></div><p class="muted" id="shareMsg" aria-live="polite">' + (can ? "" : "Este navegador não abre o menu de compartilhar. Baixe a imagem e poste pelo app da rede social.") + "</p></div>";
+    box.innerHTML = '<div class="panel sharep"><img src="' + app.share.url + '" alt="Prévia da imagem do resumo do dia"><div class="row-btns">' + (can ? '<button type="button" class="btn primary" data-share="send">Enviar para…</button>' : "") + (app.salvar ? '<button type="button" class="btn' + (can ? "" : " primary") + '" data-share="save">Salvar a imagem</button>' : "") + '<button type="button" class="btn" data-share="close">Fechar</button></div><p class="muted" id="shareMsg" aria-live="polite">' + (can ? "" : app.salvar ? "Salve a imagem e poste pelo app da rede social." : "Segure o dedo sobre a imagem para salvar ou copiar.") + "</p></div>";
   } catch (e) { box.innerHTML = '<p class="muted">Não consegui montar a imagem.</p>'; }
 }
-// Botões de compartilhar: preparar a prévia, fechar e enviar
+// Botões de compartilhar: preparar a prévia, fechar, enviar e salvar
 function shareAct(op) {
-  const box = document.getElementById("shareBox");
+  const box = document.getElementById("shareBox"), say = t => { const m = document.getElementById("shareMsg"); if (m) m.textContent = t; };
   if (op === "prep") { sharePrep(); return; }
   if (op === "close") { if (box) box.innerHTML = ""; return; }
-  if (op === "send" && app.share) navigator.share({ files: [app.share.file], title: "Hexis", text: app.share.titulo + " · Hexis" }).catch(e => { const m = document.getElementById("shareMsg"); if (m && !(e && e.name === "AbortError")) m.textContent = "O celular não aceitou o envio. Use Baixar a imagem."; });
+  if (op === "send" && app.share) navigator.share({ files: [app.share.file], title: "Hexis", text: app.share.titulo + " · Hexis" }).catch(e => { if (!(e && e.name === "AbortError")) say(app.salvar ? "O celular não aceitou o envio. Use Salvar a imagem." : "O celular não aceitou o envio. Segure o dedo sobre a imagem para salvar."); });
+  if (op === "save" && app.share && app.salvar) app.salvar(app.share.file.name, app.share.file).then(() => say("Imagem salva."), e => say(e && e.code === "declined" ? "" : e && e.code === "rate_limited" ? "Já tem um pedido de salvar aberto. Responda a ele e tente de novo." : "Não consegui salvar por aqui. Segure o dedo sobre a imagem para salvar."));
 }
-// ===== 23. DIÁRIO DE SUBSTÂNCIAS E EXAMES (registro pessoal: o app guarda e mostra, não sugere nada) =====
+// ===== 23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto) =====
 // Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra.
 const DJ_MARC = [["Hematócrito", "%"], ["Hemoglobina", "g/dL"], ["Testosterona total", "ng/dL"], ["Testosterona livre", "pg/mL"], ["Estradiol", "pg/mL"], ["PSA", "ng/mL"], ["LDL", "mg/dL"], ["HDL", "mg/dL"], ["Triglicerídeos", "mg/dL"], ["TGO (AST)", "U/L"], ["TGP (ALT)", "U/L"], ["Creatinina", "mg/dL"], ["Glicemia", "mg/dL"], ["Pressão sistólica", "mmHg"], ["Pressão diastólica", "mmHg"], ["Frequência cardíaca de repouso", "bpm"]];
+// Grupos da referência: chave, título e a situação comum do grupo
+const DJ_GRUPOS = [
+  ["t", "Testosterona, anabolizantes e GH", "Medicamentos com bula. Testosterona e anabolizantes são de controle especial (lista C5): só com receita, que fica retida."],
+  ["p", "Peptídeos com registro", "Medicamentos com bula, vendidos com receita."],
+  ["s", "Peptídeos sem registro", "Sem registro na Anvisa em nenhuma categoria. Em 2026 a agência avisou que são irregulares para qualquer uso em saúde e proibiu a venda de vários produtos. Não há garantia de origem, pureza ou dose."]
+];
+// Referência para estudo. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a bula traz um valor único (senão null) · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte
+const DJ_REF = [
+  { n: "Cipionato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: 8, mvT: "cerca de 8 dias", bula: "a cada 2 a 4 semanas", nota: "Éster em óleo, de absorção lenta. Cerca de 70% da massa do éster é testosterona.", fonte: "bula" },
+  { n: "Enantato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: 4.5, mvT: "4 a 5 dias (4,5 em estudo; a bula não traz o número)", bula: "no músculo, a cada 2 a 4 semanas; a caneta subcutânea é semanal", nota: "Cerca de 72% da massa do éster é testosterona.", fonte: "bula e estudo publicado" },
+  { n: "Undecilato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: null, mvT: "53 a 90 dias, conforme a bula (é a velocidade de liberação do depósito)", bula: "a cada 10 a 14 semanas; a 2ª aplicação pode vir 6 semanas depois da 1ª", nota: "Pico entre 7 e 14 dias. O nível estabiliza entre a 3ª e a 5ª aplicação. 1.000 mg do éster equivalem a 631,5 mg de testosterona.", fonte: "bula" },
+  { n: "Mistura de ésteres de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: null, mvT: "sem valor único: são quatro ésteres de durações diferentes", bula: "em geral a cada 3 semanas", nota: "Propionato, fempropionato, isocaproato e decanoato. Pico em 24 a 48 h; volta ao limite inferior do normal em cerca de 21 dias.", fonte: "bula" },
+  { n: "Testosterona em gel", g: "t", un: "mg", via: "Transdérmica", mv: null, mvT: "não se aplica: uso diário, sem depósito", bula: "uma vez ao dia", nota: "O nível estabiliza em 2 a 3 dias e volta ao de antes 48 a 72 h depois da última aplicação.", fonte: "bula" },
+  { n: "Decanoato de nandrolona", g: "t", un: "mg", via: "Intramuscular", mv: null, mvT: "5 a 15 dias de liberação do depósito; no sangue, a nandrolona dura cerca de 4 h", bula: "cada aplicação age por cerca de 3 semanas", nota: "Indicações de bula: osteoporose e alguns tipos de anemia.", fonte: "bula" },
+  { n: "Oxandrolona", g: "t", un: "mg", via: "Oral", mv: 0.43, mvT: "cerca de 10 h (13 h em idosos)", bula: "diária, em doses divididas", nota: "Oral 17-alfa-alquilado: a bula traz alerta para o fígado e aumento forte do efeito da varfarina.", fonte: "bula (EUA)" },
+  { n: "Somatropina (GH)", g: "t", un: "UI", via: "Subcutânea", mv: null, mvT: "3 a 5 h depois da aplicação subcutânea", bula: "diária", nota: "Pico em cerca de 5 h. 1 mg equivale a 3 UI. A bula pede acompanhamento de glicose e IGF-1.", fonte: "bula" },
+  { n: "Semaglutida", g: "p", un: "mg", via: "Subcutânea", mv: 7, mvT: "cerca de 1 semana", bula: "semanal", nota: "O nível estabiliza em 4 a 5 semanas e a substância ainda circula por cerca de 5 semanas depois da última dose.", fonte: "bula" },
+  { n: "Tirzepatida", g: "p", un: "mg", via: "Subcutânea", mv: 5, mvT: "cerca de 5 dias", bula: "semanal", nota: "O nível estabiliza em cerca de 4 semanas.", fonte: "bula" },
+  { n: "Liraglutida", g: "p", un: "mg", via: "Subcutânea", mv: 0.54, mvT: "cerca de 13 h", bula: "diária", nota: "O nível estabiliza em 2 a 3 dias.", fonte: "bula" },
+  { n: "Tesamorelina", g: "p", un: "mg", via: "Subcutânea", mv: null, mvT: "8 a 38 minutos, conforme a formulação", bula: "diária", nota: "Análogo do GHRH. Aprovada nos EUA para gordura abdominal na lipodistrofia do HIV.", fonte: "bula (EUA)" },
+  { n: "CJC-1295 (com DAC)", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "5,8 a 8,1 dias em adultos saudáveis", bula: "não há", nota: "Análogo do GHRH de longa duração, estudado só em ensaios iniciais.", fonte: "estudo em humanos (2006)" },
+  { n: "Ipamorelina", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "cerca de 2 h, medida com infusão na veia", bula: "não há", nota: "Estimula a liberação de GH. O único ensaio clínico concluído, em outra indicação, não atingiu o objetivo.", fonte: "estudo em humanos (1999)" },
+  { n: "BPC-157", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "sem valor estabelecido em humanos", bula: "não há", nota: "O que existe publicado é quase todo em animais.", fonte: "comunicado da Anvisa (2026)" },
+  { n: "TB-500", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "sem valor estabelecido em humanos", bula: "não há", nota: "Fragmento sintético da timosina beta-4. O que existe publicado é quase todo em animais.", fonte: "comunicado da Anvisa (2026)" },
+  { n: "Retatrutida", g: "s", un: "mg", via: "Subcutânea", mv: null, mvT: "ainda em ensaios clínicos; sem valor de bula", bula: "não há", nota: "Sem registro em nenhuma agência reguladora do mundo.", fonte: "comunicado da Anvisa (2026)" }
+];
+// Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias"
+function djDias(d) { return d < 2 ? Math.round(d * 24) + " h" : fmt(Math.round(d)) + " dias"; }
+// Painel da referência: um bloco recolhível por grupo, com um cartão por substância, mais as notas de leitura, exames e regras
+function djRefHtml() {
+  const card = (r, i) => '<div class="djr"><div class="djr-h"><b>' + esc(r.n) + '</b><span class="muted">' + esc(r.via) + '</span></div><dl><dt>Meia-vida</dt><dd>' + esc(r.mvT) + "</dd>" +
+    (r.mv ? "<dt>Equilíbrio e saída</dt><dd>cerca de " + djDias(r.mv * DJ_EQUIL) + " (" + DJ_EQUIL + " meias-vidas)</dd>" : "") + "<dt>Intervalo de bula</dt><dd>" + esc(r.bula) + '</dd></dl><p class="muted">' + esc(r.nota) + " Fonte: " + esc(r.fonte) + '.</p><button type="button" class="btn small" data-dj="ref|' + i + '">Usar no cadastro</button></div>';
+  const nota = (t, li) => '<details class="pfsec sub"><summary><h3>' + t + "</h3></summary><ul class=\"djn\">" + li.map(x => "<li>" + x + "</li>").join("") + "</ul></details>";
+  return DJ_GRUPOS.map(([g, t, sit]) => { const L = DJ_REF.map((r, i) => [r, i]).filter(x => x[0].g === g); return '<details class="pfsec sub"><summary><h3>' + t + ' <span class="muted">(' + L.length + ')</span></h3></summary><p class="djsit' + (g === "s" ? " no" : "") + '">' + sit + "</p>" + L.map(x => card(x[0], x[1])).join("") + "</details>"; }).join("") +
+    nota("Como ler estes números", [
+      "<b>Meia-vida</b>: tempo para a quantidade no corpo cair pela metade.",
+      "<b>Estado de equilíbrio</b>: com doses repetidas no mesmo intervalo, o nível para de subir depois de cerca de " + DJ_EQUIL + " meias-vidas.",
+      "<b>Saída</b>: depois da última dose, restam cerca de 3% ao fim de " + DJ_EQUIL + " meias-vidas.",
+      "<b>Ésteres em óleo</b>: o número da bula é a velocidade com que o depósito no músculo libera o hormônio. A testosterona livre no sangue dura de 10 a 100 minutos.",
+      "<b>Massa do éster</b>: parte do peso é o éster, não o hormônio. Por isso 1.000 mg de undecilato equivalem a 631,5 mg de testosterona.",
+      "Os valores são médias de estudos. De pessoa para pessoa, variam."]) +
+    nota("O que as diretrizes pedem para acompanhar", [
+      "<b>Hematócrito</b>: antes de começar, entre 3 e 6 meses depois e então uma vez por ano. Acima de " + DJ_HT_ALERTA + "%, a diretriz de reposição de testosterona manda suspender até baixar e retomar com dose menor.",
+      "<b>Testosterona no sangue</b>: o momento da coleta muda com a apresentação. Cipionato e enantato: no meio do intervalo entre duas aplicações. Undecilato: logo antes da aplicação seguinte. Gel: de 2 a 8 horas depois de aplicar.",
+      "<b>PSA</b>: conforme idade e risco, combinado com o médico. Subida acima de 1,4 ng/mL no primeiro ano ou valor acima de 4 ng/mL pede avaliação com urologista.",
+      "<b>Pressão arterial</b>: medir de tempos em tempos; a testosterona pode elevá-la.",
+      "<b>Fígado</b>: nos orais 17-alfa-alquilados, como a oxandrolona. <b>Glicose e IGF-1</b>: no uso de GH.",
+      "Registre os resultados em Exames e sinais, com a faixa do seu laudo."]) +
+    nota("Regras no Brasil", [
+      "O Conselho Federal de Medicina (Resolução 2.333/2023) proíbe o médico de prescrever esteroides androgênicos e anabolizantes para estética, ganho de massa muscular ou desempenho esportivo. A prescrição segue indicada quando há deficiência comprovada.",
+      "Testosterona e anabolizantes são medicamentos de controle especial (lista C5).",
+      "BPC-157, TB-500, GHK-Cu, CJC-1295 e ipamorelina não têm registro na Anvisa em nenhuma categoria. O rótulo “apenas para pesquisa” não autoriza uso em pessoas.",
+      "As bulas de testosterona avisam que o medicamento pode causar doping."]);
+}
+// Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida
+function djCtrlHtml(subs, aps) {
+  const now = Date.now(), rows = subs.map((s, i) => {
+    const L = aps.filter(x => x.sub === s.id && Date.parse(x.quando) <= now); if (!L.length) return "";
+    const last = L[L.length - 1], dias = Math.floor((now - Date.parse(last.quando)) / 864e5), soma = d => L.filter(x => now - Date.parse(x.quando) <= d * 864e5), s7 = soma(7), s30 = soma(30), tot = a => fmt(Math.round(a.reduce((t, x) => t + (+x.dose || 0), 0) * 100) / 100), lv = djLevel(s, aps, now);
+    return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + '</b><div class="muted">em ' + esc(s.un) + "</div></td><td>" + fmt(last.dose) + '<div class="muted">' + (dias ? "há " + dias + (dias === 1 ? " dia" : " dias") : "hoje") + "</div></td><td>" + tot(s7) + '<div class="muted">' + s7.length + "×</div></td><td>" + tot(s30) + '<div class="muted">' + s30.length + "×</div></td><td>" + (lv == null ? "—" : fmt(Math.round(lv * 100) / 100)) + "</td></tr>";
+  }).join("");
+  return rows ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Última</th><th>7 dias</th><th>30 dias</th><th>Estimado hoje</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : '<p class="muted">Aparece depois da primeira aplicação registrada.</p>';
+}
 // Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)
 function djList(tipo) { const key = v => v.quando || v.data || (v.nome || "").toLowerCase(); return Object.entries(app.diario || {}).filter(([, v]) => v.tipo === tipo).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0); }
 // Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue.
@@ -4202,7 +4334,7 @@ function djCalHtml(subs, aps) {
 }
 // Botão de apagar com confirmação no segundo toque
 function djDelBtn(id, nome) { return '<button type="button" class="btn small" data-dj="del|' + id + '" aria-label="Apagar ' + esc(nome) + '">Apagar</button>'; }
-// Desenha a aba Diário: substâncias, calendário, aplicações, curva estimada e exames
+// Desenha a aba Hormônios e peptídeos: referência, substâncias, calendário, aplicações, controle de doses, curva estimada e exames
 function renderDiario() {
   const subs = djList("sub"), aps = djList("ap"), exs = djList("ex"), byId = Object.fromEntries(subs.map(s => [s.id, s])), $ = id => document.getElementById(id);
   const hora = q => dCurta(q.slice(0, 10)) + " " + q.slice(11, 16);
@@ -4210,7 +4342,9 @@ function renderDiario() {
   const sel = $("djApSub"), cur = sel.value; sel.innerHTML = subs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + " (" + esc(s.un) + ")</option>").join(""); if (cur && byId[cur]) sel.value = cur;
   if (!$("djApQuando").value) $("djApQuando").value = nowLocal();
   if (!$("djExData").value) $("djExData").value = todayStr();
+  if (!$("djRef").firstChild) $("djRef").innerHTML = djRefHtml();
   $("djCal").innerHTML = djCalHtml(subs, aps);
+  $("djCtrl").innerHTML = djCtrlHtml(subs, aps);
   $("djApList").innerHTML = aps.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Quando</th><th>Substância e dose</th><th>Detalhes</th><th></th></tr></thead><tbody>' + aps.slice(-12).reverse().map(x => { const s = byId[x.sub]; return "<tr><td>" + hora(x.quando) + "</td><td><b>" + esc(s ? s.nome : "(apagada)") + "</b><div>" + fmt(x.dose) + " " + esc(s ? s.un : "") + "</div></td><td>" + esc([x.local, x.lote && "lote " + x.lote, x.obs].filter(Boolean).join(" · ") || "—") + "</td><td>" + djDelBtn(x.id, "a aplicação de " + hora(x.quando)) + "</td></tr>"; }).join("") + "</tbody></table></div>" + (aps.length > 12 ? '<p class="muted">Mostrando as 12 mais recentes de ' + aps.length + ".</p>" : "") : '<p class="muted">Nenhuma aplicação registrada ainda.</p>';
   // Curva estimada: 60 dias para trás e 30 para a frente, um ponto a cada meio dia; peso no eixo da direita
   const now = Date.now(), cols = ["--series-1", "--series-2", "--up", "--deload", "--new"], ds = [];
@@ -4226,17 +4360,26 @@ function renderDiario() {
   const marcs = [...new Set(exs.map(x => x.marc))], ms = $("djExSel"), mc = app.djMarc || ms.value;
   const st = x => x.rmin != null && x.valor < x.rmin ? ["abaixo", "no"] : x.rmax != null && x.valor > x.rmax ? ["acima", "no"] : x.rmin != null || x.rmax != null ? ["dentro", "ok"] : ["sem referência", ""];
   $("djExTable").innerHTML = marcs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Marcador</th><th>Último</th><th>Data</th><th>Referência do laudo</th><th></th></tr></thead><tbody>' + marcs.map(m => { const x = exs.filter(e => e.marc === m).pop(), s = st(x); return "<tr><td><b>" + esc(m) + "</b></td><td>" + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + dCurta(x.data) + "</td><td>" + (x.rmin != null || x.rmax != null ? (x.rmin != null ? fmt(x.rmin) : "…") + " a " + (x.rmax != null ? fmt(x.rmax) : "…") : "—") + '</td><td><span class="sst ' + s[1] + '">' + s[0] + "</span></td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhum exame registrado ainda.</p>';
+  const ht = exs.filter(e => e.marc === "Hematócrito").pop();
+  $("djExAlerta").innerHTML = ht && +ht.valor > DJ_HT_ALERTA ? '<div class="banner warn"><b>Hematócrito de ' + fmt(ht.valor) + "% em " + dCurta(ht.data) + ".</b> Acima de " + DJ_HT_ALERTA + "%, a diretriz de reposição de testosterona manda suspender o uso até baixar e reavaliar. Leve este resultado ao seu médico.</div>" : "";
   ms.innerHTML = marcs.map(m => '<option value="' + esc(m) + '">' + esc(m) + "</option>").join(""); if (mc && marcs.includes(mc)) ms.value = mc;
   const one = exs.filter(e => e.marc === ms.value), last = one[one.length - 1] || {}, o2 = chartBase();
   o2.plugins.tooltip.callbacks = { label: x => x.dataset.label + ": " + fmt(x.parsed.y) + " " + (last.un || "") };
   mkChart("chDjEx", { type: "line", data: { labels: one.map(x => dCurta(x.data)), datasets: [dsLine(ms.value || "Marcador", one.map(x => x.valor), "--series-1")].concat(last.rmin != null ? [dsDash("Mínimo do laudo", one.map(() => last.rmin), "--muted", [5, 4])] : [], last.rmax != null ? [dsDash("Máximo do laudo", one.map(() => last.rmax), "--muted", [5, 4])] : []) }, options: o2 });
   $("djExHist").innerHTML = one.length ? '<table class="plain"><tbody>' + one.slice().reverse().map(x => "<tr><td>" + dCurta(x.data) + "</td><td>" + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + djDelBtn(x.id, "o exame de " + dCurta(x.data)) + "</td></tr>").join("") + "</tbody></table>" : "";
 }
-// Ações do diário: trocar o mês do calendário, apagar (com confirmação) e salvar substância, aplicação ou exame
+// Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar substância, aplicação ou exame
 function djAct(a, b) {
   const [op, arg] = a.split("|"), v = id => (document.getElementById(id).value || "").trim(), n = id => { const x = parseFloat(v(id).replace(",", ".")); return isFinite(x) ? x : null; };
   const say = (el, t) => { document.getElementById(el).textContent = t; }, clear = ids => ids.forEach(i => { document.getElementById(i).value = ""; });
   if (op === "mes") { const [Y, M] = (app.djMes || todayStr().slice(0, 7)).split("-").map(Number); app.djMes = new Date(Date.UTC(Y, M - 1 + +arg, 1)).toISOString().slice(0, 7); renderDiario(); return; }
+  if (op === "ref") {
+    // copia o que é descritivo; dose e intervalo ficam por conta de quem registra
+    const r = DJ_REF[+arg], set = (id, val) => { document.getElementById(id).value = val; }, f = document.getElementById("djSubForm");
+    set("djSubNome", r.n); set("djSubUn", r.un); set("djSubVia", r.via); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubObs", "");
+    f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + ". Confira com a sua bula e informe o intervalo da sua prescrição.");
+    if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
+  }
   if (op === "del") {
     if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Apagar"; } }, 4000); return; }
     putDoc("diario", arg, { apagado: true }, "djMsg"); renderDiario(); return;
@@ -4538,6 +4681,8 @@ const SB_URL = "https://urrgxjudwntgoyslsgwe.supabase.co";
 const SB_KEY = "sb_publishable_8cj6PIB9miDzyeLa3ysN7w_u5Hg8Mj9";
 // Cliente do Supabase (criado em connect)
 let sb = null;
+// Salvar um arquivo gerado no app (imagem do resumo): baixa pelo navegador
+app.salvar = (nome, blob) => { const a = document.createElement("a"), u = URL.createObjectURL(blob); a.href = u; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); return Promise.resolve(); };
 // Mesma interface de coleções e documentos que o app usa: dados carregados de uma vez e gravados um a um
 function makeDb(uid) {
   const store = {}, subs = [];
