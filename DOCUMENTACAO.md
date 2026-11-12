@@ -206,7 +206,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 267 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 268 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -694,13 +694,18 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | Dado | O que guarda |
 | --- | --- |
 | `DJ_MARC` | Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra. |
-| `DJ_GRUPOS` | Grupos da referência: chave, título e a situação comum do grupo |
-| `DJ_REF` | Referência para estudo. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a bula traz um valor único (senão null) · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte |
+| `DJ_GRUPOS` | Grupos da referência: chave, título e nota do grupo |
+| `DJ_T` | Hormônios com dados de bula. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a fonte traz um valor único · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte |
+| `DJ_FICHAS` | Fichas do material de estudo: [ficha, nome, grupo, classe, via, frequência ou uso descrito, meia-vida descrita, meia-vida em dias quando há um valor único] |
+| `DJ_BULA` | O que foi conferido em bula ou estudo para substâncias que também têm ficha: entra por cima do dado da ficha |
+| `DJ_M` | Citados só nas tabelas do material, sem ficha: [nome, classe, via, padrão descrito] |
+| `DJ_REF` | Lista final da referência: hormônios, fichas (com o conferido em bula por cima) e os citados sem ficha |
 
 | Função | O que faz |
 | --- | --- |
+| `djVia()` | Via da referência → opção do cadastro |
 | `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
-| `djRefHtml()` | Painel da referência: um bloco recolhível por grupo, com um cartão por substância, mais as notas de leitura, exames e regras |
+| `djRefHtml()` | Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e regras |
 | `djCtrlHtml()` | Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida |
 | `djList()` | Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome) |
 | `djLevel()` | Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue. |

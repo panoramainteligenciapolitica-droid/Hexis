@@ -501,7 +501,6 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
 .djr dt { color: var(--muted); } .djr dd { margin: 0; }
 .djr p { margin: 0 0 8px; font-size: 13px; line-height: 1.35; }
 .djsit { margin: 8px 0; font-size: 13px; line-height: 1.35; color: var(--muted); }
-.djsit.no { color: var(--down); font-weight: 600; }
 .djn { margin: 8px 0 4px; padding-left: 18px; font-size: 14px; line-height: 1.4; }
 .djn li { margin-bottom: 6px; }
 #djRef details.pfsec { border-top: 1px solid var(--line); padding: 6px 0; }
@@ -783,14 +782,16 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 
   <!-- Tela: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames) -->
   <section class="view" id="v-diario">
-    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> Não é prescrição nem orientação de uso. O app não sugere substância, dose nem esquema: a referência reúne dados de bula e de estudos publicados, e o resto é o que você anotar. Hormônios e peptídeos só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
+    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
     <div class="panel">
       <h2>Hormônios e peptídeos</h2>
-      <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (meia-vida, via e intervalo de bula), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
+      <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (classe, via e meia-vida de 95 substâncias, com busca), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
     </div>
     <div class="panel">
       <h2>Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h2>
-      <p class="lead">Dados de bula e de estudos em humanos. Servem para entender o que você registra; não indicam o que usar nem quanto.</p>
+      <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. As doses e os protocolos ficam no seu material: cada cartão diz a ficha.</p>
+      <div class="field"><label for="djRefQ">Buscar substância</label><input id="djRefQ" type="search" autocomplete="off" placeholder="nome ou classe" data-djq></div>
+      <p class="muted" id="djRefN"></p>
       <div id="djRef"></div>
     </div>
     <div class="panel">
@@ -2498,8 +2499,8 @@ GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (D
 GLOSS.resumo = ["Resumo do dia", "<p>Análise do que você anotou no dia contra o que estava planejado.</p><p><b>Desempenho</b>: para cada exercício, compara a sua melhor série com a melhor série prevista pela força estimada (carga e repetições juntas, com as parciais contando como fração de repetição). No peso do corpo, compara o total de repetições. O número do dia é a média dos exercícios.</p><p>Até 2,5% abaixo conta como <b>no previsto</b>; 2% acima ou mais, <b>acima</b>.</p><p>Os <b>direcionamentos</b> saem dos seus registros: descanso, recuperação, RIR, parciais, dor, ordem, lados, tempo e cardio. Em cada exercício aparece a carga da próxima vez, já recalculada com o treino de hoje.</p>"];
 GLOSS.volume = ["Volume", "<p>Soma de carga × repetições de todas as séries feitas. Compara com o mesmo cálculo das séries previstas.</p><p>Serve para ver se o dia rendeu o trabalho total planejado; o desempenho de cada exercício mostra a força.</p>"];
 GLOSS.fotos = ["Fotos", "<p><b>Foto do treino</b>: fica ligada ao dia e entra no topo da imagem de compartilhar.</p><p><b>Fotos de evolução</b>: tire sempre no mesmo lugar, com a mesma luz, distância e pose. O app mostra a primeira ao lado da mais recente.</p><p>As fotos são reduzidas antes de enviar e só a sua conta consegue abri-las. Para apagar, toque em Apagar e depois em Confirmar.</p>"];
-GLOSS.diario = ["Hormônios e peptídeos", "<p>Um caderno de controle e estudo. O app não diz o que usar, quanto nem por quanto tempo.</p><ul><li><b>Referência para estudo</b>: meia-vida, via e intervalo de bula das substâncias mais comuns, com a situação de cada uma no Brasil.</li><li><b>Substâncias</b>: as que você usa, com unidade, via, meia-vida e o intervalo da sua prescrição.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Controle de doses</b>: última aplicação, totais de 7 e 30 dias e o estimado hoje.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
-GLOSS.dj_ref = ["Referência para estudo", "<p>Cada cartão resume o que a bula ou um estudo em humanos informa sobre a substância. A linha <b>Fonte</b> diz de onde veio o número.</p><ul><li><b>Meia-vida</b>: tempo para a quantidade cair pela metade. Quando a fonte traz uma faixa, o app mostra a faixa e não escolhe um valor por você.</li><li><b>Equilíbrio e saída</b>: conta feita pelo app, de 5 meias-vidas.</li><li><b>Intervalo de bula</b>: o da indicação aprovada. Não é sugestão: o intervalo que vale é o da sua prescrição.</li></ul><p><b>Usar no cadastro</b> copia nome, unidade, via e, quando a bula traz um valor único, a meia-vida. Dose e intervalo ficam em branco.</p><p>Substâncias sem registro aparecem para você saber a situação delas, com o que existe publicado. O app não preenche número nenhum para elas.</p>"];
+GLOSS.diario = ["Hormônios e peptídeos", "<p>Um caderno de controle e estudo. O app não diz o que usar, quanto nem por quanto tempo.</p><ul><li><b>Referência para estudo</b>: classe, via, frequência descrita e meia-vida de cada substância, com busca por nome.</li><li><b>Substâncias</b>: as que você usa, com unidade, via, meia-vida e o intervalo da sua prescrição.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Controle de doses</b>: última aplicação, totais de 7 e 30 dias e o estimado hoje.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
+GLOSS.dj_ref = ["Referência para estudo", "<p>Cada cartão resume uma substância. A linha <b>Fonte</b> diz de onde veio o dado: bula, estudo em humanos ou o material de estudo, com o número da ficha.</p><ul><li><b>Classe</b> e <b>Como é descrito</b>: o que a ficha informa sobre o tipo de molécula, a frequência e o tipo de uso (clínico, experimental, hospitalar, estético).</li><li><b>Meia-vida</b>: tempo para a quantidade cair pela metade. Muitas fichas dizem só curta ou prolongada; nesses casos o app mostra o texto e não inventa um número.</li><li><b>Equilíbrio e saída</b>: conta feita pelo app, de 5 meias-vidas, quando há um número.</li><li><b>Intervalo de bula</b> e <b>Registro</b>: aparecem quando foram conferidos em bula ou em comunicado oficial.</li></ul><p><b>Usar no cadastro</b> copia nome, via e, quando há um valor único, a meia-vida. Dose e intervalo ficam em branco: são os da sua prescrição ou do seu material.</p><p>As faixas de dose e os protocolos não foram copiados para o app. Para consultá-los, abra a ficha indicada no cartão.</p>"];
 GLOSS.dj_ctrl = ["Controle de doses", "<p>Resumo do que foi registrado em cada substância: a última aplicação, há quantos dias foi, a soma das doses nos últimos 7 e 30 dias e quanto ainda restaria hoje pela meia-vida informada.</p><p>É só a soma do que você anotou, na unidade da própria substância. Serve para conferir se o registrado bate com o prescrito.</p>"];
 GLOSS.dj_mv = ["Meia-vida", "<p>Tempo para a quantidade da substância no corpo cair pela metade. Informe o valor que consta na bula ou na literatura da apresentação que você usa, em dias (12 horas = 0,5). A Referência para estudo, no alto da aba, traz os valores de bula.</p><p>O app usa esse número só para desenhar a curva estimada. Sem ele, a substância não aparece na curva.</p>"];
 GLOSS.dj_int = ["Intervalo", "<p>De quantos em quantos dias a aplicação se repete, conforme a sua prescrição. Com ele, o calendário marca a próxima data prevista (última aplicação + intervalo).</p><p>É opcional e não cria lembrete com som.</p>"];
@@ -4262,14 +4263,21 @@ function shareAct(op) {
 // ===== 23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto) =====
 // Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra.
 const DJ_MARC = [["Hematócrito", "%"], ["Hemoglobina", "g/dL"], ["Testosterona total", "ng/dL"], ["Testosterona livre", "pg/mL"], ["Estradiol", "pg/mL"], ["PSA", "ng/mL"], ["LDL", "mg/dL"], ["HDL", "mg/dL"], ["Triglicerídeos", "mg/dL"], ["TGO (AST)", "U/L"], ["TGP (ALT)", "U/L"], ["Creatinina", "mg/dL"], ["Glicemia", "mg/dL"], ["Pressão sistólica", "mmHg"], ["Pressão diastólica", "mmHg"], ["Frequência cardíaca de repouso", "bpm"]];
-// Grupos da referência: chave, título e a situação comum do grupo
+// Grupos da referência: chave, título e nota do grupo
 const DJ_GRUPOS = [
   ["t", "Testosterona, anabolizantes e GH", "Medicamentos com bula. Testosterona e anabolizantes são de controle especial (lista C5): só com receita, que fica retida."],
-  ["p", "Peptídeos com registro", "Medicamentos com bula, vendidos com receita."],
-  ["s", "Peptídeos sem registro", "Sem registro na Anvisa em nenhuma categoria. Em 2026 a agência avisou que são irregulares para qualquer uso em saúde e proibiu a venda de vários produtos. Não há garantia de origem, pureza ou dose."]
+  ["b1", "Metabólicos, incretínicos e controle de peso", ""],
+  ["b2", "Eixo GH, anabolismo e performance", ""],
+  ["b3", "Reparo tecidual, regeneração e recuperação", ""],
+  ["b4", "Hormonais, sexuais e reprodutivos", ""],
+  ["b5", "Neurológicos, cognitivos e neuroprotetores", ""],
+  ["b6", "Imunomoduladores, anti-inflamatórios e gastroendócrinos", ""],
+  ["b7", "Longevidade, mitocôndria, estética e saúde celular", ""],
+  ["b8", "Clínicos, hospitalares e terapêuticos específicos", ""],
+  ["m", "Outros citados no material de estudo", "Aparecem só nas tabelas do material, sem ficha própria."]
 ];
-// Referência para estudo. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a bula traz um valor único (senão null) · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte
-const DJ_REF = [
+// Hormônios com dados de bula. n nome · g grupo · un unidade usual · via · mv meia-vida em dias, só quando a fonte traz um valor único · mvT meia-vida por extenso · bula intervalo na indicação aprovada · nota · fonte
+const DJ_T = [
   { n: "Cipionato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: 8, mvT: "cerca de 8 dias", bula: "a cada 2 a 4 semanas", nota: "Éster em óleo, de absorção lenta. Cerca de 70% da massa do éster é testosterona.", fonte: "bula" },
   { n: "Enantato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: 4.5, mvT: "4 a 5 dias (4,5 em estudo; a bula não traz o número)", bula: "no músculo, a cada 2 a 4 semanas; a caneta subcutânea é semanal", nota: "Cerca de 72% da massa do éster é testosterona.", fonte: "bula e estudo publicado" },
   { n: "Undecilato de testosterona", g: "t", un: "mg", via: "Intramuscular", mv: null, mvT: "53 a 90 dias, conforme a bula (é a velocidade de liberação do depósito)", bula: "a cada 10 a 14 semanas; a 2ª aplicação pode vir 6 semanas depois da 1ª", nota: "Pico entre 7 e 14 dias. O nível estabiliza entre a 3ª e a 5ª aplicação. 1.000 mg do éster equivalem a 631,5 mg de testosterona.", fonte: "bula" },
@@ -4277,25 +4285,134 @@ const DJ_REF = [
   { n: "Testosterona em gel", g: "t", un: "mg", via: "Transdérmica", mv: null, mvT: "não se aplica: uso diário, sem depósito", bula: "uma vez ao dia", nota: "O nível estabiliza em 2 a 3 dias e volta ao de antes 48 a 72 h depois da última aplicação.", fonte: "bula" },
   { n: "Decanoato de nandrolona", g: "t", un: "mg", via: "Intramuscular", mv: null, mvT: "5 a 15 dias de liberação do depósito; no sangue, a nandrolona dura cerca de 4 h", bula: "cada aplicação age por cerca de 3 semanas", nota: "Indicações de bula: osteoporose e alguns tipos de anemia.", fonte: "bula" },
   { n: "Oxandrolona", g: "t", un: "mg", via: "Oral", mv: 0.43, mvT: "cerca de 10 h (13 h em idosos)", bula: "diária, em doses divididas", nota: "Oral 17-alfa-alquilado: a bula traz alerta para o fígado e aumento forte do efeito da varfarina.", fonte: "bula (EUA)" },
-  { n: "Somatropina (GH)", g: "t", un: "UI", via: "Subcutânea", mv: null, mvT: "3 a 5 h depois da aplicação subcutânea", bula: "diária", nota: "Pico em cerca de 5 h. 1 mg equivale a 3 UI. A bula pede acompanhamento de glicose e IGF-1.", fonte: "bula" },
-  { n: "Semaglutida", g: "p", un: "mg", via: "Subcutânea", mv: 7, mvT: "cerca de 1 semana", bula: "semanal", nota: "O nível estabiliza em 4 a 5 semanas e a substância ainda circula por cerca de 5 semanas depois da última dose.", fonte: "bula" },
-  { n: "Tirzepatida", g: "p", un: "mg", via: "Subcutânea", mv: 5, mvT: "cerca de 5 dias", bula: "semanal", nota: "O nível estabiliza em cerca de 4 semanas.", fonte: "bula" },
-  { n: "Liraglutida", g: "p", un: "mg", via: "Subcutânea", mv: 0.54, mvT: "cerca de 13 h", bula: "diária", nota: "O nível estabiliza em 2 a 3 dias.", fonte: "bula" },
-  { n: "Tesamorelina", g: "p", un: "mg", via: "Subcutânea", mv: null, mvT: "8 a 38 minutos, conforme a formulação", bula: "diária", nota: "Análogo do GHRH. Aprovada nos EUA para gordura abdominal na lipodistrofia do HIV.", fonte: "bula (EUA)" },
-  { n: "CJC-1295 (com DAC)", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "5,8 a 8,1 dias em adultos saudáveis", bula: "não há", nota: "Análogo do GHRH de longa duração, estudado só em ensaios iniciais.", fonte: "estudo em humanos (2006)" },
-  { n: "Ipamorelina", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "cerca de 2 h, medida com infusão na veia", bula: "não há", nota: "Estimula a liberação de GH. O único ensaio clínico concluído, em outra indicação, não atingiu o objetivo.", fonte: "estudo em humanos (1999)" },
-  { n: "BPC-157", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "sem valor estabelecido em humanos", bula: "não há", nota: "O que existe publicado é quase todo em animais.", fonte: "comunicado da Anvisa (2026)" },
-  { n: "TB-500", g: "s", un: "mcg", via: "Subcutânea", mv: null, mvT: "sem valor estabelecido em humanos", bula: "não há", nota: "Fragmento sintético da timosina beta-4. O que existe publicado é quase todo em animais.", fonte: "comunicado da Anvisa (2026)" },
-  { n: "Retatrutida", g: "s", un: "mg", via: "Subcutânea", mv: null, mvT: "ainda em ensaios clínicos; sem valor de bula", bula: "não há", nota: "Sem registro em nenhuma agência reguladora do mundo.", fonte: "comunicado da Anvisa (2026)" }
+  { n: "Somatropina (GH)", g: "t", un: "UI", via: "Subcutânea", mv: null, mvT: "3 a 5 h depois da aplicação subcutânea", bula: "diária", nota: "Pico em cerca de 5 h. 1 mg equivale a 3 UI. A bula pede acompanhamento de glicose e IGF-1.", fonte: "bula" }
 ];
+// Fichas do material de estudo: [ficha, nome, grupo, classe, via, frequência ou uso descrito, meia-vida descrita, meia-vida em dias quando há um valor único]
+const DJ_FICHAS = [
+  [1, "Semaglutida", "b1", "Agonista do receptor de GLP-1", "Subcutânea", "1x por semana · uso clínico", "cerca de 1 semana", 7],
+  [2, "Liraglutida", "b1", "Agonista do receptor de GLP-1", "Subcutânea", "1x ao dia · uso clínico", "cerca de 13 h", 0.54],
+  [3, "Tirzepatida", "b1", "Agonista dual GIP/GLP-1", "Subcutânea", "1x por semana · uso clínico", "cerca de 5 dias", 5],
+  [4, "Retatrutida", "b1", "Agonista triplo GIP/GLP-1/glucagon", "Subcutânea", "1x por semana · uso experimental", "ainda em investigação"],
+  [5, "Cagrilintida", "b1", "Análogo de amilina de longa ação", "Subcutânea", "1x por semana · uso experimental", "prolongada, compatível com uso semanal"],
+  [6, "Pramlintida", "b1", "Análogo de amilina", "Subcutânea", "antes das refeições · uso clínico", "cerca de 48 minutos", 0.033],
+  [7, "Setmelanotida", "b1", "Agonista do receptor MC4", "Subcutânea", "1x ao dia · uso clínico", ""],
+  [8, "Tesamorelina", "b1", "Análogo do GHRH", "Subcutânea", "1x ao dia · uso clínico", "curta"],
+  [9, "Dulaglutida", "b1", "Agonista do receptor de GLP-1", "Subcutânea", "1x por semana · uso clínico", "cerca de 5 dias", 5],
+  [10, "Exenatida", "b1", "Agonista do receptor de GLP-1", "Subcutânea", "2x ao dia ou semanal, conforme a formulação · uso clínico", "cerca de 2,4 h na formulação de 2x ao dia"],
+  [11, "Sermorelina", "b2", "Análogo do GHRH", "Subcutânea", "1x ao dia", "curta"],
+  [12, "CJC-1295 com DAC", "b2", "Análogo do GHRH de ação prolongada", "Subcutânea", "1x por semana", "prolongada"],
+  [13, "Mod GRF 1-29 (CJC-1295 sem DAC)", "b2", "Análogo do GHRH de ação curta", "Subcutânea", "1 a 3x ao dia · uso experimental", "curta"],
+  [14, "Ipamorelina", "b2", "Agonista do receptor de grelina", "Subcutânea", "1 a 3x ao dia · uso experimental", "curta"],
+  [15, "Hexarelina", "b2", "Secretagogo de GH potente", "Subcutânea", "1 a 3x ao dia", "curta"],
+  [16, "GHRP-2", "b2", "Secretagogo de GH", "Subcutânea", "2 a 3x ao dia", "curta"],
+  [17, "GHRP-6", "b2", "Secretagogo de GH", "Subcutânea", "2 a 3x ao dia", "curta"],
+  [18, "AOD-9604", "b2", "Fragmento do GH (176-191)", "Subcutânea", "1x ao dia · uso experimental", ""],
+  [19, "IGF-1 LR3", "b2", "Análogo do IGF-1", "SC / IM", "1x ao dia · uso experimental", "prolongada"],
+  [20, "PEG-MGF", "b2", "Fator mecânico de crescimento, peguilado", "SC / IM", "2 a 3x por semana · uso experimental", ""],
+  [21, "BPC-157", "b3", "Pentadecapeptídeo reparador", "SC / oral", "1 a 2x ao dia · uso experimental", ""],
+  [22, "Thymosin Beta-4 (TB-500)", "b3", "Fragmento da timosina beta-4", "Subcutânea", "2x por semana · uso investigacional", ""],
+  [23, "GHK-Cu", "b3", "Peptídeo ligado ao cobre", "Tópica", "1 a 2x ao dia", ""],
+  [24, "KPV", "b3", "Tripeptídeo anti-inflamatório", "Oral / tópica", "1 a 2x ao dia", ""],
+  [25, "LL-37", "b3", "Peptídeo antimicrobiano", "Tópica / local", "1x ao dia, por pouco tempo · uso experimental", ""],
+  [26, "ARA-290 (Cibinetide)", "b3", "Análogo não eritropoiético da EPO", "Subcutânea", "1x ao dia", ""],
+  [27, "Ac-SDKP", "b3", "Tetrapeptídeo antifibrótico", "Oral", "1x ao dia", "curta"],
+  [28, "P-15", "b3", "Peptídeo osteogênico", "Local (enxerto)", "aplicação única", ""],
+  [29, "Epitalon", "b3", "Tetrapeptídeo pineal", "IM / intranasal", "ciclos curtos", ""],
+  [30, "Thymulin", "b3", "Peptídeo imunomodulador", "SC / tópica", "2 a 3x por semana", ""],
+  [31, "Kisspeptina-10", "b4", "Peptídeo regulador do eixo HPG", "IV / SC", "uso experimental", ""],
+  [32, "Gonadorelina", "b4", "GnRH sintético", "SC / IV", "uso clínico e investigacional", "curta"],
+  [33, "Triptorelina", "b4", "Agonista de GnRH", "SC / IM", "uso clínico", ""],
+  [34, "Leuprorrelina", "b4", "Agonista de GnRH", "SC / IM", "uso clínico", ""],
+  [35, "Buserelina", "b4", "Agonista de GnRH", "SC / intranasal", "uso clínico", ""],
+  [36, "Nafarelina", "b4", "Agonista de GnRH", "Intranasal", "uso clínico", ""],
+  [37, "Desmopressina", "b4", "Análogo de vasopressina", "Oral / intranasal / SC / IV", "uso clínico", ""],
+  [38, "Oxitocina", "b4", "Peptídeo uterotônico", "IV / IM", "uso clínico", "curta"],
+  [39, "Bremelanotida (PT-141)", "b4", "Agonista melanocortínico", "Subcutânea", "sob demanda · uso clínico", ""],
+  [40, "Melanotan II", "b4", "Agonista melanocortínico", "Subcutânea", "uso experimental", ""],
+  [41, "Semax", "b5", "Análogo de ACTH (4-10)", "Intranasal", "uso clínico regional e experimental", ""],
+  [42, "Selank", "b5", "Análogo de tuftsina", "Intranasal", "uso experimental", ""],
+  [43, "N-Acetyl Semax Amidate", "b5", "Derivado de Semax", "Intranasal / SC", "uso experimental", ""],
+  [44, "N-Acetyl Selank Amidate", "b5", "Derivado de Selank", "Intranasal / SC", "uso experimental", ""],
+  [45, "Dihexa", "b5", "Análogo da angiotensina IV", "Oral / SC", "uso experimental", ""],
+  [46, "DSIP", "b5", "Peptídeo indutor do sono delta", "SC / IV / intranasal", "uso experimental", ""],
+  [47, "Cerebrolysin", "b5", "Complexo neuropeptídico", "IV / IM", "uso clínico em alguns países", ""],
+  [48, "P21", "b5", "Peptídeo neurotrófico", "Oral / SC", "uso experimental", ""],
+  [49, "ACTH 4-10", "b5", "Fragmento melanocortínico", "Intranasal / SC", "uso experimental", ""],
+  [50, "Humanin", "b5", "Peptídeo mitocondrial", "SC / IV", "uso experimental", ""],
+  [51, "Thymosin Alpha-1", "b6", "Peptídeo imunomodulador", "Subcutânea", "uso aprovado em alguns países", ""],
+  [52, "Octreotida", "b6", "Análogo da somatostatina", "SC / IV / IM de depósito", "uso clínico estabelecido", ""],
+  [53, "Lanreotida", "b6", "Análogo da somatostatina", "SC profunda, de depósito", "uso clínico estabelecido", ""],
+  [54, "Pasireotida", "b6", "Análogo da somatostatina", "SC / IM de liberação lenta", "uso clínico especializado", ""],
+  [55, "Larazotida", "b6", "Modulador das junções de oclusão", "Oral", "uso experimental", ""],
+  [56, "Teriparatida", "b6", "Análogo do PTH (1-34)", "Subcutânea", "diária · uso clínico estabelecido", ""],
+  [57, "Abaloparatida", "b6", "Análogo do PTHrP", "Subcutânea", "diária · uso clínico estabelecido", ""],
+  [58, "Calcitonina", "b6", "Hormônio peptídico", "Intranasal / SC / IM", "uso clínico específico", ""],
+  [59, "Linaclotida", "b6", "Agonista da GC-C", "Oral", "diária · uso clínico estabelecido", ""],
+  [60, "Plecanatida", "b6", "Agonista da GC-C", "Oral", "uso clínico estabelecido", ""],
+  [61, "MOTS-c", "b7", "Peptídeo mitocondrial", "Subcutânea", "uso experimental", ""],
+  [62, "SS-31 (Elamipretida)", "b7", "Peptídeo mitocondrial", "SC / IV", "uso experimental", ""],
+  [63, "FOXO4-DRI", "b7", "Peptídeo senolítico", "Subcutânea", "uso experimental", ""],
+  [64, "Epithalamin", "b7", "Bioregulador pineal", "IM / SC", "uso experimental", ""],
+  [65, "Pinealon", "b7", "Tripeptídeo bioregulador", "Oral / intranasal", "uso experimental", ""],
+  [66, "Vilon", "b7", "Dipeptídeo bioregulador", "Oral / intranasal", "uso experimental", ""],
+  [67, "Matrixyl (Palmitoyl Pentapeptide-4)", "b7", "Peptídeo cosmético", "Tópica", "uso estético", ""],
+  [68, "Argireline (Acetyl Hexapeptide-8)", "b7", "Peptídeo cosmético", "Tópica", "uso estético", ""],
+  [69, "SNAP-8 (Acetyl Octapeptide-3)", "b7", "Peptídeo cosmético", "Tópica", "uso estético", ""],
+  [70, "Palmitoyl Tetrapeptide-7", "b7", "Peptídeo cosmético", "Tópica", "uso estético", ""],
+  [71, "Teduglutida", "b8", "Peptídeo intestinal", "Subcutânea", "uso clínico", "curta"],
+  [72, "Ziconotida", "b8", "Peptídeo analgésico", "Intratecal", "uso hospitalar", ""],
+  [73, "Eptifibatida", "b8", "Antiplaquetário", "IV", "uso hospitalar", "curta"],
+  [74, "Bivalirudina", "b8", "Anticoagulante", "IV", "uso hospitalar", "curta"],
+  [75, "Vasopressina", "b8", "Vasopressor", "IV", "uso hospitalar", "curta, de 10 a 20 minutos"],
+  [76, "Angiotensina II", "b8", "Vasopressor", "IV, em infusão contínua", "uso hospitalar", "muito curta"],
+  [77, "Icatibanto", "b8", "Antagonista da bradicinina", "Subcutânea", "uso clínico", "curta"]
+];
+// O que foi conferido em bula ou estudo para substâncias que também têm ficha: entra por cima do dado da ficha
+const DJ_BULA = {
+  "Semaglutida": { un: "mg", bula: "semanal", nota: "O nível estabiliza em 4 a 5 semanas e a substância ainda circula por cerca de 5 semanas depois da última dose.", fb: "bula" },
+  "Tirzepatida": { un: "mg", bula: "semanal", nota: "O nível estabiliza em cerca de 4 semanas.", fb: "bula" },
+  "Liraglutida": { un: "mg", bula: "diária", nota: "O nível estabiliza em 2 a 3 dias.", fb: "bula" },
+  "Dulaglutida": { un: "mg" }, "Pramlintida": { un: "mcg" },
+  "Tesamorelina": { un: "mg", mvT: "curta: 8 a 38 minutos, conforme a formulação", bula: "diária", nota: "Aprovada nos EUA para gordura abdominal na lipodistrofia do HIV.", fb: "bula (EUA)" },
+  "Retatrutida": { un: "mg", reg: "sem registro em nenhuma agência reguladora", fb: "comunicado da Anvisa (2026)" },
+  "CJC-1295 com DAC": { un: "mcg", mvT: "prolongada: 5,8 a 8,1 dias em adultos saudáveis", reg: "sem registro na Anvisa", fb: "estudo em humanos (2006)" },
+  "Ipamorelina": { un: "mcg", mvT: "curta: cerca de 2 h, medida com infusão na veia", reg: "sem registro na Anvisa", fb: "estudo em humanos (1999)" },
+  "BPC-157": { un: "mcg", mvT: "sem valor estabelecido em humanos", reg: "sem registro na Anvisa", fb: "comunicado da Anvisa (2026)" },
+  "Thymosin Beta-4 (TB-500)": { un: "mg", mvT: "sem valor estabelecido em humanos", reg: "sem registro na Anvisa", fb: "comunicado da Anvisa (2026)" },
+  "GHK-Cu": { reg: "sem registro na Anvisa", fb: "comunicado da Anvisa (2026)" }
+};
+// Citados só nas tabelas do material, sem ficha: [nome, classe, via, padrão descrito]
+const DJ_M = [
+  ["5-Amino-1MQ / 1MK", "Inibidor da NNMT (pequena molécula)", "Subcutânea", "1 a 2x ao dia"],
+  ["Follistatin 315 / 344", "Inibidor da miostatina", "Subcutânea", "diária, por período curto"],
+  ["HGH Frag 176-191", "Fragmento lipolítico do GH", "Subcutânea", "1 a 2x ao dia"],
+  ["Klotho-FG", "Peptídeo do eixo Klotho", "Subcutânea", "diária ou intermitente"],
+  ["NA-931", "Peptídeo metabólico em pesquisa", "Subcutânea", "1 a 2x ao dia"],
+  ["CJC-1295 + Ipamorelina", "Combinação de análogo do GHRH e secretagogo de GH", "Subcutânea", "ver as fichas 12 e 14"],
+  ["MGF", "Fator mecânico de crescimento", "SC / IM", "depois do estímulo mecânico"],
+  ["DY-131", "Pequena molécula em pesquisa (não é peptídeo)", "", ""],
+  ["ADAMAX", "Peptídeo sintético em pesquisa", "", ""],
+  ["PC-27", "Peptídeo experimental", "", ""]
+];
+// Lista final da referência: hormônios, fichas (com o conferido em bula por cima) e os citados sem ficha
+const DJ_REF = DJ_T.concat(
+  DJ_FICHAS.map(f => { const x = DJ_BULA[f[1]] || {}; return Object.assign({ n: f[1], g: f[2], cls: f[3], via: f[4], freq: f[5], mvT: f[6] || "", mv: f[7] || null, fonte: "material de estudo, ficha " + f[0] + (x.fb ? "; " + x.fb : "") }, x); }),
+  DJ_M.map(f => ({ n: f[0], g: "m", cls: f[1], via: f[2], freq: f[3], mvT: "", mv: null, fonte: "material de estudo, tabela geral" })));
+// Via da referência → opção do cadastro
+function djVia(v) { const t = String(v || "").toLowerCase(); return /^(subcut|sc\b)/.test(t) ? "Subcutânea" : /^(intramusc|im\b)/.test(t) ? "Intramuscular" : /^oral/.test(t) ? "Oral" : /^transd/.test(t) ? "Transdérmica" : "Outra"; }
 // Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias"
 function djDias(d) { return d < 2 ? Math.round(d * 24) + " h" : fmt(Math.round(d)) + " dias"; }
-// Painel da referência: um bloco recolhível por grupo, com um cartão por substância, mais as notas de leitura, exames e regras
-function djRefHtml() {
-  const card = (r, i) => '<div class="djr"><div class="djr-h"><b>' + esc(r.n) + '</b><span class="muted">' + esc(r.via) + '</span></div><dl><dt>Meia-vida</dt><dd>' + esc(r.mvT) + "</dd>" +
-    (r.mv ? "<dt>Equilíbrio e saída</dt><dd>cerca de " + djDias(r.mv * DJ_EQUIL) + " (" + DJ_EQUIL + " meias-vidas)</dd>" : "") + "<dt>Intervalo de bula</dt><dd>" + esc(r.bula) + '</dd></dl><p class="muted">' + esc(r.nota) + " Fonte: " + esc(r.fonte) + '.</p><button type="button" class="btn small" data-dj="ref|' + i + '">Usar no cadastro</button></div>';
+// Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e regras
+function djRefHtml(q) {
+  q = String(q || "").trim().toLowerCase();
+  const row = (t, v) => v ? "<dt>" + t + "</dt><dd>" + esc(v) + "</dd>" : "";
+  const card = (r, i) => '<div class="djr"><div class="djr-h"><b>' + esc(r.n) + '</b><span class="muted">' + esc(r.via || "") + "</span></div><dl>" + row("Classe", r.cls) + row("Como é descrito", r.freq) + row("Meia-vida", r.mvT) +
+    (r.mv ? "<dt>Equilíbrio e saída</dt><dd>cerca de " + djDias(r.mv * DJ_EQUIL) + " (" + DJ_EQUIL + " meias-vidas)</dd>" : "") + row("Intervalo de bula", r.bula) + row("Registro", r.reg) + '</dl><p class="muted">' + (r.nota ? esc(r.nota) + " " : "") + "Fonte: " + esc(r.fonte) + '.</p><button type="button" class="btn small" data-dj="ref|' + i + '">Usar no cadastro</button></div>';
   const nota = (t, li) => '<details class="pfsec sub"><summary><h3>' + t + "</h3></summary><ul class=\"djn\">" + li.map(x => "<li>" + x + "</li>").join("") + "</ul></details>";
-  return DJ_GRUPOS.map(([g, t, sit]) => { const L = DJ_REF.map((r, i) => [r, i]).filter(x => x[0].g === g); return '<details class="pfsec sub"><summary><h3>' + t + ' <span class="muted">(' + L.length + ')</span></h3></summary><p class="djsit' + (g === "s" ? " no" : "") + '">' + sit + "</p>" + L.map(x => card(x[0], x[1])).join("") + "</details>"; }).join("") +
+  const all = DJ_REF.map((r, i) => [r, i]).filter(x => !q || (x[0].n + " " + (x[0].cls || "")).toLowerCase().includes(q));
+  const grupos = DJ_GRUPOS.map(([g, t, sit]) => { const L = all.filter(x => x[0].g === g); return !L.length ? "" : '<details class="pfsec sub"' + (q ? " open" : "") + '><summary><h3>' + t + ' <span class="muted">(' + L.length + ")</span></h3></summary>" + (sit ? '<p class="djsit">' + sit + "</p>" : "") + L.map(x => card(x[0], x[1])).join("") + "</details>"; }).join("");
+  if (q) return grupos || '<p class="muted">Nenhuma substância com esse nome.</p>';
+  return grupos +
     nota("Como ler estes números", [
       "<b>Meia-vida</b>: tempo para a quantidade no corpo cair pela metade.",
       "<b>Estado de equilíbrio</b>: com doses repetidas no mesmo intervalo, o nível para de subir depois de cerca de " + DJ_EQUIL + " meias-vidas.",
@@ -4352,7 +4469,7 @@ function renderDiario() {
   const sel = $("djApSub"), cur = sel.value; sel.innerHTML = subs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + " (" + esc(s.un) + ")</option>").join(""); if (cur && byId[cur]) sel.value = cur;
   if (!$("djApQuando").value) $("djApQuando").value = nowLocal();
   if (!$("djExData").value) $("djExData").value = todayStr();
-  if (!$("djRef").firstChild) $("djRef").innerHTML = djRefHtml();
+  if (!$("djRef").firstChild) { $("djRef").innerHTML = djRefHtml($("djRefQ").value); $("djRefN").textContent = DJ_REF.length + " substâncias em " + DJ_GRUPOS.length + " grupos."; }
   $("djCal").innerHTML = djCalHtml(subs, aps);
   $("djCtrl").innerHTML = djCtrlHtml(subs, aps);
   $("djApList").innerHTML = aps.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Quando</th><th>Substância e dose</th><th>Detalhes</th><th></th></tr></thead><tbody>' + aps.slice(-12).reverse().map(x => { const s = byId[x.sub]; return "<tr><td>" + hora(x.quando) + "</td><td><b>" + esc(s ? s.nome : "(apagada)") + "</b><div>" + fmt(x.dose) + " " + esc(s ? s.un : "") + "</div></td><td>" + esc([x.local, x.lote && "lote " + x.lote, x.obs].filter(Boolean).join(" · ") || "—") + "</td><td>" + djDelBtn(x.id, "a aplicação de " + hora(x.quando)) + "</td></tr>"; }).join("") + "</tbody></table></div>" + (aps.length > 12 ? '<p class="muted">Mostrando as 12 mais recentes de ' + aps.length + ".</p>" : "") : '<p class="muted">Nenhuma aplicação registrada ainda.</p>';
@@ -4386,8 +4503,8 @@ function djAct(a, b) {
   if (op === "ref") {
     // copia o que é descritivo; dose e intervalo ficam por conta de quem registra
     const r = DJ_REF[+arg], set = (id, val) => { document.getElementById(id).value = val; }, f = document.getElementById("djSubForm");
-    set("djSubNome", r.n); set("djSubUn", r.un); set("djSubVia", r.via); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubObs", "");
-    f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + ". Confira com a sua bula e informe o intervalo da sua prescrição.");
+    set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubObs", "");
+    f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + (r.un ? "" : "; confira a unidade") + ". Dose e intervalo ficam por sua conta.");
     if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
   }
   if (op === "del") {
@@ -4603,6 +4720,7 @@ document.addEventListener("click", ev => {
 document.addEventListener("input", ev => {
   const el = ev.target;
   if (el.id === "qwKg") { app.qwTyping = true; return; }
+  if (el.id === "djRefQ") { document.getElementById("djRef").innerHTML = djRefHtml(el.value); return; }
   if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; }
   if (el.id === "clkFixIn") { const m = document.getElementById("clkFixMm"); if (m) m.textContent = mmss(parseMmss(el.value)); return; }
   if (el.dataset.set) {
