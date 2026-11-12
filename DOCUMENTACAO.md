@@ -1,6 +1,6 @@
 # Hexis · documentação do código
 
-Atualizada em 11/nov/2026. A tabela de parâmetros e o índice de funções deste documento são tirados dos comentários do próprio código, então cada linha daqui tem um comentário igual no ponto correspondente do `index.html`.
+Atualizada em 12/nov/2026. A tabela de parâmetros e o índice de funções deste documento são tirados dos comentários do próprio código, então cada linha daqui tem um comentário igual no ponto correspondente do `index.html`.
 
 ## 1. Onde fica cada coisa
 
@@ -23,9 +23,9 @@ Pontos de atenção:
 
 1. **Estilos** (`<style>`): a aparência, em 18 blocos numerados.
 2. **Telas** (`<main>` e as barras): a estrutura vazia de cada aba.
-3. **Programa** (`<script>`): 24 seções numeradas, que preenchem as telas e guardam os dados.
+3. **Programa** (`<script>`): 26 seções numeradas, que preenchem as telas e guardam os dados.
 
-Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 24 seções.
+Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 26 seções.
 
 ### Estilos (18 blocos)
 
@@ -52,7 +52,7 @@ Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` le
 
 Cada aba é uma `<section class="view">`. Só a aba aberta fica visível.
 
-- `v-inicio`: Início (preenchida por renderHome)
+- `v-inicio`: Início (preenchida por renderHome): o que é o app
 - `v-perfil`: Perfil
 - `v-objetivo`: Objetivo
 - `v-semana`: Semana (treino do dia)
@@ -60,9 +60,10 @@ Cada aba é uma `<section class="view">`. Só a aba aberta fica visível.
 - `v-proxima`: Próxima semana
 - `v-progresso`: Progresso (gráficos)
 - `v-corpo`: Corpo e dieta
+- `v-diario`: Diário de substâncias e exames (registro pessoal)
 - `v-plano`: Plano e regras
 
-Fora das abas ficam: o cabeçalho com o logo e as subabas (`#subnav`), a barra de navegação de baixo (`#bnav`), a barra de salvar com o cronômetro (`.savebar`, `#clkbar`) e a janela de explicação (`#pop`).
+Fora das abas ficam: o cabeçalho com o logo, o botão **Hoje** (`#hojeBtn`) e as subabas (`#subnav`), o painel flutuante Hoje (`#hoje`, com o treino do dia, os números principais e a pesagem diária), a barra de navegação de baixo (`#bnav`), a barra de salvar com o cronômetro (`.savebar`, `#clkbar`) e a janela de explicação (`#pop`).
 
 ### Navegação
 
@@ -73,7 +74,7 @@ A barra de baixo tem 5 grupos; cada grupo pode ter subabas no topo. Tudo sai da 
 | Início | Início |
 | Treino | Semana · Próxima semana |
 | Resumo | Resumo do dia |
-| Evolução | Progresso · Corpo e dieta |
+| Evolução | Progresso · Corpo e dieta · Diário |
 | Você | Perfil · Objetivo · Plano e regras |
 
 ## 3. Como os dados são guardados
@@ -85,17 +86,21 @@ Cada item é um documento separado, com um caminho:
 | `semanas/w01-A` | Um dia de treino: `{ semana, dia, nota, tags, cardio, ex }` |
 | `corpo/2026-11-10` | Pesagem e medidas de um dia |
 | `meta/perfil` | Perfil e Objetivo |
-| `meta/ajustes` | Deload escolhido, palavras-chave criadas e quais exercícios são unilaterais |
+| `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas e quais exercícios são unilaterais |
+| `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Diário: substância, aplicação e exame |
+| `fotos/2026-11-12-…` | Registro de uma foto: data, tipo (`treino` ou `evolucao`) e onde o arquivo está |
 
 Dentro de um dia, `ex` tem um registro por exercício:
 
-- `ex.A1 = { st, sets, nota, tags, trans, startAt, doneAt, prev }`
-  - `st`: `"feito"`, `"nao"` ou vazio. `trans`: intervalo antes do exercício, em segundos. `startAt` e `doneAt`: horários usados para descobrir a ordem feita. `prev`: o que estava previsto quando o exercício foi feito.
+- `ex.A1 = { st, sets, nota, tags, trans, startAt, doneAt, prev, aq, aqT }`
+  - `st`: `"feito"`, `"nao"` ou vazio. `trans`: intervalo antes do exercício, em segundos. `startAt` e `doneAt`: horários usados para descobrir a ordem feita. `prev`: o que estava previsto quando o exercício foi feito. `aq`: séries de aquecimento marcadas. `aqT`: tempo do aquecimento, em segundos.
 - `sets[i] = { kg, reps, rir, parc, exec, desc, lados, dif }`
   - `parc`: repetições parciais, em % do movimento. `exec`: tempo de execução (s). `desc`: descanso depois da série (s).
   - `lados`: dados de cada lado (`e`, `d`) no exercício unilateral. `dif`: lado mais difícil.
 
-O cronômetro em andamento fica só no aparelho (parâmetro `CLK_KEY`), para continuar contando se a página for fechada.
+O cronômetro em andamento fica só no aparelho (parâmetro `CLK_KEY`), para continuar contando se a página for fechada. A preferência de tela acesa também (`WAKE_KEY`).
+
+No diário e nas fotos, apagar é gravar o documento como `{ apagado: true }`; o app deixa de mostrá-lo.
 
 **No site**, cada documento é uma linha da tabela `hexis_docs`:
 
@@ -108,25 +113,29 @@ O cronômetro em andamento fica só no aparelho (parâmetro `CLK_KEY`), para con
 
 A chave é `(user_id, path)`. As regras de acesso da tabela (RLS) só deixam cada pessoa ler e gravar as linhas com o próprio `user_id`.
 
+Os arquivos das fotos ficam no armazenamento `fotos` do Supabase, que é privado: cada pessoa tem uma pasta com o próprio `user_id` e só ela consegue enviar, abrir e apagar o que está lá. A foto é reduzida para 1.280 px antes do envio e aberta por um link temporário de 1 hora.
+
 ## 4. Como uma mudança percorre o app
 
-1. Você toca ou digita (seção 22).
-2. O registro muda na memória (seção 10) e o salvamento é agendado para 1,2 s depois (seção 22).
+1. Você toca ou digita (seção 24).
+2. O registro muda na memória (seção 10) e o salvamento é agendado para 1,2 s depois (seção 24).
 3. O motor refaz todas as semanas a partir dos registros (seção 3). Nada da prescrição é gravado: ela é sempre recalculada.
-4. A tela é redesenhada (seções 11 a 20).
+4. A tela é redesenhada (seções 11 a 23).
 
 Por isso corrigir um registro antigo corrige sozinho todas as semanas seguintes.
 
 ## 5. Parâmetros ajustáveis
 
-São 33 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
+São 39 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
 
 **Plano**
 
 | Parâmetro | Valor | O que regula |
 | --- | --- | --- |
-| `MAXW` | `12` | quantas semanas o app calcula |
-| `BLOCK_W` | `9` | semanas do bloco atual ("Semana N de 9") |
+| `MAXW` | `60` | quantas semanas o app calcula (até o fim de 2027) |
+| `BLOCK_W` | `9` | semanas do primeiro bloco ("Semana N de 9") e de cada bloco de quem não segue o plano anual |
+| `PLUS_MAX` | `2` | no máximo 2 séries a mais por exercício quando o músculo é prioritário |
+| `REFASE_MIN` | `2` | a carga é reajustada entre blocos quando o meio da faixa muda 2 repetições ou mais |
 | `TEMPO_MAX_DEF` | `120` | limite de tempo por dia (min), se o Perfil não disser outro |
 | `CARDIO_DEF` | `{ min: 40, vezes: 6, incl: 15, vel: 5.5, tipo: "caminhada" }` | cardio quando ainda não há plano |
 
@@ -152,7 +161,8 @@ São 33 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `EXEC_DEF` | `40` | segundos de execução por série, quando não anotado |
 | `TRANS_DEF` | `90` | segundos de intervalo entre exercícios, quando não anotado |
 | `AQUEC_SEC` | `300` | aquecimento geral no começo do treino |
-| `WARM_SEC` | `45` | cada série de aquecimento do exercício |
+| `WARM_SEC` | `45` | cada série de aquecimento do exercício (quando não foi cronometrada) |
+| `CLK_WARM_MAX` | `900` | aquecimento acima de 15 min no cronômetro é tratado como esquecido |
 | `REST_OPTS` | `[30, 45, 60, 90, 120, 150, 180, 240]` | botões de descanso entre séries |
 | `TRANS_OPTS` | `[60, 90, 120, 180, 240, 300, 420]` | botões de intervalo entre exercícios |
 | `REST_CURTO` | `0.75` | descanso "curto": abaixo de 75% do previsto |
@@ -167,6 +177,9 @@ São 33 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `CLK_KEY` | `"hexis.clk.v1"` | nome com que o cronômetro fica guardado no aparelho |
 | `CLK_ALERT` | `300` | avisa a cada 5 minutos rodando |
 | `CLK_EXEC_MAX` | `150` | execução acima de 2:30 é tratada como esquecida |
+| `FOTO_MAX` | `1280` | lado maior da foto enviada, em pixels (fotos maiores são reduzidas) |
+| `DJ_ATRAS` | `60, DJ_FRENTE = 30` | curva do diário: dias para trás e para a frente |
+| `WAKE_KEY` | `"hexis.wake"` | preferência "tela acesa durante o cronômetro", guardada no aparelho |
 | `CLK_SEG_REP` | `4` | segundos por repetição, para a barra de execução |
 
 **Resumo do dia**
@@ -188,7 +201,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 224 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 266 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -197,7 +210,7 @@ Os números que regulam o app (tabela acima).
 
 ### 2. Ficha
 
-Dias, exercícios e regras de cada semana do bloco.
+Dias, exercícios, regras de cada semana do primeiro bloco e os blocos do resto do ano.
 
 | Dado | O que guarda |
 | --- | --- |
@@ -206,8 +219,9 @@ Dias, exercícios e regras de cada semana do bloco.
 | `EX` | A ficha: todos os exercícios, na ordem em que aparecem em cada dia |
 | `EXBY` | Exercício pelo código (EXBY.A1) |
 | `WT` | Semanas do bloco: RIR-alvo [mín, máx] da série pesada (top), dos compostos (comp) e dos isoladores (iso), séries extras de core e a alavanca da semana |
-| `WT_AFTER` | Depois do bloco: regras gerais |
 | `WT_NORMAL` | Semana comum, usada quando a semana 7 ou 8 não cai nas festas do calendário |
+| `RIR_FORCA`, `RIR_HIPER`, `RIR_PICO` | Rampa de RIR por semana do bloco, na ordem [série pesada, compostos, isoladores]; ao chegar ao fim, recomeça |
+| `BLOCOS_ANO` | Blocos do plano anual, cada um a partir de uma segunda-feira (ini) até o começo do próximo. top, back = faixa da série pesada e dos back-offs (sem isso, 6–8 e 8–10) · rir = rampa de RIR · core = séries extras de core plus = músculos prioritários: ganham n0 séries na 1ª semana e +1 por semana até n1 · leve = semanas leves · teste = semana de teste |
 | `ACT` | Ações que o motor pode prescrever: símbolo, texto e cor |
 | `FIXNAME` | Nomes das técnicas de destrave |
 | `MES` | Meses abreviados |
@@ -218,7 +232,12 @@ Dias, exercícios e regras de cada semana do bloco.
 | `dayEx()` | Exercícios de um dia, na ordem da ficha |
 | `exShort()` | Nome curto do exercício (sem o que vem entre parênteses) |
 | `isFestas()` | Semana com 24, 25 ou 31/dez ou 1º/jan |
-| `wt()` | Regras da semana w, ajustadas ao calendário (festas) e a quem não segue o plano anual |
+| `blocoDe()` | Bloco do plano anual em que a semana cai (só depois do primeiro bloco e para quem segue o plano anual) |
+| `wtAno()` | Regras de uma semana dentro de um bloco do plano anual (k = semana do bloco) |
+| `wtCiclo()` | Quem não segue o plano anual: depois do primeiro bloco, o ciclo de 9 semanas recomeça a partir das cargas atingidas |
+| `wt()` | Regras da semana w: primeiro bloco pela tabela WT (ajustada às festas do calendário); depois, pelo bloco do plano anual ou pelo ciclo |
+| `plusSets()` | Séries a mais de um exercício quando o músculo é prioritário no bloco: as n séries da semana são repartidas entre os exercícios do músculo, na ordem da ficha |
+| `rephase()` | Mudança de faixa da série pesada entre blocos (ex.: 6–8 → 4–6): ajusta a carga pela força estimada, para o mesmo esforço com outra quantidade de repetições |
 | `rnd()` | Arredonda x para o múltiplo de step |
 | `fmt()` | Número com vírgula, até 2 casas; vazio vira — |
 | `e1()` | Força estimada (1RM pela fórmula de Epley): carga × (1 + repetições ÷ 30) |
@@ -292,6 +311,7 @@ Descanso previsto e feito, recuperação entre séries, duração do treino e or
 | `recov()` | Recuperação entre duas séries: força estimada da seguinte ÷ da anterior (com o RIR, se anotado) (normalizada pelo previsto: back-off mais leve ou com mais folga já é esperado) |
 | `recovTxt()` | Recuperação em texto: 96% · boa |
 | `restFlags()` | Descanso médio do exercício e se foi curto (abaixo de 75% do previsto) |
+| `warmDone()` | Quantas séries de aquecimento foram marcadas (null = nenhuma marcação feita) |
 | `dayTime()` | Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado |
 | `dayOrder()` | Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha |
 | `recOf()` | Registro de um exercício em uma semana |
@@ -431,7 +451,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 | `dayStatus()` | Situação do dia: feito, parcial, não feito ou pendente |
 | `renderDay()` | Treino do dia: cartões dos exercícios, intervalos, cardio, tempo e observações do dia |
 | `warmPlan()` | Séries de aquecimento do exercício: [fração da carga, repetições]; nenhuma se o músculo já foi aquecido antes |
-| `warmHtml()` | Linha de aquecimento do cartão |
+| `warmHtml()` | Aquecimento do cartão, com controle próprio: cada série vira um botão de marcar e o bloco tem cronômetro |
 | `parcHtml()` | Repetições parciais da série: chips (toque remove) e botões de 25/50/75% |
 | `tagsHtml()` | Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido |
 | `exFlags()` | Sinais das observações do exercício (texto, blocos e descanso) |
@@ -469,6 +489,7 @@ A aba Progresso e seus gráficos.
 | `mkChart()` | Cria ou recria um gráfico |
 | `actGroup()` | Agrupa as ações para o gráfico de prescrições |
 | `weekAgg()` | Números de cada semana: séries, volume, exercícios feitos, índice de força, ações, séries por músculo e cardio |
+| `weekExtras()` | Números extras de cada semana para os gráficos: execução média por série (s), séries com parciais e diferença entre os lados (% por exercício; positivo = direito mais forte) |
 | `nf()` | Número inteiro com separador de milhar |
 | `renderProgress()` | Desenha a aba Progresso: blocos de número e gráficos |
 | `tile()` | Bloco de número: rótulo, valor e detalhe |
@@ -543,6 +564,7 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | --- | --- |
 | `clkAudio` | Saída de som do aviso (criada no primeiro toque, exigência dos navegadores) |
 | `clkRaf` | Pedido de quadro da animação em andamento (null = parada) |
+| `wakeLock` | Tela acesa enquanto o cronômetro roda (para o aviso de 5 minutos tocar). A preferência fica no aparelho. |
 
 | Função | O que faz |
 | --- | --- |
@@ -566,11 +588,16 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkRefresh()` | Redesenha as barras do cronômetro |
 | `clkRing()` | Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos |
 | `clkPlan()` | Tempo previsto da fase atual, para a barra de progresso |
+| `clkWarmRec()` | Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas |
+| `clkWarm()` | Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando) |
 | `clkFrame()` | Um quadro da animação: enche a barra e gira o ponteiro |
 | `clkAnim()` | Liga a animação se houver cronômetro rodando |
 | `clkSetHtml()` | Barra embaixo de cada série (unilateral: um lado, troca, o outro lado) |
 | `clkBar()` | Barra fixa embaixo da tela enquanto o cronômetro roda |
 | `clkTick()` | A cada meio segundo: atualiza os números e dispara o aviso de 5 minutos |
+| `wakeOn()` | A pessoa quer a tela acesa? (padrão: sim) |
+| `wakeSync()` | Liga ou solta o bloqueio de tela conforme o cronômetro, a preferência e a página visível |
+| `wakeHtml()` | Botões Sim/Não da preferência, no painel de tempo do treino (só onde o navegador tem o recurso) |
 | `clkDock()` | Mostra a barra de baixo fora da aba Semana enquanto o cronômetro roda |
 
 ### 19. Tela: Resumo do dia
@@ -583,19 +610,23 @@ A aba Resumo do dia: métricas, direcionamentos e exercício por exercício.
 | `sumEx()` | Números de cada exercício do dia: séries, volume, desempenho, RIR, descanso, execução, sinais, ordem e lados |
 | `pctTxt()` | Fração como porcentagem com sinal: +2,5% |
 | `kgTxt()` | Quilos sem casas decimais: 1.240 kg |
-| `daySummaryHtml()` | Monta o Resumo do dia: resultado, blocos de número, direcionamentos e exercício por exercício |
+| `dayStats()` | Números do dia, usados pelo resumo e pela imagem de compartilhar: exercícios, séries, volume, desempenho, tempo e cardio |
+| `daySummaryHtml()` | Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício |
 | `renderResumo()` | Desenha a aba Resumo do dia |
 
 ### 20. Tela: Início
 
-A página inicial.
+A página inicial (o que é o app) e o painel flutuante Hoje (treino do dia, números e pesagem).
 
 | Função | O que faz |
 | --- | --- |
 | `todayPlan()` | Semana e treino de hoje |
 | `homeToday()` | Card de hoje e números principais |
 | `homeLogo()` | Logo grande, com os traços animados |
-| `renderHome()` | Desenha a aba Início |
+| `hojeFill()` | Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia. |
+| `hojeOpen()` | Abre o painel Hoje |
+| `hojeClose()` | Fecha o painel Hoje (com a animação de saída) |
+| `renderHome()` | Desenha o Início: apresentação do app, o nome, por que registrar, como funciona e atalhos |
 
 ### 21. Navegação e animações
 
@@ -620,7 +651,50 @@ Troca de abas, barra de baixo, subabas e animações de entrada.
 | `countUp()` | Números que contam até o valor (só na entrada da tela) |
 | `revealAll()` | Blocos que aparecem ao rolar |
 
-### 22. Edição e salvamento
+### 22. Fotos e compartilhar
+
+Fotos do treino e de evolução, a imagem do resumo para compartilhar e a gravação dos registros avulsos.
+
+| Função | O que faz |
+| --- | --- |
+| `putDoc()` | Guarda um documento avulso (diário, fotos): aparece na hora e segue para o armazenamento. Apagar = gravar { apagado: true }. |
+| `subExtras()` | Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos |
+| `isoLocal()` | Data local (AAAA-MM-DD) e data e hora local (AAAA-MM-DDTHH:MM) de um instante |
+| `nowLocal()` | Data e hora local de agora, no formato dos campos de data e hora |
+| `dCurta()` | "2026-11-12" → "12/nov" |
+| `fotoShrink()` | Reduz a foto para no máximo FOTO_MAX px de lado e devolve um JPEG |
+| `fotoAdd()` | Envia a foto escolhida e guarda o registro: tipo "treino" (com semana e dia) ou "evolucao" |
+| `fotosDe()` | Fotos de um tipo, da mais nova para a mais antiga (f = filtro opcional) |
+| `fotoThumbs()` | Miniaturas. O endereço da imagem é um link temporário que chega depois: fotoFill preenche cada <img> |
+| `fotoUrl()` | Link temporário de uma foto (pedido uma vez e reaproveitado) |
+| `fotoFill()` | Preenche as miniaturas que ainda estão sem imagem |
+| `fotoDiaHtml()` | Painel "Foto do treino" do dia aberto na aba Semana |
+| `fotoEvoHtml()` | Painel "Fotos de evolução" da aba Corpo e dieta: primeira contra a mais recente, e todas |
+| `fotoDel()` | Apagar foto: o primeiro toque pede confirmação no próprio botão; o segundo apaga |
+| `loadImg()` | Carrega uma imagem para desenhar no canvas |
+| `shareDraw()` | Desenha a imagem (1080 × 1350) com os números do dia e, se houver, a foto do treino no topo |
+| `sharePrep()` | 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou baixa. O envio precisa de um toque próprio para o celular permitir. |
+| `shareAct()` | Botões de compartilhar: preparar a prévia, fechar e enviar |
+
+### 23. Diário de substâncias e exames
+
+A aba Diário: substâncias, aplicações, calendário, curva pela meia-vida informada e exames. O app só guarda e mostra; não sugere nada.
+
+| Dado | O que guarda |
+| --- | --- |
+| `DJ_MARC` | Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra. |
+
+| Função | O que faz |
+| --- | --- |
+| `djList()` | Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome) |
+| `djLevel()` | Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue. |
+| `djNext()` | Próxima aplicação prevista: a última mais o intervalo informado (dias) |
+| `djCalHtml()` | Calendário do mês: ponto cheio = aplicação feita; ponto vazado = próxima prevista |
+| `djDelBtn()` | Botão de apagar com confirmação no segundo toque |
+| `renderDiario()` | Desenha a aba Diário: substâncias, calendário, aplicações, curva estimada e exames |
+| `djAct()` | Ações do diário: trocar o mês do calendário, apagar (com confirmação) e salvar substância, aplicação ou exame |
+
+### 24. Edição e salvamento
 
 Tudo o que acontece quando você toca ou digita, e a gravação dos dados.
 
@@ -642,9 +716,10 @@ Tudo o que acontece quando você toca ou digita, e a gravação dos dados.
 | `tapSel()` | Seletor do botão tocado, para reencontrá-lo depois de redesenhar |
 | `playTap()` | Efeito de toque no botão |
 | `flashBtn()` | Mostra "✓ Salvo" no botão por um instante |
+| `parcEdit()` | Parciais de uma série: abre o campo, inclui (pv = % do movimento) ou remove (pv = posição); ps = lado, no unilateral |
 | `saveSettings()` | Salva os ajustes (deload escolhido, palavras-chave e exercícios unilaterais) |
 
-### 23. Conexão com o armazenamento
+### 25. Conexão com o armazenamento
 
 Login e ligação com o banco de dados: carrega os dados da pessoa e grava cada mudança.
 
@@ -663,7 +738,7 @@ Login e ligação com o banco de dados: carrega os dados da pessoa e grava cada 
 | `connect()` | Liga no Supabase e espera a sessão: com login, abre os dados; sem login, mostra a tela de entrada |
 | `startSession()` | Sessão aberta: carrega os dados da pessoa e liga as telas |
 
-### 24. Partida
+### 26. Partida
 
 Ordem em que o app liga.
 
@@ -690,7 +765,9 @@ O código (`A1`, `C2f`) identifica o exercício nos registros. Trocar o código 
 
 **Mudar o descanso previsto.** Mesma lista, opção `rest` do exercício.
 
-**Mudar as semanas do bloco.** Seção 2, lista `WT` (metas de RIR e séries de core por semana) e os parâmetros `BLOCK_W` e `MAXW`.
+**Mudar as semanas do primeiro bloco.** Seção 2, lista `WT` (metas de RIR e séries de core por semana) e o parâmetro `BLOCK_W`.
+
+**Mudar os blocos do resto do ano.** Seção 2, lista `BLOCOS_ANO`: cada linha tem a segunda-feira em que o bloco começa, o nome, a faixa da série pesada, a rampa de RIR, os músculos prioritários e as semanas leves. O parâmetro `MAXW` diz até que semana o app calcula.
 
 **Criar um bloco de observação.** Seção 4: inclua a subopção no tema certo (`T_DOR`, `T_EXEC`, `T_CARGA`, `T_EQUIP`, `T_DISP`, `T_TEMPO`), o texto em `TAG_LABEL` e, se o bloco deve mudar o treino, o efeito em `tagFlags()`.
 
@@ -708,7 +785,7 @@ O site é gerado da versão de origem pelo `build_web.py`, que faz o seguinte:
 2. Inclui a biblioteca do Supabase.
 3. Inclui a tela de login (entrar ou criar conta com e-mail e senha) e o botão de sair.
 4. Remove o perfil inicial do dono do app, para que dados pessoais não fiquem no site público.
-5. Troca a seção 23 (conexão com o armazenamento) por uma que lê e grava na tabela `hexis_docs`.
+5. Troca a seção 25 (conexão com o armazenamento) por uma que lê e grava na tabela `hexis_docs` e liga o armazenamento de fotos.
 6. Confere que não sobrou nenhuma referência à plataforma de origem e interrompe a geração se sobrar.
 
 Publicar: gerar o `index.html`, copiar para o repositório, fazer o commit e enviar para o ramo `main`. O GitHub Pages atualiza o site em cerca de um minuto.
@@ -729,16 +806,22 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run17` | Conversão do tempo de execução para minutos |
 | `run18` | Cronômetro completo e modo unilateral |
 | `run19` | Resumo do dia |
-| `run20` | Página inicial e navegação |
+| `run20` | Página inicial, painel Hoje com a pesagem e navegação |
 | `run21` | Feito durante o descanso, mensagens de erro e parâmetros |
+| `run22` | Parcial com porcentagem livre, descanso previsto e tela acesa |
+| `run23` | Blocos do ano: semanas, ajuste de carga na troca de faixa, séries dos prioritários e semanas leves |
+| `run25` | Gráficos de execução, parciais, lados e descanso por exercício |
+| `run26` | Diário: substâncias, aplicações, curva, exames e apagar |
+| `run27` | Aquecimento: marcar séries, cronômetro e tempo do treino |
 | `tbudget` | Duração prevista de cada dia de treino |
 | `cmp.sh` | Compara a saída de todos os testes antes e depois de uma reorganização do código |
 | `inv.py` | Lista funções, textos e estilos sem uso |
 
 ## 10. Limites conhecidos
 
-- O app calcula **12 semanas** (`MAXW`). Depois disso é preciso gerar um novo bloco de treino.
-- O aviso do cronômetro só toca com o app aberto na tela.
+- O app calcula **60 semanas**, até o fim de 2027 (`MAXW`). Os blocos seguem a lista `BLOCOS_ANO`; a troca de variações de exercício entre blocos ainda é manual.
+- As fotos só existem no site, porque dependem do armazenamento de arquivos do Supabase.
+- O aviso do cronômetro só toca com o app aberto na tela. Por padrão o app mantém a tela acesa enquanto o cronômetro roda; aviso com a tela bloqueada exigiria notificações enviadas por um servidor.
 - O site não tem recuperação de senha por e-mail.
 - No plano gratuito do Supabase, um projeto sem uso por uma semana é pausado e precisa ser reativado no painel.
 - A versão de origem e o site têm dados separados.

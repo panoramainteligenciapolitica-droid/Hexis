@@ -201,7 +201,7 @@ table.plain tr.cur td { background: color-mix(in srgb, var(--accent) 10%, transp
 .info { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex: 0 0 auto; margin-left: 4px; padding: 0; border-radius: 50%; border: 1.5px solid var(--muted); background: transparent; color: var(--muted); font: italic 700 12px/1 Georgia, "Times New Roman", serif; cursor: pointer; vertical-align: middle; }
 .info::after { content: ""; position: absolute; inset: -9px; }
 .info:hover, .info:focus-visible { color: var(--accent); border-color: var(--accent); }
-.qw { padding: 10px 12px; margin-bottom: 12px; }
+.qw { padding: 10px 12px; margin: 12px 0; }
 .qw-row { display: grid; grid-template-columns: auto 1fr 84px auto; gap: 8px; align-items: center; }
 .qw-l { font-weight: 700; font-size: 15px; white-space: nowrap; }
 .qw input { height: 40px; min-width: 0; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 8px; font-size: 16px; }
@@ -366,7 +366,6 @@ body.clk-on .wrap { padding-bottom: calc(210px + var(--bnh)); }
 .hm-name span { color: var(--accent); }
 .hm-tag { font-family: var(--font-display); font-size: 19px; margin: 8px 0 6px; }
 .hm-lead { color: var(--muted); max-width: 460px; margin: 0 auto; font-size: 15px; line-height: 1.5; }
-.hm-card { margin-top: 14px; }
 .hm-today { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
 .hm-ring { position: relative; width: 64px; height: 64px; flex: none; color: var(--accent); }
 .hm-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -440,7 +439,6 @@ input, select, textarea { transition: border-color .18s, box-shadow .18s, backgr
   .hm-logo .hm-h { animation: popIn .5s cubic-bezier(.3, 1.6, .5, 1) .8s both; }
   .hm-name, .hm-tag, .hm-lead { animation: fadeUp .5s cubic-bezier(.2, .75, .25, 1) both; }
   .hm-name { animation-delay: .3s; } .hm-tag { animation-delay: .42s; } .hm-lead { animation-delay: .52s; }
-  .hm-card { animation: fadeUp .5s cubic-bezier(.2, .75, .25, 1) .6s both; }
   .hm-ring .f { animation: ringIn 1s cubic-bezier(.3, .8, .3, 1) .8s both; }
 }
 /* a tela que entra deslizando não pode alargar a página */
@@ -459,6 +457,40 @@ input, select, textarea { transition: border-color .18s, box-shadow .18s, backgr
 @keyframes popIn { from { opacity: 0; transform: scale(.4); } }
 @keyframes ringIn { from { stroke-dasharray: 0 100; } }
 /* ---- 17. Resumo do dia ---- */
+.subh { margin: 16px 0 8px; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+.warm .wqrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.warm .clk.wq { display: inline-flex; margin: 0; padding: 3px 6px 3px 8px; flex: 1 1 180px; }
+.warm .clk.wq .clkn { flex: 1 1 auto; }
+.hd-r { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hojebtn { flex: none; min-height: 36px; padding: 4px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font: inherit; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color .18s, transform .1s; -webkit-tap-highlight-color: transparent; }
+.hojebtn:active { transform: scale(.94); }
+.hojebtn.done { border-color: var(--up); color: var(--up); background: color-mix(in srgb, var(--up) 12%, var(--surface)); }
+.pop.hoje { z-index: 40; align-items: flex-start; padding-top: 64px; }
+.pop.hoje .pop-card { max-height: calc(100% - 20px); }
+.pop.hoje .qw { padding: 12px 0 0; margin: 12px 0 0; border-top: 1px solid var(--line); }
+@media (max-width: 420px) { .hd-r .sync { max-width: 96px; overflow: hidden; text-overflow: ellipsis; } }
+.vh { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin: 8px 0; }
+.fotos:empty { display: none; }
+.fotos.cmp { grid-template-columns: 1fr 1fr; }
+.foto { margin: 0; }
+.foto img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; background: var(--surface-2); }
+.foto figcaption { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.fdel { border: 0; background: none; color: var(--down); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; padding: 4px 0; }
+label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; position: relative; }
+.sharep img { display: block; width: 100%; max-width: 360px; margin: 0 auto 10px; border-radius: 12px; }
+.djcal-h { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; }
+.djcal-h .iconbtn { width: 44px; }
+.djcal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.djcal .dw { text-align: center; font-size: 12px; color: var(--muted); font-weight: 700; }
+.djcal .dd { min-height: 46px; border-radius: 8px; background: var(--surface-2); padding: 3px 4px; font-size: 12px; display: flex; flex-direction: column; gap: 2px; }
+.djcal .dd i { font-style: normal; color: var(--muted); }
+.djcal .dd.hoje { outline: 2px solid var(--accent); }
+.djcal .dd em { display: flex; flex-wrap: wrap; gap: 2px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--series-1); color: var(--series-1); vertical-align: middle; }
+.dot.c1 { background: var(--series-2); color: var(--series-2); } .dot.c2 { background: var(--up); color: var(--up); } .dot.c3 { background: var(--deload); color: var(--deload); } .dot.c4 { background: var(--new); color: var(--new); }
+.dot.nx { background: transparent; box-shadow: inset 0 0 0 2px currentColor; }
+.djleg { margin: 8px 0 12px; font-size: 13px; }
 .verdict { margin: 4px 0 12px; padding: 10px 12px; border-radius: 10px; font-size: 15px; background: var(--surface-2); border-left: 4px solid var(--muted); }
 .verdict.up { border-left-color: var(--up); background: color-mix(in srgb, var(--up) 9%, var(--surface)); }
 .verdict.lo { border-left-color: var(--down); background: color-mix(in srgb, var(--down) 9%, var(--surface)); }
@@ -514,6 +546,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .pchip, .padd { min-height: 32px; padding: 2px 9px; border-radius: 999px; font: inherit; font-size: 13px; cursor: pointer; font-variant-numeric: tabular-nums; }
 .pchip { border: 1px solid var(--fix); background: color-mix(in srgb, var(--fix) 14%, var(--surface)); color: var(--ink); font-weight: 600; }
 .padd { border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+.parc .pin { width: 84px; min-height: 32px; padding: 2px 9px; border-radius: 999px; border: 1px dashed var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; }
 .rmtab .cin { width: 100%; min-width: 64px; height: 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 0 6px; font-size: 16px; }
 .rmtab .rm { font-weight: 700; white-space: nowrap; }
 .rmtab .s1 { font-size: 12px; color: var(--muted); }
@@ -552,7 +585,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 </div>
 <header class="top">
   <div class="top-inner">
-    <div class="brand"><div><h1><a class="home-link" href="#inicio" aria-label="Hexis: ir para o início"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><g style="stroke: var(--accent)" stroke-width="4.2" stroke-linecap="round"><line x1="62.61" y1="21.68" x2="63.83" y2="18.94" opacity="0.35"></line><line x1="70.88" y1="27.09" x2="73.30" y2="24.44" opacity="0.39"></line><line x1="77.04" y1="34.83" x2="80.68" y2="32.79" opacity="0.43"></line><line x1="80.44" y1="44.12" x2="85.11" y2="43.21" opacity="0.46"></line><line x1="80.74" y1="54.00" x2="86.05" y2="54.69" opacity="0.50"></line><line x1="77.92" y1="63.47" x2="83.27" y2="66.06" opacity="0.54"></line><line x1="72.26" y1="71.58" x2="76.94" y2="76.13" opacity="0.58"></line><line x1="64.33" y1="77.49" x2="67.62" y2="83.80" opacity="0.62"></line><line x1="54.94" y1="80.60" x2="56.17" y2="88.21" opacity="0.66"></line><line x1="45.06" y1="80.60" x2="43.73" y2="88.79" opacity="0.69"></line><line x1="35.67" y1="77.49" x2="31.57" y2="85.37" opacity="0.73"></line><line x1="27.74" y1="71.58" x2="20.95" y2="78.17" opacity="0.77"></line><line x1="22.08" y1="63.47" x2="13.02" y2="67.85" opacity="0.81"></line><line x1="19.26" y1="54.00" x2="8.70" y2="55.37" opacity="0.85"></line><line x1="19.56" y1="44.12" x2="8.53" y2="41.98" opacity="0.89"></line><line x1="22.96" y1="34.83" x2="12.65" y2="29.05" opacity="0.92"></line><line x1="29.12" y1="27.09" x2="20.75" y2="17.92" opacity="0.96"></line><line x1="37.39" y1="21.68" x2="32.10" y2="9.80" opacity="1.00"></line></g><g style="fill: var(--ink)"><rect x="38.5" y="35" width="7" height="30" rx="2"></rect><rect x="54.5" y="35" width="7" height="30" rx="2"></rect><rect x="38.5" y="47.5" width="23" height="5" rx="1.5"></rect></g></svg>Hex<span class="ego">is</span></a></h1></div><div class="brandr"><span class="sync" id="sync">Carregando…</span><div class="acct" id="acct"></div></div></div>
+    <div class="brand"><div><h1><a class="home-link" href="#inicio" aria-label="Hexis: ir para o início"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><g style="stroke: var(--accent)" stroke-width="4.2" stroke-linecap="round"><line x1="62.61" y1="21.68" x2="63.83" y2="18.94" opacity="0.35"></line><line x1="70.88" y1="27.09" x2="73.30" y2="24.44" opacity="0.39"></line><line x1="77.04" y1="34.83" x2="80.68" y2="32.79" opacity="0.43"></line><line x1="80.44" y1="44.12" x2="85.11" y2="43.21" opacity="0.46"></line><line x1="80.74" y1="54.00" x2="86.05" y2="54.69" opacity="0.50"></line><line x1="77.92" y1="63.47" x2="83.27" y2="66.06" opacity="0.54"></line><line x1="72.26" y1="71.58" x2="76.94" y2="76.13" opacity="0.58"></line><line x1="64.33" y1="77.49" x2="67.62" y2="83.80" opacity="0.62"></line><line x1="54.94" y1="80.60" x2="56.17" y2="88.21" opacity="0.66"></line><line x1="45.06" y1="80.60" x2="43.73" y2="88.79" opacity="0.69"></line><line x1="35.67" y1="77.49" x2="31.57" y2="85.37" opacity="0.73"></line><line x1="27.74" y1="71.58" x2="20.95" y2="78.17" opacity="0.77"></line><line x1="22.08" y1="63.47" x2="13.02" y2="67.85" opacity="0.81"></line><line x1="19.26" y1="54.00" x2="8.70" y2="55.37" opacity="0.85"></line><line x1="19.56" y1="44.12" x2="8.53" y2="41.98" opacity="0.89"></line><line x1="22.96" y1="34.83" x2="12.65" y2="29.05" opacity="0.92"></line><line x1="29.12" y1="27.09" x2="20.75" y2="17.92" opacity="0.96"></line><line x1="37.39" y1="21.68" x2="32.10" y2="9.80" opacity="1.00"></line></g><g style="fill: var(--ink)"><rect x="38.5" y="35" width="7" height="30" rx="2"></rect><rect x="54.5" y="35" width="7" height="30" rx="2"></rect><rect x="38.5" y="47.5" width="23" height="5" rx="1.5"></rect></g></svg>Hex<span class="ego">is</span></a></h1></div><div class="hd-r"><div class="brandr"><span class="sync" id="sync">Carregando…</span><div class="acct" id="acct"></div></div><button class="hojebtn" id="hojeBtn" type="button" aria-haspopup="dialog" aria-controls="hoje">Hoje</button></div></div>
     <nav class="subnav hide" id="subnav" aria-label="Subseções"></nav>
   </div>
 </header>
@@ -560,9 +593,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
   <div id="conn" class="banner warn hide"></div>
   <div id="onb"></div>
 
-  <!-- Tela: Início (preenchida por renderHome) -->
+  <!-- Tela: Início (preenchida por renderHome): o que é o app -->
   <section class="view" id="v-inicio">
     <div id="homeView"></div>
+    <div id="homeMore"></div>
   </section>
 
   <!-- Tela: Perfil -->
@@ -582,16 +616,6 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 
   <!-- Tela: Semana (treino do dia) -->
   <section class="view" id="v-semana">
-    <div class="panel qw" id="qwBox">
-      <div class="qw-row">
-        <span class="qw-l">Peso de hoje<button class="info" type="button" data-info="pesodiario" aria-label="Explicar: pesagem diária">i</button></span>
-        <input id="qwDate" type="date" aria-label="Data da pesagem">
-        <input id="qwKg" type="number" step="0.1" inputmode="decimal" placeholder="kg" aria-label="Peso em kg">
-        <button class="btn primary small" id="qwSave" type="button">Salvar</button>
-      </div>
-      <div class="pres" id="qwStats"></div>
-      <div class="muted" id="qwMsg" aria-live="polite"></div>
-    </div>
     <div class="weekbar">
       <button class="iconbtn" id="wkPrev" aria-label="Semana anterior">‹</button>
       <div class="weektitle"><div class="wk" id="wkTitle">Semana 1</div><div class="sub" id="wkSub"></div></div>
@@ -677,7 +701,24 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <p class="lead">Melhor série de cada semana convertida em 1RM estimado; a linha tracejada é o 1RM da sua carga máxima do Perfil.</p>
       <div class="field" style="margin-bottom:8px"><label for="exSel">Exercício</label><select id="exSel"></select></div>
       <div class="chartbox"><canvas id="chEx" aria-label="Gráfico de força estimada"></canvas></div>
+      <h3 class="subh">Descanso e execução deste exercício<button class="info" type="button" data-info="g_descexec" aria-label="Explicar: descanso e execução do exercício">i</button></h3>
+      <div class="chartbox"><canvas id="chExRest" aria-label="Gráfico: descanso e tempo de execução do exercício por semana"></canvas></div>
       <div class="tablewrap" id="exTable"></div>
+    </div>
+    <div class="panel">
+      <h2>Tempo de execução por série<button class="info" type="button" data-info="tempoexec" aria-label="Explicar: tempo de execução">i</button></h2>
+      <p class="lead">Média da semana, em segundos, de todas as séries cronometradas.</p>
+      <div class="chartbox"><canvas id="chExec" aria-label="Gráfico: tempo médio de execução por série, por semana"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Séries com repetições parciais<button class="info" type="button" data-info="parciais" aria-label="Explicar: repetições parciais">i</button></h2>
+      <p class="lead">Quantas séries da semana terminaram com parciais. Muitas parciais indicam carga no limite.</p>
+      <div class="chartbox"><canvas id="chParc" aria-label="Gráfico: séries com repetições parciais por semana"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Diferença entre os lados<button class="info" type="button" data-info="unilateral" aria-label="Explicar: exercício unilateral">i</button></h2>
+      <p class="lead" id="ladosLead"></p>
+      <div class="chartbox"><canvas id="chLados" aria-label="Gráfico: diferença de força entre o lado direito e o esquerdo, por semana"></canvas></div>
     </div>
   </section>
 
@@ -723,6 +764,66 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       </form>
     </div>
     <div class="panel"><h2>Últimas medidas</h2><div class="tablewrap" id="bodyList"></div></div>
+    <div id="fotosEvo"></div>
+  </section>
+
+  <!-- Tela: Diário de substâncias e exames (registro pessoal) -->
+  <section class="view" id="v-diario">
+    <div class="banner warn"><b>Registro pessoal, para estudo e acompanhamento.</b> Não é prescrição nem orientação de uso. O app não sugere substância, dose nem esquema: só guarda e mostra o que você anotar. Decisões sobre hormônios e peptídeos são suas e do seu médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: diário">i</button></div>
+    <div class="panel">
+      <h2>Substâncias</h2>
+      <div id="djSubs"></div>
+      <details class="pfsec sub"><summary><h3>Cadastrar substância</h3></summary>
+        <div class="grid2">
+          <div class="field wide"><label for="djSubNome">Nome</label><input id="djSubNome" type="text" autocomplete="off"></div>
+          <div class="field"><label for="djSubUn">Unidade da dose</label><select id="djSubUn"><option>mg</option><option>mcg</option><option>UI</option><option>mL</option><option>g</option></select></div>
+          <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
+          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="da bula"></div>
+          <div class="field"><label for="djSubInt">Intervalo, em dias<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
+          <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação, concentração, quem prescreveu…"></div>
+        </div>
+        <div class="row-btns"><button type="button" class="btn primary" data-dj="addsub">Salvar substância</button></div>
+        <div class="muted" id="djSubMsg" aria-live="polite"></div>
+      </details>
+    </div>
+    <div class="panel">
+      <h2>Aplicações</h2>
+      <div class="grid2">
+        <div class="field wide"><label for="djApSub">Substância</label><select id="djApSub"></select></div>
+        <div class="field"><label for="djApDose">Dose</label><input id="djApDose" type="text" inputmode="decimal" autocomplete="off"></div>
+        <div class="field"><label for="djApQuando">Data e hora</label><input id="djApQuando" type="datetime-local"></div>
+        <div class="field"><label for="djApLocal">Local da aplicação</label><input id="djApLocal" type="text" placeholder="opcional"></div>
+        <div class="field"><label for="djApLote">Lote</label><input id="djApLote" type="text" placeholder="opcional"></div>
+        <div class="field wide"><label for="djApObs">Observação</label><input id="djApObs" type="text" placeholder="como se sentiu, reações…"></div>
+      </div>
+      <div class="row-btns"><button type="button" class="btn primary" data-dj="addap">Registrar aplicação</button></div>
+      <div class="muted" id="djMsg" aria-live="polite"></div>
+      <div id="djCal"></div>
+      <div id="djApList"></div>
+    </div>
+    <div class="panel">
+      <h2>Quantidade estimada no corpo<button class="info" type="button" data-info="dj_curva" aria-label="Explicar: curva estimada">i</button></h2>
+      <p class="lead" id="djCurvaLead"></p>
+      <div class="chartbox"><canvas id="chDj" aria-label="Gráfico: quantidade estimada de cada substância ao longo dos dias"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Exames e sinais</h2>
+      <div class="grid2">
+        <div class="field"><label for="djExMarc">Marcador</label><select id="djExMarc"></select></div>
+        <div class="field hide" id="djExOutroF"><label for="djExOutro">Qual marcador</label><input id="djExOutro" type="text"></div>
+        <div class="field"><label for="djExData">Data</label><input id="djExData" type="date"></div>
+        <div class="field"><label for="djExValor">Valor</label><input id="djExValor" type="text" inputmode="decimal" autocomplete="off"></div>
+        <div class="field"><label for="djExUn">Unidade</label><input id="djExUn" type="text"></div>
+        <div class="field"><label for="djExMin">Referência mínima do laudo</label><input id="djExMin" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
+        <div class="field"><label for="djExMax">Referência máxima do laudo</label><input id="djExMax" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
+      </div>
+      <div class="row-btns"><button type="button" class="btn primary" data-dj="addex">Salvar exame</button></div>
+      <div class="muted" id="djExMsg" aria-live="polite"></div>
+      <div id="djExTable"></div>
+      <div class="field" style="margin:12px 0 8px"><label for="djExSel">Evolução do marcador</label><select id="djExSel"></select></div>
+      <div class="chartbox"><canvas id="chDjEx" aria-label="Gráfico: evolução do marcador escolhido"></canvas></div>
+      <div class="tablewrap" id="djExHist"></div>
+    </div>
   </section>
 
   <!-- Tela: Plano e regras -->
@@ -742,6 +843,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div class="tablewrap" id="weekTable"></div>
     </div>
     <div class="panel">
+      <h2>Blocos seguintes<button class="info" type="button" data-info="blocos" aria-label="Explicar: blocos do ano">i</button></h2>
+      <div id="blocosBox"></div>
+    </div>
+    <div class="panel">
       <h2>Dieta e fases<button class="info" type="button" data-info="fase" aria-label="Explicar: fases do plano">i</button></h2>
       <p class="lead" id="yearLead"></p>
       <div class="tablewrap" id="yearTable"></div>
@@ -751,6 +856,24 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 <!-- Barra de navegação de baixo, barra de salvar com o cronômetro e janela de explicação -->
 <nav class="bnav" id="bnav" aria-label="Seções"></nav>
 <div class="savebar"><div id="clkToast" class="clktoast hide" role="status"></div><div id="clkbar" class="hide"></div><div class="inner"><span><span id="saveMsg" class="muted">Marque cada exercício como feito ou não feito.</span><button class="info" type="button" data-info="registrar" aria-label="Explicar: como registrar">i</button></span><span class="muted" id="saveWeek"></span></div></div>
+<!-- Painel flutuante "Hoje": treino do dia, números principais e pesagem diária (abre pelo botão do cabeçalho, em qualquer aba) -->
+<div id="hoje" class="pop hoje hide" role="dialog" aria-modal="true" aria-labelledby="hojeT">
+  <div class="pop-card">
+    <div class="pop-h"><h2 id="hojeT">Hoje</h2><button class="iconbtn" id="hojeX" type="button" aria-label="Fechar o painel de hoje">×</button></div>
+    <div id="hojeBody"></div>
+    <div class="qw" id="qwBox">
+      <div class="qw-row">
+        <span class="qw-l">Peso de hoje<button class="info" type="button" data-info="pesodiario" aria-label="Explicar: pesagem diária">i</button></span>
+        <input id="qwDate" type="date" aria-label="Data da pesagem">
+        <input id="qwKg" type="number" step="0.1" inputmode="decimal" placeholder="kg" aria-label="Peso em kg">
+        <button class="btn primary small" id="qwSave" type="button">Salvar</button>
+      </div>
+      <div class="pres" id="qwStats"></div>
+      <div class="muted" id="qwMsg" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
 <div id="pop" class="pop hide" role="dialog" aria-modal="true" aria-labelledby="popT">
   <div class="pop-card">
     <div class="pop-h"><h2 id="popT"></h2><button class="iconbtn" id="popX" type="button" aria-label="Fechar explicação">×</button></div>
@@ -788,9 +911,11 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 //  19. Tela: Resumo do dia
 //  20. Tela: Início
 //  21. Navegação e animações
-//  22. Edição e salvamento ........... cliques, digitação e gravação
-//  23. Conexão com o armazenamento
-//  24. Partida
+//  22. Fotos e compartilhar ......... fotos do treino e de evolução; imagem do resumo do dia
+//  23. Diário ....................... substâncias, aplicações, calendário, curva pela meia-vida e exames
+//  24. Edição e salvamento ........... cliques, digitação e gravação
+//  25. Conexão com o armazenamento
+//  26. Partida
 //
 // COMO OS DADOS SÃO GUARDADOS (um documento por item):
 //   semanas/w01-A ..... um dia de treino: { semana, dia, nota, tags, cardio, ex: { A1: {...} } }
@@ -810,8 +935,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Plano
-const MAXW = 12;                   // quantas semanas o app calcula
-const BLOCK_W = 9;                 // semanas do bloco atual ("Semana N de 9")
+const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
+const BLOCK_W = 9;                 // semanas do primeiro bloco ("Semana N de 9") e de cada bloco de quem não segue o plano anual
+const PLUS_MAX = 2;                // no máximo 2 séries a mais por exercício quando o músculo é prioritário
+const REFASE_MIN = 2;              // a carga é reajustada entre blocos quando o meio da faixa muda 2 repetições ou mais
 const TEMPO_MAX_DEF = 120;         // limite de tempo por dia (min), se o Perfil não disser outro
 const CARDIO_DEF = { min: 40, vezes: 6, incl: 15, vel: 5.5, tipo: "caminhada" }; // cardio quando ainda não há plano
 // Motor de progressão
@@ -829,7 +956,8 @@ const DELOAD_DIAS = 2;             // dias abaixo da faixa na semana 4 que ligam
 const EXEC_DEF = 40;               // segundos de execução por série, quando não anotado
 const TRANS_DEF = 90;              // segundos de intervalo entre exercícios, quando não anotado
 const AQUEC_SEC = 300;             // aquecimento geral no começo do treino
-const WARM_SEC = 45;               // cada série de aquecimento do exercício
+const WARM_SEC = 45;               // cada série de aquecimento do exercício (quando não foi cronometrada)
+const CLK_WARM_MAX = 900;          // aquecimento acima de 15 min no cronômetro é tratado como esquecido
 const REST_OPTS = [30, 45, 60, 90, 120, 150, 180, 240]; // botões de descanso entre séries
 const TRANS_OPTS = [60, 90, 120, 180, 240, 300, 420];   // botões de intervalo entre exercícios
 const REST_CURTO = 0.75;           // descanso "curto": abaixo de 75% do previsto
@@ -840,6 +968,9 @@ const REC_REGULAR = 0.9;           // "regular" até 90%; abaixo disso, "incompl
 const CLK_KEY = "hexis.clk.v1";    // nome com que o cronômetro fica guardado no aparelho
 const CLK_ALERT = 300;             // avisa a cada 5 minutos rodando
 const CLK_EXEC_MAX = 150;          // execução acima de 2:30 é tratada como esquecida
+const FOTO_MAX = 1280;               // lado maior da foto enviada, em pixels (fotos maiores são reduzidas)
+const DJ_ATRAS = 60, DJ_FRENTE = 30; // curva do diário: dias para trás e para a frente
+const WAKE_KEY = "hexis.wake";       // preferência "tela acesa durante o cronômetro", guardada no aparelho
 const CLK_SEG_REP = 4;             // segundos por repetição, para a barra de execução
 // Resumo do dia
 const PERF_ACIMA = 0.02;           // "acima do previsto" a partir de +2%
@@ -867,47 +998,47 @@ const EX = [
   ex("A1", "A", "Chest press (sentado)", "Peito", { sc: "top", kg: 52, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("A2", "A", "Peito 45° com halter", "Peito", { sets: 3, lo: 8, hi: 10, kg: 28, inc: 2, mic: 1, step: 1, t: "comp", obs: "Peso de cada halter" }),
   ex("A3", "A", "Crucifixo (máquina)", "Peito", { sets: 2, lo: 10, hi: 12, kg: 73, obs: "Pausa de 1 s no alongamento" }),
-  ex("A4", "A", "Tríceps francês na polia", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "90 s" }),
-  ex("A5", "A", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "90 s" }),
-  ex("A6", "A", "Abdominal (máquina)", "Core", { sets: 4, lo: 8, hi: 12, kg: 87, t: "core", rest: "90 s", obs: "Principal do core" }),
-  ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "90 s", obs: "Pausa de 1 s embaixo" }),
+  ex("A4", "A", "Tríceps francês na polia", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min" }),
+  ex("A5", "A", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
+  ex("A6", "A", "Abdominal (máquina)", "Core", { sets: 4, lo: 8, hi: 12, kg: 87, t: "core", rest: "2 min", obs: "Principal do core" }),
+  ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Pausa de 1 s embaixo" }),
   ex("B1", "B", "Puxada barra Y", "Costas", { sc: "top", kg: 88.5, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("B2", "B", "Remada triângulo", "Costas", { sets: 3, lo: 8, hi: 10, kg: 141, t: "comp", obs: "Alongar as escápulas à frente" }),
   ex("B3", "B", "Remada sentada", "Costas", { sets: 2, lo: 8, hi: 10, kg: 92.5, t: "comp" }),
-  ex("B4", "B", "Bíceps extendido 45°", "Bíceps", { sets: 3, lo: 8, hi: 10, kg: 16, inc: 1, mic: 0.5, step: 0.5, rest: "90 s", obs: "Bíceps alongado" }),
-  ex("B5", "B", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 12, hi: 15, kg: 20, inc: 1.25, mic: 0.5, rest: "90 s" }),
-  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "90 s", obs: "Cada lado; oblíquos" }),
-  ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "90 s" }),
+  ex("B4", "B", "Bíceps extendido 45°", "Bíceps", { sets: 3, lo: 8, hi: 10, kg: 16, inc: 1, mic: 0.5, step: 0.5, rest: "2 min", obs: "Bíceps alongado" }),
+  ex("B5", "B", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 12, hi: 15, kg: 20, inc: 1.25, mic: 0.5, rest: "2 min" }),
+  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos" }),
+  ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
   ex("C1a", "C1", "Leg press 45° ou hack", "Quadríceps", { sc: "top", kg: null, inc: 5, mic: 2.5, t: "comp", rest: "3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
-  ex("C1b", "C1", "Cadeira extensora unilateral", "Quadríceps", { sets: 3, lo: 8, hi: 10, kg: 26.5, inc: 1.25, mic: 0.5, rest: "90 s", obs: "Cada perna, sem descanso entre elas" }),
+  ex("C1b", "C1", "Cadeira extensora unilateral", "Quadríceps", { sets: 3, lo: 8, hi: 10, kg: 26.5, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna, sem descanso entre elas" }),
   ex("C1c", "C1", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 8, hi: 10, kg: 81 }),
   ex("C1d", "C1", "Elevação pélvica", "Glúteos", { sets: 3, lo: 8, hi: 10, kg: 57, t: "comp", obs: "Pausa de 1 s no topo" }),
-  ex("C1e", "C1", "Abdutora", "Glúteos", { sets: 3, lo: 12, hi: 15, kg: 79, rest: "90 s" }),
-  ex("C1f", "C1", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "90 s", obs: "Novo: alongar o abdômen no topo" }),
-  ex("C1g", "C1", "Panturrilha burrinho", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: 50, rest: "90 s" }),
+  ex("C1e", "C1", "Abdutora", "Glúteos", { sets: 3, lo: 12, hi: 15, kg: 79, rest: "2 min" }),
+  ex("C1f", "C1", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "2 min", obs: "Novo: alongar o abdômen no topo" }),
+  ex("C1g", "C1", "Panturrilha burrinho", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: 50, rest: "2 min" }),
   ex("D1", "D", "Desenvolvimento com halter", "Ombro anterior", { sets: 3, lo: 8, hi: 10, kg: 20, inc: 2, mic: 1, step: 1, t: "comp", obs: "Peso de cada halter" }),
   ex("D2", "D", "Inferior de peito (polia alta)", "Peito", { sets: 3, lo: 12, hi: 15, kg: 76 }),
   ex("D3", "D", "Crucifixo (máquina)", "Peito", { sets: 3, lo: 12, hi: 15, kg: 68.5, obs: "Pausa de 1 s no alongamento" }),
-  ex("D4", "D", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 10, hi: 12, kg: 44.5, rest: "90 s", obs: "Dia pesado de lateral" }),
-  ex("D5", "D", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 15, hi: 20, kg: 18.5, inc: 1.25, mic: 0.5, rest: "90 s" }),
-  ex("D6", "D", "Abdominal (máquina)", "Core", { sets: 3, lo: 12, hi: 15, kg: 74, t: "core", rest: "90 s" }),
-  ex("D7", "D", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "90 s" }),
+  ex("D4", "D", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 10, hi: 12, kg: 44.5, rest: "2 min", obs: "Dia pesado de lateral" }),
+  ex("D5", "D", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 15, hi: 20, kg: 18.5, inc: 1.25, mic: 0.5, rest: "2 min" }),
+  ex("D6", "D", "Abdominal (máquina)", "Core", { sets: 3, lo: 12, hi: 15, kg: 74, t: "core", rest: "2 min" }),
+  ex("D7", "D", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
   ex("E1", "E", "Puxada barra grande", "Costas", { sets: 3, lo: 10, hi: 12, kg: 73, t: "comp" }),
   ex("E2", "E", "Remada sentada", "Costas", { sets: 3, lo: 10, hi: 12, kg: 89, t: "comp" }),
   ex("E3", "E", "Bíceps 45° na polia alta", "Bíceps", { sets: 3, lo: 10, hi: 12, kg: 30, inc: 1.25, mic: 0.5, rest: "Bi-set com o tríceps cruzado (mesma polia)" }),
   ex("E4", "E", "Tríceps polia alta cruzado", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min após o par" }),
   ex("E5", "E", "Bíceps corda na polia", "Bíceps", { sets: 3, lo: 12, hi: 15, kg: 70, rest: "Bi-set com o coice (mesma polia)" }),
   ex("E6", "E", "Tríceps coice na polia", "Tríceps", { sets: 3, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s após o par" }),
-  ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "90 s" }),
+  ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
   ex("C2a", "C2", "Stiff (barra ou halteres)", "Posteriores de coxa", { sets: 3, lo: 6, hi: 10, kg: null, t: "comp", rest: "2–3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
   ex("C2b", "C2", "Elevação pélvica", "Glúteos", { sets: 3, lo: 10, hi: 12, kg: 55, t: "comp" }),
   ex("C2c", "C2", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 10, hi: 12, kg: 78 }),
   ex("C2d", "C2", "Leg press 45° ou hack", "Quadríceps", { sets: 3, lo: 12, hi: 15, kg: null, inc: 5, mic: 2.5, t: "comp", obs: "~80% da carga de quarta" }),
-  ex("C2e", "C2", "Cadeira extensora unilateral", "Quadríceps", { sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s", obs: "Cada perna" }),
-  ex("C2f", "C2", "Adutora", "Adutores", { sets: 2, lo: 12, hi: 15, kg: 79, rest: "90 s" }),
-  ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "90 s", obs: "Passou de 15: halter entre os pés" }),
-  ex("C2h", "C2", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "90 s" }),
-  ex("C2i", "C2", "Back extension (opcional)", "Lombar", { sets: 2, lo: 10, hi: 12, kg: 78, rest: "90 s", obs: "Só se sobrar tempo", opt: true })
+  ex("C2e", "C2", "Cadeira extensora unilateral", "Quadríceps", { sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna" }),
+  ex("C2f", "C2", "Adutora", "Adutores", { sets: 2, lo: 12, hi: 15, kg: 79, rest: "2 min" }),
+  ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "2 min", obs: "Passou de 15: halter entre os pés" }),
+  ex("C2h", "C2", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
+  ex("C2i", "C2", "Back extension (opcional)", "Lombar", { sets: 2, lo: 10, hi: 12, kg: 78, rest: "2 min", obs: "Só se sobrar tempo", opt: true })
 ];
 // Exercício pelo código (EXBY.A1)
 const EXBY = Object.fromEntries(EX.map(e => [e.k, e]));
@@ -927,29 +1058,85 @@ const WT = {
   8: { top: [2, 2], comp: [1, 2], iso: [1, 2], core: 0, festas: true, label: "Festas: 1/3 a menos de séries" },
   9: { top: [1, 2], comp: [1, 2], iso: [1, 1], core: 2, label: "Última semana do cutting" }
 };
-// Depois do bloco: regras gerais
-const WT_AFTER = { top: [1, 2], comp: [1, 3], iso: [1, 2], core: 2, label: "Pós-cutting: regras gerais até a próxima ficha", after: true };
 // Semana comum, usada quando a semana 7 ou 8 não cai nas festas do calendário
 const WT_NORMAL = { top: [1, 2], comp: [1, 2], iso: [1, 1], core: 2, label: "Alavanca: recordes de repetições" };
 // Semana com 24, 25 ou 31/dez ou 1º/jan
 function isFestas(w) { const a = PLAN_START + (w - 1) * 6048e5; for (let i = 0; i < 7; i++) { const d = new Date(a + i * 864e5), m = d.getUTCMonth(), dd = d.getUTCDate(); if ((m === 11 && (dd === 24 || dd === 25 || dd === 31)) || (m === 0 && dd === 1)) return true; } return false; }
-// Regras da semana w, ajustadas ao calendário (festas) e a quem não segue o plano anual
+// ----- Blocos depois do primeiro: o treino do resto do ano -----
+// Rampa de RIR por semana do bloco, na ordem [série pesada, compostos, isoladores]; ao chegar ao fim, recomeça
+const RIR_FORCA = [[[1, 2], [2, 3], [1, 2]]];
+const RIR_HIPER = [[[2, 3], [3, 3], [3, 3]], [[2, 2], [2, 3], [2, 2]], [[1, 2], [1, 2], [1, 2]], [[1, 1], [1, 1], [0, 1]]];
+const RIR_PICO = [[[2, 2], [2, 2], [2, 2]], [[1, 2], [1, 2], [1, 2]], [[1, 1], [1, 1], [1, 1]], [[1, 1], [1, 1], [0, 1]]];
+// Blocos do plano anual, cada um a partir de uma segunda-feira (ini) até o começo do próximo.
+//   top, back = faixa da série pesada e dos back-offs (sem isso, 6–8 e 8–10) · rir = rampa de RIR · core = séries extras de core
+//   plus = músculos prioritários: ganham n0 séries na 1ª semana e +1 por semana até n1 · leve = semanas leves · teste = semana de teste
+const BLOCOS_ANO = [
+  { ini: "2027-01-11", nome: "Recuperar força", top: [4, 6], back: [6, 8], rir: [[[2, 2], [2, 3], [2, 2]]], core: 0, leve: ["2027-01-11"], foco: "Sair do cutting e recuperar força nos compostos" },
+  { ini: "2027-02-01", nome: "Força I", top: [4, 6], back: [6, 8], rir: RIR_FORCA, core: 0, foco: "Série pesada de 4 a 6 e back-offs de 6 a 8" },
+  { ini: "2027-03-01", nome: "Força II", top: [5, 8], back: [6, 8], rir: RIR_FORCA, core: 0, foco: "Carga sobe quando bater o topo da faixa" },
+  { ini: "2027-03-29", nome: "Hipertrofia I", rir: RIR_HIPER, core: 1, plus: { m: ["Ombro lateral", "Quadríceps"], n0: 1, n1: 6 }, leve: ["2027-05-24"], foco: "Volume crescente em ombro lateral e quadríceps" },
+  { ini: "2027-05-31", nome: "Hipertrofia II", rir: RIR_HIPER, core: 1, plus: { m: ["Peito", "Costas"], n0: 1, n1: 6 }, leve: ["2027-07-26"], foco: "Volume crescente em peito e costas", nota: "Bloco novo: vale trocar a variação de 1 exercício por músculo (pegada, ângulo ou aparelho)." },
+  { ini: "2027-08-02", nome: "Hipertrofia III (pico)", rir: RIR_PICO, core: 2, plus: { m: ["Bíceps", "Tríceps", "Core"], n0: 4, n1: 8 }, foco: "Pico de volume em braços e core", nota: "Nos isoladores, a última série pode terminar com um drop-set: ao chegar ao limite, tire 20 a 30% da carga e continue sem descansar." },
+  { ini: "2027-08-30", nome: "Semana leve, teste e força", top: [4, 6], back: [6, 8], rir: [[[1, 2], [2, 3], [1, 2]]], core: 0, leve: ["2027-08-30"], teste: "2027-09-06", foco: "Medir o ganho do ano" },
+  { ini: "2027-09-27", nome: "Cutting 2", rir: [[[1, 2], [1, 2], [1, 2]]], core: 2, foco: "Manter as cargas com menos volume; core" },
+  { ini: "2027-11-29", nome: "Manutenção", rir: [[[2, 2], [2, 2], [2, 2]]], core: 0, foco: "Manter e planejar o ano seguinte" }
+];
+// Bloco do plano anual em que a semana cai (só depois do primeiro bloco e para quem segue o plano anual)
+function blocoDe(w) {
+  if (w <= BLOCK_W || !ownerPlan()) return null;
+  const d = isoDate(weekStart(w)); let b = null;
+  for (const x of BLOCOS_ANO) if (x.ini <= d) b = x;
+  return b;
+}
+// Regras de uma semana dentro de um bloco do plano anual (k = semana do bloco)
+function wtAno(b, w) {
+  const d = isoDate(weekStart(w)), k = Math.round((weekStart(w) - Date.parse(b.ini + "T00:00:00Z")) / 6048e5) + 1;
+  const r = b.rir[(k - 1) % b.rir.length];
+  const t = { top: r[0], comp: r[1], iso: r[2], core: b.core, label: b.nome + " · semana " + k, bloco: b.nome, k, nota: b.nota || "" };
+  if (b.top) { t.rngTop = b.top; t.rngBack = b.back; }
+  if (b.plus) t.plus = { m: b.plus.m, n: Math.min(b.plus.n1, b.plus.n0 + k - 1) };
+  if (b.leve && b.leve.includes(d)) { t.leve = true; t.label = b.nome + " · semana leve"; }
+  if (b.teste === d) { t.top = [0, 1]; t.label = b.nome + " · teste da série pesada"; t.nota = "Semana de teste: na série pesada dos compostos, vá até sobrar no máximo 1 repetição. A força estimada desta semana mostra o ganho do ano."; }
+  if (isFestas(w)) { t.festas = true; t.label = "Festas: 1/3 a menos de séries"; }
+  return t;
+}
+// Quem não segue o plano anual: depois do primeiro bloco, o ciclo de 9 semanas recomeça a partir das cargas atingidas
+function wtCiclo(w) {
+  const k = (w - 1) % BLOCK_W + 1, n = Math.floor((w - 1) / BLOCK_W) + 1;
+  let t = k === 1 ? Object.assign({}, WT[1], { label: "Novo bloco: retomar com folga" }) : k === BLOCK_W ? Object.assign({}, WT[9], { label: "Última semana do bloco" }) : k >= 7 ? WT_NORMAL : WT[k];
+  if (isFestas(w)) t = WT[7];
+  return Object.assign({}, t, { label: "Bloco " + n + " · " + t.label, bloco: "Bloco " + n, k });
+}
+// Regras da semana w: primeiro bloco pela tabela WT (ajustada às festas do calendário); depois, pelo bloco do plano anual ou pelo ciclo
 function wt(w) {
-  let t = WT[w] || WT_AFTER;
+  if (w > BLOCK_W) { const b = blocoDe(w); return b ? wtAno(b, w) : wtCiclo(w); }
+  let t = WT[w];
   const f = isFestas(w);
   if (t.festas && !f) t = WT_NORMAL;
-  else if (!t.festas && f && !t.after) t = WT[7];
-  if (!ownerPlan()) {
-    if (w === BLOCK_W && !t.festas) t = Object.assign({}, t, { label: "Última semana do bloco" });
-    if (t.after) t = Object.assign({}, t, { label: "Depois do bloco: regras gerais até a próxima ficha" });
-  }
+  else if (!t.festas && f) t = WT[7];
+  if (!ownerPlan() && w === BLOCK_W && !t.festas) t = Object.assign({}, t, { label: "Última semana do bloco" });
   return t;
+}
+// Séries a mais de um exercício quando o músculo é prioritário no bloco: as n séries da semana são repartidas entre os exercícios do músculo, na ordem da ficha
+function plusSets(def, t) {
+  if (!t.plus || def.opt || !t.plus.m.includes(def.m)) return 0;
+  const L = EX.filter(e => e.m === def.m && !e.opt), j = L.indexOf(def), n = t.plus.n;
+  return Math.min(PLUS_MAX, Math.floor(n / L.length) + (j < n % L.length ? 1 : 0));
+}
+// Mudança de faixa da série pesada entre blocos (ex.: 6–8 → 4–6): ajusta a carga pela força estimada, para o mesmo esforço com outra quantidade de repetições
+function rephase(def, st, tOld, tNew) {
+  const a = tOld.rngTop || [6, 8], b = tNew.rngTop || [6, 8], ma = (a[0] + a[1]) / 2, mb = (b[0] + b[1]) / 2;
+  if (def.sc !== "top" || st.load == null || Math.abs(ma - mb) < REFASE_MIN) return st;
+  const load = rnd(st.load * (1 + ma / 30) / (1 + mb / 30), def.step);
+  return Object.assign({}, st, { load, prevLoad: st.load, tr: null, stall: 0, below: 0, mode: "normal", how: "", heavy: undefined, stuck: undefined, phase: undefined, action: "fase",
+    why: "Novo bloco: a série pesada passa de " + a[0] + "–" + a[1] + " para " + b[0] + "–" + b[1] + " repetições. Carga ajustada pela força estimada: " + fmt(st.load) + " → " + fmt(load) + " kg." });
 }
 // Ações que o motor pode prescrever: símbolo, texto e cor
 const ACT = {
   start: { sym: "■", txt: "Carga da ficha", c: "--keep" },
   "new": { sym: "★", txt: "Definir carga", c: "--new" },
   up: { sym: "▲", txt: "Subir carga", c: "--up" },
+  fase: { sym: "◆", txt: "Nova faixa", c: "--keep" },
   reps: { sym: "●", txt: "Manter carga, +1 rep", c: "--keep" },
   keep: { sym: "●", txt: "Manter", c: "--keep" },
   down: { sym: "▼", txt: "Reduzir carga", c: "--down" },
@@ -985,8 +1172,8 @@ function dayDate(w, dayId) { const d = DAYS.find(x => x.id === dayId); return ne
 
 // ===== 3. MOTOR DE PROGRESSÃO =====
 // Séries-base do exercício: 1 pesada (6–8) + 2 back-offs (8–10), ou N séries iguais na faixa da ficha
-function baseSets(def) {
-  if (def.sc === "top") return [{ kind: "top", lo: 6, hi: 8 }, { kind: "back", lo: 8, hi: 10 }, { kind: "back", lo: 8, hi: 10 }];
+function baseSets(def, t) {
+  if (def.sc === "top") { const a = (t && t.rngTop) || [6, 8], b = (t && t.rngBack) || [8, 10]; return [{ kind: "top", lo: a[0], hi: a[1] }, { kind: "back", lo: b[0], hi: b[1] }, { kind: "back", lo: b[0], hi: b[1] }]; }
   return Array.from({ length: def.sets }, () => ({ kind: "work", lo: def.lo, hi: def.hi }));
 }
 // RIR-alvo da série conforme o tipo (pesada, composto ou isolador) e a semana
@@ -995,8 +1182,8 @@ function rirFor(def, kind, t) { if (kind === "top" || kind === "over") return t.
 // Prescrição de uma semana a partir do estado
 function prescribe(def, st, w, flags) {
   const t = wt(w);
-  let sets = baseSets(def);
-  let extra = 0;
+  let sets = baseSets(def, t);
+  let extra = plusSets(def, t);
   if (def.k === "C1f" && t.core >= 1) extra = 1;
   if (def.k === "C2g" && t.core >= 2) extra = 1;
   for (let i = 0; i < extra; i++) sets.push(Object.assign({}, sets[sets.length - 1]));
@@ -1018,9 +1205,9 @@ function prescribe(def, st, w, flags) {
     return o;
   });
   let action = st.action, why = st.why;
-  if (deload) { action = "deload"; why = "Semana de deload: metade das séries, mesma carga, 3 repetições sobrando. Nenhuma mudança de carga conta nesta semana."; }
+  if (deload) { action = "deload"; why = "Semana de deload: metade das séries, mesma carga, 3 repetições sobrando. Nenhuma mudança de carga conta nesta semana." + (st.action === "fase" ? " " + st.why : ""); }
   else if (festas && action !== "fix" && action !== "down") { action = "festas"; why = "Semana de festas: 1/3 a menos de séries com a mesma carga. " + (st.why || ""); }
-  return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def).length, ordemHist: st.ordemHist || [] };
+  return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def, t).length, plus: plusSets(def, t), ordemHist: st.ordemHist || [] };
 }
 
 // Séries feitas em texto: 52×7, 46×9+1p (p = parciais)
@@ -1264,8 +1451,9 @@ function replay(records, W, curW, settings, sl) {
   const states = Object.fromEntries(EX.map(d => [d.k, initState(d, sl)]));
   const weeks = {};
   for (let w = 1; w <= W; w++) {
-    const flags = { deload: false };
-    if (wt(w).deloadCheck) {
+    const flags = { deload: false }, tw = wt(w);
+    if (tw.leve) { const choice = (settings && settings["deload" + w]) || "sim"; flags.deload = choice !== "nao"; flags.deloadChoice = choice; }
+    if (tw.deloadCheck) {
       const choice = (settings && settings["deload" + w]) || "auto";
       const auto = weekStruggle(weeks[w - 1], records, w - 1) >= DELOAD_DIAS;
       flags.deload = choice === "sim" || (choice === "auto" && auto);
@@ -1274,7 +1462,7 @@ function replay(records, W, curW, settings, sl) {
     const pres = {};
     for (const d of EX) pres[d.k] = prescribe(d, states[d.k], w, flags);
     weeks[w] = { pres, flags };
-    if (w < W) for (const d of EX) states[d.k] = transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW, noteFlags(records, w, d));
+    if (w < W) { const tn = wt(w + 1); for (const d of EX) states[d.k] = rephase(d, transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW, noteFlags(records, w, d)), tw, tn); }
   }
   return weeks;
 }
@@ -1440,21 +1628,28 @@ function restFlags(e, def) {
   const avg = ds.reduce((a, b) => a + b, 0) / ds.length, prev = restSec(def);
   return { desc: avg, descPrev: prev, descCurto: avg < prev * REST_CURTO };
 }
+// Quantas séries de aquecimento foram marcadas (null = nenhuma marcação feita)
+function warmDone(e, n) { return e && Array.isArray(e.aq) ? e.aq.slice(0, n).filter(Boolean).length : null; }
 // Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado
 function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
-  let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [];
+  let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0;
   defs.forEach((d, idx) => {
     const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d);
     const warm = (warmPlan(d) || []).length;
     prev += warm * WARM_SEC + n * EXEC_DEF + (n - 1) * rs + (idx ? TRANS_DEF : 0);
+    aqPrev += warm * WARM_SEC; aqN += warm;
     const e = doc && doc.ex ? doc.ex[d.k] : null;
     if (!e || e.st === "nao") return;
     const sets = (e.sets || []).filter(x => x && +x.reps > 0);
     if (!sets.length && e.st !== "feito") return;
     nReg++;
     const m = Math.max(sets.length, e.st === "feito" ? n : 0);
-    reg += warm * WARM_SEC + (idx ? (+e.trans > 0 ? +e.trans : TRANS_DEF) : 0);
+    // aquecimento: tempo cronometrado; senão, as séries marcadas; sem marcação nenhuma, supõe o previsto
+    const aq = warmDone(e, warm), aqS = +e.aqT > 0 ? +e.aqT : (aq == null ? warm : aq) * WARM_SEC;
+    if (warm && !(+e.aqT > 0) && aq == null) regEst = true;
+    aqReg += aqS; aqDone += aq == null ? 0 : aq;
+    reg += aqS + (idx ? (+e.trans > 0 ? +e.trans : TRANS_DEF) : 0);
     for (let i = 0; i < m; i++) {
       const x = (e.sets || [])[i] || {};
       if (+x.exec > 0) reg += +x.exec; else { reg += EXEC_DEF; regEst = true; }
@@ -1463,7 +1658,7 @@ function dayTime(W, day, wk) {
     }
   });
   const c = doc && doc.cardio && doc.cardio.st === "feito" ? (doc.cardio.min || 0) : 0;
-  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c };
+  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c, aqPrev, aqReg, aqN, aqDone };
 }
 // Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha
 function dayOrder(doc, day) {
@@ -2091,6 +2286,7 @@ function refreshRm() {
 // ===== 9. EXPLICAÇÕES: textos dos botões "i" =====
 // Legenda das ações: quando aparece e o que fazer
 const LEGEND = [
+  ["fase", "Começou um bloco em que a série pesada tem outra faixa de repetições.", "A carga já vem ajustada pela força estimada. Anote o que fizer: a partir daí a progressão segue normal."],
   ["up", "Bateu o topo da faixa em todas as séries, com a carga prevista.", "Sobe 1 salto (2,5 kg na máquina; 1–2 kg no halter) e o alvo volta ao mínimo da faixa."],
   ["reps", "Ficou dentro da faixa e melhorou em relação à semana anterior.", "Mesma carga; alvo de +1 repetição por série."],
   ["down", "Ficou abaixo da faixa ou não conseguiu usar a carga prevista.", "Reduz ~5% (ou para a carga em que fechou a faixa) e reconstrói."],
@@ -2250,11 +2446,19 @@ Object.assign(GLOSS, {
 });
 
 
-GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão e não precisam ser anotadas.</p>"];
-GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps e toque +50%, +50% e +25%. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
+GLOSS.aquecimento = ["Aquecimento", "<p>Séries leves antes da primeira série válida. Preparam articulações e o movimento e deixam você render de verdade na série pesada.</p><ul><li><b>Primeiro exercício do dia</b>: 2 a 3 séries em rampa, por exemplo 50% × 8, 70% × 5 e 85% × 2 da carga do dia.</li><li><b>Primeiro composto de um grupo novo</b> (ex.: leg press no treino de posteriores): 2 séries.</li><li><b>Primeiro isolador de um grupo que ainda não trabalhou</b> (ex.: panturrilha): 1 série leve.</li><li>Músculos já aquecidos por exercícios anteriores (tríceps depois do supino, bíceps depois da remada) não precisam.</li></ul><p>Fique longe da falha, descanse 45–60 s entre elas e ~2 min antes da primeira válida. Elas <b>não contam</b> para volume nem para a progressão.</p><p><b>Controle próprio:</b> toque em cada série de aquecimento para marcar como feita e use <b>▶ Cronometrar</b> para medir o tempo do aquecimento. Se você começar a primeira série válida com o cronômetro do aquecimento rodando, ele é fechado e anotado sozinho.</p><p>O aquecimento entra no <b>tempo do treino</b>: o previsto considera 45 s por série; o registrado usa o tempo cronometrado ou, sem ele, as séries que você marcou.</p>"];
+GLOSS.parciais = ["Repetições parciais", "<p>As repetições feitas só em parte do movimento depois da última completa, quando não dá mais para fazer uma inteira.</p><p class=\"eg\">Ex.: 6 completas, depois uma de 50%, outra de 50% e uma de 30%: escreva 6 em Reps, toque +50% duas vezes e digite 30 no campo “outro %”. Toque numa parcial para apagar.</p><ul><li>Não contam como repetição para a faixa nem para subir carga: o app usa só as completas.</li><li>Mostram que você chegou à falha: ao registrar parciais, o RIR vira 0 sozinho.</li><li>Contam no progresso pela metade da fração (50% = 0,25 repetição): mais parciais com a mesma carga já contam como avanço e evitam marcar o exercício como parado.</li></ul>"];
 GLOSS.observacoes = ["Observações que ajustam o treino", "<p>Toque num tema (Dor, Execução, Carga, Equipamento, Disposição, Tempo) e escolha as opções dele; o que estiver marcado aparece em roxo, e tocar tira. Também dá para escrever no campo de texto. Com <b>+ palavra-chave</b> você cria um bloco seu e escolhe o efeito dele. Abaixo aparece o que o app entendeu.</p><ul><li><b>Carga fixa, sem ajuste</b> (máquinas de placas fixas): vale o peso que você usou, mesmo diferente do previsto. Não conta como queda; a próxima semana mantém essa placa e busca +1 repetição; no topo da faixa, sobe para a próxima placa.</li><li><b>Carga pesada demais</b>: mesmo batendo o topo, a carga fica mais uma semana antes de subir.</li><li><b>Dor forte</b>: a carga cai 10% e o app sugere trocar o exercício.</li><li><b>Dor</b> (dor, doeu, incômodo, fisgada, lesão): a carga não sobe; cai 10% se você ficou abaixo da faixa. Na 2ª semana seguida, sugere trocar o exercício. Na observação do dia, diga onde dói (ombro, cotovelo, punho, joelho, lombar, quadril, pescoço, tornozelo) para ajustar os exercícios dessa região.</li><li><b>Com ajuda ou técnica ruim</b> (com ajuda, roubei, embalo, meia amplitude): não vale para subir carga; repete carga e alvo.</li><li><b>Dia fora do normal</b> (cansado, dormi mal, gripado, sem tempo, máquina ocupada ou diferente): se ficou abaixo do previsto, não conta como estagnação nem queda.</li><li><b>Fácil</b> (fácil, leve demais, dava para mais): sobe a carga um salto; dois se você também bateu o topo da faixa.</li></ul><p>Negações são entendidas: “sem dor” ou “não doeu” não contam como dor. O mais grave vale primeiro: dor, depois ajuda, depois dia ruim, depois fácil.</p>"];
 GLOSS.resumo = ["Resumo do dia", "<p>Análise do que você anotou no dia contra o que estava planejado.</p><p><b>Desempenho</b>: para cada exercício, compara a sua melhor série com a melhor série prevista pela força estimada (carga e repetições juntas, com as parciais contando como fração de repetição). No peso do corpo, compara o total de repetições. O número do dia é a média dos exercícios.</p><p>Até 2,5% abaixo conta como <b>no previsto</b>; 2% acima ou mais, <b>acima</b>.</p><p>Os <b>direcionamentos</b> saem dos seus registros: descanso, recuperação, RIR, parciais, dor, ordem, lados, tempo e cardio. Em cada exercício aparece a carga da próxima vez, já recalculada com o treino de hoje.</p>"];
 GLOSS.volume = ["Volume", "<p>Soma de carga × repetições de todas as séries feitas. Compara com o mesmo cálculo das séries previstas.</p><p>Serve para ver se o dia rendeu o trabalho total planejado; o desempenho de cada exercício mostra a força.</p>"];
+GLOSS.fotos = ["Fotos", "<p><b>Foto do treino</b>: fica ligada ao dia e entra no topo da imagem de compartilhar.</p><p><b>Fotos de evolução</b>: tire sempre no mesmo lugar, com a mesma luz, distância e pose. O app mostra a primeira ao lado da mais recente.</p><p>As fotos são reduzidas antes de enviar e só a sua conta consegue abri-las. Para apagar, toque em Apagar e depois em Confirmar.</p>"];
+GLOSS.diario = ["Diário de substâncias e exames", "<p>Um caderno para registrar o que você usa e acompanhar exames. Tudo é digitado por você: o app não traz lista de substâncias, não sugere dose e não diz o que usar.</p><ul><li><b>Substâncias</b>: nome, unidade, via e, se quiser, a meia-vida e o intervalo entre aplicações.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida informada.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
+GLOSS.dj_mv = ["Meia-vida", "<p>Tempo para a quantidade da substância no corpo cair pela metade. Informe o valor que consta na bula ou na literatura da apresentação que você usa, em dias (12 horas = 0,5).</p><p>O app usa esse número só para desenhar a curva estimada. Sem ele, a substância não aparece na curva.</p>"];
+GLOSS.dj_int = ["Intervalo", "<p>De quantos em quantos dias a aplicação se repete, conforme a sua prescrição. Com ele, o calendário marca a próxima data prevista (última aplicação + intervalo).</p><p>É opcional e não cria lembrete com som.</p>"];
+GLOSS.dj_curva = ["Quantidade estimada no corpo", "<p>Para cada aplicação, o app considera a dose inteira no momento registrado e a reduz pela metade a cada meia-vida. A linha é a soma das aplicações.</p><p><b>É um modelo didático.</b> Não considera absorção, apresentação, peso nem metabolismo, e não corresponde ao nível no sangue. Só um exame mede isso.</p><p>A linha tracejada mostra o seu peso no mesmo período, para comparar as datas.</p>"];
+GLOSS.blocos = ["Blocos do ano", "<p>O treino é dividido em blocos. O primeiro tem 9 semanas. Quando ele termina, o app monta o seguinte sozinho, a partir das cargas e repetições que você registrou. Nada precisa ser recomeçado.</p><p>Para quem segue o plano anual, cada bloco acompanha a fase da dieta:</p><ul><li><b>Força</b> (calorias em manutenção): a série pesada dos compostos cai para 4 a 6 repetições e a carga é reajustada pela força estimada.</li><li><b>Hipertrofia</b> (ganho): o RIR começa em 3 e desce a cada semana, e os músculos prioritários ganham 1 série por semana.</li><li><b>Cutting</b>: volume menor, cargas mantidas e mais core.</li></ul><p>As <b>semanas leves</b> já vêm marcadas (metade das séries, mesma carga); dá para pular com um toque. Para os demais, o ciclo de 9 semanas se repete, com a checagem de recuperação na 5ª semana de cada bloco.</p><p>A lista dos blocos e suas datas fica em Plano e regras.</p>"];
+GLOSS.g_descexec = ["Descanso e execução do exercício", "<p>Mostra, semana a semana, o <b>descanso médio</b> entre as séries deste exercício (contra o previsto, na linha tracejada) e o <b>tempo médio de execução</b> de cada série.</p><p>Serve para ver se a queda ou a melhora de desempenho veio junto com descanso mais curto ou séries mais rápidas. Os dados vêm do cronômetro ou dos tempos que você anotar.</p>"];
+GLOSS.telaacesa = ["Tela acesa", "<p>Com <b>Sim</b>, o celular não apaga nem bloqueia a tela enquanto o cronômetro está rodando. Assim o aviso de 5 minutos toca e você vê o tempo sem desbloquear.</p><p>Gasta um pouco mais de bateria. Quando o cronômetro para, a tela volta a apagar normalmente. A escolha fica guardada neste aparelho.</p>"];
 GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A barra enche até o tempo previsto (execução estimada pelas repetições, descanso e intervalo da ficha) e o ponteiro dá uma volta por minuto.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
 GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
@@ -2392,7 +2596,7 @@ function renderWeek() {
   const t = wt(W);
   document.getElementById("wkTitle").textContent = "Semana " + W + (W <= BLOCK_W ? " de " + BLOCK_W : "");
   const phW = phaseAt(isoDate(weekStart(W)));
-  document.getElementById("wkSub").textContent = weekLabel(W) + " · " + (phW ? phW.fase : (W <= BLOCK_W ? "Bloco 1" : "Depois do bloco")) + (W === app.curW ? " · esta semana" : "");
+  document.getElementById("wkSub").textContent = weekLabel(W) + " · " + (t.bloco || (phW ? phW.fase : "Bloco 1")) + (W === app.curW ? " · esta semana" : "");
   document.getElementById("wkPrev").disabled = W <= 1;
   document.getElementById("wkNext").disabled = W >= MAXW;
   document.getElementById("saveWeek").textContent = "Semana " + W;
@@ -2407,12 +2611,15 @@ function renderWeek() {
   let bn = "";
   if (t.deloadCheck) {
     const ch = wk.flags.deloadChoice;
-    bn = '<div class="banner' + (deload ? "" : " warn") + '"><b>' + (deload ? "⤓ Semana de deload." : "Semana 5: deload só se precisar.") + "</b>" + infoBtn("deload") + " " +
-      (wk.flags.deloadAuto ? "Na semana 4 houve 2 ou mais dias abaixo da faixa." : "Na semana 4 não houve 2 dias abaixo da faixa.") +
+    bn = '<div class="banner' + (deload ? "" : " warn") + '"><b>' + (deload ? "⤓ Semana de deload." : "Semana " + W + ": deload só se precisar.") + "</b>" + infoBtn("deload") + " " +
+      (wk.flags.deloadAuto ? "Na semana " + (W - 1) + " houve 2 ou mais dias abaixo da faixa." : "Na semana " + (W - 1) + " não houve 2 dias abaixo da faixa.") +
       ' <span class="row-btns" style="display:inline-flex;margin:6px 0 0">' +
       ["auto", "sim", "nao"].map(c => '<button class="btn small" data-deload="' + c + '" aria-pressed="' + (ch === c) + '">' + { auto: "Automático", sim: "Fazer deload", nao: "Sem deload" }[c] + "</button>").join("") + "</span></div>";
   }
-  if (t.after) bn += '<div class="banner">' + (ownerPlan() ? "O cutting terminou. Os exercícios seguem as regras gerais de progressão até a próxima ficha." : "O bloco de 9 semanas terminou. Os exercícios seguem as regras gerais de progressão até a próxima ficha.") + "</div>";
+  if (t.leve) bn += '<div class="banner' + (deload ? "" : " warn") + '"><b>' + (deload ? "⤓ Semana leve planejada." : "Semana leve pulada.") + "</b>" + infoBtn("deload") + ' Metade das séries, mesma carga, 3 repetições sobrando. <span class="row-btns" style="display:inline-flex;margin:6px 0 0">' +
+    ["sim", "nao"].map(c => '<button class="btn small" data-deload="' + c + '" aria-pressed="' + (wk.flags.deloadChoice === c) + '">' + { sim: "Fazer a semana leve", nao: "Treinar normal" }[c] + "</button>").join("") + "</span></div>";
+  if (t.plus) bn += '<div class="banner"><b>Prioritários do bloco:</b> ' + esc(t.plus.m.join(", ")) + ". Cada um com " + t.plus.n + (t.plus.n > 1 ? " séries" : " série") + " a mais nesta semana, repartidas entre os exercícios." + infoBtn("blocos") + "</div>";
+  if (t.nota) bn += '<div class="banner">' + esc(t.nota) + "</div>";
   document.getElementById("wkBanner").innerHTML = bn;
   document.getElementById("days").innerHTML = dayBtns(W);
   renderDay(wk);
@@ -2452,10 +2659,12 @@ function renderDay(wk) {
   defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
   h += cardioCard(W, day);
   h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
+  h += fotoDiaHtml(W, day);
   h += '<div class="row-btns" style="margin:4px 0 14px"><a class="btn" href="#resumo">📋 Ver o resumo do dia</a></div>';
   h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
   const dv = document.getElementById("dayView");
   dv.innerHTML = h;
+  fotoFill(dv);
   const dk = W + "|" + day;
   if (app.dayKey !== dk) { if (app.dayKey) animSwap(dv); app.dayKey = dk; }
 }
@@ -2471,13 +2680,15 @@ function warmPlan(d) {
   if (groups.includes(d.m) || (WARM_BY[d.m] || []).some(g => groups.includes(g))) return null;
   return d.t === "comp" ? [[0.5, 8], [0.75, 4]] : [[0.5, 12]];
 }
-// Linha de aquecimento do cartão
-function warmHtml(d, p) {
+// Aquecimento do cartão, com controle próprio: cada série vira um botão de marcar e o bloco tem cronômetro
+function warmHtml(d, p, e) {
   const plan = warmPlan(d); if (!plan) return "";
-  const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load;
-  const st = d.step || 1;
-  const txt = L > 0 ? plan.map(([f, r]) => fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r).join(" · ") : (plan.length > 1 ? plan.length + " séries leves" : "1 série leve") + " (" + plan.map(([f]) => Math.round(f * 100) + "%").join(", ") + " da carga do dia)";
-  return '<div class="warm"><b>Aquecimento</b> <span class="muted">(não conta)</span>: ' + txt + infoBtn("aquecimento") + "</div>";
+  const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load, st = d.step || 1, c = app.clk;
+  const run = c && c.ph === "warm" && c.W === app.week && c.k === d.k, aq = (e && e.aq) || [];
+  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + "</button>").join("");
+  const tm = run ? '<span class="clk run rs clkanim wq"><span class="clkfill"></span>' + clkRing() + '<span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar e registrar o aquecimento">⏸ Parar</button></span>'
+    : '<button type="button" class="btn small clkgo" data-clk="warm|' + d.k + '" aria-label="Cronometrar o aquecimento">▶ ' + (e && +e.aqT > 0 ? "⏱ " + clkFmt(e.aqT) + " · de novo" : "Cronometrar") + "</button>";
+  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b> <span class="muted">(não conta para a progressão)</span>' + infoBtn("aquecimento") + '</div><div class="wqrow">' + chips + tm + "</div></div>";
 }
 // Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
 function parcHtml(k, i, arr, side) {
@@ -2487,7 +2698,8 @@ function parcHtml(k, i, arr, side) {
   if (!open) return '<button class="pbtn" type="button" data-parcopen="' + k + "|" + i + "|0" + sx + '">+ parciais' + lt + "</button>";
   return '<div class="parc"><span class="plbl">Parciais' + lt + (side === "d" ? "" : infoBtn("parciais")) + "</span>" +
     arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + sx + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
-    PARC_OPTS.map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + sx + '" aria-label="Adicionar parcial de ' + v + '%' + lt + '">+' + v + "%</button>").join("") + "</div>";
+    PARC_OPTS.map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + sx + '" aria-label="Adicionar parcial de ' + v + '%' + lt + '">+' + v + "%</button>").join("") +
+    '<input class="pin" type="number" inputmode="numeric" min="1" max="99" step="1" placeholder="outro %" data-parcin="' + k + "|" + i + sx + '" aria-label="Adicionar parcial com outra porcentagem' + lt + '"></div>';
 }
 // Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido
 function tagsHtml(scope, k, selected) {
@@ -2547,8 +2759,9 @@ function dayTimeHtml(W, day, wk) {
     tile("Previsto", totPrev + " min", "musculação " + t.prev + " + cardio " + t.cardioPrev + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
     tile("Registrado", t.nReg ? "~" + totReg + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + t.cardio + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * REST_CURTO ? " · curto" : t.restAvg > t.restPrev * REST_LONGO ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
-    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") + "</div>" +
-    (ord.length >= 2 ? '<p class="lead" style="margin-top:8px">Ordem feita' + infoBtn("ordem") + ": " + ord.map(([k]) => esc(exShort(EXBY[k]))).join(" → ") + (trocas ? " · " + trocas + " fora da ordem da ficha" : " · igual à ficha") + "</p>" : "");
+    tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") +
+    (t.aqN ? tile("Aquecimento", t.nReg ? "~" + Math.max(1, Math.round(t.aqReg / 60)) + " min" : "—", t.aqDone + " de " + t.aqN + " séries marcadas · previsto " + Math.round(t.aqPrev / 60) + " min", "aquecimento") : "") + "</div>" +
+    (ord.length >= 2 ? '<p class="lead" style="margin-top:8px">Ordem feita' + infoBtn("ordem") + ": " + ord.map(([k]) => esc(exShort(EXBY[k]))).join(" → ") + (trocas ? " · " + trocas + " fora da ordem da ficha" : " · igual à ficha") + "</p>" : "") + wakeHtml();
 }
 // Atualiza o painel de tempo sem redesenhar a tela
 function updateDayTime() { const el = document.getElementById("dayTime"); if (!el || app.tab !== "semana") return; const wk = computeWeeks(app.week)[app.week]; el.innerHTML = dayTimeHtml(app.week, app.day, wk); }
@@ -2629,7 +2842,7 @@ function exCard(d, p, entry, W) {
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
     (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") + ordemLine(p) +
     ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p)) + uniToggleHtml(d) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniToggleHtml(d) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     '<div class="row-btns" style="margin-top:8px"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
     '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
@@ -2709,6 +2922,28 @@ function weekAgg(weeks, lastW) {
       }
     }
     out.push({ w, setsP, setsD, ton: Math.round(ton), idx: pcts.length ? pcts.reduce((x, y) => x + y, 0) / pcts.length : null, n: pcts.length, acts, done, planned, musD, musP, cardio: cardioWeek(w) });
+  }
+  return out;
+}
+// Números extras de cada semana para os gráficos: execução média por série (s), séries com parciais e diferença entre os lados (% por exercício; positivo = direito mais forte)
+function weekExtras(lastW) {
+  const out = [];
+  for (let w = 1; w <= lastW; w++) {
+    let exS = 0, exN = 0, parc = 0; const lados = {};
+    for (const d of EX) {
+      const r = recOf(app.records, w, d); if (!r || !r.sets) continue;
+      const rs = [];
+      for (const x of r.sets) {
+        if (!x || !(+x.reps > 0)) continue;
+        if (+x.exec > 0) { exS += +x.exec; exN++; }
+        const L = x.lados || {};
+        if ((x.parc && x.parc.length) || ["e", "d"].some(n => L[n] && L[n].parc && L[n].parc.length)) parc++;
+        const se = uniScore(L, "e", x.kg), sd = uniScore(L, "d", x.kg);
+        if (se > 0 && sd > 0) rs.push(sd / se - 1);
+      }
+      if (rs.length) lados[d.k] = Math.round(rs.reduce((a, b) => a + b, 0) / rs.length * 1000) / 10;
+    }
+    out.push({ w, exec: exN ? Math.round(exS / exN) : null, parc, lados });
   }
   return out;
 }
@@ -2795,6 +3030,13 @@ function renderProgress() {
   cTm.scales.y.beginAtZero = true; cTm.scales.y.ticks.callback = v => v + " min";
   cTm.plugins.tooltip.callbacks = { label: c => c.datasetIndex === 0 ? "Treino médio: " + (c.parsed.y == null ? "—" : c.parsed.y + " min") + (tw[c.dataIndex].rec != null ? " · recuperação " + Math.round(tw[c.dataIndex].rec * 100) + "%" : "") + (tw[c.dataIndex].rest.length ? " · descanso " + fmtSec(tw[c.dataIndex].rest.reduce((a, b) => a + b, 0) / tw[c.dataIndex].rest.length) : "") : "Limite: " + maxT + " min" };
   mkChart("chTempo", { data: { labels, datasets: [{ type: "bar", label: "Treino médio", data: tw.map(x => x.min), backgroundColor: css("--series-1"), borderRadius: 4, maxBarThickness: 36 }, { type: "line", label: "Limite", data: tw.map(() => maxT), borderColor: css("--series-2"), borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 }] }, options: cTm });
+  // Gráficos dos registros finos: execução, parciais e lados
+  const xt = weekExtras(lastW), opt = f => { const o = chartBase(); f(o); return o; };
+  mkChart("chExec", { type: "line", data: { labels, datasets: [dsLine("Execução média por série", xt.map(x => x.exec), "--series-1", { spanGaps: true })] }, options: opt(o => { o.scales.y.ticks.callback = v => v + " s"; o.plugins.tooltip.callbacks = { label: x => x.dataset.label + ": " + clkFmt(x.parsed.y) + " min" }; }) });
+  mkChart("chParc", { type: "bar", data: { labels, datasets: [dsBar("Séries com parciais", xt.map(x => x.parc), "--series-2", 36)] }, options: opt(o => { o.scales.y.beginAtZero = true; o.scales.y.ticks.precision = 0; }) });
+  const uk = [...new Set(xt.flatMap(x => Object.keys(x.lados)))], lado = v => v == null ? "" : Math.abs(v) < 0.05 ? "iguais" : (v > 0 ? "direito +" : "esquerdo +") + fmt(Math.abs(v)) + "%";
+  document.getElementById("ladosLead").textContent = uk.length ? "Força estimada de um lado contra o outro, nos exercícios unilaterais. Acima de zero, o direito está mais forte; abaixo, o esquerdo." : "Aparece quando um exercício unilateral tiver os dois lados anotados.";
+  mkChart("chLados", { type: "line", data: { labels, datasets: uk.map((k, i) => dsLine(exShort(EXBY[k]), xt.map(x => x.lados[k] != null ? x.lados[k] : null), ["--series-1", "--series-2", "--up", "--deload", "--new"][i % 5], { spanGaps: true })) }, options: opt(o => { o.scales.y.ticks.callback = v => lado(v); o.scales.y.suggestedMin = -10; o.scales.y.suggestedMax = 10; o.plugins.tooltip.callbacks = { label: x => x.dataset.label + ": " + lado(x.parsed.y) }; }) });
   // séries por músculo na semana
   const ml = Object.keys(cur.musP);
   document.getElementById("musLead").textContent = "Séries diretas planejadas e feitas na semana " + W + ".";
@@ -2839,6 +3081,16 @@ function renderExChart() {
   c.scales.x = { type: "linear", min: 1, max: Math.max(lastW, 2), ticks: { stepSize: 1, color: css("--muted"), callback: v => "S" + v }, grid: { color: css("--line") } };
   c.plugins.tooltip.callbacks = { title: it => "Semana " + it[0].parsed.x, label: x => x.dataset.label + ": " + fmt(x.parsed.y) + " kg" };
   mkChart("chEx", { type: "line", data: { datasets: ds }, options: c });
+  // Descanso médio e execução média do exercício, semana a semana
+  const rp = [], ep = [], rPrev = restSec(def);
+  for (let w = 1; w <= lastW; w++) {
+    const r = recOf(app.records, w, def); if (!r) continue;
+    const rf = restFlags(r, def); if (rf.desc) rp.push({ x: w, y: Math.round(rf.desc) });
+    const ex = (r.sets || []).map(x => x && +x.exec).filter(x => x > 0); if (ex.length) ep.push({ x: w, y: Math.round(ex.reduce((a, b) => a + b, 0) / ex.length) });
+  }
+  const c2 = chartBase(); c2.scales.x = c.scales.x; c2.scales.y.beginAtZero = true; c2.scales.y.ticks.callback = v => clkFmt(v);
+  c2.plugins.tooltip.callbacks = { title: it => "Semana " + it[0].parsed.x, label: x => x.dataset.label + ": " + clkFmt(x.parsed.y) + " min" };
+  mkChart("chExRest", { type: "line", data: { datasets: [dsLine("Descanso médio", rp, "--series-1"), dsDash("Descanso previsto", [{ x: 1, y: rPrev }, { x: Math.max(lastW, 2), y: rPrev }], "--muted", [5, 4]), dsLine("Execução média", ep, "--series-2")] }, options: c2 });
   document.getElementById("exTable").innerHTML = rowsH.length ? '<table class="plain"><thead><tr><th>Semana</th><th>Séries</th><th>Força est.</th><th>Obs.</th></tr></thead><tbody>' + rowsH.reverse().join("") + "</tbody></table>" : '<p class="muted">Nenhum registro deste exercício ainda.</p>';
 }
 
@@ -2995,7 +3247,7 @@ async function saveQW() {
   const kg = Number(raw);
   if (!(kg > 30 && kg < 250)) { msg.textContent = "Confira o peso: o valor parece fora do normal."; return; }
   const rec = Object.assign({ data: d, peso: null, gordura: null, cintura: null, nota: "" }, app.body[d] || {}, { peso: kg });
-  app.body[d] = rec; app.qwTyping = false; updateQW();
+  app.body[d] = rec; app.qwTyping = false; updateQW(); hojeFill();
   if (!app.db || app.P == null) { msg.textContent = "Sem armazenamento: o peso fica só nesta tela."; return; }
   const btn = document.getElementById("qwSave"); btn.disabled = true; msg.textContent = "Salvando…";
   try { await app.db.doc(app.P + "corpo/" + d).set(rec); msg.textContent = "Peso de " + dm(d) + " salvo ✓"; flashBtn("qwSave"); }
@@ -3123,6 +3375,12 @@ function renderPlan() {
     "<tr><td>Abaixo da faixa</td><td>Redução, cluster, reset</td><td>1ª vez: −5%. 2ª vez seguida: cluster na carga atual. 3ª: reset de 10% em onda.</td></tr></tbody></table>";
   document.getElementById("weekTable").innerHTML = '<table class="plain"><thead><tr><th>Semana</th><th>Datas</th><th>Pesada' + infoBtn("top") + '</th><th>Compostos' + infoBtn("comp") + '</th><th>Isoladores' + infoBtn("iso") + '</th><th>Core' + infoBtn("core") + '</th><th>Foco' + infoBtn("alavanca") + '</th></tr></thead><tbody>' +
     [1, 2, 3, 4, 5, 6, 7, 8, 9].map(w => { const t = wt(w); return '<tr class="' + (+w === app.curW ? "cur" : "") + '"><td>' + w + "</td><td>" + weekLabel(+w) + "</td><td>RIR " + rirTxt(t.top) + "</td><td>RIR " + rirTxt(t.comp) + "</td><td>RIR " + rirTxt(t.iso) + "</td><td>" + (16 + t.core) + "</td><td>" + esc(t.label) + "</td></tr>"; }).join("") + "</tbody></table>";
+  const dAno = x => { const t = Date.parse(x + "T00:00:00Z"); return new Date(t).getUTCDate() + "/" + MES[new Date(t).getUTCMonth()] + "/" + String(new Date(t).getUTCFullYear()).slice(2); };
+  const bNow = blocoDe(app.curW);
+  document.getElementById("blocosBox").innerHTML = ownerPlan()
+    ? '<p class="lead">Depois da semana ' + BLOCK_W + ", o app monta cada bloco sozinho, a partir do que você registrou.</p>" + '<div class="tablewrap"><table class="plain"><thead><tr><th>Começa</th><th>Bloco</th><th>Série pesada</th><th>Foco</th><th>Semana leve</th></tr></thead><tbody>' +
+      BLOCOS_ANO.map(b => '<tr class="' + (bNow === b ? "cur" : "") + '"><td>' + dAno(b.ini) + " · S" + weekOfDateStr(b.ini) + "</td><td><b>" + esc(b.nome) + "</b></td><td>" + (b.top || [6, 8]).join("–") + " reps</td><td>" + esc(b.foco) + (b.plus ? " (até +" + b.plus.n1 + " séries por músculo)" : "") + "</td><td>" + ((b.leve || []).map(dAno).join(", ") || "—") + "</td></tr>").join("") + "</tbody></table></div>"
+    : '<p class="lead">Depois da semana ' + BLOCK_W + ", o ciclo de " + BLOCK_W + " semanas recomeça sozinho, partindo das cargas que você atingiu. A primeira semana de cada bloco volta com folga (RIR 2) e a 5ª faz a checagem de recuperação.</p>";
   const F = app.fases || [], now = Date.parse(todayStr() + "T12:00:00Z");
   document.getElementById("yearLead").textContent = !F.length ? "" : ownerPlan() ? "Plano anual de fases, mês a mês. Para gerar as fases pelo seu objetivo, desmarque o plano anual na aba Objetivo." : "Fases geradas pelo seu Objetivo: a fase até a meta e depois a fase seguinte que você escolheu.";
   document.getElementById("yearTable").innerHTML = !F.length ? '<p class="muted">Preencha o Perfil (pelo menos o peso) e o Objetivo para gerar as fases. <a href="#perfil">Abrir o Perfil</a></p>' : '<table class="plain"><thead><tr><th>Período</th><th>Fase' + infoBtn("fase") + '</th><th>kcal/dia' + infoBtn("kcal") + '</th><th>P / C / G (g)' + infoBtn("macros") + '</th><th>Cardio' + infoBtn("cardio") + '</th><th>Refeição livre' + infoBtn("livre") + '</th><th>Peso</th></tr></thead><tbody>' +
@@ -3197,7 +3455,7 @@ function uniRows(d, i, v, lbl, head, g) {
 // Lê o cronômetro guardado no aparelho
 function clkLoad() { try { const s = localStorage.getItem(CLK_KEY); app.clk = s ? JSON.parse(s) : null; } catch (e) { app.clk = app.clk || null; } }
 // Guarda o cronômetro no aparelho
-function clkSave() { try { if (app.clk) localStorage.setItem(CLK_KEY, JSON.stringify(app.clk)); else localStorage.removeItem(CLK_KEY); } catch (e) { } }
+function clkSave() { wakeSync(); try { if (app.clk) localStorage.setItem(CLK_KEY, JSON.stringify(app.clk)); else localStorage.removeItem(CLK_KEY); } catch (e) { } }
 // Segundos decorridos da fase atual
 function clkEl() { const c = app.clk; return !c ? 0 : c.fixed != null ? c.fixed : Math.max(0, (Date.now() - c.t0) / 1000); }
 // Segundos como m:ss
@@ -3246,6 +3504,10 @@ function clkHandoff(W, m, j, side) {
   } else if (c.ph === "rest") {
     if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
     else if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
+  } else if (c.ph === "warm") {
+    if (el <= CLK_WARM_MAX) { clkWarmRec(W, c.k, el); msgs.push("aquecimento " + clkFmt(el) + " anotado"); }
+    else msgs.push("aquecimento de " + clkFmt(el) + " não anotado (parecia esquecido)");
+    if (c.k === m) return msgs;
   } else if (c.ph === "trans") {
     if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
     else if (j > 0) { clkRecord(W, m, j - 1, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
@@ -3274,8 +3536,9 @@ function clkAfterExec(c, t0) {
 }
 // Para a execução, anota o tempo e passa para a fase seguinte
 function clkStop() {
-  const c = app.clk; if (!c || c.ph !== "exec") return;
-  if (c.waitSide) return;
+  const c = app.clk; if (!c) return;
+  if (c.ph === "warm") { clkWarmRec(c.W, c.k, clkEl()); app.clk = null; clkSave(); clkRefresh(); return; }
+  if (c.ph !== "exec" || c.waitSide) return;
   const el = clkEl();
   clkRecord(c.W, c.k, c.i, "exec", el, c.side);
   clkAfterExec(c, Date.now());
@@ -3290,6 +3553,7 @@ function clkOnDone(W, k) {
     // execução rodando: anota e o intervalo começa agora; descanso rodando (séries seguintes feitas sem cronômetro): começa agora; troca de lado: desde o fim do 1º lado
     let t0 = Date.now();
     if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= CLK_EXEC_MAX) clkRecord(W, k, c.i, "exec", el, c.side); } }
+    if (c.ph === "warm" && clkEl() <= CLK_WARM_MAX) clkWarmRec(W, k, clkEl());
     app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", prev: TRANS_DEF, t0: Date.now(), ack: 0 };
   else return;
@@ -3313,7 +3577,8 @@ function clkOnInput(W, k) {
 function clkAct(a) {
   const c = app.clk;
   if (a.startsWith("go|")) { const [, k, i, sd] = a.split("|"); clkGo(app.week, k, +i, sd || null); return; }
-  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
+  if (a.startsWith("warm|")) { clkWarm(app.week, a.split("|")[1]); return; }
+  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
   if (!c) return;
   if (a === "stop") { clkStop(); return; }
   if (a === "side") { if (c.waitSide) { c.waitSide = false; c.t0 = Date.now(); c.ack = 0; clkSave(); clkRefresh(); } return; }
@@ -3327,6 +3592,7 @@ function clkAct(a) {
     if (s == null || (c.ph !== "exec" && !(s > 0))) { const i = document.getElementById("clkFixIn"); if (i) i.focus(); return; }
     if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
     else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
+    else if (c.ph === "warm") { clkWarmRec(c.W, c.k, s); app.clk = null; }
     else { c.fixed = s; c.ask = false; c.fixOpen = false; }
     clkSave(); clkRefresh(); clkToast("Tempo corrigido para " + clkFmt(s) + "."); return;
   }
@@ -3337,6 +3603,22 @@ function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); clkAni
 function clkRing() { return '<svg class="clkring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rb" cx="18" cy="18" r="15"/><circle class="rf" cx="18" cy="18" r="15" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 18 18)"/><line class="rh" x1="18" y1="18" x2="18" y2="7"/><circle class="rc" cx="18" cy="18" r="2"/></svg>'; }
 // Tempo previsto da fase atual, para a barra de progresso
 function clkPlan(c) { return c.ph === "exec" ? (c.waitSide ? 0 : c.exp || EXEC_DEF) : c.prev || TRANS_DEF; }
+// Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas
+function clkWarmRec(W, k, sec) {
+  const { def, entry } = ctx(k, null, W), n = (warmPlan(def) || []).length;
+  entry.aqT = Math.round(sec);
+  if (warmDone(entry, n) == null || !warmDone(entry, n)) entry.aq = Array.from({ length: n }, () => true);
+  touch(def.d, W);
+}
+// Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando)
+function clkWarm(W, k) {
+  clkUnlock();
+  const msgs = clkHandoff(W, k, 0, null), { def, entry } = ctx(k, null, W);
+  if (!entry.startAt) { entry.startAt = new Date().toISOString(); touch(def.d, W); }
+  app.clk = { W, day: def.d, k, i: 0, side: null, ph: "warm", prev: Math.max(WARM_SEC, (warmPlan(def) || []).length * WARM_SEC), t0: Date.now(), ack: 0 };
+  clkSave(); clkRefresh();
+  if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
+}
 // Pedido de quadro da animação em andamento (null = parada)
 let clkRaf = null;
 // Um quadro da animação: enche a barra e gira o ponteiro
@@ -3375,8 +3657,8 @@ function clkBar() {
   if (!c || !EXBY[c.k]) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
   box.classList.remove("hide"); clkDock();
   const el = clkEl(), lado = c.side ? (c.side === "e" ? " · lado esquerdo" : " · lado direito") : "";
-  const lbl = c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
-  const btns = c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
+  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
+  const btns = c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>' : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
@@ -3396,6 +3678,24 @@ function clkTick() {
   document.querySelectorAll("[data-clkt]").forEach(x => { if (x.textContent !== t) x.textContent = t; });
   clkAnim();
   if (c.fixed == null && !c.ask && Math.floor(el / CLK_ALERT) > (c.ack || 0)) { c.ask = true; clkSave(); clkBar(); clkBeep(); }
+}
+// Tela acesa enquanto o cronômetro roda (para o aviso de 5 minutos tocar). A preferência fica no aparelho.
+let wakeLock = null;
+// A pessoa quer a tela acesa? (padrão: sim)
+function wakeOn() { try { return localStorage.getItem(WAKE_KEY) !== "0"; } catch (e) { return true; } }
+// Liga ou solta o bloqueio de tela conforme o cronômetro, a preferência e a página visível
+async function wakeSync() {
+  const want = !!app.clk && wakeOn() && !document.hidden && "wakeLock" in navigator;
+  try {
+    if (want && !wakeLock) { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => { wakeLock = null; }); }
+    else if (!want && wakeLock) { const l = wakeLock; wakeLock = null; await l.release(); }
+  } catch (e) { wakeLock = null; }
+}
+// Botões Sim/Não da preferência, no painel de tempo do treino (só onde o navegador tem o recurso)
+function wakeHtml() {
+  if (!("wakeLock" in navigator)) return "";
+  const on = wakeOn();
+  return '<div class="unitg"><span class="rl">Tela acesa durante o cronômetro' + infoBtn("telaacesa") + '</span><button type="button" class="rbtn" aria-pressed="' + on + '" data-wake="1">Sim</button><button type="button" class="rbtn" aria-pressed="' + !on + '" data-wake="0">Não</button></div>';
 }
 // Mostra a barra de baixo fora da aba Semana enquanto o cronômetro roda
 function clkDock() { const sb = document.querySelector(".savebar"); if (!sb) return; const sem = app.tab === "semana"; sb.classList.toggle("hide", !sem && !app.clk); sb.classList.toggle("only-clk", !sem); document.body.classList.toggle("clk-on", !!app.clk); }
@@ -3447,18 +3747,21 @@ function sumEx(W, day, wk, nx) {
 function pctTxt(x) { return x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "") + fmt(Math.abs(Math.round(x * 1000) / 10)) + "%"; }
 // Quilos sem casas decimais: 1.240 kg
 function kgTxt(x) { return Math.round(x).toLocaleString("pt-BR") + " kg"; }
-// Monta o Resumo do dia: resultado, blocos de número, direcionamentos e exercício por exercício
-function daySummaryHtml(W, day) {
+// Números do dia, usados pelo resumo e pela imagem de compartilhar: exercícios, séries, volume, desempenho, tempo e cardio
+function dayStats(W, day) {
   const weeks = computeWeeks(Math.min(W + 1, MAXW)), wk = weeks[W], nx = W < MAXW ? weeks[W + 1] : null;
-  const dd = DAYS.find(x => x.id === day), doc = getDoc(W, day, false);
-  const rows = sumEx(W, day, wk, nx);
-  const t = dayTime(W, day, wk), max = maxMin();
+  const doc = getDoc(W, day, false), rows = sumEx(W, day, wk, nx), t = dayTime(W, day, wk);
   const req = rows.filter(r => !r.d.opt || r.st === "feito" || r.sets.length);
   const feitos = req.filter(r => r.st === "feito"), nao = req.filter(r => r.st === "nao"), pend = req.filter(r => r.st !== "feito" && r.st !== "nao");
   const setsDone = req.reduce((a, r) => a + r.sets.length, 0), setsPrev = req.filter(r => r.st !== "nao").reduce((a, r) => a + r.n, 0);
   const tonR = rows.filter(r => r.tonPrev != null), ton = tonR.reduce((a, r) => a + r.ton, 0), tonPrev = tonR.reduce((a, r) => a + r.tonPrev, 0);
   const pr = rows.filter(r => r.perf != null), perf = pr.length ? pr.reduce((a, r) => a + r.perf, 0) / pr.length : null;
-  const c = doc && doc.cardio || {}, pl = cardioPlan(W);
+  return { doc, rows, t, req, feitos, nao, pend, setsDone, setsPrev, ton, tonPrev, pr, perf, c: doc && doc.cardio || {}, pl: cardioPlan(W) };
+}
+// Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício
+function daySummaryHtml(W, day) {
+  const { doc, rows, t, req, feitos, nao, pend, setsDone, setsPrev, ton, tonPrev, pr, perf, c, pl } = dayStats(W, day), max = maxMin();
+  const dd = DAYS.find(x => x.id === day);
   const dateStr = isoDate(dayDate(W, day)), past = dateStr <= todayStr();
   const peso = app.body[dateStr] && app.body[dateStr].peso;
   const head = '<h2>' + esc(dd.nome) + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + " · " + esc(dd.titulo) + "</h2>";
@@ -3480,6 +3783,7 @@ function daySummaryHtml(W, day) {
     tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular" : "incompleta") : "precisa de 2 séries seguidas", "recuperacao") +
     tile("Cardio", c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : c.st === "nao" ? "não feito" : "—", c.st === "feito" ? (paceOf(c) ? "pace " + paceFmt(paceOf(c)) + " /km · " : "") + "previsto " + pl.min + " min" : "previsto " + pl.min + " min") +
     (peso ? tile("Peso do dia", fmt(peso) + " kg", "pesagem registrada") : "") + "</div>";
+  h += '<div class="row-btns" style="margin:0 0 14px"><button type="button" class="btn" data-share="prep">📤 Compartilhar o resumo</button></div><div id="shareBox"></div>';
   // direcionamentos
   const dir = [], nm = r => esc(exShort(r.d));
   const list = (arr, f) => arr.map(f).join(", ");
@@ -3577,24 +3881,42 @@ function homeLogo() {
   const ticks = [[62.61, 21.68, 63.83, 18.94, .35], [70.88, 27.09, 73.30, 24.44, .39], [77.04, 34.83, 80.68, 32.79, .43], [80.44, 44.12, 85.11, 43.21, .46], [80.74, 54.00, 86.05, 54.69, .50], [77.92, 63.47, 83.27, 66.06, .54], [72.26, 71.58, 76.94, 76.13, .58], [64.33, 77.49, 67.62, 83.80, .62], [54.94, 80.60, 56.17, 88.21, .66], [45.06, 80.60, 43.73, 88.79, .69], [35.67, 77.49, 31.57, 85.37, .73], [27.74, 71.58, 20.95, 78.17, .77], [22.08, 63.47, 13.02, 67.85, .81], [19.26, 54.00, 8.70, 55.37, .85], [19.56, 44.12, 8.53, 41.98, .89], [22.96, 34.83, 12.65, 29.05, .92], [29.12, 27.09, 20.75, 17.92, .96], [37.39, 21.68, 32.10, 9.80, 1]];
   return '<svg class="hm-logo" viewBox="0 0 100 100" aria-hidden="true"><g stroke-width="4.2" stroke-linecap="round">' + ticks.map((t, i) => '<line x1="' + t[0] + '" y1="' + t[1] + '" x2="' + t[2] + '" y2="' + t[3] + '" style="--o:' + t[4] + ";--i:" + i + '"/>').join("") + '</g><g class="hm-h"><rect x="38.5" y="35" width="7" height="30" rx="2"/><rect x="54.5" y="35" width="7" height="30" rx="2"/><rect x="38.5" y="47.5" width="23" height="5" rx="1.5"/></g></svg>';
 }
-// Desenha a aba Início
+// Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia.
+function hojeFill() {
+  const tp = todayPlan(), btn = document.getElementById("hojeBtn");
+  if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => !e.opt) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
+  const pop = document.getElementById("hoje"); if (!pop || pop.classList.contains("hide")) return;
+  if (!(document.activeElement && pop.contains(document.activeElement) && document.activeElement.matches("input"))) document.getElementById("hojeBody").innerHTML = homeToday();
+}
+// Abre o painel Hoje
+function hojeOpen() { const pop = document.getElementById("hoje"); pop.classList.remove("hide", "closing"); hojeFill(); updateQW(); countUp(document.getElementById("hojeBody")); document.getElementById("hojeX").focus(); }
+// Fecha o painel Hoje (com a animação de saída)
+function hojeClose() {
+  const pop = document.getElementById("hoje"); if (pop.classList.contains("hide")) return;
+  if (RM()) pop.classList.add("hide"); else { pop.classList.add("closing"); setTimeout(() => { pop.classList.add("hide"); pop.classList.remove("closing"); }, 170); }
+  const b = document.getElementById("hojeBtn"); if (b) b.focus();
+}
+// Desenha o Início: apresentação do app, o nome, por que registrar, como funciona e atalhos
 function renderHome() {
   const box = document.getElementById("homeView"); if (!box) return;
-  if (!app.fresh && box.dataset.built) { const c = box.querySelector(".hm-card"); if (c) c.innerHTML = homeToday(); return; }
+  if (!app.fresh && box.dataset.built) return;
   app.fresh = false; box.dataset.built = "1";
   const feat = [
     ["semana", "Treino da semana", "A ficha de cada dia com aquecimento, carga prevista e ajuste ao vivo entre as séries."],
     ["semana", "Cronômetro de série", "Execução, descanso e intervalo contados sozinhos, com aviso se você esquecer de parar."],
-    ["resumo", "Resumo do dia", "A análise depois do treino: o que rendeu, o que ficou abaixo e o que fazer na próxima."],
+    ["resumo", "Resumo do dia", "A análise depois do treino: o que rendeu, o que ficou abaixo e o que fazer na próxima. Vira imagem para compartilhar."],
     ["proxima", "Próxima semana", "O que sobe, o que segura e o motivo de cada mudança, antes de você chegar na academia."],
     ["progresso", "Progresso", "Força estimada, volume e tempo de treino semana a semana, exercício por exercício."],
     ["corpo", "Corpo e dieta", "Peso, gordura e medidas, com calorias, macros e cardio ajustados à meta."],
+    ["diario", "Diário", "Registro pessoal de substâncias, aplicações e exames, com calendário e curva pela meia-vida."],
     ["perfil", "Perfil e objetivo", "Seus dados, medidas, cargas máximas e onde você quer chegar."],
     ["plano", "Plano e regras", "Como o app decide cada carga: tudo explicado, sem caixa-preta."]
   ];
   box.innerHTML =
-    '<section class="hm-hero">' + homeLogo() + '<h2 class="hm-name">Hex<span>is</span></h2><p class="hm-tag">O corpo que se constrói pela prática.</p><p class="hm-lead">Treino, cardio e dieta num só lugar. Você anota o que fez e o app ajusta a próxima série, o próximo treino e a próxima semana.</p></section>' +
-    '<section class="panel hm-card">' + homeToday() + "</section>" +
+    '<section class="hm-hero">' + homeLogo() + '<h2 class="hm-name">Hex<span>is</span></h2><p class="hm-tag">O corpo que se constrói pela prática.</p><p class="hm-lead">Treino, cardio e dieta num só lugar. Você anota o que fez e o app ajusta a próxima série, o próximo treino e a próxima semana.</p></section>';
+
+  const more = document.getElementById("homeMore");
+  more.innerHTML =
     '<section class="hm-sec rv"><h2>Por que Hexis</h2><p class="hm-greek">ἕξις <span>· héxis</span></p><p>Em grego, <b>héxis</b> é a disposição que se adquire com a prática: um jeito de ser que não nasce pronto e se forma pela repetição. Aristóteles usou a palavra para explicar o caráter: ninguém nasce disciplinado ou corajoso; a pessoa se torna assim fazendo, de novo e de novo, até aquilo virar parte dela.</p><p>Com o corpo é igual. Força, condicionamento e composição corporal não saem de um treino perfeito, e sim da soma de muitas sessões bem feitas. O que você faz com frequência vira quem você é.</p><p class="muted">No logo, os traços em volta ficam mais fortes a cada passo, como as repetições que se acumulam. No centro, o H de Hexis.</p></section>' +
     '<section class="hm-sec rv"><h2>Por que registrar faz diferença</h2><div class="hm-why">' +
     [["Progresso sem achismo", "Cada série é comparada com o planejado. A partir disso o app decide se sobe a carga, busca mais repetições, segura ou alivia."],
@@ -3608,8 +3930,7 @@ function renderHome() {
      ["Acompanhe", "Resumo do dia, progresso por exercício e evolução do corpo mostram se o caminho está certo."]].map(x => "<li><b>" + x[0] + "</b><span>" + x[1] + "</span></li>").join("") + "</ol></section>" +
     '<section class="hm-sec rv"><h2>O que tem aqui</h2><div class="hm-feat">' + feat.map((f, i) => '<a class="hm-f" href="#' + f[0] + '" style="--i:' + i + '"><b>' + f[1] + "</b><span>" + f[2] + '</span><i aria-hidden="true">→</i></a>').join("") + "</div></section>" +
     '<p class="hm-foot rv">Hexis · treino com método, um dia de cada vez.</p>';
-  countUp(box);
-  revealAll(box);
+  revealAll(more);
 }
 // ===== 21. NAVEGAÇÃO E ANIMAÇÕES =====
 // Troca de aba: marca a navegação, mostra a tela e anima a entrada
@@ -3634,7 +3955,7 @@ function renderOnb() {
 }
 // Redesenha a aba atual (espera a pessoa terminar de digitar, se for o caso)
 function render() {
-  renderOnb();
+  renderOnb(); hojeFill();
   if (document.activeElement && document.activeElement.matches && document.activeElement.matches("main input, main textarea, main select") && (app.tab === "semana" || (app.tab === "perfil" && !app.pfRendered) || (app.tab === "objetivo" && !app.objRendered))) { app.deferRender = true; return; }
   app.deferRender = false;
   if (app.tab === "semana") renderWeek();
@@ -3642,7 +3963,8 @@ function render() {
   else if (app.tab === "inicio") renderHome();
   else if (app.tab === "proxima") renderNext();
   else if (app.tab === "progresso") renderProgress();
-  else if (app.tab === "corpo") renderGoal();
+  else if (app.tab === "corpo") { renderGoal(); const fe = document.getElementById("fotosEvo"); fe.innerHTML = fotoEvoHtml(); fotoFill(fe); }
+  else if (app.tab === "diario") renderDiario();
   else if (app.tab === "perfil") renderPerfilTab();
   else if (app.tab === "objetivo") renderObjTab();
   else renderPlan();
@@ -3661,7 +3983,7 @@ const NAVG = [
   { id: "inicio", t: "Início", tabs: [["inicio", "Início"]], ic: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>' },
   { id: "treino", t: "Treino", tabs: [["semana", "Semana"], ["proxima", "Próxima semana"]], ic: '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12"/>' },
   { id: "resumo", t: "Resumo", tabs: [["resumo", "Resumo do dia"]], ic: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 11l2 2 4-4M8.5 17h7"/>' },
-  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo e dieta"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
+  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo e dieta"], ["diario", "Diário"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
   { id: "voce", t: "Você", tabs: [["perfil", "Perfil"], ["objetivo", "Objetivo"], ["plano", "Plano e regras"]], ic: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>' }
 ];
 // Todas as abas
@@ -3719,7 +4041,221 @@ function revealAll(root) {
   if (!app.rvObs) app.rvObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); app.rvObs.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
   els.forEach(e => app.rvObs.observe(e));
 }
-// ===== 22. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação =====
+// ===== 22. FOTOS E COMPARTILHAR =====
+// Guarda um documento avulso (diário, fotos): aparece na hora e segue para o armazenamento. Apagar = gravar { apagado: true }.
+async function putDoc(coll, id, data, msgEl) {
+  app[coll] = app[coll] || {};
+  if (data.apagado) delete app[coll][id]; else app[coll][id] = data;
+  const say = t => { const m = msgEl && document.getElementById(msgEl); if (m) m.textContent = t; };
+  if (!app.db || app.P == null) { say("Sem armazenamento: fica só nesta tela."); return; }
+  try { await app.db.doc(app.P + coll + "/" + id).set(data); say("Salvo."); } catch (e) { say(saveErr(e)); }
+}
+// Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos
+function subExtras(db, P) {
+  [["diario", ["diario"]], ["fotos", ["corpo", "semana", "resumo"]]].forEach(([c, tabs]) => db.collection(P + c).onSnapshot(snap => {
+    const o = {}; for (const d of snap.docs) { const v = d.data(); if (v && !v.apagado) o[d.id] = v; }
+    app[c] = o; if (tabs.includes(app.tab)) render();
+  }, () => { }));
+}
+// Data local (AAAA-MM-DD) e data e hora local (AAAA-MM-DDTHH:MM) de um instante
+function isoLocal(t) { const d = new Date(t - new Date(t).getTimezoneOffset() * 6e4); return d.toISOString().slice(0, 10); }
+// Data e hora local de agora, no formato dos campos de data e hora
+function nowLocal() { return new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16); }
+// "2026-11-12" → "12/nov"
+function dCurta(iso) { return +iso.slice(8, 10) + "/" + MES[+iso.slice(5, 7) - 1]; }
+// ----- Fotos (só onde há armazenamento de arquivos: app.fotoStore, ligado na conexão) -----
+// Reduz a foto para no máximo FOTO_MAX px de lado e devolve um JPEG
+function fotoShrink(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, FOTO_MAX / Math.max(img.width, img.height)), c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); c.toBlob(b => b ? res(b) : rej(new Error("foto")), "image/jpeg", 0.82); };
+    img.onerror = () => { URL.revokeObjectURL(u); rej(new Error("foto")); };
+    img.src = u;
+  });
+}
+// Envia a foto escolhida e guarda o registro: tipo "treino" (com semana e dia) ou "evolucao"
+async function fotoAdd(file, tipo, msgEl) {
+  const say = t => { const m = document.getElementById(msgEl); if (m) m.textContent = t; };
+  if (!file || !app.fotoStore) return;
+  say("Enviando a foto…");
+  try {
+    const id = (tipo === "treino" ? isoDate(dayDate(app.week, app.day)) : todayStr()) + "-" + Date.now().toString(36);
+    const ref = await app.fotoStore.put(await fotoShrink(file), id);
+    await putDoc("fotos", id, Object.assign({ tipo, data: id.slice(0, 10), ref }, tipo === "treino" ? { w: app.week, dia: app.day } : {}), msgEl);
+    render();
+  } catch (e) { say("Não consegui enviar a foto. Tente de novo."); }
+}
+// Fotos de um tipo, da mais nova para a mais antiga (f = filtro opcional)
+function fotosDe(tipo, f) { return Object.entries(app.fotos || {}).filter(([, v]) => v.tipo === tipo && (!f || f(v))).sort((a, b) => a[0] < b[0] ? 1 : -1); }
+// Miniaturas. O endereço da imagem é um link temporário que chega depois: fotoFill preenche cada <img>
+function fotoThumbs(list, del) {
+  return list.map(([id, v]) => '<figure class="foto"><img alt="Foto de ' + dCurta(v.data) + '" data-foto="' + esc(v.ref) + '"><figcaption>' + dCurta(v.data) + (del ? '<button type="button" class="fdel" data-fotodel="' + id + '" aria-label="Apagar a foto de ' + dCurta(v.data) + '">Apagar</button>' : "") + "</figcaption></figure>").join("");
+}
+// Link temporário de uma foto (pedido uma vez e reaproveitado)
+function fotoUrl(ref) { app.fotoUrls = app.fotoUrls || {}; return app.fotoUrls[ref] || (app.fotoUrls[ref] = app.fotoStore.url(ref).catch(e => { delete app.fotoUrls[ref]; throw e; })); }
+// Preenche as miniaturas que ainda estão sem imagem
+function fotoFill(root) { if (app.fotoStore) (root || document).querySelectorAll("img[data-foto]:not([src])").forEach(img => fotoUrl(img.dataset.foto).then(u => { img.src = u; }, () => { })); }
+// Painel "Foto do treino" do dia aberto na aba Semana
+function fotoDiaHtml(W, day) {
+  if (!app.fotoStore) return "";
+  const d = isoDate(dayDate(W, day)), L = fotosDe("treino", v => v.data === d);
+  return '<div class="panel"><h2>Foto do treino' + infoBtn("fotos") + '</h2><div class="fotos">' + fotoThumbs(L, true) + '</div><div class="row-btns"><label class="btn">📷 ' + (L.length ? "Outra foto" : "Tirar ou escolher uma foto") + '<input type="file" accept="image/*" class="vh" data-fotoin="treino" aria-label="Escolher a foto do treino"></label></div><div class="muted" id="fotoMsg" aria-live="polite"></div></div>';
+}
+// Painel "Fotos de evolução" da aba Corpo e dieta: primeira contra a mais recente, e todas
+function fotoEvoHtml() {
+  if (!app.fotoStore) return '<div class="panel"><h2>Fotos de evolução</h2><p class="muted">As fotos ficam disponíveis na versão web do Hexis, com login.</p></div>';
+  const L = fotosDe("evolucao");
+  return '<div class="panel"><h2>Fotos de evolução' + infoBtn("fotos") + "</h2>" + (L.length >= 2 ? '<p class="lead">Primeira e mais recente</p><div class="fotos cmp">' + fotoThumbs([L[L.length - 1], L[0]], false) + "</div><p class=\"lead\">Todas</p>" : "") +
+    '<div class="fotos">' + fotoThumbs(L, true) + '</div><div class="row-btns"><label class="btn">📷 Adicionar foto<input type="file" accept="image/*" class="vh" data-fotoin="evolucao" aria-label="Escolher a foto de evolução"></label></div><div class="muted" id="fotoEvoMsg" aria-live="polite"></div></div>';
+}
+// Apagar foto: o primeiro toque pede confirmação no próprio botão; o segundo apaga
+function fotoDel(b) {
+  const id = b.dataset.fotodel, v = (app.fotos || {})[id];
+  if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Apagar"; } }, 4000); return; }
+  if (v && app.fotoStore) app.fotoStore.del(v.ref).catch(() => { });
+  putDoc("fotos", id, { apagado: true }).then(render);
+}
+// ----- Compartilhar o resumo do dia como imagem -----
+// Carrega uma imagem para desenhar no canvas
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+// Desenha a imagem (1080 × 1350) com os números do dia e, se houver, a foto do treino no topo
+async function shareDraw(W, day) {
+  const S = dayStats(W, day), dd = DAYS.find(x => x.id === day), dt = dayDate(W, day), iso = isoDate(dt);
+  const cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1350;
+  const g = cv.getContext("2d"), C = { bg: "#0E1420", card: "#18202F", ink: "#F4F6FA", mut: "#9AA6B8", ac: "#3987E5", up: "#2FBF71", lo: "#E5534B" };
+  const disp = getComputedStyle(document.documentElement).getPropertyValue("--font-display") || "sans-serif", body = '"Source Sans 3", system-ui, sans-serif';
+  const T = (txt, x, y, px, col, o) => { o = o || {}; g.font = (o.w || 400) + " " + px + "px " + (o.d ? disp : body); g.fillStyle = col; g.textAlign = o.a || "left"; g.fillText(txt, x, y); return g.measureText(txt).width; };
+  const fit = (txt, px, maxW, o) => { g.font = ((o && o.w) || 400) + " " + px + "px " + (o && o.d ? disp : body); while (g.measureText(txt).width > maxW && txt.length > 4) txt = txt.slice(0, -2).trimEnd() + "…"; return txt; };
+  g.fillStyle = C.bg; g.fillRect(0, 0, 1080, 1350);
+  let y = 0;
+  const ft = app.fotoStore ? fotosDe("treino", v => v.data === iso)[0] : null;
+  if (ft) {
+    try {
+      const img = await loadImg(await fotoUrl(ft[1].ref)), h = 540, k = Math.max(1080 / img.width, h / img.height);
+      g.save(); g.beginPath(); g.rect(0, 0, 1080, h); g.clip(); g.drawImage(img, (1080 - img.width * k) / 2, (h - img.height * k) / 2, img.width * k, img.height * k); g.restore();
+      const gr = g.createLinearGradient(0, h - 260, 0, h); gr.addColorStop(0, "rgba(14,20,32,0)"); gr.addColorStop(1, C.bg); g.fillStyle = gr; g.fillRect(0, h - 260, 1080, 260);
+      y = h - 70;
+    } catch (e) { y = 0; }
+  }
+  const top = y ? 84 : 120;
+  if (y) { g.fillStyle = "rgba(14,20,32,.55)"; g.fillRect(0, 0, 1080, 130); }
+  const wH = T("HEX", 72, top, 76, C.ink, { w: 700, d: 1 }); T("IS", 72 + wH, top, 76, C.ac, { w: 700, d: 1 });
+  T(dd.nome + " " + dt.getUTCDate() + "/" + MES[dt.getUTCMonth()], 1008, top - 8, 38, C.mut, { a: "right", w: 600 });
+  y = y ? y + 60 : 230;
+  T(fit(dd.titulo, 60, 936, { w: 700, d: 1 }), 72, y, 60, C.ink, { w: 700, d: 1 });
+  const p = S.perf, vc = p == null ? C.ac : p >= PERF_ACIMA ? C.up : p <= PERF_ABAIXO ? C.lo : C.ac;
+  const vt = p == null ? "Treino registrado" : (p >= PERF_ACIMA ? "Acima do previsto" : p <= PERF_ABAIXO ? "Abaixo do previsto" : "No previsto") + " · " + pctTxt(p);
+  y += 44; g.font = "700 38px " + body; const vw = g.measureText(vt).width + 56;
+  g.fillStyle = vc; g.beginPath(); g.roundRect(72, y, vw, 68, 34); g.fill(); T(vt, 100, y + 47, 38, "#fff", { w: 700 });
+  y += 108;
+  const c = S.c, tiles = [["Exercícios", S.feitos.length + " de " + S.req.length], ["Séries", S.setsDone + " de " + S.setsPrev], ["Volume", S.tonPrev ? kgTxt(S.ton) : "—"],
+    ["Tempo", S.t.nReg ? "~" + (S.t.reg + S.t.cardio) + " min" : "—"], ["Descanso médio", S.t.restAvg != null ? fmtSec(S.t.restAvg) : "—"], ["Cardio" + (c.st === "feito" && paceOf(c) ? " · " + paceFmt(paceOf(c)) + "/km" : ""), c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : "—"]];
+  tiles.forEach(([k, v], i) => { const x = 72 + (i % 3) * 318, yy = y + Math.floor(i / 3) * 168; g.fillStyle = C.card; g.beginPath(); g.roundRect(x, yy, 300, 150, 22); g.fill(); T(fit(k, 30, 256, { w: 600 }), x + 24, yy + 50, 30, C.mut, { w: 600 }); T(fit(v, 50, 256, { w: 700, d: 1 }), x + 24, yy + 114, 50, C.ink, { w: 700, d: 1 }); });
+  y += 2 * 168 + 30;
+  const best = S.rows.filter(r => r.sets.length && r.perf != null).sort((a, b) => b.perf - a.perf).slice(0, Math.max(0, Math.min(3, Math.floor((1240 - y - 60) / 62))));
+  if (best.length) {
+    T("Destaques", 72, y + 34, 34, C.mut, { w: 700 }); y += 62;
+    best.forEach(r => { const s = r.sets.filter(x => x.kg != null).sort((a, b) => e1(b.kg, b.reps) - e1(a.kg, a.reps))[0] || r.sets[0]; T(fit(exShort(r.d), 38, 560, { w: 600 }), 72, y + 40, 38, C.ink, { w: 600 }); T((s.kg != null ? fmt(s.kg) + " kg × " : "") + s.reps + (r.perf >= 0 ? "  " + pctTxt(r.perf) : ""), 1008, y + 40, 38, r.perf >= 0 ? C.up : C.ink, { a: "right", w: 700 }); y += 62; });
+  }
+  g.fillStyle = C.ac; g.fillRect(72, 1262, 60, 6);
+  T("Hexis · treino com método, um dia de cada vez", 72, 1312, 30, C.mut);
+  return { cv, nome: "hexis-" + iso + ".png", titulo: dd.titulo };
+}
+// 1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou baixa. O envio precisa de um toque próprio para o celular permitir.
+async function sharePrep() {
+  const box = document.getElementById("shareBox"); if (!box) return;
+  box.innerHTML = '<p class="muted">Montando a imagem…</p>';
+  try {
+    const r = await shareDraw(app.week, app.day), blob = await new Promise(res => r.cv.toBlob(res, "image/png"));
+    if (app.share && app.share.url) URL.revokeObjectURL(app.share.url);
+    app.share = { file: new File([blob], r.nome, { type: "image/png" }), url: URL.createObjectURL(blob), titulo: r.titulo };
+    const can = !!(navigator.canShare && navigator.canShare({ files: [app.share.file] }));
+    box.innerHTML = '<div class="panel sharep"><img src="' + app.share.url + '" alt="Prévia da imagem do resumo do dia"><div class="row-btns">' + (can ? '<button type="button" class="btn primary" data-share="send">Enviar para…</button>' : "") + '<a class="btn" href="' + app.share.url + '" download="' + r.nome + '">Baixar a imagem</a><button type="button" class="btn" data-share="close">Fechar</button></div><p class="muted" id="shareMsg" aria-live="polite">' + (can ? "" : "Este navegador não abre o menu de compartilhar. Baixe a imagem e poste pelo app da rede social.") + "</p></div>";
+  } catch (e) { box.innerHTML = '<p class="muted">Não consegui montar a imagem.</p>'; }
+}
+// Botões de compartilhar: preparar a prévia, fechar e enviar
+function shareAct(op) {
+  const box = document.getElementById("shareBox");
+  if (op === "prep") { sharePrep(); return; }
+  if (op === "close") { if (box) box.innerHTML = ""; return; }
+  if (op === "send" && app.share) navigator.share({ files: [app.share.file], title: "Hexis", text: app.share.titulo + " · Hexis" }).catch(e => { const m = document.getElementById("shareMsg"); if (m && !(e && e.name === "AbortError")) m.textContent = "O celular não aceitou o envio. Use Baixar a imagem."; });
+}
+// ===== 23. DIÁRIO DE SUBSTÂNCIAS E EXAMES (registro pessoal: o app guarda e mostra, não sugere nada) =====
+// Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra.
+const DJ_MARC = [["Hematócrito", "%"], ["Hemoglobina", "g/dL"], ["Testosterona total", "ng/dL"], ["Testosterona livre", "pg/mL"], ["Estradiol", "pg/mL"], ["PSA", "ng/mL"], ["LDL", "mg/dL"], ["HDL", "mg/dL"], ["Triglicerídeos", "mg/dL"], ["TGO (AST)", "U/L"], ["TGP (ALT)", "U/L"], ["Creatinina", "mg/dL"], ["Glicemia", "mg/dL"], ["Pressão sistólica", "mmHg"], ["Pressão diastólica", "mmHg"], ["Frequência cardíaca de repouso", "bpm"]];
+// Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)
+function djList(tipo) { const key = v => v.quando || v.data || (v.nome || "").toLowerCase(); return Object.entries(app.diario || {}).filter(([, v]) => v.tipo === tipo).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0); }
+// Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue.
+function djLevel(sub, aps, t) { const mv = +sub.mv * 864e5; if (!(mv > 0)) return null; return aps.reduce((a, x) => { const dt = t - Date.parse(x.quando); return x.sub === sub.id && dt >= 0 ? a + (+x.dose || 0) * Math.pow(0.5, dt / mv) : a; }, 0); }
+// Próxima aplicação prevista: a última mais o intervalo informado (dias)
+function djNext(sub, aps) { const L = aps.filter(x => x.sub === sub.id); return L.length && +sub.intervalo > 0 ? Date.parse(L[L.length - 1].quando) + sub.intervalo * 864e5 : null; }
+// Calendário do mês: ponto cheio = aplicação feita; ponto vazado = próxima prevista
+function djCalHtml(subs, aps) {
+  const ym = app.djMes || todayStr().slice(0, 7), [Y, M] = ym.split("-").map(Number), first = new Date(Date.UTC(Y, M - 1, 1));
+  const n = new Date(Date.UTC(Y, M, 0)).getUTCDate(), off = (first.getUTCDay() + 6) % 7, ix = id => Math.max(0, subs.findIndex(s => s.id === id)) % 5, by = {}, nx = {};
+  aps.forEach(x => { const d = x.quando.slice(0, 10); (by[d] = by[d] || []).push(ix(x.sub)); });
+  subs.forEach((s, i) => { const t = djNext(s, aps); if (t) { const d = isoLocal(t); (nx[d] = nx[d] || []).push(i % 5); } });
+  let h = '<div class="djcal-h"><button type="button" class="iconbtn" data-dj="mes|-1" aria-label="Mês anterior">‹</button><b>' + first.toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" }).replace(/^./, x => x.toUpperCase()) + '</b><button type="button" class="iconbtn" data-dj="mes|1" aria-label="Próximo mês">›</button></div><div class="djcal">' + ["S", "T", "Q", "Q", "S", "S", "D"].map(x => '<span class="dw">' + x + "</span>").join("");
+  for (let i = 0; i < off; i++) h += "<span></span>";
+  for (let d = 1; d <= n; d++) { const iso = ym + "-" + String(d).padStart(2, "0"); h += '<span class="dd' + (iso === todayStr() ? " hoje" : "") + '"><i>' + d + "</i><em>" + (by[iso] || []).map(i => '<b class="dot c' + i + '"></b>').join("") + (nx[iso] || []).map(i => '<b class="dot nx c' + i + '"></b>').join("") + "</em></span>"; }
+  return h + '</div><p class="muted djleg"><b class="dot c0"></b> aplicação feita &nbsp; <b class="dot nx c0"></b> próxima prevista (última + intervalo)</p>';
+}
+// Botão de apagar com confirmação no segundo toque
+function djDelBtn(id, nome) { return '<button type="button" class="btn small" data-dj="del|' + id + '" aria-label="Apagar ' + esc(nome) + '">Apagar</button>'; }
+// Desenha a aba Diário: substâncias, calendário, aplicações, curva estimada e exames
+function renderDiario() {
+  const subs = djList("sub"), aps = djList("ap"), exs = djList("ex"), byId = Object.fromEntries(subs.map(s => [s.id, s])), $ = id => document.getElementById(id);
+  const hora = q => dCurta(q.slice(0, 10)) + " " + q.slice(11, 16);
+  $("djSubs").innerHTML = subs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Via</th><th>Meia-vida</th><th>Intervalo</th><th>Próxima</th><th></th></tr></thead><tbody>' + subs.map((s, i) => { const nx = djNext(s, aps); return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b> <span class=\"muted\">(" + esc(s.un) + ")</span>" + (s.obs ? '<div class="muted">' + esc(s.obs) + "</div>" : "") + "</td><td>" + esc(s.via || "—") + "</td><td>" + (s.mv ? fmt(s.mv) + " d" : "—") + "</td><td>" + (s.intervalo ? "a cada " + fmt(s.intervalo) + " d" : "—") + "</td><td>" + (nx ? dCurta(isoLocal(nx)) : "—") + "</td><td>" + djDelBtn(s.id, s.nome) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhuma substância cadastrada ainda.</p>';
+  const sel = $("djApSub"), cur = sel.value; sel.innerHTML = subs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + " (" + esc(s.un) + ")</option>").join(""); if (cur && byId[cur]) sel.value = cur;
+  if (!$("djApQuando").value) $("djApQuando").value = nowLocal();
+  if (!$("djExData").value) $("djExData").value = todayStr();
+  $("djCal").innerHTML = djCalHtml(subs, aps);
+  $("djApList").innerHTML = aps.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Quando</th><th>Substância e dose</th><th>Detalhes</th><th></th></tr></thead><tbody>' + aps.slice(-12).reverse().map(x => { const s = byId[x.sub]; return "<tr><td>" + hora(x.quando) + "</td><td><b>" + esc(s ? s.nome : "(apagada)") + "</b><div>" + fmt(x.dose) + " " + esc(s ? s.un : "") + "</div></td><td>" + esc([x.local, x.lote && "lote " + x.lote, x.obs].filter(Boolean).join(" · ") || "—") + "</td><td>" + djDelBtn(x.id, "a aplicação de " + hora(x.quando)) + "</td></tr>"; }).join("") + "</tbody></table></div>" + (aps.length > 12 ? '<p class="muted">Mostrando as 12 mais recentes de ' + aps.length + ".</p>" : "") : '<p class="muted">Nenhuma aplicação registrada ainda.</p>';
+  // Curva estimada: 60 dias para trás e 30 para a frente, um ponto a cada meio dia; peso no eixo da direita
+  const now = Date.now(), cols = ["--series-1", "--series-2", "--up", "--deload", "--new"], ds = [];
+  subs.forEach((s, i) => { if (!(+s.mv > 0) || !aps.some(x => x.sub === s.id)) return; const pts = []; for (let d = -DJ_ATRAS; d <= DJ_FRENTE; d += 0.5) pts.push({ x: d, y: Math.round(djLevel(s, aps, now + d * 864e5) * 100) / 100 }); ds.push(Object.assign(dsLine(s.nome + " (" + s.un + ")", pts, cols[i % 5]), { pointRadius: 0, tension: 0.2, yAxisID: "y" })); });
+  const pw = Object.entries(app.body || {}).filter(([, v]) => v && +v.peso > 0).map(([d, v]) => ({ x: (Date.parse(d + "T12:00:00") - now) / 864e5, y: +v.peso })).filter(p => p.x >= -DJ_ATRAS && p.x <= 0).sort((a, b) => a.x - b.x);
+  if (ds.length && pw.length) ds.push(Object.assign(dsDash("Peso (kg)", pw, "--muted", [4, 4]), { yAxisID: "y2" }));
+  $("djCurvaLead").textContent = ds.length ? "Quanto de cada dose ainda restaria no corpo, pela meia-vida que você informou. É um modelo didático de decaimento: não é o nível no sangue e não considera absorção. Cada linha está na unidade da própria substância." : "Aparece quando houver uma substância com meia-vida informada e pelo menos uma aplicação.";
+  const o = chartBase(); o.scales.x = { type: "linear", min: -DJ_ATRAS, max: DJ_FRENTE, ticks: { color: css("--muted"), stepSize: 15, callback: v => v === 0 ? "hoje" : dCurta(isoLocal(now + v * 864e5)) }, grid: { color: css("--line") } };
+  o.scales.y.beginAtZero = true; o.scales.y2 = { position: "right", display: pw.length > 0 && ds.length > 1, ticks: { color: css("--muted") }, grid: { display: false } };
+  o.plugins.tooltip.callbacks = { title: it => dCurta(isoLocal(now + it[0].parsed.x * 864e5)), label: x => x.dataset.label + ": " + fmt(x.parsed.y) };
+  mkChart("chDj", { type: "line", data: { datasets: ds }, options: o });
+  // Exames: último valor de cada marcador contra a referência do laudo, e a evolução do marcador escolhido
+  const marcs = [...new Set(exs.map(x => x.marc))], ms = $("djExSel"), mc = app.djMarc || ms.value;
+  const st = x => x.rmin != null && x.valor < x.rmin ? ["abaixo", "no"] : x.rmax != null && x.valor > x.rmax ? ["acima", "no"] : x.rmin != null || x.rmax != null ? ["dentro", "ok"] : ["sem referência", ""];
+  $("djExTable").innerHTML = marcs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Marcador</th><th>Último</th><th>Data</th><th>Referência do laudo</th><th></th></tr></thead><tbody>' + marcs.map(m => { const x = exs.filter(e => e.marc === m).pop(), s = st(x); return "<tr><td><b>" + esc(m) + "</b></td><td>" + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + dCurta(x.data) + "</td><td>" + (x.rmin != null || x.rmax != null ? (x.rmin != null ? fmt(x.rmin) : "…") + " a " + (x.rmax != null ? fmt(x.rmax) : "…") : "—") + '</td><td><span class="sst ' + s[1] + '">' + s[0] + "</span></td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhum exame registrado ainda.</p>';
+  ms.innerHTML = marcs.map(m => '<option value="' + esc(m) + '">' + esc(m) + "</option>").join(""); if (mc && marcs.includes(mc)) ms.value = mc;
+  const one = exs.filter(e => e.marc === ms.value), last = one[one.length - 1] || {}, o2 = chartBase();
+  o2.plugins.tooltip.callbacks = { label: x => x.dataset.label + ": " + fmt(x.parsed.y) + " " + (last.un || "") };
+  mkChart("chDjEx", { type: "line", data: { labels: one.map(x => dCurta(x.data)), datasets: [dsLine(ms.value || "Marcador", one.map(x => x.valor), "--series-1")].concat(last.rmin != null ? [dsDash("Mínimo do laudo", one.map(() => last.rmin), "--muted", [5, 4])] : [], last.rmax != null ? [dsDash("Máximo do laudo", one.map(() => last.rmax), "--muted", [5, 4])] : []) }, options: o2 });
+  $("djExHist").innerHTML = one.length ? '<table class="plain"><tbody>' + one.slice().reverse().map(x => "<tr><td>" + dCurta(x.data) + "</td><td>" + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + djDelBtn(x.id, "o exame de " + dCurta(x.data)) + "</td></tr>").join("") + "</tbody></table>" : "";
+}
+// Ações do diário: trocar o mês do calendário, apagar (com confirmação) e salvar substância, aplicação ou exame
+function djAct(a, b) {
+  const [op, arg] = a.split("|"), v = id => (document.getElementById(id).value || "").trim(), n = id => { const x = parseFloat(v(id).replace(",", ".")); return isFinite(x) ? x : null; };
+  const say = (el, t) => { document.getElementById(el).textContent = t; }, clear = ids => ids.forEach(i => { document.getElementById(i).value = ""; });
+  if (op === "mes") { const [Y, M] = (app.djMes || todayStr().slice(0, 7)).split("-").map(Number); app.djMes = new Date(Date.UTC(Y, M - 1 + +arg, 1)).toISOString().slice(0, 7); renderDiario(); return; }
+  if (op === "del") {
+    if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Apagar"; } }, 4000); return; }
+    putDoc("diario", arg, { apagado: true }, "djMsg"); renderDiario(); return;
+  }
+  const id = op.slice(3) + "-" + Date.now().toString(36);
+  if (op === "addsub") {
+    if (!v("djSubNome")) { say("djSubMsg", "Informe o nome."); return; }
+    putDoc("diario", id, { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), obs: v("djSubObs") }, "djSubMsg"); clear(["djSubNome", "djSubMv", "djSubInt", "djSubObs"]);
+  } else if (op === "addap") {
+    if (!v("djApSub") || !(n("djApDose") > 0) || !v("djApQuando")) { say("djMsg", "Cadastre e escolha a substância, e informe a dose e a data."); return; }
+    putDoc("diario", id, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg"); clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal();
+  } else if (op === "addex") {
+    const m = v("djExMarc") === "outro" ? v("djExOutro") : v("djExMarc");
+    if (!m || n("djExValor") == null || !v("djExData")) { say("djExMsg", "Informe o marcador, o valor e a data."); return; }
+    putDoc("diario", id, { tipo: "ex", marc: m, valor: n("djExValor"), un: v("djExUn"), rmin: n("djExMin"), rmax: n("djExMax"), data: v("djExData") }, "djExMsg"); clear(["djExValor"]); app.djMarc = m;
+  }
+  renderDiario();
+}
+// ===== 24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação =====
 // Exercício pronto para editar: definição, prescrição da semana e registro (i = garante que a série i existe; W = outra semana)
 function ctx(k, i, W) {
   W = W || app.week;
@@ -3782,9 +4318,30 @@ function flashBtn(id, txt) {
   b.classList.add("saved"); b.textContent = txt || "✓ Salvo";
   clearTimeout(b._ft); b._ft = setTimeout(() => { b.classList.remove("saved"); b.textContent = b.dataset.label; }, 1600);
 }
+// Parciais de uma série: abre o campo, inclui (pv = % do movimento) ou remove (pv = posição); ps = lado, no unilateral
+function parcEdit(op, pk, pi, pv, ps) {
+  const def = EXBY[pk], pres = currentPres(pk), okey = pk + "|" + pi + (ps ? "|" + ps : "");
+  if (op !== "open") {
+    const { entry, set } = ctx(pk, pi);
+    const tgt = ps ? sideOf(set, ps) : set;
+    tgt.parc = Array.isArray(tgt.parc) ? tgt.parc : [];
+    if (op === "add") {
+      tgt.parc.push(pv);
+      if (tgt.rir == null || tgt.rir === "") { tgt.rir = 0; const sel = document.querySelector('[data-set="' + pk + "|" + pi + "|rir" + (ps ? "|" + ps : "") + '"]'); if (sel) sel.value = "0"; }
+    } else tgt.parc.splice(pv, 1);
+    if (ps) { uniAgg(set); const ul = document.getElementById("ul-" + pk); if (ul) ul.innerHTML = uniLine(entry); }
+    snapPrev(entry, pres);
+    touch(def.d); updateHints(pk);
+  }
+  app.parcOpen.add(okey);
+  const box = document.getElementById("parc-" + pk + "-" + pi + (ps ? "-" + ps : ""));
+  const e2 = entryFor(app.week, def.d, pk, pres, false), s2 = e2 && e2.sets && e2.sets[pi] ? e2.sets[pi] : {};
+  if (box) box.innerHTML = parcHtml(pk, pi, ps ? ((s2.lados || {})[ps] || {}).parc : s2.parc, ps);
+}
 // Cliques: todo botão do app passa por aqui (o atributo data-… diz o que fazer)
 document.addEventListener("click", ev => {
   if (ev.target.id === "pop") { closeInfo(); return; }
+  if (ev.target.id === "hoje") { hojeClose(); return; }
   const b = ev.target.closest("button");
   if (!b) return;
   if (!b.dataset.info && b.id !== "popX") playTap(tapSel(b));
@@ -3813,7 +4370,7 @@ document.addEventListener("click", ev => {
   if (b.id === "wkPrev" && app.week > 1) { app.week--; app.weekTouched = true; render(); return; }
   if (b.id === "wkNext" && app.week < MAXW) { app.week++; app.weekTouched = true; render(); return; }
   if (b.dataset.day) { app.day = b.dataset.day; (app.tab === "resumo" ? renderResumo : renderWeek)(); return; }
-  if (b.dataset.go) { const [gt, gw, gd] = b.dataset.go.split("|"); app.week = +gw; app.day = gd; app.weekTouched = true; if (location.hash === "#" + gt) render(); else location.hash = "#" + gt; return; }
+  if (b.dataset.go) { hojeClose(); const [gt, gw, gd] = b.dataset.go.split("|"); app.week = +gw; app.day = gd; app.weekTouched = true; if (location.hash === "#" + gt) render(); else location.hash = "#" + gt; return; }
   if (b.dataset.rswk) { const nw = app.week + +b.dataset.rswk; if (nw >= 1 && nw <= MAXW) { app.week = nw; app.weekTouched = true; renderResumo(); } return; }
   if (b.dataset.deload) { app.settings["deload" + app.week] = b.dataset.deload; saveSettings(); render(); return; }
   if (b.id === "rangeBtn") { app.fullYear = !app.fullYear; b.setAttribute("aria-pressed", String(app.fullYear)); b.textContent = app.fullYear ? "Ver o início" : "Ver o plano todo"; renderGoal(); return; }
@@ -3835,7 +4392,18 @@ document.addEventListener("click", ev => {
     app.tagForm = null; saveSettings(); renderWeek(); return;
   }
   if (b.dataset.tagdel) { app.settings.tags = userTags().filter(c => c.id !== b.dataset.tagdel); saveSettings(); renderWeek(); return; }
+  if (b.id === "hojeBtn") { hojeOpen(); return; }
+  if (b.id === "hojeX") { hojeClose(); return; }
   if (b.dataset.clk) { clkAct(b.dataset.clk); return; }
+  if (b.dataset.aq) {
+    const [ak, ai] = b.dataset.aq.split("|"), { def, entry } = ctx(ak), n = (warmPlan(def) || []).length;
+    entry.aq = Array.from({ length: n }, (x, i) => !!(entry.aq || [])[i]); entry.aq[+ai] = !entry.aq[+ai];
+    touch(def.d); b.setAttribute("aria-pressed", entry.aq[+ai]); updateDayTime(); return;
+  }
+  if (b.dataset.dj) { djAct(b.dataset.dj, b); return; }
+  if (b.dataset.share) { shareAct(b.dataset.share); return; }
+  if (b.dataset.fotodel) { fotoDel(b); return; }
+  if (b.dataset.wake) { try { localStorage.setItem(WAKE_KEY, b.dataset.wake); } catch (e) { } wakeSync(); updateDayTime(); return; }
   if (b.dataset.uni) { const [uk, uv] = b.dataset.uni.split("|"); app.settings.uni = Object.assign({}, app.settings.uni || {}); app.settings.uni[uk] = uv === "1"; saveSettings(); renderWeek(); return; }
   if (b.dataset.unidif) {
     const [dk, di, dv] = b.dataset.unidif.split("|");
@@ -3865,26 +4433,7 @@ document.addEventListener("click", ev => {
   }
   if (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel) {
     const [pk, pi, pv, ps] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
-    const def = EXBY[pk]; const pres = currentPres(pk);
-    const okey = pk + "|" + pi + (ps ? "|" + ps : "");
-    if (b.dataset.parcopen) { app.parcOpen.add(okey); }
-    else {
-      const { entry, set } = ctx(pk, +pi);
-      const tgt = ps ? sideOf(set, ps) : set;
-      tgt.parc = Array.isArray(tgt.parc) ? tgt.parc : [];
-      if (b.dataset.parcadd) {
-        tgt.parc.push(+pv);
-        if (tgt.rir == null || tgt.rir === "") { tgt.rir = 0; const sel = document.querySelector('[data-set="' + pk + "|" + pi + "|rir" + (ps ? "|" + ps : "") + '"]'); if (sel) sel.value = "0"; }
-      } else tgt.parc.splice(+pv, 1);
-      if (ps) { uniAgg(set); const ul = document.getElementById("ul-" + pk); if (ul) ul.innerHTML = uniLine(entry); }
-      app.parcOpen.add(okey);
-      snapPrev(entry, pres);
-      touch(def.d); updateHints(pk);
-    }
-    const box = document.getElementById("parc-" + pk + "-" + pi + (ps ? "-" + ps : ""));
-    const entry2 = entryFor(app.week, def.d, pk, pres, false);
-    const s2 = entry2 && entry2.sets && entry2.sets[+pi] ? entry2.sets[+pi] : {};
-    if (box) box.innerHTML = parcHtml(pk, +pi, ps ? ((s2.lados || {})[ps] || {}).parc : s2.parc, ps);
+    parcEdit(b.dataset.parcopen ? "open" : b.dataset.parcadd ? "add" : "del", pk, +pi, +pv, ps);
     return;
   }
   const k = b.dataset.done || b.dataset.skip || b.dataset.addset;
@@ -3932,14 +4481,19 @@ document.addEventListener("input", ev => {
   }
 });
 // Campos de escolha (listas e caixas de marcar)
-document.addEventListener("change", ev => { const el = ev.target; if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
+document.addEventListener("change", ev => { const el = ev.target;
+  if (el.dataset && el.dataset.fotoin) { fotoAdd(el.files && el.files[0], el.dataset.fotoin, el.dataset.fotoin === "treino" ? "fotoMsg" : "fotoEvoMsg"); el.value = ""; return; }
+  if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); return; }
+  if (el.id === "djExSel") { app.djMarc = el.value; renderDiario(); return; }
+  if (el.dataset && el.dataset.parcin) { const v = Math.round(+el.value), [pk, pi, ps] = el.dataset.parcin.split("|"); if (v >= 1 && v <= 99) parcEdit("add", pk, +pi, v, ps); else el.value = ""; return; }
+  if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
 // Teclado: Enter salva a pesagem; Esc fecha a explicação
 document.addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.target.id === "qwKg") { ev.preventDefault(); saveQW(); } });
 // Ao sair de um campo, faz o redesenho que ficou esperando
 document.addEventListener("focusout", () => { setTimeout(() => { if (app.deferRender && !(document.activeElement && document.activeElement.matches && document.activeElement.matches("main input, main textarea, main select"))) render(); }, 50); });
 window.addEventListener("hashchange", routeFromHash);
 window.addEventListener("resize", () => subnavInd());
-document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !document.getElementById("pop").classList.contains("hide")) closeInfo(); });
+document.addEventListener("keydown", ev => { if (ev.key !== "Escape") return; if (!document.getElementById("pop").classList.contains("hide")) closeInfo(); else hojeClose(); });
 
 // Formulário de corpo: salva peso, gordura e medidas do dia
 document.getElementById("bodyForm").addEventListener("submit", async ev => {
@@ -3978,7 +4532,7 @@ async function saveSettings() {
 try { new MutationObserver(() => { if (app.tab !== "semana") render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }); } catch (e) { }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (app.tab !== "semana") render(); }); } catch (e) { }
 
-// ===== 23. CONEXÃO: login e dados no Supabase (cada pessoa só lê e grava as próprias linhas) =====
+// ===== 25. CONEXÃO: login e dados no Supabase (cada pessoa só lê e grava as próprias linhas) =====
 // Endereço do projeto no Supabase e a chave pública (feita para ficar no navegador; quem protege os dados são as regras da tabela)
 const SB_URL = "https://urrgxjudwntgoyslsgwe.supabase.co";
 const SB_KEY = "sb_publishable_8cj6PIB9miDzyeLa3ysN7w_u5Hg8Mj9";
@@ -4090,6 +4644,14 @@ async function startSession(session) {
   });
   db.collection("corpo").onSnapshot(snap => { app.body = {}; for (const d of snap.docs) app.body[d.id] = d.data(); updateQW(); if (app.tab === "corpo" || app.tab === "perfil" || app.tab === "objetivo") render(); });
   db.doc("meta/ajustes").onSnapshot(s => { if (s.exists && !settingsSaving) app.settings = JSON.parse(JSON.stringify(s.data())); render(); });
+  subExtras(db, "");
+  // Fotos: arquivos no armazenamento "fotos", cada pessoa na própria pasta; a imagem é aberta por um link temporário de 1 hora
+  const pasta = session.user.id + "/";
+  app.fotoStore = {
+    put: async (blob, id) => { const { error } = await sb.storage.from("fotos").upload(pasta + id + ".jpg", blob, { contentType: "image/jpeg", upsert: true }); if (error) throw error; return pasta + id + ".jpg"; },
+    url: async ref => { const { data, error } = await sb.storage.from("fotos").createSignedUrl(ref, 3600); if (error) throw error; return data.signedUrl; },
+    del: async ref => { await sb.storage.from("fotos").remove([ref]); }
+  };
   db.doc("meta/perfil").onSnapshot(s => {
     const first = !app.perfilLoaded;
     app.perfil = s.exists ? s.data() : null;
@@ -4109,15 +4671,16 @@ async function startSession(session) {
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !app.dirty.size && !app.saving.size) db.load().then(ok).catch(() => { }); });
 }
 
-// ===== 24. PARTIDA =====
+// ===== 26. PARTIDA =====
 initBodyForm();
 initDates();
-clkLoad();
+clkLoad(); wakeSync();
+document.getElementById("djExMarc").innerHTML = DJ_MARC.map(m => "<option>" + m[0] + "</option>").join("") + '<option value="outro">Outro…</option>'; document.getElementById("djExUn").value = DJ_MARC[0][1];
 updateQW();
 routeFromHash();
 connect();
 clkBar(); clkAnim(); setInterval(clkTick, 500);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) clkTick(); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) clkTick(); wakeSync(); });
 </script>
 </body>
 </html>
