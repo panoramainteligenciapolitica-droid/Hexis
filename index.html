@@ -1004,6 +1004,7 @@ const DJ_EQUIL = 5;                // meias-vidas até o nível estabilizar com 
 const DJ_HT_ALERTA = 54;           // hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar
 const WAKE_KEY = "hexis.wake";       // preferência "tela acesa durante o cronômetro", guardada no aparelho
 const CLK_SEG_REP = 4;             // segundos por repetição, para a barra de execução
+const UNI_TROCA = 30;              // troca de lado na série unilateral: referência da barra e tempo previsto (o que você levar é anotado)
 // Resumo do dia
 const PERF_ACIMA = 0.02;           // "acima do previsto" a partir de +2%
 const PERF_ABAIXO = -0.025;        // "abaixo do previsto" a partir de −2,5%
@@ -1678,9 +1679,9 @@ function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
   let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0;
   defs.forEach((d, idx) => {
-    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d);
+    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? 2 * EXEC_DEF + UNI_TROCA : EXEC_DEF;
     const plan = warmPlan(d) || [], warm = plan.length, wp = warmTime(plan);
-    prev += wp.serie + wp.antes + n * EXEC_DEF + (n - 1) * rs + (idx ? TRANS_DEF : 0);
+    prev += wp.serie + wp.antes + n * ex1 + (n - 1) * rs + (idx ? TRANS_DEF : 0);
     aqPrev += wp.serie + wp.antes; aqN += warm;
     const e = doc && doc.ex ? doc.ex[d.k] : null;
     if (!e || e.st === "nao") return;
@@ -1697,7 +1698,7 @@ function dayTime(W, day, wk) {
     reg += aqS + (idx ? (+e.trans > 0 ? +e.trans : TRANS_DEF) : 0);
     for (let i = 0; i < m; i++) {
       const x = (e.sets || [])[i] || {};
-      if (+x.exec > 0) reg += +x.exec; else { reg += EXEC_DEF; regEst = true; }
+      if (+x.exec > 0) reg += +x.exec + (un ? (+x.troca > 0 ? +x.troca : UNI_TROCA) : 0); else { reg += ex1; regEst = true; }
       if (i < m - 1) { if (+x.desc > 0) { reg += +x.desc; restSum += +x.desc; restN++; restPrevSum += rs; } else { reg += rs; regEst = true; } }
       if (i < m - 1) { const r = recov(x, (e.sets || [])[i + 1], p.sets[Math.min(i, n - 1)], p.sets[Math.min(i + 1, n - 1)]); if (r != null) recs.push(r); }
     }
@@ -2507,7 +2508,7 @@ GLOSS.blocos = ["Blocos do ano", "<p>O treino é dividido em blocos. O primeiro 
 GLOSS.g_descexec = ["Descanso e execução do exercício", "<p>Mostra, semana a semana, o <b>descanso médio</b> entre as séries deste exercício (contra o previsto, na linha tracejada) e o <b>tempo médio de execução</b> de cada série.</p><p>Serve para ver se a queda ou a melhora de desempenho veio junto com descanso mais curto ou séries mais rápidas. Os dados vêm do cronômetro ou dos tempos que você anotar.</p>"];
 GLOSS.telaacesa = ["Tela acesa", "<p>Com <b>Sim</b>, o celular não apaga nem bloqueia a tela enquanto o cronômetro está rodando. Assim o aviso de 5 minutos toca e você vê o tempo sem desbloquear.</p><p>Gasta um pouco mais de bateria. Quando o cronômetro para, a tela volta a apagar normalmente. A escolha fica guardada neste aparelho.</p>"];
 GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A barra enche até o tempo previsto (execução estimada pelas repetições, descanso e intervalo da ficha) e o ponteiro dá uma volta por minuto.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
-GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
+GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p><b>Cronômetro:</b> cada lado tem o seu tempo. Ao parar o primeiro lado, a barra passa a contar a <b>troca de lado</b> (referência de 30 s; em geral vai-se direto para o outro lado, porque o lado que trabalhou descansa enquanto o outro trabalha). Toque <b>▶ Lado</b> ao começar o segundo; ao parar, começa o descanso da série. <b>⏭</b> pula o outro lado e já conta o descanso. O tempo da troca é anotado e entra no tempo do treino.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
@@ -3512,14 +3513,14 @@ function clkEl() { const c = app.clk; return !c ? 0 : c.fixed != null ? c.fixed 
 function clkFmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
 // "1:30" ou "90" → segundos
 function parseMmss(t) { t = String(t == null ? "" : t).trim().replace(",", "."); if (!t) return null; const m = /^(\d+):(\d{1,2})$/.exec(t); if (m) return +m[1] * 60 + +m[2]; const n = Number(t); return isNaN(n) || n < 0 ? null : Math.round(n); }
-// Anota um tempo no registro: exec (execução), desc (descanso) ou trans (intervalo entre exercícios)
+// Anota um tempo no registro: exec (execução), desc (descanso), troca (entre os lados) ou trans (intervalo entre exercícios)
 function clkRecord(W, k, i, field, sec, side) {
   const { def, pres, entry, set } = ctx(k, field === "trans" ? null : i, W);
   sec = Math.round(sec);
   if (field === "trans") entry.trans = sec;
   else {
     if (side) { sideOf(set, side)[field] = sec; if (field === "exec") set.exec = uniSum(set, "exec"); }
-    else set[field] = sec;
+    else set[field] = sec; // exec, desc ou troca (tempo entre um lado e o outro)
     snapPrev(entry, pres);
   }
   touch(def.d, W);
@@ -3576,14 +3577,20 @@ function clkGo(W, m, j, side) {
   const { def, pres, entry } = ctx(m, null, W);
   if (!entry.startAt) { entry.startAt = new Date().toISOString(); touch(def.d, W); }
   const sp = pres.sets, tr = (sp[Math.min(j, sp.length - 1)] || {}).tr || 10;
-  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: [], ph: "exec", exp: Math.max(20, Math.min(75, tr * CLK_SEG_REP)), t0: Date.now(), ack: 0 };
+  const L0 = ((entry.sets || [])[j] || {}).lados || {}, ot = side === "e" ? "d" : "e", tem = x => L0[x] && +L0[x].exec > 0;
+  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: side && tem(ot) && !tem(side) ? [ot] : [], ph: "exec", exp: Math.max(20, Math.min(75, tr * CLK_SEG_REP)), t0: Date.now(), ack: 0 };
   clkSave(); clkRefresh();
   if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
 }
-// Depois da execução: unilateral → o outro lado; série com descanso → descanso; última série → intervalo
+// Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série
 function clkAfterExec(c, t0) {
-  const { def, pres } = ctx(c.k, null, c.W);
+  const { def } = ctx(c.k, null, c.W);
   if (isUni(def) && c.side) { const done = (c.done || []).concat(c.side), other = c.side === "e" ? "d" : "e"; if (!done.includes(other)) { app.clk = Object.assign({}, c, { side: other, done, t0, ack: 0, ask: false, fixOpen: false, waitSide: true }); return; } }
+  clkToRest(c, t0);
+}
+// Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia)
+function clkToRest(c, t0) {
+  const { def, pres } = ctx(c.k, null, c.W);
   if (c.i < pres.sets.length - 1) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "rest", prev: restSec(def), t0, ack: 0 };
   else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado. Veja a aba Resumo do dia."); }
@@ -3633,7 +3640,7 @@ function clkOnInput(W, k) {
   const pv = document.querySelector(".tcard.run"); if (pv) { const pk = pv.id.slice(3); pv.outerHTML = transHtml(EXBY[pk], (getDoc(W, c.day, false) || { ex: {} }).ex[pk]); }
   clkToast(msg); updateDayTime();
 }
-// Trata os botões do cronômetro: go, warm, first, stop, side, next, end, see, keep, drop, fix e fixok
+// Trata os botões do cronômetro: go, warm, first, stop, side, skip, next, end, see, keep, drop, fix e fixok
 function clkAct(a) {
   const c = app.clk;
   if (a.startsWith("go|")) { const [, k, i, sd] = a.split("|"); clkGo(app.week, k, +i, sd || null); return; }
@@ -3641,8 +3648,10 @@ function clkAct(a) {
   if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" || c.ph === "pre" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
   if (!c) return;
   if (a === "stop") { clkStop(); return; }
-  if (a === "side") { if (c.waitSide) { c.waitSide = false; c.t0 = Date.now(); c.ack = 0; clkSave(); clkRefresh(); } return; }
-  if (a === "next") { clkGo(c.W, c.k, c.i + 1, null); return; }
+  if (a === "side") { if (c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", clkEl()); c.waitSide = false; c.t0 = Date.now(); c.ack = 0; c.ask = false; clkSave(); clkRefresh(); } return; }
+  // pular o outro lado: o descanso da série conta desde o fim do lado feito
+  if (a === "skip") { if (c.waitSide) { clkToRest(c, c.t0); clkSave(); clkRefresh(); } return; }
+  if (a === "next") { clkGo(c.W, c.k, c.i + 1, isUni(EXBY[c.k]) ? "e" : null); return; }
   if (a === "first") { clkGo(c.W, c.k, 0, isUni(EXBY[c.k]) ? "e" : null); return; }
   if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
   if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
@@ -3651,7 +3660,8 @@ function clkAct(a) {
   if (a === "fixok") {
     const s = parseMmss((document.getElementById("clkFixIn") || {}).value);
     if (s == null || (c.ph !== "exec" && !(s > 0))) { const i = document.getElementById("clkFixIn"); if (i) i.focus(); return; }
-    if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
+    if (c.ph === "exec" && c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", s); app.clk = null; }
+    else if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
     else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
     else if (c.ph === "warm") { clkWarmRec(c.W, c.k, s); app.clk = null; }
     else if (c.ph === "pre") { clkPreRec(c.W, c.k, s); app.clk = null; }
@@ -3664,7 +3674,7 @@ function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); clkAni
 // Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos
 function clkRing() { return '<svg class="clkring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rb" cx="18" cy="18" r="15"/><circle class="rf" cx="18" cy="18" r="15" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 18 18)"/><line class="rh" x1="18" y1="18" x2="18" y2="7"/><circle class="rc" cx="18" cy="18" r="2"/></svg>'; }
 // Tempo previsto da fase atual, para a barra de progresso
-function clkPlan(c) { return c.ph === "exec" ? (c.waitSide ? 0 : c.exp || EXEC_DEF) : c.prev || TRANS_DEF; }
+function clkPlan(c) { return c.ph === "exec" ? (c.waitSide ? UNI_TROCA : c.exp || EXEC_DEF) : c.prev || TRANS_DEF; }
 // Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas. antes = 0 quando o descanso até a 1ª válida já está dentro desse tempo
 function clkWarmRec(W, k, sec, antes) {
   const { def, entry } = ctx(k, null, W), n = (warmPlan(def) || []).length;
@@ -3692,28 +3702,28 @@ function clkFrame() {
   const c = app.clk; if (!c) return;
   const el = clkEl(), plan = clkPlan(c), p = plan ? Math.min(1, el / plan) : 0;
   let sec = el % 60; if (RM()) sec = Math.floor(sec);
-  document.querySelectorAll(".clkanim").forEach(x => { x.style.setProperty("--p", p.toFixed(4)); x.classList.toggle(c.ph === "exec" ? "over" : "ok", plan > 0 && el >= plan); });
+  document.querySelectorAll(".clkanim").forEach(x => { x.style.setProperty("--p", p.toFixed(4)); x.classList.toggle(c.ph === "exec" && !c.waitSide ? "over" : "ok", plan > 0 && el >= plan); });
   document.querySelectorAll(".clkring .rf").forEach(x => x.setAttribute("stroke-dasharray", sec.toFixed(2) + " 60"));
   document.querySelectorAll(".clkring .rh").forEach(x => x.setAttribute("transform", "rotate(" + (sec * 6).toFixed(1) + " 18 18)"));
   if (!document.hidden) clkRaf = requestAnimationFrame(clkFrame);
 }
 // Liga a animação se houver cronômetro rodando
 function clkAnim() { if (!clkRaf && app.clk && !document.hidden) clkRaf = requestAnimationFrame(clkFrame); }
-// Barra embaixo de cada série (unilateral: um lado, troca, o outro lado)
+// Barra embaixo de cada série (unilateral: um lado, troca de lado com contagem própria, o outro lado, descanso)
 function clkSetHtml(d, i, v, uni) {
   const c = app.clk;
   const on = c && c.W === app.week && c.k === d.k && c.i === i;
   const id = "tb-" + d.k + "-" + i;
   const lado = s => s === "e" ? " · esquerdo" : s === "d" ? " · direito" : "";
-  if (on && c.ph === "exec" && c.waitSide) return '<div class="clk wait" id="' + id + '"><span class="clkt"><b>Troca de lado</b> <span class="muted" data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="side">▶ Iniciar lado ' + (c.side === "e" ? "esquerdo" : "direito") + "</button></div>";
+  if (on && c.ph === "exec" && c.waitSide) { const el = clkEl(); return '<div class="clk run rs clkanim' + (el >= UNI_TROCA ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / UNI_TROCA).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Troca</b></span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(UNI_TROCA) + '</small></span><button type="button" class="btn small primary" data-clk="side" aria-label="Anotar a troca e iniciar o lado ' + (c.side === "e" ? "esquerdo" : "direito") + '">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + '</button><button type="button" class="btn small" data-clk="skip" aria-label="Pular o outro lado e contar o descanso da série">⏭</button></div>'; }
   if (on && c.ph === "exec") return '<div class="clk run ex clkanim" id="' + id + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Execução</b>' + lado(c.side) + '</span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span><small> / ~' + clkFmt(c.exp || EXEC_DEF) + '</small></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar e registrar a execução">⏸ Parar</button></div>';
   if (on && c.ph === "rest") { const el = clkEl(); return '<div class="clk run rs clkanim' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="next" aria-label="Anotar o descanso e começar a próxima série">▶ Próxima</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>'; }
   const L = (v && v.lados) || {};
-  const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") : v && +v.exec > 0 ? clkFmt(v.exec) + " execução" : "";
-  const ds = v && +v.desc > 0 ? clkFmt(v.desc) + " descanso" : "";
+  const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") + (v && +v.troca > 0 ? " · troca " + clkFmt(v.troca) : "") : v && +v.exec > 0 ? clkFmt(v.exec) + " execução" : "";
+  const ds = v && +v.desc > 0 ? clkFmt(v.desc) + " descanso" : "", both = uni && L.e && +L.e.exec > 0 && L.d && +L.d.exec > 0;
   const sum = ex || ds ? '<span class="clks">⏱ ' + [ex, ds].filter(Boolean).join(" · ") + "</span>" : '<span class="clks muted">' + (uni ? "cronometra cada lado e o descanso" : "cronometra execução e descanso") + "</span>";
   const first = uni ? (L.e && +L.e.exec > 0 && !(L.d && +L.d.exec > 0) ? "d" : "e") : "";
-  return '<div class="clk" id="' + id + '">' + sum + '<button type="button" class="btn small clkgo" data-clk="go|' + d.k + "|" + i + (first ? "|" + first : "") + '" aria-label="Iniciar o cronômetro da ' + (i + 1) + "ª série" + lado(first) + '">▶ ' + (ex ? "De novo" : uni ? "Iniciar " + (first === "d" ? "lado dir." : "lado esq.") : "Iniciar série") + "</button>" + (i === 0 ? infoBtn("cronometro") : "") + "</div>";
+  return '<div class="clk" id="' + id + '">' + sum + '<button type="button" class="btn small clkgo" data-clk="go|' + d.k + "|" + i + (first ? "|" + first : "") + '" aria-label="Iniciar o cronômetro da ' + (i + 1) + "ª série" + lado(first) + '">▶ ' + (uni ? (both ? "De novo" : "Iniciar " + (first === "d" ? "lado dir." : "lado esq.")) : ex ? "De novo" : "Iniciar série") + "</button>" + (i === 0 ? infoBtn("cronometro") : "") + "</div>";
 }
 // Barra fixa embaixo da tela enquanto o cronômetro roda
 function clkBar() {
@@ -3729,7 +3739,7 @@ function clkBar() {
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
-  let h = '<div class="clkb ' + c.ph + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  let h = '<div class="clkb ' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
   if (c.ask) {
     const plan = c.ph === "exec" ? EXEC_DEF : c.prev || TRANS_DEF;
     h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +

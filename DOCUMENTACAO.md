@@ -126,7 +126,7 @@ Por isso corrigir um registro antigo corrige sozinho todas as semanas seguintes.
 
 ## 5. Parâmetros ajustáveis
 
-São 43 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
+São 44 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
 
 **Plano**
 
@@ -185,6 +185,7 @@ São 43 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `DJ_HT_ALERTA` | `54` | hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar |
 | `WAKE_KEY` | `"hexis.wake"` | preferência "tela acesa durante o cronômetro", guardada no aparelho |
 | `CLK_SEG_REP` | `4` | segundos por repetição, para a barra de execução |
+| `UNI_TROCA` | `30` | troca de lado na série unilateral: referência da barra e tempo previsto (o que você levar é anotado) |
 
 **Resumo do dia**
 
@@ -205,7 +206,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 266 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 267 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -581,18 +582,19 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkEl()` | Segundos decorridos da fase atual |
 | `clkFmt()` | Segundos como m:ss |
 | `parseMmss()` | "1:30" ou "90" → segundos |
-| `clkRecord()` | Anota um tempo no registro: exec (execução), desc (descanso) ou trans (intervalo entre exercícios) |
+| `clkRecord()` | Anota um tempo no registro: exec (execução), desc (descanso), troca (entre os lados) ou trans (intervalo entre exercícios) |
 | `clkLeft()` | Exercícios do dia que ainda faltam (fora o atual) |
 | `clkUnlock()` | Libera o som no primeiro toque (exigência dos navegadores) |
 | `clkBeep()` | Aviso sonoro e vibração |
 | `clkToast()` | Mensagem curta acima da barra do cronômetro |
 | `clkHandoff()` | Fecha a fase em andamento quando você começa a série (m, j) e anota o que couber |
 | `clkGo()` | Começa a cronometrar a execução da série (m = exercício, j = série) |
-| `clkAfterExec()` | Depois da execução: unilateral → o outro lado; série com descanso → descanso; última série → intervalo |
+| `clkAfterExec()` | Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série |
+| `clkToRest()` | Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia) |
 | `clkStop()` | Para a execução, anota o tempo e passa para a fase seguinte |
 | `clkOnDone()` | "Feito" no cartão: o intervalo até o próximo exercício começa (do fim da última série, se cronometrada) |
 | `clkOnInput()` | Anotou carga ou reps em outro exercício durante o intervalo: você já está no próximo |
-| `clkAct()` | Trata os botões do cronômetro: go, warm, first, stop, side, next, end, see, keep, drop, fix e fixok |
+| `clkAct()` | Trata os botões do cronômetro: go, warm, first, stop, side, skip, next, end, see, keep, drop, fix e fixok |
 | `clkRefresh()` | Redesenha as barras do cronômetro |
 | `clkRing()` | Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos |
 | `clkPlan()` | Tempo previsto da fase atual, para a barra de progresso |
@@ -601,7 +603,7 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkWarm()` | Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando) |
 | `clkFrame()` | Um quadro da animação: enche a barra e gira o ponteiro |
 | `clkAnim()` | Liga a animação se houver cronômetro rodando |
-| `clkSetHtml()` | Barra embaixo de cada série (unilateral: um lado, troca, o outro lado) |
+| `clkSetHtml()` | Barra embaixo de cada série (unilateral: um lado, troca de lado com contagem própria, o outro lado, descanso) |
 | `clkBar()` | Barra fixa embaixo da tela enquanto o cronômetro roda |
 | `clkTick()` | A cada meio segundo: atualiza os números e dispara o aviso de 5 minutos |
 | `wakeOn()` | A pessoa quer a tela acesa? (padrão: sim) |
