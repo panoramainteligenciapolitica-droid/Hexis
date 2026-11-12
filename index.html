@@ -501,6 +501,8 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
 .djr dt { color: var(--muted); } .djr dd { margin: 0; }
 .djr p { margin: 0 0 8px; font-size: 13px; line-height: 1.35; }
 .djsit { margin: 8px 0; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.djnt { display: block; margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+.djnt textarea { margin-top: 4px; font-size: 15px; color: var(--ink); }
 .djn { margin: 8px 0 4px; padding-left: 18px; font-size: 14px; line-height: 1.4; }
 .djn li { margin-bottom: 6px; }
 #djRef details.pfsec { border-top: 1px solid var(--line); padding: 6px 0; }
@@ -789,7 +791,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     </div>
     <div class="panel">
       <h2>Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h2>
-      <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. As doses e os protocolos ficam no seu material: cada cartão diz a ficha.</p>
+      <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. A posologia é você quem preenche, em <b>Sua anotação</b>: ela fica guardada só na sua conta.</p>
       <div class="field"><label for="djRefQ">Buscar substância</label><input id="djRefQ" type="search" autocomplete="off" placeholder="nome ou classe" data-djq></div>
       <p class="muted" id="djRefN"></p>
       <div id="djRef"></div>
@@ -804,6 +806,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
           <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
           <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="da bula ou da referência"></div>
           <div class="field"><label for="djSubInt">Intervalo, em dias<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
+          <div class="field wide"><label for="djSubPos">Posologia (você preenche)</label><input id="djSubPos" type="text" autocomplete="off" placeholder="a da sua prescrição: dose, frequência e duração"></div>
           <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação, concentração, quem prescreveu…"></div>
         </div>
         <div class="row-btns"><button type="button" class="btn primary" data-dj="addsub">Salvar substância</button></div>
@@ -2500,7 +2503,7 @@ GLOSS.resumo = ["Resumo do dia", "<p>Análise do que você anotou no dia contra 
 GLOSS.volume = ["Volume", "<p>Soma de carga × repetições de todas as séries feitas. Compara com o mesmo cálculo das séries previstas.</p><p>Serve para ver se o dia rendeu o trabalho total planejado; o desempenho de cada exercício mostra a força.</p>"];
 GLOSS.fotos = ["Fotos", "<p><b>Foto do treino</b>: fica ligada ao dia e entra no topo da imagem de compartilhar.</p><p><b>Fotos de evolução</b>: tire sempre no mesmo lugar, com a mesma luz, distância e pose. O app mostra a primeira ao lado da mais recente.</p><p>As fotos são reduzidas antes de enviar e só a sua conta consegue abri-las. Para apagar, toque em Apagar e depois em Confirmar.</p>"];
 GLOSS.diario = ["Hormônios e peptídeos", "<p>Um caderno de controle e estudo. O app não diz o que usar, quanto nem por quanto tempo.</p><ul><li><b>Referência para estudo</b>: classe, via, frequência descrita e meia-vida de cada substância, com busca por nome.</li><li><b>Substâncias</b>: as que você usa, com unidade, via, meia-vida e o intervalo da sua prescrição.</li><li><b>Aplicações</b>: dose, data, local e lote. O calendário marca as feitas e a próxima prevista.</li><li><b>Controle de doses</b>: última aplicação, totais de 7 e 30 dias e o estimado hoje.</li><li><b>Quantidade estimada</b>: curva didática pela meia-vida.</li><li><b>Exames e sinais</b>: valor e a faixa de referência do seu laudo.</li></ul><p>Serve para estudo e para levar um histórico organizado às consultas. Não substitui acompanhamento médico. Os registros ficam visíveis só para a sua conta.</p>"];
-GLOSS.dj_ref = ["Referência para estudo", "<p>Cada cartão resume uma substância. A linha <b>Fonte</b> diz de onde veio o dado: bula, estudo em humanos ou o material de estudo, com o número da ficha.</p><ul><li><b>Classe</b> e <b>Como é descrito</b>: o que a ficha informa sobre o tipo de molécula, a frequência e o tipo de uso (clínico, experimental, hospitalar, estético).</li><li><b>Meia-vida</b>: tempo para a quantidade cair pela metade. Muitas fichas dizem só curta ou prolongada; nesses casos o app mostra o texto e não inventa um número.</li><li><b>Equilíbrio e saída</b>: conta feita pelo app, de 5 meias-vidas, quando há um número.</li><li><b>Intervalo de bula</b> e <b>Registro</b>: aparecem quando foram conferidos em bula ou em comunicado oficial.</li></ul><p><b>Usar no cadastro</b> copia nome, via e, quando há um valor único, a meia-vida. Dose e intervalo ficam em branco: são os da sua prescrição ou do seu material.</p><p>As faixas de dose e os protocolos não foram copiados para o app. Para consultá-los, abra a ficha indicada no cartão.</p>"];
+GLOSS.dj_ref = ["Referência para estudo", "<p>Cada cartão resume uma substância. A linha <b>Fonte</b> diz de onde veio o dado: bula, estudo em humanos ou o material de estudo, com o número da ficha.</p><ul><li><b>Classe</b> e <b>Como é descrito</b>: o que a ficha informa sobre o tipo de molécula, a frequência e o tipo de uso (clínico, experimental, hospitalar, estético).</li><li><b>Meia-vida</b>: tempo para a quantidade cair pela metade. Muitas fichas dizem só curta ou prolongada; nesses casos o app mostra o texto e não inventa um número.</li><li><b>Equilíbrio e saída</b>: conta feita pelo app, de 5 meias-vidas, quando há um número.</li><li><b>Intervalo de bula</b> e <b>Registro</b>: aparecem quando foram conferidos em bula ou em comunicado oficial.</li></ul><p><b>Usar no cadastro</b> copia nome, via e, quando há um valor único, a meia-vida. Dose e intervalo ficam em branco: são os da sua prescrição ou do seu material.</p><p><b>Sua anotação</b>: campo livre em cada cartão para você escrever a posologia da sua prescrição, corrigir um dado ou guardar uma observação. Fica salvo na sua conta e, ao usar a substância no cadastro, vai para o campo Posologia.</p><p>O app não traz doses nem protocolos prontos.</p>"];
 GLOSS.dj_ctrl = ["Controle de doses", "<p>Resumo do que foi registrado em cada substância: a última aplicação, há quantos dias foi, a soma das doses nos últimos 7 e 30 dias e quanto ainda restaria hoje pela meia-vida informada.</p><p>É só a soma do que você anotou, na unidade da própria substância. Serve para conferir se o registrado bate com o prescrito.</p>"];
 GLOSS.dj_mv = ["Meia-vida", "<p>Tempo para a quantidade da substância no corpo cair pela metade. Informe o valor que consta na bula ou na literatura da apresentação que você usa, em dias (12 horas = 0,5). A Referência para estudo, no alto da aba, traz os valores de bula.</p><p>O app usa esse número só para desenhar a curva estimada. Sem ele, a substância não aparece na curva.</p>"];
 GLOSS.dj_int = ["Intervalo", "<p>De quantos em quantos dias a aplicação se repete, conforme a sua prescrição. Com ele, o calendário marca a próxima data prevista (última aplicação + intervalo).</p><p>É opcional e não cria lembrete com som.</p>"];
@@ -4398,6 +4401,11 @@ const DJ_M = [
 const DJ_REF = DJ_T.concat(
   DJ_FICHAS.map(f => { const x = DJ_BULA[f[1]] || {}; return Object.assign({ n: f[1], g: f[2], cls: f[3], via: f[4], freq: f[5], mvT: f[6] || "", mv: f[7] || null, fonte: "material de estudo, ficha " + f[0] + (x.fb ? "; " + x.fb : "") }, x); }),
   DJ_M.map(f => ({ n: f[0], g: "m", cls: f[1], via: f[2], freq: f[3], mvT: "", mv: null, fonte: "material de estudo, tabela geral" })));
+// Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código
+function djSlug(n) { return "nt-" + String(n).toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+function djNota(n) { return (app.diario || {})[djSlug(n)] || null; }
+// Salva a anotação digitada no cartão
+function djNotaSave(el) { const r = DJ_REF[+el.dataset.djnt]; if (!r) return; putDoc("diario", djSlug(r.n), { tipo: "nt", ref: r.n, txt: el.value.trim() }, "djRefN"); }
 // Via da referência → opção do cadastro
 function djVia(v) { const t = String(v || "").toLowerCase(); return /^(subcut|sc\b)/.test(t) ? "Subcutânea" : /^(intramusc|im\b)/.test(t) ? "Intramuscular" : /^oral/.test(t) ? "Oral" : /^transd/.test(t) ? "Transdérmica" : "Outra"; }
 // Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias"
@@ -4407,7 +4415,7 @@ function djRefHtml(q) {
   q = String(q || "").trim().toLowerCase();
   const row = (t, v) => v ? "<dt>" + t + "</dt><dd>" + esc(v) + "</dd>" : "";
   const card = (r, i) => '<div class="djr"><div class="djr-h"><b>' + esc(r.n) + '</b><span class="muted">' + esc(r.via || "") + "</span></div><dl>" + row("Classe", r.cls) + row("Como é descrito", r.freq) + row("Meia-vida", r.mvT) +
-    (r.mv ? "<dt>Equilíbrio e saída</dt><dd>cerca de " + djDias(r.mv * DJ_EQUIL) + " (" + DJ_EQUIL + " meias-vidas)</dd>" : "") + row("Intervalo de bula", r.bula) + row("Registro", r.reg) + '</dl><p class="muted">' + (r.nota ? esc(r.nota) + " " : "") + "Fonte: " + esc(r.fonte) + '.</p><button type="button" class="btn small" data-dj="ref|' + i + '">Usar no cadastro</button></div>';
+    (r.mv ? "<dt>Equilíbrio e saída</dt><dd>cerca de " + djDias(r.mv * DJ_EQUIL) + " (" + DJ_EQUIL + " meias-vidas)</dd>" : "") + row("Intervalo de bula", r.bula) + row("Registro", r.reg) + '</dl><p class="muted">' + (r.nota ? esc(r.nota) + " " : "") + "Fonte: " + esc(r.fonte) + '.</p><label class="djnt">Sua anotação<textarea rows="2" data-djnt="' + i + '" placeholder="posologia, correções ou observações: você preenche">' + esc((djNota(r.n) || {}).txt || "") + '</textarea></label><button type="button" class="btn small" data-dj="ref|' + i + '">Usar no cadastro</button></div>';
   const nota = (t, li) => '<details class="pfsec sub"><summary><h3>' + t + "</h3></summary><ul class=\"djn\">" + li.map(x => "<li>" + x + "</li>").join("") + "</ul></details>";
   const all = DJ_REF.map((r, i) => [r, i]).filter(x => !q || (x[0].n + " " + (x[0].cls || "")).toLowerCase().includes(q));
   const grupos = DJ_GRUPOS.map(([g, t, sit]) => { const L = all.filter(x => x[0].g === g); return !L.length ? "" : '<details class="pfsec sub"' + (q ? " open" : "") + '><summary><h3>' + t + ' <span class="muted">(' + L.length + ")</span></h3></summary>" + (sit ? '<p class="djsit">' + sit + "</p>" : "") + L.map(x => card(x[0], x[1])).join("") + "</details>"; }).join("");
@@ -4438,7 +4446,7 @@ function djCtrlHtml(subs, aps) {
   const now = Date.now(), rows = subs.map((s, i) => {
     const L = aps.filter(x => x.sub === s.id && Date.parse(x.quando) <= now); if (!L.length) return "";
     const last = L[L.length - 1], dias = Math.floor((now - Date.parse(last.quando)) / 864e5), soma = d => L.filter(x => now - Date.parse(x.quando) <= d * 864e5), s7 = soma(7), s30 = soma(30), tot = a => fmt(Math.round(a.reduce((t, x) => t + (+x.dose || 0), 0) * 100) / 100), lv = djLevel(s, aps, now);
-    return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + '</b><div class="muted">em ' + esc(s.un) + "</div></td><td>" + fmt(last.dose) + '<div class="muted">' + (dias ? "há " + dias + (dias === 1 ? " dia" : " dias") : "hoje") + "</div></td><td>" + tot(s7) + '<div class="muted">' + s7.length + "×</div></td><td>" + tot(s30) + '<div class="muted">' + s30.length + "×</div></td><td>" + (lv == null ? "—" : fmt(Math.round(lv * 100) / 100)) + "</td></tr>";
+    return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + '</b><div class="muted">em ' + esc(s.un) + (s.pos ? " · posologia: " + esc(s.pos) : "") + "</div></td><td>" + fmt(last.dose) + '<div class="muted">' + (dias ? "há " + dias + (dias === 1 ? " dia" : " dias") : "hoje") + "</div></td><td>" + tot(s7) + '<div class="muted">' + s7.length + "×</div></td><td>" + tot(s30) + '<div class="muted">' + s30.length + "×</div></td><td>" + (lv == null ? "—" : fmt(Math.round(lv * 100) / 100)) + "</td></tr>";
   }).join("");
   return rows ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Última</th><th>7 dias</th><th>30 dias</th><th>Estimado hoje</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : '<p class="muted">Aparece depois da primeira aplicação registrada.</p>';
 }
@@ -4465,11 +4473,13 @@ function djDelBtn(id, nome) { return '<button type="button" class="btn small" da
 function renderDiario() {
   const subs = djList("sub"), aps = djList("ap"), exs = djList("ex"), byId = Object.fromEntries(subs.map(s => [s.id, s])), $ = id => document.getElementById(id);
   const hora = q => dCurta(q.slice(0, 10)) + " " + q.slice(11, 16);
-  $("djSubs").innerHTML = subs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Via</th><th>Meia-vida</th><th>Intervalo</th><th>Próxima</th><th></th></tr></thead><tbody>' + subs.map((s, i) => { const nx = djNext(s, aps); return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b> <span class=\"muted\">(" + esc(s.un) + ")</span>" + (s.obs ? '<div class="muted">' + esc(s.obs) + "</div>" : "") + "</td><td>" + esc(s.via || "—") + "</td><td>" + (s.mv ? fmt(s.mv) + " d" : "—") + "</td><td>" + (s.intervalo ? "a cada " + fmt(s.intervalo) + " d" : "—") + "</td><td>" + (nx ? dCurta(isoLocal(nx)) : "—") + "</td><td>" + djDelBtn(s.id, s.nome) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhuma substância cadastrada ainda.</p>';
+  $("djSubs").innerHTML = subs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Via</th><th>Meia-vida</th><th>Intervalo</th><th>Próxima</th><th></th></tr></thead><tbody>' + subs.map((s, i) => { const nx = djNext(s, aps); return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b> <span class=\"muted\">(" + esc(s.un) + ")</span>" + (s.pos ? "<div>Posologia: " + esc(s.pos) + "</div>" : "") + (s.obs ? '<div class="muted">' + esc(s.obs) + "</div>" : "") + "</td><td>" + esc(s.via || "—") + "</td><td>" + (s.mv ? fmt(s.mv) + " d" : "—") + "</td><td>" + (s.intervalo ? "a cada " + fmt(s.intervalo) + " d" : "—") + "</td><td>" + (nx ? dCurta(isoLocal(nx)) : "—") + "</td><td>" + djDelBtn(s.id, s.nome) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhuma substância cadastrada ainda.</p>';
   const sel = $("djApSub"), cur = sel.value; sel.innerHTML = subs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + " (" + esc(s.un) + ")</option>").join(""); if (cur && byId[cur]) sel.value = cur;
   if (!$("djApQuando").value) $("djApQuando").value = nowLocal();
   if (!$("djExData").value) $("djExData").value = todayStr();
-  if (!$("djRef").firstChild) { $("djRef").innerHTML = djRefHtml($("djRefQ").value); $("djRefN").textContent = DJ_REF.length + " substâncias em " + DJ_GRUPOS.length + " grupos."; }
+  const ref = $("djRef"), ae = document.activeElement;
+  if (!(ae && ref.contains(ae))) { const ab = [...ref.children].map(x => x.open); ref.innerHTML = djRefHtml($("djRefQ").value); if (!$("djRefQ").value) [...ref.children].forEach((x, i) => { if (ab[i]) x.open = true; }); }
+  if (!$("djRefN").textContent) $("djRefN").textContent = DJ_REF.length + " substâncias em " + DJ_GRUPOS.length + " grupos.";
   $("djCal").innerHTML = djCalHtml(subs, aps);
   $("djCtrl").innerHTML = djCtrlHtml(subs, aps);
   $("djApList").innerHTML = aps.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Quando</th><th>Substância e dose</th><th>Detalhes</th><th></th></tr></thead><tbody>' + aps.slice(-12).reverse().map(x => { const s = byId[x.sub]; return "<tr><td>" + hora(x.quando) + "</td><td><b>" + esc(s ? s.nome : "(apagada)") + "</b><div>" + fmt(x.dose) + " " + esc(s ? s.un : "") + "</div></td><td>" + esc([x.local, x.lote && "lote " + x.lote, x.obs].filter(Boolean).join(" · ") || "—") + "</td><td>" + djDelBtn(x.id, "a aplicação de " + hora(x.quando)) + "</td></tr>"; }).join("") + "</tbody></table></div>" + (aps.length > 12 ? '<p class="muted">Mostrando as 12 mais recentes de ' + aps.length + ".</p>" : "") : '<p class="muted">Nenhuma aplicação registrada ainda.</p>';
@@ -4503,7 +4513,7 @@ function djAct(a, b) {
   if (op === "ref") {
     // copia o que é descritivo; dose e intervalo ficam por conta de quem registra
     const r = DJ_REF[+arg], set = (id, val) => { document.getElementById(id).value = val; }, f = document.getElementById("djSubForm");
-    set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubObs", "");
+    set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubPos", (djNota(r.n) || {}).txt || ""); set("djSubObs", "");
     f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + (r.un ? "" : "; confira a unidade") + ". Dose e intervalo ficam por sua conta.");
     if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
   }
@@ -4514,7 +4524,7 @@ function djAct(a, b) {
   const id = op.slice(3) + "-" + Date.now().toString(36);
   if (op === "addsub") {
     if (!v("djSubNome")) { say("djSubMsg", "Informe o nome."); return; }
-    putDoc("diario", id, { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), obs: v("djSubObs") }, "djSubMsg"); clear(["djSubNome", "djSubMv", "djSubInt", "djSubObs"]);
+    putDoc("diario", id, { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), pos: v("djSubPos"), obs: v("djSubObs") }, "djSubMsg"); clear(["djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
   } else if (op === "addap") {
     if (!v("djApSub") || !(n("djApDose") > 0) || !v("djApQuando")) { say("djMsg", "Cadastre e escolha a substância, e informe a dose e a data."); return; }
     putDoc("diario", id, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg"); clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal();
@@ -4753,6 +4763,7 @@ document.addEventListener("input", ev => {
 });
 // Campos de escolha (listas e caixas de marcar)
 document.addEventListener("change", ev => { const el = ev.target;
+  if (el.dataset && el.dataset.djnt != null) { djNotaSave(el); return; }
   if (el.dataset && el.dataset.fotoin) { fotoAdd(el.files && el.files[0], el.dataset.fotoin, el.dataset.fotoin === "treino" ? "fotoMsg" : "fotoEvoMsg"); el.value = ""; return; }
   if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); return; }
   if (el.id === "djExSel") { app.djMarc = el.value; renderDiario(); return; }

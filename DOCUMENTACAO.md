@@ -206,7 +206,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 268 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 271 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -703,6 +703,8 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 
 | Função | O que faz |
 | --- | --- |
+| `djSlug()`, `djNota()` | Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código |
+| `djNotaSave()` | Salva a anotação digitada no cartão |
 | `djVia()` | Via da referência → opção do cadastro |
 | `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
 | `djRefHtml()` | Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e regras |
