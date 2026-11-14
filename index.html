@@ -981,6 +981,8 @@ const CUT_DOR = 0.9;               // dor forte, ou dor com série abaixo: a car
 const CUT_QUEDA = 0.95;            // 1ª semana abaixo da faixa, ou 2 semanas sem fazer: a carga cai 5%
 const RESET_ONDA = [0.9, 0.95, 1]; // reset em onda: fases 1, 2 e 3, como fração da carga travada
 const AJUSTE_PISO = 0.85;          // ajuste entre séries: no máximo 15% abaixo do previsto
+const ELO_SEG = 0.95;              // conversa entre treinos: margem de 5% na carga trazida de outro dia quando a faixa de repetições é diferente
+const ELO_LIMIAR = 1;              // conversa entre treinos: a diferença contra o previsto precisa valer pelo menos este tanto de saltos de carga para mexer na carga do outro dia
 const PARC_OPTS = [25, 50, 75];     // botões de repetição parcial: % do movimento feito
 const PARC_CREDITO = 0.5;          // parcial vale metade da fração feita (50% do movimento = 0,25 repetição)
 const DELOAD_DIAS = 2;             // dias abaixo da faixa na semana 4 que ligam o deload automático da semana 5
@@ -1171,6 +1173,7 @@ function rephase(def, st, tOld, tNew) {
 // Ações que o motor pode prescrever: símbolo, texto e cor
 const ACT = {
   start: { sym: "■", txt: "Carga da ficha", c: "--keep" },
+  elo: { sym: "⇄", txt: "Carga trazida de outro treino", c: "--keep" },
   "new": { sym: "★", txt: "Definir carga", c: "--new" },
   up: { sym: "▲", txt: "Subir carga", c: "--up" },
   fase: { sym: "◆", txt: "Nova faixa", c: "--keep" },
@@ -1244,7 +1247,7 @@ function prescribe(def, st, w, flags) {
   let action = st.action, why = st.why;
   if (deload) { action = "deload"; why = "Semana de deload: metade das séries, mesma carga, 3 repetições sobrando. Nenhuma mudança de carga conta nesta semana." + (st.action === "fase" ? " " + st.why : ""); }
   else if (festas && action !== "fix" && action !== "down") { action = "festas"; why = "Semana de festas: 1/3 a menos de séries com a mesma carga. " + (st.why || ""); }
-  return { k: def.k, w, sets: out, action, why, how: st.how || "", mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def, t).length, plus: plusSets(def, t), ordemHist: st.ordemHist || [] };
+  return { k: def.k, w, sets: out, action, why, how: st.how || "", elo: st.elo || 0, mode: st.mode, stall: st.stall, below: st.below, deload, festas, load: L, prevLoad: st.prevLoad, setsDelta: out.length - baseSets(def, t).length, plus: plusSets(def, t), ordemHist: st.ordemHist || [] };
 }
 
 // Séries feitas em texto: 52×7, 46×9+1p (p = parciais)
@@ -1272,7 +1275,7 @@ function transition(def, st, pres, rec, w, curW, notes) {
 function transitionCore(def, st, pres, rec, w, curW, notes) {
   const nf = notes || {};
   const s = Object.assign({}, st);
-  s.prevLoad = st.load; s.how = "";
+  s.prevLoad = st.load; s.how = ""; s.elo = 0;
   const neutral = pres.deload || pres.festas;
   const status = rec && rec.st;
   if (!rec || status == null) {
@@ -1484,6 +1487,52 @@ function initState(def, sl) {
   if (kg == null) return { load: null, tr: null, stall: 0, below: 0, missed: 0, mode: "normal", action: "new", why: def.obs || "Exercício novo: escolha uma carga que deixe 3 reps sobrando e registre.", lastMetric: null };
   return { load: kg, tr: null, stall: 0, below: 0, missed: 0, mode: "normal", action: "start", why: fromPf ? "Semana 1: carga calculada pelas suas cargas atuais do Perfil." : "Semana 1: carga de partida da ficha.", lastMetric: null };
 }
+// ----- Conversa entre treinos: o mesmo exercício em dias diferentes troca informação de carga -----
+// Irmãos de cada exercício (mesmo nome em outro dia), a posição de cada dia na semana e a ficha em ordem de dia
+const ELOS = (() => { const g = {}; EX.forEach(d => (g[d.n] = g[d.n] || []).push(d)); return Object.fromEntries(EX.map(d => [d.k, g[d.n].filter(x => x.k !== d.k)])); })();
+const DOW = Object.fromEntries(DAYS.map(d => [d.id, d.dow]));
+const EX_ORD = EX.slice().sort((a, b) => DOW[a.d] - DOW[b.d]);
+// Séries de um registro que servem de sinal: com carga e repetições
+function eloSets(rec) { return rec && rec.st !== "nao" ? (rec.sets || []).filter(x => x && +x.reps > 0 && x.kg != null && x.kg !== "" && +x.kg > 0).map(x => ({ kg: +x.kg, reps: +x.reps, rir: x.rir })) : []; }
+// A sessão mais recente de um irmão feita depois da última sessão do próprio exercício: nesta semana em dia anterior, ou na semana passada em dia posterior
+function eloFonte(def, w, records, weeks, presW) {
+  let best = null;
+  for (const t of ELOS[def.k] || []) {
+    for (const [ww, ok, p] of [[w, DOW[t.d] < DOW[def.d], presW[t.k]], [w - 1, DOW[t.d] > DOW[def.d], weeks[w - 1] && weeks[w - 1].pres[t.k]]]) {
+      if (!ok || ww < 1 || !p) continue;
+      const rec = recOf(records, ww, t), sets = eloSets(rec); if (!sets.length) continue;
+      const ord = ww * 10 + DOW[t.d];
+      if (!best || ord > best.ord) best = { ord, t, w: ww, sets, feito: rec.st === "feito", pres: p, notes: noteFlags(records, ww, t) };
+    }
+  }
+  return best;
+}
+// Aplica a conversa ao estado do exercício antes de prescrever a semana w: traz a carga (exercício ainda sem carga) ou move 1 salto (o irmão rendeu bem acima ou bem abaixo do previsto)
+function eloAjuste(def, st, w, records, weeks, presW, flags) {
+  if (flags.deload || def.bw) return st;
+  const f = eloFonte(def, w, records, weeks, presW); if (!f) return st;
+  const dia = DAYS.find(x => x.id === f.t.d), onde = "treino " + f.t.d + " (" + dia.nome.toLowerCase() + (f.w < w ? ", semana passada" : "") + ")";
+  if (st.load == null) {
+    // base da conversão: a série do irmão com repetições mais próximas do alvo daqui (em empate, a mais fraca)
+    const t = wt(w), alvo = baseSets(def, t)[0], longe = x => Math.abs(x.reps - alvo.lo);
+    const top = f.sets.reduce((a, x) => longe(x) < longe(a) || (longe(x) === longe(a) && e1(x.kg, x.reps) < e1(a.kg, a.reps)) ? x : a);
+    const same = f.t.sc === def.sc && f.t.lo === def.lo && f.t.hi === def.hi;
+    const rirA = top.rir != null && top.rir !== "" ? +top.rir : mid(f.pres.sets[Math.min(f.sets.indexOf(top), f.pres.sets.length - 1)].rir);
+    const L = Math.max(def.step, rnd(same ? f.sets[0].kg : e1(top.kg, top.reps + rirA) / (1 + (alvo.lo + mid(rirFor(def, alvo.kind, t))) / 30) * ELO_SEG, def.step));
+    return Object.assign({}, st, { load: L, tr: null, action: "elo", elo: 1, why: "Carga trazida do " + onde + ": lá você fez " + fmt(top.kg) + " kg × " + top.reps + (same ? ". Mesma faixa de repetições, mesma carga." : ". Mesma força estimada, convertida para " + alvo.lo + " repetições, com 5% de margem.") });
+  }
+  // só mexe na carga com sinal confiável: sessão do irmão concluída e comparada com uma carga que já era dele (não a recém-trazida)
+  const nf = f.notes || {};
+  if (!f.feito || f.pres.action === "elo" || f.pres.action === "new" || st.mode !== "normal" || nf.dor || nf.equip || nf.cansaco || nf.tempo || nf.ajuda || nf.fixa) return st;
+  const ps = f.pres.sets, rs = [];
+  f.sets.forEach((x, i) => { const q = ps[Math.min(i, ps.length - 1)]; if (!q || !(q.kg > 0)) return; rs.push(e1(x.kg, x.reps + (x.rir != null && x.rir !== "" ? +x.rir : mid(q.rir))) / e1(q.kg, q.tr + mid(q.rir))); });
+  if (!rs.length) return st;
+  const r = rs.reduce((a, b) => a + b, 0) / rs.length, dif = st.load * (r - 1), up = dif > 0;
+  if (Math.abs(dif) < def.inc * ELO_LIMIAR) return st;
+  if ((up && st.action === "up") || (!up && st.action === "down")) return st; // a progressão do próprio exercício já mexeu na carga nesse sentido
+  const L = Math.max(def.step, rnd(st.load + (up ? def.inc : -def.inc), def.step));
+  return Object.assign({}, st, { prevLoad: st.load, load: L, action: up ? "up" : "down", elo: 1, why: "Conversa com o " + onde + ": lá você fez " + setsStr(f.sets) + " contra " + ps.filter(q => q.kg > 0).map(q => fmt(q.kg) + "×" + q.tr).join(", ") + " previsto (" + (up ? "+" : "−") + fmt(Math.abs(Math.round((r - 1) * 1000) / 10)) + "%). A carga daqui " + (up ? "sobe" : "desce") + " de " + fmt(st.load) + " para " + fmt(L) + " kg." });
+}
 // Replay de todas as semanas, do início até W
 function replay(records, W, curW, settings, sl) {
   const states = Object.fromEntries(EX.map(d => [d.k, initState(d, sl)]));
@@ -1498,7 +1547,8 @@ function replay(records, W, curW, settings, sl) {
       flags.deloadAuto = auto; flags.deloadChoice = choice;
     }
     const pres = {};
-    for (const d of EX) pres[d.k] = prescribe(d, states[d.k], w, flags);
+    // em ordem de dia: cada exercício ouve primeiro o que o irmão fez antes dele
+    for (const d of EX_ORD) { states[d.k] = eloAjuste(d, states[d.k], w, records, weeks, pres, flags); pres[d.k] = prescribe(d, states[d.k], w, flags); }
     weeks[w] = { pres, flags };
     if (w < W) { const tn = wt(w + 1); for (const d of EX) states[d.k] = rephase(d, transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW, noteFlags(records, w, d)), tw, tn); }
   }
@@ -2345,11 +2395,13 @@ const LEGEND = [
   ["deload", "Semana 5, se na semana 4 houve 2 ou mais dias abaixo da faixa (ou se você escolher).", "Metade das séries, mesma carga, 3 repetições sobrando."],
   ["festas", "Semanas 7 e 8, no fim de dezembro.", "1/3 a menos de séries com a mesma carga; o core mantém o volume."],
   ["new", "Exercício novo, sem carga definida.", "Escolha uma carga que deixe 3 repetições sobrando e registre."],
+  ["elo", "O mesmo exercício já foi feito em outro dia e este ainda não tinha carga.", "A carga vem de lá: igual, se a faixa de repetições é a mesma; convertida pela força estimada, com 5% de margem, se a faixa é diferente."],
   ["start", "Semana 1.", "Carga de partida da ficha (5% abaixo do seu máximo na série pesada)."],
   ["pending", "Na tela da próxima semana, quando o exercício desta semana ainda não foi registrado.", "Depois do registro, a prescrição é recalculada."]
 ];
 // Textos dos botões "i": chave → [título, explicação]
 const GLOSS = {
+  elo: ["Conversa entre treinos", "<p>Quando o mesmo exercício aparece em mais de um dia (leg press na quarta e no sábado, panturrilha em quatro dias, crucifixo na segunda e na quinta), os dias trocam informação de carga. Cada um continua com a sua faixa de repetições e a sua progressão.</p><ul><li><b>Exercício ainda sem carga</b>: assim que você registra em um dia, os outros já aparecem com a carga. Mesma faixa de repetições: mesma carga. Faixa diferente: a carga é convertida pela força estimada, com 5% de margem.</li><li><b>Rendeu bem acima do previsto</b> (em média, o equivalente a 1 salto de carga ou mais): o próximo dia do mesmo exercício sobe 1 salto.</li><li><b>Ficou bem abaixo do previsto</b>: o próximo dia desce 1 salto.</li><li>Ficou perto do previsto: nada muda.</li></ul><p>A conversa vale do dia mais recente para o seguinte: da quarta para o sábado, e do sábado para a quarta da semana seguinte. Ela não soma com a progressão do próprio exercício no mesmo sentido, não age em semana leve e ignora o dia em que a observação fala em dor, cansaço, pressa, ajuda ou equipamento diferente.</p>"],
   rir: ["RIR (repetições em reserva)", "<p>Quantas repetições você ainda conseguiria fazer, com boa técnica, no momento em que parou a série.</p><ul><li><b>RIR 0</b>: falha, não sairia mais nenhuma.</li><li><b>RIR 2</b>: parou com 2 sobrando.</li></ul><p>O app usa o RIR que você informa para ajustar as séries seguintes e a próxima semana. Se deixar em branco, ele assume o RIR previsto.</p>"],
   faixa: ["Faixa de repetições", "<p>O mínimo e o máximo de repetições da série (ex.: 8–10).</p><ul><li>Abaixo do mínimo: a carga estava pesada demais.</li><li>No máximo em todas as séries: a carga sobe na semana seguinte.</li></ul>"],
   alvo: ["Alvo de repetições", "<p>Quantas repetições buscar nesta semana em cada série, dentro da faixa. Sobe 1 por semana quando você progride e volta ao mínimo da faixa quando a carga aumenta (dupla progressão).</p><p class=\"eg\">Ex.: alvo 9 / 8 / 8 = buscar 9 reps na 1ª série e 8 nas outras duas.</p>"],
@@ -2895,7 +2947,7 @@ function exCard(d, p, entry, W) {
   return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
     '<div class="card-h"><div><h3>' + esc(d.n) + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
-    (p.why ? '<div class="why">' + esc(p.why) + "</div>" : "") + ordemLine(p) +
+    (p.why ? '<div class="why">' + esc(p.why) + (p.elo ? infoBtn("elo") : "") + "</div>" : "") + ordemLine(p) +
     ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniToggleHtml(d) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
     '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +

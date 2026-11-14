@@ -126,7 +126,7 @@ Por isso corrigir um registro antigo corrige sozinho todas as semanas seguintes.
 
 ## 5. Parâmetros ajustáveis
 
-São 44 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
+São 46 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
 
 **Plano**
 
@@ -150,6 +150,8 @@ São 44 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `CUT_QUEDA` | `0.95` | 1ª semana abaixo da faixa, ou 2 semanas sem fazer: a carga cai 5% |
 | `RESET_ONDA` | `[0.9, 0.95, 1]` | reset em onda: fases 1, 2 e 3, como fração da carga travada |
 | `AJUSTE_PISO` | `0.85` | ajuste entre séries: no máximo 15% abaixo do previsto |
+| `ELO_SEG` | `0.95` | conversa entre treinos: margem de 5% na carga trazida de outro dia quando a faixa de repetições é diferente |
+| `ELO_LIMIAR` | `1` | conversa entre treinos: a diferença contra o previsto precisa valer pelo menos este tanto de saltos de carga para mexer na carga do outro dia |
 | `PARC_OPTS` | `[25, 50, 75]` | botões de repetição parcial: % do movimento feito |
 | `PARC_CREDITO` | `0.5` | parcial vale metade da fração feita (50% do movimento = 0,25 repetição) |
 | `DELOAD_DIAS` | `2` | dias abaixo da faixa na semana 4 que ligam o deload automático da semana 5 |
@@ -206,7 +208,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 271 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 274 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -260,6 +262,7 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | Dado | O que guarda |
 | --- | --- |
 | `mid` | Meio de uma faixa [mín, máx] |
+| `ELOS`, `DOW`, `EX_ORD` | Irmãos de cada exercício (mesmo nome em outro dia), a posição de cada dia na semana e a ficha em ordem de dia |
 
 | Função | O que faz |
 | --- | --- |
@@ -276,6 +279,9 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | `missed()` | Exercício não feito: repete a prescrição; na 2ª semana seguida, volta com 5% a menos |
 | `howFor()` | Texto de como aplicar cada técnica de destrave |
 | `initState()` | Estado inicial do exercício: carga calculada pelo Perfil (1RM), carga da ficha, ou a definir |
+| `eloSets()` | Séries de um registro que servem de sinal: com carga e repetições |
+| `eloFonte()` | A sessão mais recente de um irmão feita depois da última sessão do próprio exercício: nesta semana em dia anterior, ou na semana passada em dia posterior |
+| `eloAjuste()` | Aplica a conversa ao estado do exercício antes de prescrever a semana w: traz a carga (exercício ainda sem carga) ou move 1 salto (o irmão rendeu bem acima ou bem abaixo do previsto) |
 | `replay()` | Replay de todas as semanas, do início até W |
 
 ### 4. Observações
