@@ -22,7 +22,7 @@
    1 Cores e fontes · 2 Base e cabeçalho · 3 Cardio · 4 Telas, avisos e barra da semana · 5 Cartão do exercício e séries
    6 Botões · 7 Campos, painéis, números, tabelas e gráficos · 8 Barra de salvar, botão "i" e pesagem · 9 Janela de explicação
    10 Perfil e Objetivo · 11 Aquecimento, Feito, intervalo e blocos de observação · 12 Cronômetro · 13 Unilateral
-   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso · 19 Dieta: diário de alimentos */
+   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso · 19 Dieta: diário de alimentos · 20 Corpo: evolução corporal */
 /* ---- 1. Cores e fontes (tema claro; o escuro vem logo abaixo) ---- */
 :root {
   --bg: #eef1f4;
@@ -643,6 +643,109 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .dtcr { display: grid; grid-template-columns: minmax(0, 1fr) 64px auto 36px; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
 .dtcr input { min-height: 38px; min-width: 0; }
 .dtcr > span { white-space: nowrap; }
+/* ---- 20. Corpo: evolução corporal (exames de bioimpedância) ---- */
+.bio { margin: 0 0 14px; }
+.biohd { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin: 0 0 10px; }
+.biohd h2 { margin: 0; font-family: var(--font-display); font-size: 26px; text-transform: uppercase; letter-spacing: .01em; }
+.biohd p { margin: 2px 0 0; font-size: 13px; }
+.bion { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; padding-top: 8px; }
+.biocard { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: 0 0 12px; }
+.biolab { display: block; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.biosm { display: block; font-size: 13px; }
+.biohero { display: grid; grid-template-columns: auto auto; gap: 10px 18px; align-items: end; justify-content: space-between; }
+.biobig { display: block; font-family: var(--font-display); font-size: 68px; line-height: .95; color: var(--up); font-variant-numeric: tabular-nums; }
+.biobig small { font-size: 38px; }
+.biomid { display: block; font-family: var(--font-display); font-size: 38px; line-height: 1; color: var(--up); font-variant-numeric: tabular-nums; }
+.biomid small { font-size: 22px; }
+.bioring { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
+.bioring svg { width: 72px; height: 72px; flex: none; }
+.bioring .rb { fill: none; stroke: color-mix(in srgb, var(--neutral-bar) 40%, transparent); stroke-width: 7; }
+.bioring .rf { fill: none; stroke: var(--up); stroke-width: 7; stroke-linecap: round; }
+.bioring .rn { font-family: var(--font-display); font-size: 26px; font-weight: 800; fill: var(--ink); }
+.bioring .rd { font-size: 9px; fill: var(--muted); }
+.biopb { margin-top: 12px; height: 22px; border-radius: 999px; background: color-mix(in srgb, var(--neutral-bar) 35%, transparent); overflow: hidden; }
+.biopb i { display: flex; align-items: center; justify-content: flex-end; height: 100%; border-radius: 999px; background: var(--up); min-width: 118px; }
+.biopb span { padding: 0 10px; font-style: normal; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+.biopl { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.biopl b { color: var(--ink); margin-left: 8px; }
+.biopl b.ok { color: var(--up); }
+.bioct { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin: 0 0 8px; }
+.bioct h3, .bioct h4 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.bioct .muted { font-size: 12px; }
+.bioleg { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); }
+.bioleg i { display: inline-block; width: 14px; height: 8px; margin-left: 8px; border-radius: 2px; }
+.bioleg i.s { background: var(--ink); }
+.bioleg i.d { border: 1.5px dashed var(--muted); }
+.bioleg i.m { width: 2px; height: 12px; background: var(--up); border-radius: 0; }
+.biozh, .biorow { display: grid; grid-template-columns: 88px minmax(0, 1fr) 50px; gap: 8px; align-items: center; }
+.biozh { margin-bottom: 2px; font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.biozh > div { display: flex; border-radius: 6px; background: color-mix(in srgb, var(--neutral-bar) 22%, transparent); overflow: hidden; }
+.biozh > div span { padding: 4px 0; text-align: center; }
+.biozh > div span.n { color: var(--up); background: color-mix(in srgb, var(--up) 14%, transparent); }
+.biozh > span:last-child { text-align: right; }
+.biorow { padding: 5px 0; border-top: 1px solid var(--line); }
+.biorl b { display: block; font-size: 13.5px; line-height: 1.2; }
+.biorl small { font-weight: 400; color: var(--muted); font-size: 11px; }
+.biorl span { display: block; font-size: 10.5px; color: var(--muted); }
+.biotr { position: relative; height: 46px; }
+.biotr i { position: absolute; display: block; }
+.biotr .z { top: 0; bottom: 0; background: color-mix(in srgb, var(--up) 9%, transparent); }
+.biotr .b { left: 0; top: 7px; height: 16px; border-radius: 3px; }
+.biotr .pk { left: 0; top: 4px; height: 22px; border: 1.5px dashed var(--muted); border-radius: 4px; box-sizing: border-box; }
+.biotr .mt { top: 3px; height: 24px; width: 2px; background: var(--up); }
+.biotr .bv { position: absolute; top: 5px; font-family: var(--font-display); font-size: 17px; line-height: 20px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.biotr .bv.in { color: #fff; text-shadow: 0 0 3px rgba(0, 0, 0, .45); }
+.biotr .pkl { position: absolute; right: 0; top: 29px; padding: 0 5px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); font-size: 10px; line-height: 15px; color: var(--muted); white-space: nowrap; }
+.biotr .pkl b { color: var(--ink); }
+.biodl { text-align: right; font-family: var(--font-display); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+.biodl.ok { color: var(--up); }
+.biodl.at { color: var(--down); }
+.biosw { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.biosc { padding: 12px; border-radius: 12px; background: var(--surface-2); }
+.biosc.mg h4, .biosc.mg .c1 { color: var(--series-1); }
+.biosc.gd h4, .biosc.gd .bios b { color: var(--series-2); }
+.biosg { display: grid; grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); gap: 14px 6px; align-items: center; }
+.bios.l { grid-column: 1; }
+.bios.r { grid-column: 3; text-align: right; }
+.bios b { display: block; font-family: var(--font-display); font-size: 25px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.bios b small { font-size: 12px; margin-left: 2px; color: var(--muted); }
+.bios span:not(.biolab) { display: block; font-size: 13px; font-variant-numeric: tabular-nums; }
+.biofig { grid-column: 2; grid-row: 1 / span 3; width: 92px; height: auto; align-self: center; }
+.biofig .hd { fill: var(--neutral-bar); }
+.biofig.mg .tr { fill: var(--series-1); opacity: .78; }
+.biofig.mg .ar { fill: var(--series-1); opacity: .95; }
+.biofig.mg .lg { fill: var(--series-1); opacity: .5; }
+.biofig.gd .tr { fill: var(--series-2); opacity: .45; }
+.biofig.gd .ar { fill: var(--series-2); opacity: .22; }
+.biofig.gd .lg { fill: var(--series-2); opacity: .4; }
+.biohg { display: grid; grid-template-columns: 86px minmax(0, 1fr); }
+.biohn div { display: flex; flex-direction: column; justify-content: center; border-top: 1px solid var(--line); box-sizing: border-box; }
+.biohn b { font-size: 12.5px; line-height: 1.2; }
+.biohn span { font-size: 10.5px; color: var(--muted); }
+.biohw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.biohist { display: block; }
+.biohist .hp { fill: color-mix(in srgb, var(--series-2) 14%, transparent); }
+.biohist .hl { fill: color-mix(in srgb, var(--up) 14%, transparent); }
+.biohist .hd { font-size: 11px; font-weight: 600; fill: var(--muted); }
+.biohist .hd.l { fill: var(--up); font-weight: 800; }
+.biohist .hd.p { fill: var(--series-2); }
+.biohist .hg { stroke: var(--line); }
+.biohist .hx { fill: none; stroke-width: 1.6; }
+.biohist .hv { font-size: 10.5px; fill: var(--muted); }
+.biohist .hv.l { fill: var(--ink); font-weight: 800; font-size: 11.5px; }
+.biofn { font-size: 11.5px; margin: 0 2px; }
+.biochk { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
+.biofh { margin: 12px 0 6px; font-size: 14px; }
+.bioseg { display: grid; grid-template-columns: 70px repeat(3, minmax(0, 1fr)); gap: 6px; align-items: center; margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+.bioseg.f { grid-template-columns: 110px repeat(2, minmax(0, 1fr)); }
+.bioseg b { font-size: 12.5px; color: var(--ink); }
+.bioseg input { min-height: 38px; min-width: 0; }
+@media (min-width: 640px) {
+  .biohero { grid-template-columns: auto auto auto; }
+  .bioring { grid-column: auto; }
+  .biosw { grid-template-columns: 1fr 1fr; }
+  .biozh, .biorow { grid-template-columns: 150px minmax(0, 1fr) 70px; }
+}
 .login { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .login.hide { display: none; }
 .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px 18px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
@@ -813,6 +916,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 
   <!-- Tela: Corpo e dieta -->
   <section class="view" id="v-corpo">
+    <div id="bioBox"></div>
     <div id="phaseCard"></div>
     <div class="tiles" id="bodyTiles"></div>
     <div class="panel">
@@ -837,6 +941,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div class="field" style="margin-bottom:8px"><label for="medSel">Medida</label><select id="medSel"></select></div>
       <div class="chartbox"><canvas id="chWaist" aria-label="Gráfico: medidas com fita"></canvas></div>
     </div>
+    <div id="bioFormBox"></div>
     <div class="panel">
       <h2>Registrar medidas</h2>
       <form id="bodyForm">
@@ -1041,6 +1146,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 //   meta/ajustes ...... deload escolhido, palavras-chave criadas, exercícios unilaterais, cargas das máquinas e refeições da dieta
 //   dieta/2026-11-15 .. alimentos do dia: { data, itens: [{ r: refeição, a: alimento, n: nome, q: quantidade, u: "g" | "porção", kcal, p, c, g }] }
 //   dieta/meus ........ alimentos fora da tabela cadastrados por você
+//   exames/2026-11-13 . exame de bioimpedância: composição, análise segmentar (seg), índices e faixas normais do laudo
 //   O cronômetro em andamento fica só no aparelho (parâmetro CLK_KEY).
 //
 // COMO UMA MUDANÇA PERCORRE O APP:
@@ -2767,6 +2873,7 @@ GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força esti
 GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos, trocas de exercício e o cardio do dia. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
 GLOSS.ritmo = ["Seu ritmo", "<p>O app mede como você treina de verdade e usa isso para prever o tempo do dia.</p><ul><li><b>Execução</b>: média do tempo cronometrado de uma série.</li><li><b>Descanso</b>: quantos segundos, em média, você descansa além do previsto na ficha (30 s acima = 2:30 onde a ficha pede 2:00).</li><li><b>Troca de exercício</b>: média do intervalo entre um exercício e o seguinte.</li></ul><p>Vale a partir de 8 tempos anotados de cada tipo (4 trocas) e olha os 60 mais recentes. Se o descanso real passa do previsto em mais de 10 s, o painel mostra quantos minutos isso custa no treino.</p>"];
 GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O painel <b>Tempo do treino</b> mostra quantos minutos os opcionais somam e se cabem no limite.</p>"];
+GLOSS.bio = ["Exame de bioimpedância", "<p>O painel <b>Evolução corporal</b> é montado com os exames que você registra (InBody ou parecido).</p><ul><li><b>Gordura e meta</b>: a gordura do último exame contra a meta do Perfil. A barra mostra quanto do caminho já foi feito desde o <b>pico</b>, que é o exame com a maior gordura.</li><li><b>Análise músculo-gordura</b>: cada barra fica numa escala com as zonas abaixo, normal e acima. O contorno tracejado é o exame do pico.</li><li><b>Faixas normais</b>: as de peso, massa magra e massa de gordura vêm do laudo, quando você preenche. Sem elas, o app estima pela altura. Gordura (%) e IMC usam a referência padrão.</li><li><b>Análise segmentar</b>: massa magra de cada braço, tronco e perna, com o percentual do padrão que o laudo informa.</li><li><b>Histórico</b>: um ponto por exame. O pico e o último ficam destacados.</li></ul><p>Um exame do período do plano também entra nas medidas do dia (peso e gordura). Bioimpedância varia com hidratação, horário e aparelho: compare exames feitos em condições parecidas.</p>"];
 GLOSS.domingo = ["Domingo: dia livre", "<p>Não há musculação prevista no domingo.</p><ul><li>Se fizer cardio ou outra atividade, registre o tempo (e a distância, se tiver) e toque em <b>Feito</b>.</li><li>O que for registrado entra no cardio da semana.</li><li>Não registrar nada não conta como falta.</li></ul>"];
 GLOSS.dt_diario = ["Diário de alimentos", "<p>Registre o que comeu em cada refeição. O app soma calorias e macros e compara com a meta do dia.</p><ul><li><b>Tabela</b>: TACO (Tabela Brasileira de Composição de Alimentos, 4ª edição, NEPA/UNICAMP), com 597 alimentos. Os valores valem para <b>100 g da parte comestível</b>.</li><li><b>Cru ou cozido</b>: escolha a linha que corresponde ao que você pesou. Arroz cru e arroz cozido têm calorias muito diferentes.</li><li><b>Quantidade</b>: em gramas. Dá para corrigir depois, direto na linha do alimento.</li><li><b>Dentro</b>: até 10% acima ou abaixo da meta. Fora disso aparece <b>acima</b> ou <b>abaixo</b>.</li><li><b>O que a tabela não tem</b>: produtos de marca e suplementos. Na 4ª edição, o leite de vaca integral e o desnatado UHT também estão sem composição. Use <b>Fora da tabela</b> com os valores do rótulo.</li></ul>"];
 GLOSS.dt_proposto = ["Proposto por refeição", "<p>O plano define a meta de calorias do dia. O proposto de cada refeição é essa meta vezes a parte da refeição: almoço com 35% de 2.450 kcal dá cerca de 860 kcal.</p><ul><li>As partes começam de um padrão pelo número de refeições do Perfil. Ajuste em <b>Refeições e proposto</b>, no fim da aba.</li><li><b>Por refeição</b> usa a média dos dias com registro no período escolhido.</li><li><b>Por dia</b> mostra cada dia da semana contra a meta daquele dia, e a tabela de refeição por dia.</li></ul>"];
@@ -3429,6 +3536,7 @@ function medIdeal(k) {
 }
 // Desenha a aba Corpo e dieta: fase, calorias e macros, peso, ritmo, gordura e medidas
 function renderGoal() {
+  renderBio();
   const t = todayStr();
   const pf = app.perfil || {}, R = app.plan || {};
   const ph = phaseAt(t);
@@ -3575,6 +3683,193 @@ async function saveQW() {
   catch (e) { msg.textContent = "Não salvou. Tente de novo."; }
   finally { btn.disabled = false; }
 }
+
+// ----- Exames de bioimpedância (InBody e similares) e o painel "Evolução corporal" -----
+// Campos do exame: [chave, rótulo, unidade, grupo]. Grupo "c" = composição; "i" = índices do laudo
+const BIO_CAMPOS = [
+  ["peso", "Peso", "kg", "c"], ["smm", "Músculo esquelético", "kg", "c"], ["gorduraKg", "Massa de gordura", "kg", "c"], ["gordura", "Gordura corporal", "%", "c"],
+  ["magra", "Massa magra", "kg", "c"], ["imc", "IMC", "kg/m²", "c"], ["agua", "Água corporal total", "L", "c"], ["proteina", "Proteína", "kg", "c"], ["minerais", "Minerais", "kg", "c"],
+  ["score", "Pontuação do exame", "de 100", "i"], ["fase", "Ângulo de fase", "°", "i"], ["ecw", "Razão de água extracelular", "", "i"], ["tmb", "Taxa metabólica basal", "kcal", "i"],
+  ["visceral", "Gordura visceral", "nível", "i"], ["rcq", "Relação cintura-quadril", "", "i"], ["smi", "Índice de músculo (SMI)", "kg/m²", "i"], ["aic", "Água intracelular", "L", "i"],
+  ["aec", "Água extracelular", "L", "i"], ["osso", "Conteúdo mineral ósseo", "kg", "i"], ["celular", "Massa celular corporal", "kg", "i"]
+];
+// Segmentos do corpo na análise segmentar
+const BIO_SEG = [["bd", "Braço D."], ["be", "Braço E."], ["tr", "Tronco"], ["pd", "Perna D."], ["pe", "Perna E."]];
+// Medidas que trazem faixa normal no laudo (os números entre parênteses)
+const BIO_FAIXA = ["peso", "magra", "gorduraKg"];
+// Padrão para estimar as faixas quando o laudo não traz: IMC ideal, parte de gordura ideal e faixa normal de gordura (%), por sexo
+const BIO_REF = { M: { imc: 22, gord: 0.15, pbf: [10, 20] }, F: { imc: 21.5, gord: 0.23, pbf: [18, 28] } };
+const BIO_IMC = [18.5, 25];        // faixa normal de IMC
+const BIO_ZONA = [25, 55];         // onde começa e termina a faixa "normal" nas barras, em % da largura
+const BIO_COL = 56;                // largura de cada exame no histórico (px)
+// Linhas do histórico e da análise músculo-gordura: [chave, rótulo, unidade, cor, menos é melhor]
+const BIO_LIN = [["peso", "Peso", "kg", "--ink", 1], ["magra", "Massa magra", "kg", "--series-1", 0], ["gorduraKg", "Massa gorda", "kg", "--series-2", 1], ["imc", "IMC", "kg/m²", "--ink", 1], ["gordura", "Gordura", "%", "--series-2", 1]];
+const BIO_HIS = [["peso", "Peso", "kg", "--ink"], ["smm", "Músculo esq.", "kg", "--series-1"], ["gorduraKg", "Massa gorda", "kg", "--series-2"], ["gordura", "Gordura", "%", "--series-2"]];
+// Exames salvos, do mais antigo ao mais novo
+function bioList() { return Object.values(app.exames || {}).filter(x => x && x.data && !x.apagado && +x.peso > 0).sort((a, b) => a.data < b.data ? -1 : 1); }
+// Mês e ano curtos do exame ("nov/26") e a data por extenso (só mês e ano quando o dia não é conhecido)
+function bioMes(e) { return MES[+e.data.slice(5, 7) - 1] + "/" + e.data.slice(2, 4); }
+function bioDia(e) { return e.soMes ? bioMes(e) : e.data.slice(8) + "/" + e.data.slice(5, 7) + "/" + e.data.slice(0, 4); }
+// Valor de um campo do exame; o que falta e dá para deduzir é calculado (massa magra = peso − gordura; IMC pela altura do Perfil)
+function bioVal(e, k) {
+  if (!e) return null;
+  const v = +e[k]; if (v > 0) return v;
+  const p = +e.peso, gk = +e.gorduraKg, g = +e.gordura, h = num((app.perfil || {}).altura) / 100, r1 = x => Math.round(x * 10) / 10;
+  if (k === "magra") return p > 0 && gk > 0 ? r1(p - gk) : p > 0 && g > 0 ? r1(p * (1 - g / 100)) : null;
+  if (k === "gorduraKg") return p > 0 && g > 0 ? r1(p * g / 100) : null;
+  if (k === "gordura") return p > 0 && gk > 0 ? r1(gk / p * 100) : null;
+  if (k === "imc") return p > 0 && h > 0 ? r1(p / (h * h)) : null;
+  return null;
+}
+// Faixas normais: as do laudo mais recente que as traz; sem laudo, estimadas pela altura e pelo sexo do Perfil
+function bioFaixas(list) {
+  const R = BIO_REF[(app.perfil || {}).sexo === "F" ? "F" : "M"], h = num((app.perfil || {}).altura) / 100, ideal = h > 0 ? R.imc * h * h : null;
+  const src = list.slice().reverse().find(e => e.faixas), f = (src && src.faixas) || {}, ok = a => Array.isArray(a) && +a[0] > 0 && +a[1] > +a[0];
+  return { peso: ok(f.peso) ? f.peso : ideal ? [ideal * 0.85, ideal * 1.15] : null, magra: ok(f.magra) ? f.magra : ideal ? [ideal * (1 - R.gord) * 0.9, ideal * (1 - R.gord) * 1.1] : null,
+    gorduraKg: ok(f.gorduraKg) ? f.gorduraKg : ideal ? [ideal * R.gord * 0.8, ideal * R.gord * 1.6] : null, imc: BIO_IMC, gordura: R.pbf, src };
+}
+// Número com casas fixas e vírgula ("22,0"); nos segmentos, três algarismos como no laudo ("3,80", "28,7")
+function bioN(v, c) { return (+v).toFixed(c == null ? 1 : c).replace(".", ","); }
+function bioN3(v) { return bioN(v, +v < 10 ? 2 : 1); }
+// Posição de um valor na barra (0 a 100%): abaixo, dentro e acima da faixa normal ocupam zonas fixas
+function bioPos(v, lo, hi, vmax) {
+  const a = BIO_ZONA[0], b = BIO_ZONA[1];
+  if (v <= lo) return Math.max(1.5, a * v / lo);
+  if (v <= hi) return a + (b - a) * (v - lo) / (hi - lo);
+  return Math.min(100, b + (100 - b) * (v - hi) / Math.max(vmax - hi, 1e-9));
+}
+// Figura do corpo (desenho simples) com os segmentos pintados na cor do cartão
+function bioFig(cls) {
+  return '<svg class="biofig ' + cls + '" viewBox="0 0 120 300" aria-hidden="true"><circle class="hd" cx="60" cy="24" r="17"/><rect class="hd" x="54" y="40" width="12" height="10" rx="3"/>' +
+    '<path class="tr" d="M33 52 Q60 44 87 52 L83 150 Q60 164 37 150 Z"/><path class="ar" d="M29 55 Q17 60 15 82 L9 150 Q9 159 16 159 Q23 159 24 150 L32 86 Z"/><path class="ar" d="M91 55 Q103 60 105 82 L111 150 Q111 159 104 159 Q97 159 96 150 L88 86 Z"/>' +
+    '<path class="lg" d="M37 157 Q48 165 58 160 L56 281 Q56 290 49 290 Q42 290 42 281 Z"/><path class="lg" d="M83 157 Q72 165 62 160 L64 281 Q64 290 71 290 Q78 290 78 281 Z"/></svg>';
+}
+// Painel "Evolução corporal": gordura contra a meta, análise músculo-gordura, análise segmentar e histórico
+function bioHtml() {
+  const list = bioList(); if (!list.length) return "";
+  const ult = list[list.length - 1], g = bioVal(ult, "gordura"), comG = list.filter(e => bioVal(e, "gordura") != null);
+  const pico = comG.length ? comG.reduce((a, e) => bioVal(e, "gordura") > bioVal(a, "gordura") ? e : a) : null, temPico = pico && pico !== ult;
+  const meta = num((app.perfil || {}).metaGordura) || null, fx = bioFaixas(list), f1 = v => bioN(v, 1);
+  let h = '<div class="bio"><div class="biohd"><div><h2>Evolução corporal' + infoBtn("bio") + '</h2><p class="muted">' + (list.length > 1 ? "primeiro exame " + bioDia(list[0]) + " · último exame " + bioDia(ult) : "exame de " + bioDia(ult)) + '</p></div><span class="bion">' + list.length + " exame" + (list.length > 1 ? "s" : "") + "</span></div>";
+  // 1. gordura corporal contra a meta, pontuação e caminho desde o pico
+  if (g != null) {
+    const pG = temPico ? bioVal(pico, "gordura") : null, falta = meta ? g - meta : null, cam = pG != null && meta && pG > meta ? Math.max(0, Math.min(100, (pG - g) / (pG - meta) * 100)) : null, C = 2 * Math.PI * 34;
+    h += '<div class="biocard"><div class="biohero"><div><span class="biolab">Gordura corporal · ' + bioMes(ult) + '</span><b class="biobig">' + f1(g) + "<small>%</small></b></div>" +
+      (meta ? '<div><span class="biolab">Meta</span><b class="biomid">' + f1(meta) + '<small>%</small></b><span class="muted biosm">' + (falta > 0.05 ? "faltam " + f1(falta) + " ponto" + (falta >= 1.95 ? "s" : "") : "meta atingida") + "</span></div>" : "") +
+      (+ult.score > 0 ? '<div class="bioring"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" class="rb"/><circle cx="40" cy="40" r="34" class="rf" stroke-dasharray="' + (C * Math.min(100, ult.score) / 100).toFixed(1) + " " + C.toFixed(1) + '" transform="rotate(-90 40 40)"/><text x="40" y="43" text-anchor="middle" class="rn">' + Math.round(ult.score) + '</text><text x="40" y="57" text-anchor="middle" class="rd">/100</text></svg><div><span class="biolab">Pontuação do exame</span>' + (temPico && +pico.score > 0 ? '<span class="muted biosm">era ' + Math.round(pico.score) + " no pico</span>" : "") + "</div></div>" : "") + "</div>" +
+      (cam != null ? '<div class="biopb"><i style="width:' + Math.max(8, cam).toFixed(1) + '%"><span>' + Math.round(cam) + '% do caminho</span></i></div><div class="biopl"><span>pico ' + f1(pG) + "% · " + bioMes(pico) + "</span><span><b>hoje " + f1(g) + '%</b> <b class="ok">meta ' + f1(meta) + "%</b></span></div>" : "") + "</div>";
+  }
+  // 2. análise músculo-gordura: barras na escala abaixo / normal / acima, com o pico tracejado
+  const linhas = BIO_LIN.map(L => ({ L, v: bioVal(ult, L[0]), p: temPico ? bioVal(pico, L[0]) : null, r: fx[L[0]] })).filter(x => x.v != null && x.r);
+  if (linhas.length) {
+    h += '<div class="biocard"><div class="bioct"><h3>Análise músculo-gordura</h3><span class="bioleg"><i class="s"></i>' + bioMes(ult) + (temPico ? '<i class="d"></i>' + bioMes(pico) + " (pico)" : "") + (meta ? '<i class="m"></i>meta' : "") + '</span></div><div class="biozh"><span></span><div><span style="width:' + BIO_ZONA[0] + '%">Abaixo</span><span class="n" style="width:' + (BIO_ZONA[1] - BIO_ZONA[0]) + '%">Normal</span><span style="width:' + (100 - BIO_ZONA[1]) + '%">Acima</span></div><span>' + (temPico ? "vs. pico" : "") + "</span></div>";
+    linhas.forEach(x => {
+      const L = x.L, lo = x.r[0], hi = x.r[1], vmax = Math.max(hi + (hi - lo) * 0.6, x.v * 1.12, (x.p || 0) * 1.12), pos = bioPos(x.v, lo, hi, vmax), pp = x.p != null ? bioPos(x.p, lo, hi, vmax) : null, d = x.p != null ? x.v - x.p : null;
+      const cd = d == null || Math.abs(d) < 0.05 ? "" : L[4] ? (d < 0 ? "ok" : "at") : (d > 0 ? "ok" : "nt"), mp = L[0] === "gordura" && meta ? bioPos(meta, lo, hi, vmax) : null;
+      h += '<div class="biorow"><div class="biorl"><b>' + L[1] + " <small>" + L[2] + "</small></b><span>normal " + f1(lo) + "–" + f1(hi) + '</span></div><div class="biotr"><i class="z" style="left:' + BIO_ZONA[0] + "%;width:" + (BIO_ZONA[1] - BIO_ZONA[0]) + '%"></i>' +
+        (pp != null ? '<i class="pk" style="width:' + pp.toFixed(1) + '%"></i>' : "") + '<i class="b" style="width:' + pos.toFixed(1) + "%;background:var(" + L[3] + ')"></i>' + (mp != null ? '<i class="mt" style="left:' + mp.toFixed(1) + '%"></i>' : "") +
+        '<b class="bv' + (pos > 72 ? " in" : "") + '" style="' + (pos > 72 ? "right:" + (100 - pos + 1.5).toFixed(1) : "left:" + (pos + 1.5).toFixed(1)) + '%">' + f1(x.v) + "</b>" + (x.p != null ? '<span class="pkl">pico ' + bioMes(pico) + " <b>" + f1(x.p) + "</b></span>" : "") + "</div>" +
+        '<b class="biodl ' + cd + '">' + (d == null ? "" : (d > 0 ? "+" : d < 0 ? "−" : "") + f1(Math.abs(d)) + (L[0] === "gordura" ? " pp" : "")) + "</b></div>";
+    });
+    h += "</div>";
+  }
+  // 3. análise segmentar: massa magra de cada segmento e, quando o exame traz, a gordura
+  const sg = ult.seg || {}, sp = (temPico && pico.seg) || {}, temM = BIO_SEG.some(s => sg[s[0]] && +sg[s[0]].kg > 0), temG = BIO_SEG.some(s => sg[s[0]] && +sg[s[0]].g > 0);
+  if (temM || temG) {
+    const cel = (k, t, campo, cls) => { const v = (sg[k] || {})[campo], era = (sp[k] || {}).g; return '<div class="bios ' + cls + '"><span class="biolab">' + t + "</span>" + (v > 0 ? "<b>" + (campo === "kg" ? bioN3(v) : f1(v)) + "<small>kg</small></b>" : "<b>—</b>") + (campo === "kg" ? ((sg[k] || {}).pc > 0 ? '<span class="c1">' + f1(sg[k].pc) + "%</span>" : "") : (era > 0 ? '<span class="muted">era ' + f1(era) + "</span>" : "")) + "</div>"; };
+    const cartao = (campo, tit, sub, cls, extra) => '<div class="biosc ' + cls + '"><div class="bioct"><h4>' + tit + '</h4><span class="muted">' + sub + '</span></div><div class="biosg">' + cel("bd", "Braço D.", campo, "l") + bioFig(cls) + cel("be", "Braço E.", campo, "r") + cel("tr", "Tronco", campo, "l") + extra + cel("pd", "Perna D.", campo, "l") + cel("pe", "Perna E.", campo, "r") + "</div></div>";
+    const smm = bioVal(ult, "smm"), smmP = temPico ? bioVal(pico, "smm") : null, gk = bioVal(ult, "gorduraKg"), gkP = temPico ? bioVal(pico, "gorduraKg") : null;
+    h += '<div class="biocard"><div class="bioct"><h3>Análise segmentar</h3><span class="muted">D = direito · E = esquerdo</span></div><div class="biosw">' +
+      (temM ? cartao("kg", "Massa magra", bioMes(ult) + " · % do padrão", "mg", '<div class="bios r"><span class="biolab">Músc. esq.</span>' + (smm ? '<b class="c1">' + f1(smm) + "<small>kg</small></b>" : "<b>—</b>") + (smmP ? '<span class="muted">pico: ' + f1(smmP) + "</span>" : "") + "</div>") : "") +
+      (temG ? cartao("g", "Gordura", (temPico ? bioMes(pico) + " → " : "") + bioMes(ult), "gd", '<div class="bios r"><span class="biolab">Total</span>' + (gk ? "<b>" + f1(gk) + "<small>kg</small></b>" : "<b>—</b>") + (gkP ? '<span class="muted">era ' + f1(gkP) + "</span>" : "") + "</div>") : "") + "</div></div>";
+  }
+  // 4. histórico de composição: uma linha por medida, um ponto por exame; o pico e o último ficam destacados
+  if (list.length > 1) {
+    const n = list.length, RH = 54, T = 28, W = n * BIO_COL + 8, H = T + BIO_HIS.length * RH, x = i => 4 + i * BIO_COL + BIO_COL / 2, ip = temPico ? list.indexOf(pico) : -1, il = n - 1;
+    let s = '<svg class="biohist" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Histórico de composição: peso, músculo esquelético, massa gorda e gordura em cada exame">' +
+      (ip >= 0 ? '<rect class="hp" x="' + (x(ip) - BIO_COL / 2 + 3) + '" y="2" width="' + (BIO_COL - 6) + '" height="' + (H - 4) + '" rx="8"/>' : "") + '<rect class="hl" x="' + (x(il) - BIO_COL / 2 + 3) + '" y="2" width="' + (BIO_COL - 6) + '" height="' + (H - 4) + '" rx="8"/>';
+    list.forEach((e, i) => { s += '<text class="hd' + (i === il ? " l" : i === ip ? " p" : "") + '" x="' + x(i) + '" y="19" text-anchor="middle">' + bioMes(e) + "</text>"; });
+    BIO_HIS.forEach((r, j) => {
+      const y0 = T + j * RH, vals = list.map(e => bioVal(e, r[0])), ok = vals.filter(v => v != null); if (!ok.length) return;
+      const mn = Math.min.apply(null, ok), mx = Math.max.apply(null, ok), y = v => y0 + 44 - (mx > mn ? (v - mn) / (mx - mn) : 0.5) * 16, pts = [];
+      s += '<line class="hg" x1="0" x2="' + W + '" y1="' + y0 + '" y2="' + y0 + '"/>';
+      vals.forEach((v, i) => { if (v != null) pts.push(x(i).toFixed(1) + "," + y(v).toFixed(1)); });
+      if (pts.length > 1) s += '<polyline class="hx" style="stroke:var(' + r[3] + ')" points="' + pts.join(" ") + '"/>';
+      vals.forEach((v, i) => { if (v != null) s += '<circle cx="' + x(i) + '" cy="' + y(v).toFixed(1) + '" r="' + (i === il ? 4.5 : 2.6) + '" style="fill:var(' + r[3] + ')"/><text class="hv' + (i === il ? " l" : "") + '" x="' + x(i) + '" y="' + (y(v) - 8).toFixed(1) + '" text-anchor="middle">' + f1(v) + "</text>"; });
+    });
+    h += '<div class="biocard"><div class="bioct"><h3>Histórico de composição</h3><span class="muted">' + n + " exames · " + bioMes(list[0]) + " a " + bioMes(ult) + '</span></div><div class="biohg"><div class="biohn" style="padding-top:' + T + 'px">' + BIO_HIS.map(r => '<div style="height:' + RH + 'px"><b>' + r[1] + "</b><span>" + r[2] + "</span></div>").join("") + '</div><div class="biohw" id="bioHistWrap">' + s + "</svg></div></div></div>";
+  }
+  const ap = Array.from(new Set(list.map(e => e.aparelho).filter(Boolean)));
+  return h + '<p class="muted biofn">Fonte: ' + list.length + " exame" + (list.length > 1 ? "s" : "") + (ap.length ? " (" + ap.join("; ") + ")" : "") + ". Faixas de peso, massa magra e massa gorda: " + (fx.src ? "do laudo de " + bioDia(fx.src) : "estimadas pela altura do Perfil") + ". Gordura (%) e IMC: referências padrão.</p></div>";
+}
+// Formulário do exame: os campos seguem a ordem do laudo
+function bioFormHtml() {
+  const S = app.bioEd || (app.bioEd = { data: "" }), list = bioList(), e = (S.data && app.exames && app.exames[S.data]) || {};
+  const inp = (id, v, rot) => '<input id="' + id + '" type="number" inputmode="decimal" step="any" min="0" value="' + (v != null && v !== "" ? v : "") + '"' + (rot ? ' aria-label="' + rot + '"' : "") + ">";
+  const campo = c => '<div class="field"><label for="bio-' + c[0] + '">' + c[1] + (c[2] ? " (" + c[2] + ")" : "") + "</label>" + inp("bio-" + c[0], e[c[0]]) + "</div>";
+  return '<div class="panel"><h2>Exame de bioimpedância' + infoBtn("bio") + '</h2><p class="lead">Copie os números do laudo (InBody ou parecido). Só a data e o peso são obrigatórios.</p>' +
+    (list.length ? '<div class="field"><label for="bioSel">Exames salvos</label><select id="bioSel"><option value="">Novo exame</option>' + list.slice().reverse().map(x => '<option value="' + x.data + '"' + (x.data === S.data ? " selected" : "") + ">" + bioDia(x) + " · " + fmt(x.peso) + " kg" + (bioVal(x, "gordura") ? " · " + fmt(bioVal(x, "gordura")) + "%" : "") + "</option>").join("") + "</select></div>" : "") +
+    '<form id="bioForm"><div class="grid2"><div class="field"><label for="bio-data">Data do exame</label><input id="bio-data" type="date" required value="' + (e.data || "") + '"></div><div class="field"><label for="bio-aparelho">Aparelho</label><input id="bio-aparelho" type="text" autocomplete="off" value="' + esc(e.aparelho || "") + '" placeholder="ex.: InBody 380"></div></div>' +
+    '<label class="biochk"><input type="checkbox" id="bio-soMes"' + (e.soMes ? " checked" : "") + '> Só sei o mês do exame</label>' +
+    '<h3 class="biofh">Composição</h3><div class="grid2">' + BIO_CAMPOS.filter(c => c[3] === "c").map(campo).join("") + "</div>" +
+    '<details class="pfsec sub"' + (e.seg ? " open" : "") + '><summary><h3>Análise segmentar</h3></summary><div class="bioseg"><span></span><span>Magra (kg)</span><span>% do padrão</span><span>Gordura (kg)</span>' + BIO_SEG.map(s => { const v = (e.seg || {})[s[0]] || {}; return "<b>" + s[1] + "</b>" + inp("bio-s-" + s[0] + "-kg", v.kg, s[1] + ": massa magra em kg") + inp("bio-s-" + s[0] + "-pc", v.pc, s[1] + ": % do padrão") + inp("bio-s-" + s[0] + "-g", v.g, s[1] + ": gordura em kg"); }).join("") + "</div></details>" +
+    '<details class="pfsec sub"><summary><h3>Índices do laudo</h3></summary><div class="grid2" style="margin-top:8px">' + BIO_CAMPOS.filter(c => c[3] === "i").map(campo).join("") + "</div></details>" +
+    '<details class="pfsec sub"' + (e.faixas ? " open" : "") + '><summary><h3>Faixas normais do laudo</h3></summary><p class="muted" style="font-size:13px;margin:6px 0">São os números entre parênteses no laudo. Em branco, o app estima pela altura.</p><div class="bioseg f"><span></span><span>Mínimo</span><span>Máximo</span>' + BIO_FAIXA.map(k => { const f = (e.faixas || {})[k] || [], c = BIO_CAMPOS.find(x => x[0] === k); return "<b>" + c[1] + "</b>" + inp("bio-f-" + k + "-lo", f[0], c[1] + ": mínimo normal") + inp("bio-f-" + k + "-hi", f[1], c[1] + ": máximo normal"); }).join("") + "</div></details>" +
+    '<div class="field"><label for="bio-nota">Observação</label><textarea id="bio-nota" rows="2">' + esc(e.nota || "") + "</textarea></div>" +
+    '<div class="row-btns"><button class="btn primary" type="submit" id="bioSave">Salvar exame</button>' + (e.data ? '<button class="btn" type="button" data-bio="del">Excluir exame</button>' : "") + '<span class="muted" id="bioMsg" aria-live="polite"></span></div></form></div>';
+}
+// Grava (ou apaga) um exame
+function bioGrava(id, doc) {
+  app.exames = app.exames || {};
+  if (doc.apagado) delete app.exames[id]; else app.exames[id] = doc;
+  if (!app.db || app.P == null) return;
+  try { const p = app.db.doc(app.P + "exames/" + id).set(JSON.parse(JSON.stringify(doc))); if (p && p.catch) p.catch(() => { const m = document.getElementById("bioMsg"); if (m) m.textContent = "Não consegui salvar. Confira a conexão."; }); } catch (e) { }
+}
+// Lê o formulário e salva o exame; o peso e a gordura do exame entram também nas medidas do dia, quando ele é do período do plano
+function bioSalva() {
+  const g = id => { const el = document.getElementById(id); return el ? String(el.value).trim() : ""; }, n = id => { const v = g(id).replace(",", "."); return v !== "" && +v > 0 ? +v : null; };
+  const data = g("bio-data"), msg = document.getElementById("bioMsg"), S = app.bioEd || (app.bioEd = { data: "" });
+  if (!data) { msg.textContent = "Informe a data."; return; }
+  const soMes = document.getElementById("bio-soMes").checked, id = soMes ? data.slice(0, 8) + "01" : data, doc = { data: id, atualizado: new Date().toISOString() };
+  if (soMes) doc.soMes = true; if (g("bio-aparelho")) doc.aparelho = g("bio-aparelho"); if (g("bio-nota")) doc.nota = g("bio-nota");
+  BIO_CAMPOS.forEach(c => { const v = n("bio-" + c[0]); if (v != null) doc[c[0]] = v; });
+  if (!(doc.peso > 0)) { msg.textContent = "Informe o peso."; return; }
+  const seg = {}; BIO_SEG.forEach(s => { const o = {}; ["kg", "pc", "g"].forEach(k => { const v = n("bio-s-" + s[0] + "-" + k); if (v != null) o[k] = v; }); if (Object.keys(o).length) seg[s[0]] = o; });
+  if (Object.keys(seg).length) doc.seg = seg;
+  const fx = {}; BIO_FAIXA.forEach(k => { const lo = n("bio-f-" + k + "-lo"), hi = n("bio-f-" + k + "-hi"); if (lo != null && hi != null && hi > lo) fx[k] = [lo, hi]; });
+  if (Object.keys(fx).length) doc.faixas = fx;
+  if (S.data && S.data !== id && app.exames && app.exames[S.data]) bioGrava(S.data, { data: S.data, apagado: true }); // a data foi corrigida: o registro antigo sai
+  bioGrava(id, doc); S.data = id;
+  const ini = (app.perfil || {}).inicio;
+  if (!soMes && ini && id >= ini) {
+    const b = Object.assign({ data: id, peso: null, gordura: null, cintura: null, nota: "" }, app.body[id] || {}); b.peso = doc.peso; if (doc.gordura) b.gordura = doc.gordura; if (!b.nota) b.nota = "Exame de bioimpedância";
+    app.body[id] = b; if (app.db && app.P != null) { try { const p = app.db.doc(app.P + "corpo/" + id).set(JSON.parse(JSON.stringify(b))); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
+  }
+  renderGoal(); renderBio(true);
+  const m2 = document.getElementById("bioMsg"); if (m2) m2.textContent = "Exame salvo ✓";
+}
+// Desenha o painel e, se ninguém está digitando nele, o formulário do exame
+function renderBio(force) {
+  const box = document.getElementById("bioBox"), fb = document.getElementById("bioFormBox"); if (!box || !fb) return;
+  box.innerHTML = bioHtml();
+  const w = document.getElementById("bioHistWrap"); if (w) w.scrollLeft = w.scrollWidth; // começa mostrando os exames mais recentes
+  const ae = document.activeElement;
+  if (force || !fb.firstChild || !(ae && fb.contains(ae) && ae.matches("input, select, textarea"))) fb.innerHTML = bioFormHtml();
+}
+// Liga o formulário do exame: salvar, escolher um exame salvo e excluir
+(function () {
+  const fb = document.getElementById("bioFormBox"); if (!fb) return;
+  fb.addEventListener("submit", ev => { if (ev.target.id === "bioForm") { ev.preventDefault(); bioSalva(); } });
+  fb.addEventListener("change", ev => { if (ev.target.id === "bioSel") { (app.bioEd || (app.bioEd = {})).data = ev.target.value; renderBio(true); } });
+  fb.addEventListener("click", ev => {
+    const b = ev.target.closest("[data-bio]"); if (!b) return;
+    const S = app.bioEd || {};
+    if (b.dataset.bio === "del" && S.data && app.exames && app.exames[S.data]) {
+      if (b.dataset.ok !== "1") { b.dataset.ok = "1"; b.textContent = "Confirmar exclusão"; return; }
+      bioGrava(S.data, { data: S.data, apagado: true }); S.data = ""; renderBio(true);
+    }
+  });
+})();
 
 // ===== 15. CARDIO =====
 // Cardio previsto na semana: minutos, vezes, inclinação, velocidade e tipo
@@ -4426,7 +4721,7 @@ async function putDoc(coll, id, data, msgEl) {
 }
 // Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos
 function subExtras(db, P) {
-  [["diario", ["diario"]], ["dieta", ["dieta"]], ["fotos", ["corpo", "semana", "resumo"]]].forEach(([c, tabs]) => db.collection(P + c).onSnapshot(snap => {
+  [["diario", ["diario"]], ["dieta", ["dieta"]], ["exames", ["corpo"]], ["fotos", ["corpo", "semana", "resumo"]]].forEach(([c, tabs]) => db.collection(P + c).onSnapshot(snap => {
     const o = {}; for (const d of snap.docs) { const v = d.data(); if (v && !v.apagado) o[d.id] = v; }
     app[c] = o; if (tabs.includes(app.tab)) render();
   }, () => { }));

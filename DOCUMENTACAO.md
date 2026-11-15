@@ -21,13 +21,13 @@ Pontos de atenção:
 
 É um arquivo só, com três partes:
 
-1. **Estilos** (`<style>`): a aparência, em 19 blocos numerados.
+1. **Estilos** (`<style>`): a aparência, em 20 blocos numerados.
 2. **Telas** (`<main>` e as barras): a estrutura vazia de cada aba.
 3. **Programa** (`<script>`): 27 seções numeradas, que preenchem as telas e guardam os dados.
 
 Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 26 seções.
 
-### Estilos (19 blocos)
+### Estilos (20 blocos)
 
 1. Cores e fontes (tema claro; o escuro vem logo abaixo)
 2. Base e cabeçalho
@@ -48,6 +48,7 @@ Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` le
 17. Resumo do dia
 18. Série: execução, parciais, descanso e aviso das observações
 19. Dieta: diário de alimentos
+20. Corpo: evolução corporal (exames de bioimpedância)
 
 ### Telas
 
@@ -91,6 +92,7 @@ Cada item é um documento separado, com um caminho:
 | `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas, quais exercícios são unilaterais e as cargas de cada máquina (`maq[nome do exercício] = { tipo, placas }`) |
 | `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Hormônios e peptídeos: substância, aplicação e exame |
 | `dieta/2026-11-15` | Alimentos de um dia: `itens[] = { r: refeição, a: alimento, n: nome, q: quantidade, u, kcal, p, c, g }` |
+| `exames/2026-11-13` | Exame de bioimpedância: composição, análise segmentar (`seg`), índices e faixas normais do laudo (`faixas`); `soMes` quando só o mês é conhecido |
 | `dieta/meus` | Alimentos fora da tabela cadastrados pela pessoa |
 | `semanas/w01-DOM` | Domingo (dia livre): só o registro de cardio ou atividade |
 | `fotos/2026-11-12-…` | Registro de uma foto: data, tipo (`treino` ou `evolucao`) e onde o arquivo está |
@@ -220,7 +222,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 320 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 334 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -535,6 +537,17 @@ A aba Progresso e seus gráficos.
 
 A aba Corpo e dieta e a pesagem rápida.
 
+| Dado | O que guarda |
+| --- | --- |
+| `BIO_CAMPOS` | Campos do exame: [chave, rótulo, unidade, grupo]. Grupo "c" = composição; "i" = índices do laudo |
+| `BIO_SEG` | Segmentos do corpo na análise segmentar |
+| `BIO_FAIXA` | Medidas que trazem faixa normal no laudo (os números entre parênteses) |
+| `BIO_REF` | Padrão para estimar as faixas quando o laudo não traz: IMC ideal, parte de gordura ideal e faixa normal de gordura (%), por sexo |
+| `BIO_IMC` | faixa normal de IMC |
+| `BIO_ZONA` | onde começa e termina a faixa "normal" nas barras, em % da largura |
+| `BIO_COL` | largura de cada exame no histórico (px) |
+| `BIO_LIN`, `BIO_HIS` | Linhas do histórico e da análise músculo-gordura: [chave, rótulo, unidade, cor, menos é melhor] |
+
 | Função | O que faz |
 | --- | --- |
 | `medIdeal()` | Meta ou referência de uma medida, para a linha do gráfico |
@@ -544,6 +557,18 @@ A aba Corpo e dieta e a pesagem rápida.
 | `dm()` | "2026-11-10" → "10/nov" |
 | `updateQW()` | Atualiza a pesagem rápida (média, ritmo e peso do plano hoje) |
 | `saveQW()` | Salva a pesagem rápida |
+| `bioList()` | Exames salvos, do mais antigo ao mais novo |
+| `bioMes()`, `bioDia()` | Mês e ano curtos do exame ("nov/26") e a data por extenso (só mês e ano quando o dia não é conhecido) |
+| `bioVal()` | Valor de um campo do exame; o que falta e dá para deduzir é calculado (massa magra = peso − gordura; IMC pela altura do Perfil) |
+| `bioFaixas()` | Faixas normais: as do laudo mais recente que as traz; sem laudo, estimadas pela altura e pelo sexo do Perfil |
+| `bioN()`, `bioN3()` | Número com casas fixas e vírgula ("22,0"); nos segmentos, três algarismos como no laudo ("3,80", "28,7") |
+| `bioPos()` | Posição de um valor na barra (0 a 100%): abaixo, dentro e acima da faixa normal ocupam zonas fixas |
+| `bioFig()` | Figura do corpo (desenho simples) com os segmentos pintados na cor do cartão |
+| `bioHtml()` | Painel "Evolução corporal": gordura contra a meta, análise músculo-gordura, análise segmentar e histórico |
+| `bioFormHtml()` | Formulário do exame: os campos seguem a ordem do laudo |
+| `bioGrava()` | Grava (ou apaga) um exame |
+| `bioSalva()` | Lê o formulário e salva o exame; o peso e a gordura do exame entram também nas medidas do dia, quando ele é do período do plano |
+| `renderBio()` | Desenha o painel e, se ninguém está digitando nele, o formulário do exame |
 
 ### 15. Cardio
 
@@ -911,6 +936,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run32` | Anotações livres e posologia preenchida pelo usuário na aba de hormônios e peptídeos |
 | `run33` | Conversa entre treinos: carga trazida do exercício irmão e ajuste pelo desempenho no outro dia |
 | `run34` | Cargas da máquina: placas guardadas, reconhecimento de placa fixa, placas deduzidas, declaração manual e carga livre |
+| `run37` | Exames de bioimpedância: painel Evolução corporal com 11 exames reais, faixas do laudo e estimadas, formulário (salvar, editar, só o mês, excluir) e espelho nas medidas do dia |
 | `run36` | Opcionais e exercícios novos fora das pendências; domingo como dia livre; aba Dieta: busca na TACO, registro, alimento fora da tabela, comparação por refeição e por dia |
 | `run35` | Tempo no ritmo real (semana 1 de verdade): todos os dias do ano cabem no limite; abdômen abre o treino; panturrilha no leg press; opcionais fora do previsto |
 | `tbudget` | Duração prevista de cada dia de treino |
@@ -920,6 +946,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 
 ## 10. Limites conhecidos
 
+- O painel **Evolução corporal** (aba Corpo) sai dos exames de bioimpedância: o pico é o exame de maior gordura; as faixas de peso, massa magra e massa gorda vêm do laudo ou são estimadas pela altura (peso ideal = IMC 22 no homem e 21,5 na mulher; faixa de 85% a 115%).
 - A **tabela TACO** (4ª edição, NEPA/UNICAMP, 597 alimentos) fica embutida no programa, conferida linha a linha contra a planilha original. Seis linhas não têm composição na tabela e ficam fora da busca. A meta por refeição é a meta do dia vezes a parte de cada refeição (`settings.dieta.refs`).
 - O **domingo** (`DOM`, `livre: true`) não tem exercícios: só registra atividade, entra no cardio da semana e não conta como falta.
 - Um exercício só conta como pendente a partir da semana em que entrou na ficha (`desde`); opcional (`opt`) nunca conta.
