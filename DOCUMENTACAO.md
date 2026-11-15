@@ -86,7 +86,7 @@ Cada item é um documento separado, com um caminho:
 | `semanas/w01-A` | Um dia de treino: `{ semana, dia, nota, tags, cardio, ex }` |
 | `corpo/2026-11-10` | Pesagem e medidas de um dia |
 | `meta/perfil` | Perfil e Objetivo |
-| `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas e quais exercícios são unilaterais |
+| `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas, quais exercícios são unilaterais e as cargas de cada máquina (`maq[nome do exercício] = { tipo, placas }`) |
 | `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Hormônios e peptídeos: substância, aplicação e exame |
 | `fotos/2026-11-12-…` | Registro de uma foto: data, tipo (`treino` ou `evolucao`) e onde o arquivo está |
 
@@ -126,7 +126,7 @@ Por isso corrigir um registro antigo corrige sozinho todas as semanas seguintes.
 
 ## 5. Parâmetros ajustáveis
 
-São 46 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
+São 53 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda todos os lugares que o usam.
 
 **Plano**
 
@@ -150,6 +150,9 @@ São 46 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `CUT_QUEDA` | `0.95` | 1ª semana abaixo da faixa, ou 2 semanas sem fazer: a carga cai 5% |
 | `RESET_ONDA` | `[0.9, 0.95, 1]` | reset em onda: fases 1, 2 e 3, como fração da carga travada |
 | `AJUSTE_PISO` | `0.85` | ajuste entre séries: no máximo 15% abaixo do previsto |
+| `MAQ_TOL` | `[0.10, 2.5, 7.5]` | placas fixas: uma carga vale como "a placa mais próxima" da prevista quando a diferença é de até 10% (no mínimo 2,5 kg, no máximo 7,5 kg) |
+| `MAQ_JUNTA` | `0.75` | placas fixas: cargas anotadas a menos disso uma da outra contam como a mesma placa |
+| `MAQ_PLACA` | `[4, 15]` | placas fixas: a máquina é reconhecida sozinha quando todas as distâncias entre as cargas anotadas ficam nesta faixa de kg (e valem pelo menos 2 saltos da ficha) |
 | `ELO_SEG` | `0.95` | conversa entre treinos: margem de 5% na carga trazida de outro dia quando a faixa de repetições é diferente |
 | `ELO_LIMIAR` | `1` | conversa entre treinos: a diferença contra o previsto precisa valer pelo menos este tanto de saltos de carga para mexer na carga do outro dia |
 | `PARC_OPTS` | `[25, 50, 75]` | botões de repetição parcial: % do movimento feito |
@@ -162,6 +165,10 @@ São 46 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | --- | --- | --- |
 | `EXEC_DEF` | `40` | segundos de execução por série, quando não anotado |
 | `TRANS_DEF` | `90` | segundos de intervalo entre exercícios, quando não anotado |
+| `TRANS_JUNTO` | `30` | troca quando o exercício é na mesma máquina do anterior (só muda a carga) |
+| `RITMO_MIN` | `8` | tempos cronometrados necessários para o app passar a usar o seu ritmo no lugar do padrão |
+| `RITMO_N` | `60` | o ritmo olha os tempos mais recentes (até este número de cada tipo) |
+| `RITMO_FOLGA` | `10` | descanso real mais de 10 s acima do previsto, em média: o painel mostra quanto tempo isso custa |
 | `AQUEC_SEC` | `300` | aquecimento geral no começo do treino |
 | `WARM_EXEC` | `20` | execução de uma série de aquecimento (carga leve ou poucas repetições) |
 | `WARM_PAUSA` | `[[0.6, 30], [1, 60]]` | pausa depois de uma série de aquecimento, pela fração da carga do dia: até 60%, só a troca de peso (30 s); acima, 1 min |
@@ -208,7 +215,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 274 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 284 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -262,6 +269,7 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | Dado | O que guarda |
 | --- | --- |
 | `mid` | Meio de uma faixa [mín, máx] |
+| `MAQ` | Mapa das máquinas da última conta feita (usado na prescrição e no ajuste entre séries) |
 | `ELOS`, `DOW`, `EX_ORD` | Irmãos de cada exercício (mesmo nome em outro dia), a posição de cada dia na semana e a ficha em ordem de dia |
 
 | Função | O que faz |
@@ -279,6 +287,12 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | `missed()` | Exercício não feito: repete a prescrição; na 2ª semana seguida, volta com 5% a menos |
 | `howFor()` | Texto de como aplicar cada técnica de destrave |
 | `initState()` | Estado inicial do exercício: carga calculada pelo Perfil (1RM), carga da ficha, ou a definir |
+| `maqTol()` | Tolerância, em kg, para uma carga contar como a placa vizinha da prevista |
+| `maqAll()` | Cargas conhecidas de cada máquina, por nome do exercício: primeiro as declaradas, depois as anotadas nos registros |
+| `maqPick()` | Escolhe uma carga conhecida da máquina: a mais próxima de L (dir 0), a seguinte acima de base (dir 1) ou a mais próxima de L abaixo de base (dir -1). Sem candidata, null |
+| `maqEntrada()` | Carga que veio da ficha, de outra faixa ou de outro treino (ou qualquer carga fora de placa, em máquina de placas fixas): se há uma placa conhecida perto, usa a placa |
+| `maqDir()` | Depois de uma subida ou descida de carga: troca o valor calculado pela placa conhecida seguinte |
+| `maqNotas()` | Sinal de placa fixa para a progressão: máquina declarada ou reconhecida como fixa, ou carga usada diferente da prevista mas vizinha dela |
 | `eloSets()` | Séries de um registro que servem de sinal: com carga e repetições |
 | `eloFonte()` | A sessão mais recente de um irmão feita depois da última sessão do próprio exercício: nesta semana em dia anterior, ou na semana passada em dia posterior |
 | `eloAjuste()` | Aplica a conversa ao estado do exercício antes de prescrever a semana w: traz a carga (exercício ainda sem carga) ou move 1 salto (o irmão rendeu bem acima ou bem abaixo do previsto) |
@@ -326,7 +340,7 @@ Descanso previsto e feito, recuperação entre séries, duração do treino e or
 | `warmGap()` | Pausa em segundos depois de uma série de aquecimento feita com a fração f da carga (tab = WARM_PAUSA ou WARM_ANTES) |
 | `warmTime()` | Tempo do aquecimento de um exercício: serie = execuções e pausas entre elas; antes = descanso até a 1ª válida. marks = séries marcadas (null = todas) |
 | `pausaTxt()` | Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min |
-| `dayTime()` | Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado |
+| `ritmo()` | Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado Ritmo real do treino: médias do que foi cronometrado (execução por série, segundos de descanso além do previsto, troca de exercício). Com poucos tempos anotados, cada item fica null e o tempo previsto usa o padrão |
 | `dayOrder()` | Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha |
 | `recOf()` | Registro de um exercício em uma semana |
 | `weekStruggle()` | Em quantos dias da semana houve série abaixo do previsto (decide o deload automático) |
@@ -474,6 +488,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 | `refreshTags()` | Redesenha os blocos de observação e o aviso do que o app entendeu |
 | `restHtml()` | Descanso entre a série i e a seguinte: tempos fixos; o previsto fica marcado |
 | `dayTimeHtml()` | Painel "Tempo do treino": previsto, registrado, descanso médio, recuperação e ordem feita |
+| `ritmoHtml()` | Linha do ritmo real, abaixo dos quadros de tempo: o que o cronômetro mediu, quanto custa descansar além do previsto e quanto somam os opcionais |
 | `updateDayTime()` | Atualiza o painel de tempo sem redesenhar a tela |
 | `ordemLine()` | O que o app aprendeu sobre trocar a ordem deste exercício |
 | `transHtml()` | Intervalo entre exercícios (troca de máquina, ajuste, água): fica no exercício que começa depois |
@@ -566,6 +581,8 @@ Modo unilateral: dados de cada lado e qual lado conta para a progressão.
 | `uniKg()` | Carga de um lado; se estiver vazia, a do outro |
 | `uniScore()` | Força estimada de um lado na série |
 | `uniAgg()` | A série vale pelo lado mais fraco (empate: o que você marcou como mais difícil) |
+| `maqBoxHtml()` | Bloco "Cargas da máquina" do cartão: as placas conhecidas, o tipo (automático, placas fixas, carga livre) e o campo para declarar as placas |
+| `maqSet()` | Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias) |
 | `uniToggleHtml()` | Botões Bilateral / Unilateral do cartão |
 | `uniLine()` | Diferença entre os lados no exercício de hoje |
 | `uniDifHtml()` | Botões "Mais difícil: Esquerdo / Igual / Direito" |
@@ -834,6 +851,11 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run28` | Aquecimento: pausas indicadas, descanso antes da 1ª série (anotar, encerrar, corrigir) e tempo do treino |
 | `run29` | Ajuste de carga entre as séries: subir, baixar, manter e preenchimento ao marcar Feito |
 | `run30` | Referência de hormônios e peptídeos, cópia para o cadastro, controle de doses e alerta de hematócrito |
+| `run31` | Modo unilateral: troca de lado cronometrada e descanso depois dos dois lados |
+| `run32` | Anotações livres e posologia preenchida pelo usuário na aba de hormônios e peptídeos |
+| `run33` | Conversa entre treinos: carga trazida do exercício irmão e ajuste pelo desempenho no outro dia |
+| `run34` | Cargas da máquina: placas guardadas, reconhecimento de placa fixa, placas deduzidas, declaração manual e carga livre |
+| `run35` | Tempo no ritmo real (semana 1 de verdade): todos os dias do ano cabem no limite; abdômen abre o treino; panturrilha no leg press; opcionais fora do previsto |
 | `tbudget` | Duração prevista de cada dia de treino |
 | `tbudget2` | Maior duração prevista de cada dia ao longo das 60 semanas |
 | `cmp.sh` | Compara a saída de todos os testes antes e depois de uma reorganização do código |
@@ -841,6 +863,8 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 
 ## 10. Limites conhecidos
 
+- O **tempo previsto** usa o ritmo medido (`ritmo`): média da execução por série, segundos de descanso além do previsto e troca de exercício, a partir de 8 tempos de cada tipo. Antes disso vale o padrão. Exercícios opcionais (`opt`) ficam fora do previsto; exercício na mesma máquina do anterior (`junto`) conta 30 s de troca.
+- As **placas deduzidas** de uma máquina partem do passo entre as cargas já usadas; com só duas cargas o passo pode estar errado. O campo "Placas desta máquina" corrige.
 - O app calcula **60 semanas**, até o fim de 2027 (`MAXW`). Os blocos seguem a lista `BLOCOS_ANO`; a troca de variações de exercício entre blocos ainda é manual.
 - As fotos só existem no site, porque dependem do armazenamento de arquivos do Supabase.
 - O aviso do cronômetro só toca com o app aberto na tela. Por padrão o app mantém a tela acesa enquanto o cronômetro roda; aviso com a tela bloqueada exigiria notificações enviadas por um servidor.

@@ -501,6 +501,10 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
 .djr dt { color: var(--muted); } .djr dd { margin: 0; }
 .djr p { margin: 0 0 8px; font-size: 13px; line-height: 1.35; }
 .djsit { margin: 8px 0; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.optb { display: inline-block; margin-left: 4px; padding: 1px 7px; border: 1px dashed var(--line); border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--muted); vertical-align: middle; }
+.maq { margin: 8px 0; } .maq summary { cursor: pointer; padding: 6px 0; list-style: none; font-size: 14px; } .maqd { margin: 2px 0 8px; font-size: 13px; color: var(--muted); } .maq summary::-webkit-details-marker { display: none; }
+.maq summary::after { content: " ▾"; color: var(--muted); } .maq[open] summary::after { content: " ▴"; }
+.maqp { display: block; margin: 8px 0 4px; font-size: 13px; color: var(--muted); } .maqp input { margin-top: 4px; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); padding: 8px; font-size: 16px; color: var(--ink); }
 .djnt { display: block; margin: 0 0 8px; font-size: 13px; color: var(--muted); }
 .djnt textarea { margin-top: 4px; font-size: 15px; color: var(--ink); }
 .djn { margin: 8px 0 4px; padding-left: 18px; font-size: 14px; line-height: 1.4; }
@@ -981,6 +985,9 @@ const CUT_DOR = 0.9;               // dor forte, ou dor com série abaixo: a car
 const CUT_QUEDA = 0.95;            // 1ª semana abaixo da faixa, ou 2 semanas sem fazer: a carga cai 5%
 const RESET_ONDA = [0.9, 0.95, 1]; // reset em onda: fases 1, 2 e 3, como fração da carga travada
 const AJUSTE_PISO = 0.85;          // ajuste entre séries: no máximo 15% abaixo do previsto
+const MAQ_TOL = [0.10, 2.5, 7.5];   // placas fixas: uma carga vale como "a placa mais próxima" da prevista quando a diferença é de até 10% (no mínimo 2,5 kg, no máximo 7,5 kg)
+const MAQ_JUNTA = 0.75;            // placas fixas: cargas anotadas a menos disso uma da outra contam como a mesma placa
+const MAQ_PLACA = [4, 15];         // placas fixas: a máquina é reconhecida sozinha quando todas as distâncias entre as cargas anotadas ficam nesta faixa de kg (e valem pelo menos 2 saltos da ficha)
 const ELO_SEG = 0.95;              // conversa entre treinos: margem de 5% na carga trazida de outro dia quando a faixa de repetições é diferente
 const ELO_LIMIAR = 1;              // conversa entre treinos: a diferença contra o previsto precisa valer pelo menos este tanto de saltos de carga para mexer na carga do outro dia
 const PARC_OPTS = [25, 50, 75];     // botões de repetição parcial: % do movimento feito
@@ -989,6 +996,10 @@ const DELOAD_DIAS = 2;             // dias abaixo da faixa na semana 4 que ligam
 // Tempo, descanso e recuperação
 const EXEC_DEF = 40;               // segundos de execução por série, quando não anotado
 const TRANS_DEF = 90;              // segundos de intervalo entre exercícios, quando não anotado
+const TRANS_JUNTO = 30;            // troca quando o exercício é na mesma máquina do anterior (só muda a carga)
+const RITMO_MIN = 8;               // tempos cronometrados necessários para o app passar a usar o seu ritmo no lugar do padrão
+const RITMO_N = 60;                // o ritmo olha os tempos mais recentes (até este número de cada tipo)
+const RITMO_FOLGA = 10;            // descanso real mais de 10 s acima do previsto, em média: o painel mostra quanto tempo isso custa
 const AQUEC_SEC = 300;             // aquecimento geral no começo do treino
 const WARM_EXEC = 20;              // execução de uma série de aquecimento (carga leve ou poucas repetições)
 const WARM_PAUSA = [[0.6, 30], [1, 60]];   // pausa depois de uma série de aquecimento, pela fração da carga do dia: até 60%, só a troca de peso (30 s); acima, 1 min
@@ -1031,52 +1042,52 @@ const DAYS = [
   { id: "C2", dow: 5, nome: "Sáb", titulo: "C2 · Pernas (posterior e glúteo) e core" }
 ];
 // Monta um exercício da ficha: k = código, d = dia, n = nome, m = músculo. O resto tem padrão: sc ("st" séries iguais, "top" 1 pesada + back-offs), sets, faixa lo–hi, kg inicial, inc e mic (salto e microcarga), step (arredondamento), t (comp, iso ou core), rest, obs, bw (peso do corpo), opt (opcional)
-function ex(k, d, n, m, o) { return Object.assign({ k, d, n, m, sc: "st", sets: 3, lo: 8, hi: 10, kg: null, inc: 2.5, mic: 1.25, step: 0.5, t: "iso", rest: "2 min", obs: "", bw: false, opt: false }, o); }
+function ex(k, d, n, m, o) { return Object.assign({ k, d, n, m, sc: "st", sets: 3, lo: 8, hi: 10, kg: null, inc: 2.5, mic: 1.25, step: 0.5, t: "iso", rest: "2 min", obs: "", bw: false, opt: false, junto: false }, o); }
 // A ficha: todos os exercícios, na ordem em que aparecem em cada dia
 const EX = [
+  ex("A6", "A", "Abdominal (máquina)", "Core", { sets: 4, lo: 8, hi: 12, kg: 87, t: "core", rest: "2 min", obs: "Principal do core: abre o treino" }),
   ex("A1", "A", "Chest press (sentado)", "Peito", { sc: "top", kg: 52, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("A2", "A", "Peito 45° com halter", "Peito", { sets: 3, lo: 8, hi: 10, kg: 28, inc: 2, mic: 1, step: 1, t: "comp", obs: "Peso de cada halter" }),
   ex("A3", "A", "Crucifixo (máquina)", "Peito", { sets: 2, lo: 10, hi: 12, kg: 73, obs: "Pausa de 1 s no alongamento" }),
   ex("A4", "A", "Tríceps francês na polia", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min" }),
   ex("A5", "A", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
-  ex("A6", "A", "Abdominal (máquina)", "Core", { sets: 4, lo: 8, hi: 12, kg: 87, t: "core", rest: "2 min", obs: "Principal do core" }),
-  ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Pausa de 1 s embaixo" }),
+  ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
+  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos. Abre o treino" }),
   ex("B1", "B", "Puxada barra Y", "Costas", { sc: "top", kg: 88.5, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("B2", "B", "Remada triângulo", "Costas", { sets: 3, lo: 8, hi: 10, kg: 141, t: "comp", obs: "Alongar as escápulas à frente" }),
   ex("B3", "B", "Remada sentada", "Costas", { sets: 2, lo: 8, hi: 10, kg: 92.5, t: "comp" }),
   ex("B4", "B", "Bíceps extendido 45°", "Bíceps", { sets: 3, lo: 8, hi: 10, kg: 16, inc: 1, mic: 0.5, step: 0.5, rest: "2 min", obs: "Bíceps alongado" }),
   ex("B5", "B", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 12, hi: 15, kg: 20, inc: 1.25, mic: 0.5, rest: "2 min" }),
-  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos" }),
-  ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
+  ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
+  ex("C1f", "C1", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "2 min", obs: "Abre o treino; alongar o abdômen no topo" }),
   ex("C1a", "C1", "Leg press 45° ou hack", "Quadríceps", { sc: "top", kg: null, inc: 5, mic: 2.5, t: "comp", rest: "3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
+  ex("C1g", "C1", "Panturrilha no leg press", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: null, inc: 5, mic: 2.5, rest: "2 min", junto: true, obs: "Na mesma máquina, logo depois do leg press: só troque a carga. Pausa de 1 s embaixo" }),
   ex("C1b", "C1", "Cadeira extensora unilateral", "Quadríceps", { sets: 3, lo: 8, hi: 10, kg: 26.5, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna, sem descanso entre elas" }),
   ex("C1c", "C1", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 8, hi: 10, kg: 81 }),
-  ex("C1d", "C1", "Elevação pélvica", "Glúteos", { sets: 3, lo: 8, hi: 10, kg: 57, t: "comp", obs: "Pausa de 1 s no topo" }),
-  ex("C1e", "C1", "Abdutora", "Glúteos", { sets: 3, lo: 12, hi: 15, kg: 79, rest: "2 min" }),
-  ex("C1f", "C1", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "2 min", obs: "Novo: alongar o abdômen no topo" }),
-  ex("C1g", "C1", "Panturrilha burrinho", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: 50, rest: "2 min" }),
+  ex("C1d", "C1", "Elevação pélvica", "Glúteos", { sets: 2, lo: 8, hi: 10, kg: 57, t: "comp", obs: "Pausa de 1 s no topo" }),
+  ex("C1e", "C1", "Abdutora", "Glúteos", { sets: 3, lo: 12, hi: 15, kg: 79, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
+  ex("D6", "D", "Abdominal (máquina)", "Core", { sets: 3, lo: 12, hi: 15, kg: 74, t: "core", rest: "2 min", obs: "Abre o treino" }),
   ex("D1", "D", "Desenvolvimento com halter", "Ombro anterior", { sets: 3, lo: 8, hi: 10, kg: 20, inc: 2, mic: 1, step: 1, t: "comp", obs: "Peso de cada halter" }),
   ex("D2", "D", "Inferior de peito (polia alta)", "Peito", { sets: 3, lo: 12, hi: 15, kg: 76 }),
   ex("D3", "D", "Crucifixo (máquina)", "Peito", { sets: 3, lo: 12, hi: 15, kg: 68.5, obs: "Pausa de 1 s no alongamento" }),
   ex("D4", "D", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 10, hi: 12, kg: 44.5, rest: "2 min", obs: "Dia pesado de lateral" }),
   ex("D5", "D", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 15, hi: 20, kg: 18.5, inc: 1.25, mic: 0.5, rest: "2 min" }),
-  ex("D6", "D", "Abdominal (máquina)", "Core", { sets: 3, lo: 12, hi: 15, kg: 74, t: "core", rest: "2 min" }),
-  ex("D7", "D", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
+  ex("D7", "D", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("E1", "E", "Puxada barra grande", "Costas", { sets: 3, lo: 10, hi: 12, kg: 73, t: "comp" }),
   ex("E2", "E", "Remada sentada", "Costas", { sets: 3, lo: 10, hi: 12, kg: 89, t: "comp" }),
   ex("E3", "E", "Bíceps 45° na polia alta", "Bíceps", { sets: 3, lo: 10, hi: 12, kg: 30, inc: 1.25, mic: 0.5, rest: "Bi-set com o tríceps cruzado (mesma polia)" }),
   ex("E4", "E", "Tríceps polia alta cruzado", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min após o par" }),
   ex("E5", "E", "Bíceps corda na polia", "Bíceps", { sets: 3, lo: 12, hi: 15, kg: 70, rest: "Bi-set com o coice (mesma polia)" }),
   ex("E6", "E", "Tríceps coice na polia", "Tríceps", { sets: 3, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s após o par" }),
-  ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
+  ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("C2a", "C2", "Stiff (barra ou halteres)", "Posteriores de coxa", { sets: 3, lo: 6, hi: 10, kg: null, t: "comp", rest: "2–3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
+  ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "2 min", obs: "Logo depois do stiff. Passou de 15: halter entre os pés" }),
   ex("C2b", "C2", "Elevação pélvica", "Glúteos", { sets: 3, lo: 10, hi: 12, kg: 55, t: "comp" }),
   ex("C2c", "C2", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 10, hi: 12, kg: 78 }),
   ex("C2d", "C2", "Leg press 45° ou hack", "Quadríceps", { sets: 3, lo: 12, hi: 15, kg: null, inc: 5, mic: 2.5, t: "comp", obs: "~80% da carga de quarta" }),
-  ex("C2e", "C2", "Cadeira extensora unilateral", "Quadríceps", { sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna" }),
-  ex("C2f", "C2", "Adutora", "Adutores", { sets: 2, lo: 12, hi: 15, kg: 79, rest: "2 min" }),
-  ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "2 min", obs: "Passou de 15: halter entre os pés" }),
-  ex("C2h", "C2", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min" }),
+  ex("C2h", "C2", "Panturrilha no leg press", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: null, inc: 5, mic: 2.5, rest: "2 min", junto: true, obs: "Na mesma máquina, logo depois do leg press: só troque a carga" }),
+  ex("C2e", "C2", "Cadeira extensora unilateral", "Quadríceps", { sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna. Opcional: só se sobrar tempo", opt: true }),
+  ex("C2f", "C2", "Adutora", "Adutores", { sets: 2, lo: 12, hi: 15, kg: 79, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("C2i", "C2", "Back extension (opcional)", "Lombar", { sets: 2, lo: 10, hi: 12, kg: 78, rest: "2 min", obs: "Só se sobrar tempo", opt: true })
 ];
 // Exercício pelo código (EXBY.A1)
@@ -1236,7 +1247,7 @@ function prescribe(def, st, w, flags) {
     const o = Object.assign({}, s);
     o.rir = deload ? [3, 3] : rirFor(def, s.kind, t);
     if (L == null) o.kg = null;
-    else if (s.kind === "back") o.kg = rnd(L * BACKOFF, def.step);
+    else if (s.kind === "back") { const b = rnd(L * BACKOFF, def.step), k = maqPick(MAQ, def, b, 0); o.kg = k != null ? k : b; }
     else o.kg = L;
     if (st.mode === "topset" && i === 0) { o.kind = "over"; o.kg = st.heavy; o.lo = 3; o.hi = 5; }
     if (st.mode === "cluster") o.cluster = true;
@@ -1275,7 +1286,7 @@ function transition(def, st, pres, rec, w, curW, notes) {
 function transitionCore(def, st, pres, rec, w, curW, notes) {
   const nf = notes || {};
   const s = Object.assign({}, st);
-  s.prevLoad = st.load; s.how = ""; s.elo = 0;
+  s.prevLoad = st.load; s.how = ""; s.elo = 0; s.snap = 0;
   const neutral = pres.deload || pres.festas;
   const status = rec && rec.st;
   if (!rec || status == null) {
@@ -1325,17 +1336,24 @@ function transitionCore(def, st, pres, rec, w, curW, notes) {
   if (nf.fixa) {
     const top = sets.every((x, i) => x.reps >= p(i).hi) && sets.length >= ps.length;
     const low = sets.some((x, i) => x.reps < p(i).lo);
-    s.fixed = true; s.mode = "normal"; s.below = 0;
+    s.fixed = true; s.mode = "normal"; s.below = 0; s.snap = 1;
     s.lastMetric = Math.max(metric, st.lastMetric || 0);
+    const cf = nf.fixaAuto ? "Você usou " + fmt(used) + " kg em vez de " + fmt(st.load) + ": entendi como a placa que a máquina tem e sigo dela. " : "Carga fixa da máquina: ";
     if (top || (nf.facil && !low)) {
-      s.load = rnd(used + def.inc, def.step); s.stall = 0; s.tr = ps.map(x => x.lo); s.action = "up";
-      s.why = done + ". Carga fixa da máquina: " + (top ? "bateu o topo da faixa" : "foi fácil") + " com " + fmt(used) + " kg. Suba para a próxima placa (cerca de " + fmt(s.load) + " kg) e registre o peso real.";
+      const prox = maqPick(nf.maq, def, used + def.inc, 1, used);
+      s.load = prox != null ? prox : rnd(used + def.inc, def.step); s.stall = 0; s.tr = ps.map(x => x.lo); s.action = "up";
+      s.why = done + ". " + cf + (top ? "Bateu o topo da faixa" : "Foi fácil") + " com " + fmt(used) + " kg. Suba para a próxima placa (" + (prox != null ? fmt(prox) + " kg" : "cerca de " + fmt(s.load) + " kg") + ") e registre o peso real.";
     } else if (low) {
-      s.load = used; s.tr = ps.map(x => x.lo); s.action = "keep";
-      s.why = done + ". Carga fixa da máquina: " + fmt(used) + " kg é a placa disponível e ficou abaixo da faixa. Manter essa placa e buscar " + ps[0].lo + " repetições; não conta como queda.";
+      // se você mesmo baixou a placa nas séries seguintes, a próxima sessão já começa da placa menor
+      // (só quando nenhuma série feita com a placa maior chegou à faixa: se alguma chegou, a queda nas seguintes foi cansaço, não placa pesada demais)
+      const pesada = sets.every((x, i) => Math.abs(x.kg - used) >= MAQ_JUNTA || x.reps < p(i).lo);
+      const menor = def.sc === "top" || !pesada ? used : Math.min.apply(null, sets.map(x => +x.kg).filter(v => v > 0).concat(used));
+      const baixou = menor < used - MAQ_JUNTA;
+      s.load = menor; s.tr = ps.map(x => x.lo); s.action = "keep";
+      s.why = done + ". " + cf + "Ficou abaixo da faixa com " + fmt(used) + " kg" + (baixou ? " e você baixou para " + fmt(menor) + " kg no próprio treino: seguir com " + fmt(menor) + " kg e buscar " : ": manter essa placa e buscar ") + ps[0].lo + " repetições. Não conta como queda.";
     } else {
       s.load = used; s.stall = progress ? 0 : (st.stall || 0) + 1; s.tr = sets.map((x, i) => Math.min(p(i).hi, x.reps + 1)); s.action = "reps";
-      s.why = done + ". Carga fixa da máquina: manter " + fmt(used) + " kg e buscar +1 repetição por série até o topo da faixa; depois, a próxima placa.";
+      s.why = done + ". " + cf + "Manter " + fmt(used) + " kg e buscar +1 repetição por série até o topo da faixa; depois, a próxima placa.";
     }
     return s;
   }
@@ -1450,6 +1468,7 @@ function suggestSets(def, pres, entry) {
     let L = p.kg * ratio;
     L = Math.max(p.kg * AJUSTE_PISO, Math.min(p.kg + def.inc, L));
     L = rnd(L, def.step);
+    const placa = maqPick(MAQ, def, L, 0); if (placa != null) L = placa;
     const target = e1(p.kg, p.tr + rirT) * ratio;
     const repsAlt = Math.max(1, Math.floor((target / p.kg - 1) * 30 - rirT));
     const what = "Série anterior: " + fmt(kgA) + " × " + a.reps + (a.rir != null && a.rir !== "" ? " (RIR " + a.rir + ")" : "") + " contra " + fmt(pj.kg) + " × " + pj.tr + " previsto.";
@@ -1487,6 +1506,66 @@ function initState(def, sl) {
   if (kg == null) return { load: null, tr: null, stall: 0, below: 0, missed: 0, mode: "normal", action: "new", why: def.obs || "Exercício novo: escolha uma carga que deixe 3 reps sobrando e registre.", lastMetric: null };
   return { load: kg, tr: null, stall: 0, below: 0, missed: 0, mode: "normal", action: "start", why: fromPf ? "Semana 1: carga calculada pelas suas cargas atuais do Perfil." : "Semana 1: carga de partida da ficha.", lastMetric: null };
 }
+// ----- Máquinas de placas fixas: as cargas que cada máquina tem, declaradas no cartão ou aprendidas pelo que você anota -----
+// Mapa das máquinas da última conta feita (usado na prescrição e no ajuste entre séries)
+let MAQ = {};
+// Tolerância, em kg, para uma carga contar como a placa vizinha da prevista
+function maqTol(P) { return Math.min(MAQ_TOL[2], Math.max(MAQ_TOL[1], P * MAQ_TOL[0])); }
+// Cargas conhecidas de cada máquina, por nome do exercício: primeiro as declaradas, depois as anotadas nos registros
+function maqAll(records, settings) {
+  const cfg = (settings && settings.maq) || {}, m = {};
+  const add = (a, kg) => { if (!a.some(v => Math.abs(v - kg) < MAQ_JUNTA)) a.push(kg); };
+  // known = todas as cargas da máquina; base = as que servem para reconhecer placas (em série pesada + back-offs, só a 1ª série: o back-off é mais leve de propósito)
+  const put = (n, kg, serve) => { if (!(kg > 0)) return; const x = m[n] = m[n] || { tipo: (cfg[n] || {}).tipo || "auto", known: [], base: [] }; add(x.known, kg); if (serve) add(x.base, kg); };
+  Object.keys(cfg).forEach(n => { m[n] = { tipo: cfg[n].tipo || "auto", known: [], base: [] }; (cfg[n].placas || []).forEach(kg => put(n, +kg, true)); });
+  Object.values(records || {}).forEach(doc => { const ex = doc && doc.ex; if (!ex) return; Object.keys(ex).forEach(k => { const d = EXBY[k]; if (!d || d.bw || !ex[k] || ex[k].st === "nao") return; (ex[k].sets || []).forEach((x, i) => { if (x && +x.reps > 0 && +x.kg > 0) put(d.n, +x.kg, d.sc !== "top" || i === 0); }); }); });
+  Object.keys(m).forEach(n => {
+    const x = m[n], k = x.known.sort((a, b) => a - b), gaps = k.slice(1).map((v, i) => v - k[i]), d0 = EX.find(d => d.n === n), g = gaps.length ? gaps.reduce((a, b) => a + b, 0) / gaps.length : 0;
+    const b = x.base.sort((a, c) => a - c), gb = b.slice(1).map((v, i) => v - b[i]);
+    x.fixa = x.tipo === "fixa" || (x.tipo === "auto" && b.length >= 2 && gb.every(v => v >= Math.max(MAQ_PLACA[0], 2 * (d0 ? d0.inc : 2.5)) && v <= MAQ_PLACA[1]));
+    // placas deduzidas: quando as distâncias entre as cargas conhecidas são múltiplos de um mesmo passo (2 a 15 kg), a máquina segue esse passo.
+    // Entram as placas que faltam no meio e duas de cada lado; assim uma carga da ficha que cai nesse passo não é trocada por uma placa mais leve só porque esta já foi usada
+    const g0 = gaps.length ? Math.min.apply(null, gaps) : 0, nPas = gaps.map(v => Math.max(1, Math.round(v / (g0 || 1)))), q = v => Math.round(v * 4) / 4;
+    const grade = g0 >= 2 && g0 <= MAQ_PLACA[1] && gaps.every((v, i) => Math.abs(v - nPas[i] * g0) <= 0.3 * nPas[i]);
+    const passo = grade ? (k[k.length - 1] - k[0]) / nPas.reduce((a, c) => a + c, 0) : 0, ded = [];
+    if (grade) { k.slice(1).forEach((v, i) => { for (let j = 1; j < nPas[i]; j++) ded.push(k[i] + j * (v - k[i]) / nPas[i]); }); ded.push(k[0] - 2 * passo, k[0] - passo, k[k.length - 1] + passo, k[k.length - 1] + 2 * passo); }
+    x.ded = ded.filter(v => v > 0).map(q).sort((a, c) => a - c);
+    x.all = k.concat(x.ded).sort((a, c) => a - c);
+  });
+  return m;
+}
+// Escolhe uma carga conhecida da máquina: a mais próxima de L (dir 0), a seguinte acima de base (dir 1) ou a mais próxima de L abaixo de base (dir -1). Sem candidata, null
+function maqPick(mq, def, L, dir, base) {
+  const x = mq && mq[def.n]; if (!x || x.tipo === "livre" || !x.all.length || L == null) return null;
+  // em máquina de placas fixas, a seguinte é a seguinte, por maior que seja o salto
+  if (dir > 0) { const k = x.all.find(v => v > base + 0.3); return k != null && (x.fixa || k - base <= Math.max(2 * def.inc, maqTol(base) * 1.5)) ? k : null; }
+  const c = x.all.filter(v => Math.abs(v - L) <= maqTol(L) && (dir === 0 || v < base - 0.3));
+  if (c.length) return c.reduce((a, v) => Math.abs(v - L) < Math.abs(a - L) - 0.01 ? v : a);
+  if (dir < 0 && x.fixa) { const ab = x.all.filter(v => v < base - 0.3); return ab.length ? ab[ab.length - 1] : null; }
+  return null;
+}
+// Carga que veio da ficha, de outra faixa ou de outro treino (ou qualquer carga fora de placa, em máquina de placas fixas): se há uma placa conhecida perto, usa a placa
+function maqEntrada(def, st, mq) {
+  if (st.load == null || !((mq[def.n] || {}).fixa || ["start", "elo", "fase"].includes(st.action))) return st;
+  const k = maqPick(mq, def, st.load, 0); if (k == null || Math.abs(k - st.load) < 0.26) return st;
+  return Object.assign({}, st, { load: k, why: (st.why || "") + " Ajustada para a placa que você já usou nesta máquina: " + fmt(k) + " kg (a conta dava " + fmt(st.load) + ")." });
+}
+// Depois de uma subida ou descida de carga: troca o valor calculado pela placa conhecida seguinte
+function maqDir(def, antes, st, mq) {
+  if (st.snap || st.load == null || antes == null || Math.abs(st.load - antes) < 0.01) return st;
+  const k = maqPick(mq, def, st.load, st.load > antes ? 1 : -1, antes);
+  if (k == null || Math.abs(k - st.load) < 0.26) return st;
+  return Object.assign({}, st, { load: k, why: (st.why || "") + " Placa conhecida desta máquina: " + fmt(k) + " kg." });
+}
+// Sinal de placa fixa para a progressão: máquina declarada ou reconhecida como fixa, ou carga usada diferente da prevista mas vizinha dela
+function maqNotas(def, nf, pres, rec, mq) {
+  const x = mq[def.n] || {}, tipo = x.tipo, out = Object.assign({}, nf, { maq: mq });
+  if (def.bw || tipo === "livre" || nf.fixa) return out;
+  const us = eloSets(rec), U = us.length ? Math.max(...us.map(v => v.kg)) : null, P = pres.load;
+  if (x.fixa) out.fixa = true;
+  else if (P != null && U != null && Math.abs(U - P) >= 0.3 && Math.abs(U - P) <= maqTol(P)) { out.fixa = true; out.fixaAuto = true; }
+  return out;
+}
 // ----- Conversa entre treinos: o mesmo exercício em dias diferentes troca informação de carga -----
 // Irmãos de cada exercício (mesmo nome em outro dia), a posição de cada dia na semana e a ficha em ordem de dia
 const ELOS = (() => { const g = {}; EX.forEach(d => (g[d.n] = g[d.n] || []).push(d)); return Object.fromEntries(EX.map(d => [d.k, g[d.n].filter(x => x.k !== d.k)])); })();
@@ -1522,7 +1601,9 @@ function eloAjuste(def, st, w, records, weeks, presW, flags) {
     return Object.assign({}, st, { load: L, tr: null, action: "elo", elo: 1, why: "Carga trazida do " + onde + ": lá você fez " + fmt(top.kg) + " kg × " + top.reps + (same ? ". Mesma faixa de repetições, mesma carga." : ". Mesma força estimada, convertida para " + alvo.lo + " repetições, com 5% de margem.") });
   }
   // só mexe na carga com sinal confiável: sessão do irmão concluída e comparada com uma carga que já era dele (não a recém-trazida)
+  // em máquina de placas fixas a conversa só traz a carga: um salto de placa é grande demais para um sinal vindo de outro dia
   const nf = f.notes || {};
+  if ((MAQ[def.n] || {}).fixa) return st;
   if (!f.feito || f.pres.action === "elo" || f.pres.action === "new" || st.mode !== "normal" || nf.dor || nf.equip || nf.cansaco || nf.tempo || nf.ajuda || nf.fixa) return st;
   const ps = f.pres.sets, rs = [];
   f.sets.forEach((x, i) => { const q = ps[Math.min(i, ps.length - 1)]; if (!q || !(q.kg > 0)) return; rs.push(e1(x.kg, x.reps + (x.rir != null && x.rir !== "" ? +x.rir : mid(q.rir))) / e1(q.kg, q.tr + mid(q.rir))); });
@@ -1530,13 +1611,20 @@ function eloAjuste(def, st, w, records, weeks, presW, flags) {
   const r = rs.reduce((a, b) => a + b, 0) / rs.length, dif = st.load * (r - 1), up = dif > 0;
   if (Math.abs(dif) < def.inc * ELO_LIMIAR) return st;
   if ((up && st.action === "up") || (!up && st.action === "down")) return st; // a progressão do próprio exercício já mexeu na carga nesse sentido
+  // conferência pela força estimada: o que o irmão fez, convertido para o alvo daqui, tem de apontar para o mesmo lado. Sem isso, ir melhor que o previsto lá
+  // subiria a carga daqui mesmo quando a carga daqui já está acima do que aquela força sustenta
+  const t2 = wt(w), alvo2 = baseSets(def, t2)[0], longe2 = x => Math.abs(x.reps - alvo2.lo);
+  const top2 = f.sets.reduce((a, x) => longe2(x) < longe2(a) || (longe2(x) === longe2(a) && e1(x.kg, x.reps) < e1(a.kg, a.reps)) ? x : a);
+  const rir2 = top2.rir != null && top2.rir !== "" ? +top2.rir : mid(ps[Math.min(f.sets.indexOf(top2), ps.length - 1)].rir);
+  const conv = e1(top2.kg, top2.reps + rir2) / (1 + (alvo2.lo + mid(rirFor(def, alvo2.kind, t2))) / 30);
+  if ((up && conv < st.load + def.inc * ELO_LIMIAR) || (!up && conv > st.load - def.inc * ELO_LIMIAR)) return st;
   const L = Math.max(def.step, rnd(st.load + (up ? def.inc : -def.inc), def.step));
   return Object.assign({}, st, { prevLoad: st.load, load: L, action: up ? "up" : "down", elo: 1, why: "Conversa com o " + onde + ": lá você fez " + setsStr(f.sets) + " contra " + ps.filter(q => q.kg > 0).map(q => fmt(q.kg) + "×" + q.tr).join(", ") + " previsto (" + (up ? "+" : "−") + fmt(Math.abs(Math.round((r - 1) * 1000) / 10)) + "%). A carga daqui " + (up ? "sobe" : "desce") + " de " + fmt(st.load) + " para " + fmt(L) + " kg." });
 }
 // Replay de todas as semanas, do início até W
 function replay(records, W, curW, settings, sl) {
   const states = Object.fromEntries(EX.map(d => [d.k, initState(d, sl)]));
-  const weeks = {};
+  const weeks = {}, mq = MAQ = maqAll(records, settings);
   for (let w = 1; w <= W; w++) {
     const flags = { deload: false }, tw = wt(w);
     if (tw.leve) { const choice = (settings && settings["deload" + w]) || "sim"; flags.deload = choice !== "nao"; flags.deloadChoice = choice; }
@@ -1548,9 +1636,13 @@ function replay(records, W, curW, settings, sl) {
     }
     const pres = {};
     // em ordem de dia: cada exercício ouve primeiro o que o irmão fez antes dele
-    for (const d of EX_ORD) { states[d.k] = eloAjuste(d, states[d.k], w, records, weeks, pres, flags); pres[d.k] = prescribe(d, states[d.k], w, flags); }
+    for (const d of EX_ORD) {
+      const s0 = states[d.k]; let s1 = eloAjuste(d, s0, w, records, weeks, pres, flags);
+      if (s1 !== s0 && s1.action !== "elo") s1 = maqDir(d, s0.load, s1, mq);
+      states[d.k] = maqEntrada(d, s1, mq); pres[d.k] = prescribe(d, states[d.k], w, flags);
+    }
     weeks[w] = { pres, flags };
-    if (w < W) { const tn = wt(w + 1); for (const d of EX) states[d.k] = rephase(d, transition(d, states[d.k], pres[d.k], recOf(records, w, d), w, curW, noteFlags(records, w, d)), tw, tn); }
+    if (w < W) { const tn = wt(w + 1); for (const d of EX) { const rec = recOf(records, w, d); const sn = maqDir(d, states[d.k].load, rephase(d, transition(d, states[d.k], pres[d.k], rec, w, curW, maqNotas(d, noteFlags(records, w, d), pres[d.k], rec, mq)), tw, tn), mq); sn.snap = 0; states[d.k] = sn; } }
   }
   return weeks;
 }
@@ -1729,14 +1821,30 @@ function warmTime(plan, marks) {
 // Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min
 function pausaTxt(sec) { return sec % 60 ? fmtSec(sec) : sec / 60 + " min"; }
 // Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado
+// Ritmo real do treino: médias do que foi cronometrado (execução por série, segundos de descanso além do previsto, troca de exercício).
+// Com poucos tempos anotados, cada item fica null e o tempo previsto usa o padrão
+function ritmo(records) {
+  const bi = [], un = [], rest = [], tr = [];
+  Object.keys(records || {}).sort().forEach(id => { const doc = records[id]; if (!doc || !doc.ex) return;
+    Object.keys(doc.ex).forEach(k => { const d = EXBY[k], e = doc.ex[k]; if (!d || !e || e.st === "nao") return;
+      if (+e.trans >= 20 && +e.trans <= 900 && !d.junto) tr.push(+e.trans);
+      (e.sets || []).forEach(x => { if (!x || !(+x.reps > 0)) return;
+        if (+x.exec >= 10 && +x.exec <= 300) { if (x.lados) un.push(+x.exec + (+x.troca > 0 ? +x.troca : 0)); else bi.push(+x.exec); }
+        if (+x.desc >= 30 && +x.desc <= 600) rest.push(+x.desc - restSec(d)); }); }); });
+  // média (e não mediana): o tempo do treino é uma soma, então as séries e trocas mais demoradas também contam
+  const med = (a, min) => { if (a.length < min) return null; const v = a.slice(-RITMO_N); return v.reduce((x, y) => x + y, 0) / v.length; };
+  return { exec: med(bi, RITMO_MIN), uni: med(un, RITMO_MIN), rest: med(rest, RITMO_MIN), trans: med(tr, RITMO_MIN / 2), n: bi.length + un.length };
+}
 function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
-  let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0;
+  // previsto no seu ritmo (ou no padrão, enquanto houver poucos tempos anotados); os opcionais ficam fora do previsto e entram à parte
+  const R = ritmo(app.records), rx = R.rest || 0, trN = R.trans || TRANS_DEF;
+  let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0, optSec = 0, nPrev = 0, folga = 0;
   defs.forEach((d, idx) => {
-    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? 2 * EXEC_DEF + UNI_TROCA : EXEC_DEF;
+    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? (R.uni || 2 * EXEC_DEF + UNI_TROCA) : (R.exec || EXEC_DEF), tr = d.junto ? TRANS_JUNTO : trN;
     const plan = warmPlan(d) || [], warm = plan.length, wp = warmTime(plan);
-    prev += wp.serie + wp.antes + n * ex1 + (n - 1) * rs + (idx ? TRANS_DEF : 0);
-    aqPrev += wp.serie + wp.antes; aqN += warm;
+    const custo = wp.serie + wp.antes + n * ex1 + (n - 1) * Math.max(30, rs + rx);
+    if (d.opt) optSec += custo + tr; else { prev += custo + (nPrev ? tr : 0); nPrev++; aqPrev += wp.serie + wp.antes; aqN += warm; folga += (n - 1) * rx; }
     const e = doc && doc.ex ? doc.ex[d.k] : null;
     if (!e || e.st === "nao") return;
     const sets = (e.sets || []).filter(x => x && +x.reps > 0);
@@ -1749,16 +1857,16 @@ function dayTime(W, day, wk) {
     const aqS = (cron ? +e.aqT : wm.serie) + (cron && e.aqD != null ? +e.aqD : wm.antes);
     if (warm && !cron && aq == null) regEst = true;
     aqReg += aqS; aqDone += aq == null ? 0 : aq;
-    reg += aqS + (idx ? (+e.trans > 0 ? +e.trans : TRANS_DEF) : 0);
+    reg += aqS + (idx ? (+e.trans > 0 ? +e.trans : tr) : 0);
     for (let i = 0; i < m; i++) {
       const x = (e.sets || [])[i] || {};
-      if (+x.exec > 0) reg += +x.exec + (un ? (+x.troca > 0 ? +x.troca : UNI_TROCA) : 0); else { reg += ex1; regEst = true; }
-      if (i < m - 1) { if (+x.desc > 0) { reg += +x.desc; restSum += +x.desc; restN++; restPrevSum += rs; } else { reg += rs; regEst = true; } }
+      if (+x.exec > 0) reg += +x.exec + (un ? (+x.troca > 0 ? +x.troca : R.uni ? 0 : UNI_TROCA) : 0); else { reg += ex1; regEst = true; }
+      if (i < m - 1) { if (+x.desc > 0) { reg += +x.desc; restSum += +x.desc; restN++; restPrevSum += rs; } else { reg += Math.max(30, rs + rx); regEst = true; } }
       if (i < m - 1) { const r = recov(x, (e.sets || [])[i + 1], p.sets[Math.min(i, n - 1)], p.sets[Math.min(i + 1, n - 1)]); if (r != null) recs.push(r); }
     }
   });
   const c = doc && doc.cardio && doc.cardio.st === "feito" ? (doc.cardio.min || 0) : 0;
-  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c, aqPrev, aqReg, aqN, aqDone };
+  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c, aqPrev, aqReg, aqN, aqDone, ritmo: R, opt: Math.round(optSec / 60), folga: Math.round(folga / 60) };
 }
 // Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha
 function dayOrder(doc, day) {
@@ -2401,7 +2509,8 @@ const LEGEND = [
 ];
 // Textos dos botões "i": chave → [título, explicação]
 const GLOSS = {
-  elo: ["Conversa entre treinos", "<p>Quando o mesmo exercício aparece em mais de um dia (leg press na quarta e no sábado, panturrilha em quatro dias, crucifixo na segunda e na quinta), os dias trocam informação de carga. Cada um continua com a sua faixa de repetições e a sua progressão.</p><ul><li><b>Exercício ainda sem carga</b>: assim que você registra em um dia, os outros já aparecem com a carga. Mesma faixa de repetições: mesma carga. Faixa diferente: a carga é convertida pela força estimada, com 5% de margem.</li><li><b>Rendeu bem acima do previsto</b> (em média, o equivalente a 1 salto de carga ou mais): o próximo dia do mesmo exercício sobe 1 salto.</li><li><b>Ficou bem abaixo do previsto</b>: o próximo dia desce 1 salto.</li><li>Ficou perto do previsto: nada muda.</li></ul><p>A conversa vale do dia mais recente para o seguinte: da quarta para o sábado, e do sábado para a quarta da semana seguinte. Ela não soma com a progressão do próprio exercício no mesmo sentido, não age em semana leve e ignora o dia em que a observação fala em dor, cansaço, pressa, ajuda ou equipamento diferente.</p>"],
+  maquina: ["Cargas da máquina", "<p>Máquinas de placas fixas só têm certos pesos. O app guarda os pesos de cada máquina e passa a prever só o que existe nela.</p><ul><li><b>Automático</b>: toda carga que você anota entra na lista da máquina. Se você usar uma carga diferente da prevista, mas vizinha dela (até 10% de diferença, entre 2,5 e 7,5 kg), o app entende que era a placa disponível: segue dessa carga e não trata como queda. Quando as cargas anotadas ficam a distâncias de placa (de 4 a 15 kg), a máquina é reconhecida sozinha como de placas fixas; com três cargas igualmente espaçadas, o app deduz as placas vizinhas.</li><li><b>Placas fixas</b>: a progressão passa a ser sempre a de máquina de placas. Mantém a placa, busca +1 repetição por série até o topo da faixa e só então sobe para a placa seguinte. Ficar abaixo da faixa logo depois de subir não derruba a carga.</li><li><b>Carga livre</b>: anilhas e halteres que você monta como quiser. O app volta a usar os saltos da ficha e não arredonda para cargas já usadas.</li></ul><p>No campo <b>Placas desta máquina</b> você pode digitar todos os pesos de uma vez. As cargas previstas, o back-off, a subida de carga e o ajuste entre séries passam a cair nessas placas.</p><p>A lista vale para o mesmo exercício em todos os dias em que ele aparece.</p>"],
+  elo: ["Conversa entre treinos", "<p>Quando o mesmo exercício aparece em mais de um dia (leg press na quarta e no sábado, panturrilha em quatro dias, crucifixo na segunda e na quinta), os dias trocam informação de carga. Cada um continua com a sua faixa de repetições e a sua progressão.</p><ul><li><b>Exercício ainda sem carga</b>: assim que você registra em um dia, os outros já aparecem com a carga. Mesma faixa de repetições: mesma carga. Faixa diferente: a carga é convertida pela força estimada, com 5% de margem.</li><li><b>Rendeu bem acima do previsto</b> (em média, o equivalente a 1 salto de carga ou mais): o próximo dia do mesmo exercício sobe 1 salto.</li><li><b>Ficou bem abaixo do previsto</b>: o próximo dia desce 1 salto.</li><li>Ficou perto do previsto: nada muda.</li></ul><p>A conversa vale do dia mais recente para o seguinte: da quarta para o sábado, e do sábado para a quarta da semana seguinte. Em máquina de placas fixas ela só traz a carga, sem subir nem descer de placa. Ela não soma com a progressão do próprio exercício no mesmo sentido, não age em semana leve e ignora o dia em que a observação fala em dor, cansaço, pressa, ajuda ou equipamento diferente.</p>"],
   rir: ["RIR (repetições em reserva)", "<p>Quantas repetições você ainda conseguiria fazer, com boa técnica, no momento em que parou a série.</p><ul><li><b>RIR 0</b>: falha, não sairia mais nenhuma.</li><li><b>RIR 2</b>: parou com 2 sobrando.</li></ul><p>O app usa o RIR que você informa para ajustar as séries seguintes e a próxima semana. Se deixar em branco, ele assume o RIR previsto.</p>"],
   faixa: ["Faixa de repetições", "<p>O mínimo e o máximo de repetições da série (ex.: 8–10).</p><ul><li>Abaixo do mínimo: a carga estava pesada demais.</li><li>No máximo em todas as séries: a carga sobe na semana seguinte.</li></ul>"],
   alvo: ["Alvo de repetições", "<p>Quantas repetições buscar nesta semana em cada série, dentro da faixa. Sobe 1 por semana quando você progride e volta ao mínimo da faixa quando a carga aumenta (dupla progressão).</p><p class=\"eg\">Ex.: alvo 9 / 8 / 8 = buscar 9 reps na 1ª série e 8 nas outras duas.</p>"],
@@ -2420,7 +2529,7 @@ const GLOSS = {
   descanso: ["Descanso", "<p>Tempo entre as séries do exercício. Acima de ~90 s não há diferença clara de hipertrofia; nos compostos pesados, 2–3 min ajudam a manter a carga.</p>"],
   comp: ["Compostos", "<p>Exercícios que movem mais de uma articulação e muita carga: chest press, peito 45°, puxadas, remadas, leg press, stiff, elevação pélvica, desenvolvimento.</p><p>Ficam com um pouco mais de repetições sobrando (RIR) para controlar a fadiga.</p>"],
   iso: ["Isoladores e core", "<p>Exercícios de uma articulação (crucifixo, extensora, flexora, elevações, roscas, tríceps) e os de abdômen.</p><p>Podem ir mais perto da falha (RIR 0–1) com pouco risco.</p>"],
-  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é a prioridade até janeiro: 16 séries na semana 1, 17 na semana 2 e 18 a partir da semana 3.</p>"],
+  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é a prioridade até janeiro: 16 séries na semana 1, 17 na semana 2 e 18 a partir da semana 3.</p><p>Por ser a prioridade, o abdômen abre o treino (no sábado, vem logo depois do stiff): é feito descansado e não fica para o fim, onde o tempo costuma acabar.</p>"],
   alavanca: ["Alavanca da semana", "<p>O que a semana prioriza para progredir: repetições, carga ou volume. Muda de semana para semana (periodização ondulatória), o que dá variação sem perder a direção.</p><p>A tabela mostra também o RIR alvo de cada tipo de série.</p>"],
   carga: ["Carga da semana", "<p>A carga prevista para as séries de trabalho.</p><ul><li><b>▲ verde</b>: subiu, porque você bateu o topo da faixa.</li><li><b>▼ laranja</b>: desceu, porque ficou abaixo do previsto ou passou 2 semanas sem fazer.</li><li><b>●</b>: mesma carga.</li></ul>"],
   series: ["Séries × repetições", "<p>Quantas séries e a faixa de repetições de cada uma. Nos exercícios com série pesada aparece <b>1 × 6–8 + 2 × 8–10</b>: 1 pesada e 2 de back-off.</p><p><b>+1 série</b> ou <b>−1 série</b> mostram mudanças da semana: core extra, deload ou festas.</p>"],
@@ -2539,7 +2648,7 @@ Object.assign(GLOSS, {
   pf_cinturaMeta: ["Cintura na meta (estimativa)", "<p>Projeção pela regra prática de ~1 cm de cintura a menos por kg de gordura perdido. A cintura real depende de onde o seu corpo guarda gordura.</p>" + FITA],
   medidastempo: ["Medidas ao longo do tempo", "<p>Escolha a medida para ver a evolução. O tracejado é a referência: na cintura, metade da altura; nas outras, a proporção clássica pelo punho (estimativa).</p><p>No cutting, cintura caindo com braço e coxa estáveis indica perda de gordura com músculo preservado.</p>"],
   festas: ["Semana de festas", "<p>As semanas do Natal e do Ano-Novo: 1/3 a menos de séries com a mesma carga, para manter a força com menos tempo e recuperação. O core mantém o volume. O resultado dessas semanas não muda a progressão.</p>"],
-  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é prioridade nesta ficha: 16 séries na semana 1, 17 na semana 2 e 18 a partir da semana 3.</p>"],
+  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é prioridade nesta ficha: 16 séries na semana 1, 17 na semana 2 e 18 a partir da semana 3.</p><p>Por ser a prioridade, o abdômen abre o treino (no sábado, vem logo depois do stiff).</p>"],
   pesoprev: ["Peso previsto hoje", "<p>O peso que o plano espera para hoje, interpolado entre o início e o fim de cada fase.</p>"],
   gorduratempo: ["Gordura corporal ao longo do tempo", "<p>Suas medidas de gordura (%) e a meta definida na aba Objetivo. Meça sempre nas mesmas condições: a bioimpedância oscila alguns pontos de um dia para outro.</p>"],
   indice: ["Índice de força", "<p>Média da força estimada (1RM) dos exercícios feitos na semana, em porcentagem do 1RM das cargas máximas do seu Perfil. 100% = suas marcas.</p><p>Em déficit, ficar estável já é bom resultado. Queda de mais de ~5% por 2 semanas pede atenção a sono, dieta e deload.</p>"],
@@ -2568,7 +2677,9 @@ GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercíc
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
-GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries de 40 s, descansos previstos, 1:30 entre exercícios e o cardio do dia.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
+GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos, trocas de exercício e o cardio do dia. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
+GLOSS.ritmo = ["Seu ritmo", "<p>O app mede como você treina de verdade e usa isso para prever o tempo do dia.</p><ul><li><b>Execução</b>: média do tempo cronometrado de uma série.</li><li><b>Descanso</b>: quantos segundos, em média, você descansa além do previsto na ficha (30 s acima = 2:30 onde a ficha pede 2:00).</li><li><b>Troca de exercício</b>: média do intervalo entre um exercício e o seguinte.</li></ul><p>Vale a partir de 8 tempos anotados de cada tipo (4 trocas) e olha os 60 mais recentes. Se o descanso real passa do previsto em mais de 10 s, o painel mostra quantos minutos isso custa no treino.</p>"];
+GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O painel <b>Tempo do treino</b> mostra quantos minutos os opcionais somam e se cabem no limite.</p>"];
 GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um exercício e começar o seguinte: trocar de máquina, ajustar o banco, beber água. O tracejado marca 1:30, o valor usado quando você não registra.</p><p>Entra no tempo registrado do treino.</p>"];
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
@@ -2773,11 +2884,12 @@ function renderDay(wk) {
   if (app.dayKey !== dk) { if (app.dayKey) animSwap(dv); app.dayKey = dk; }
 }
 // Aquecimento: séries leves antes da primeira válida (não contam para volume nem progressão)
-const WARM_BY = { "Tríceps": ["Peito", "Ombro anterior"], "Ombro lateral": ["Peito", "Ombro anterior"], "Bíceps": ["Costas"], "Ombro posterior": ["Costas"], "Glúteos": ["Quadríceps", "Posteriores de coxa"], "Adutores": ["Quadríceps", "Glúteos"], "Lombar": ["Posteriores de coxa", "Glúteos"], "Peito": ["Ombro anterior"] };
+const WARM_BY = { "Panturrilha": ["Quadríceps", "Posteriores de coxa", "Glúteos"], "Tríceps": ["Peito", "Ombro anterior"], "Ombro lateral": ["Peito", "Ombro anterior"], "Bíceps": ["Costas"], "Ombro posterior": ["Costas"], "Glúteos": ["Quadríceps", "Posteriores de coxa"], "Adutores": ["Quadríceps", "Glúteos"], "Lombar": ["Posteriores de coxa", "Glúteos"], "Peito": ["Ombro anterior"] };
 // Séries de aquecimento do exercício: [fração da carga, repetições]; nenhuma se o músculo já foi aquecido antes
 function warmPlan(d) {
-  if (d.t === "core" || d.bw || d.opt) return null;
+  if (d.bw || d.opt) return null;
   const day = dayEx(d.d), idx = day.indexOf(d);
+  if (d.t === "core") return idx === 0 ? [[0.5, 10]] : null;
   const before = day.slice(0, idx).filter(x => x.t !== "core");
   if (!before.length) return d.sc === "top" || d.lo <= 8 ? [[0.5, 8], [0.7, 5], [0.85, 2]] : [[0.5, 10], [0.75, 5]];
   const groups = before.map(x => x.m);
@@ -2868,7 +2980,16 @@ function dayTimeHtml(W, day, wk) {
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * REST_CURTO ? " · curto" : t.restAvg > t.restPrev * REST_LONGO ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
     tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") +
     (t.aqN ? tile("Aquecimento", t.nReg ? "~" + Math.max(1, Math.round(t.aqReg / 60)) + " min" : "—", t.aqDone + " de " + t.aqN + " séries marcadas · previsto " + Math.round(t.aqPrev / 60) + " min, com pausas", "aquecimento") : "") + "</div>" +
+    ritmoHtml(t, totPrev, max) +
     (ord.length >= 2 ? '<p class="lead" style="margin-top:8px">Ordem feita' + infoBtn("ordem") + ": " + ord.map(([k]) => esc(exShort(EXBY[k]))).join(" → ") + (trocas ? " · " + trocas + " fora da ordem da ficha" : " · igual à ficha") + "</p>" : "") + wakeHtml();
+}
+// Linha do ritmo real, abaixo dos quadros de tempo: o que o cronômetro mediu, quanto custa descansar além do previsto e quanto somam os opcionais
+function ritmoHtml(t, totPrev, max) {
+  const R = t.ritmo, tem = R.exec || R.rest != null || R.trans, sobra = max - totPrev, out = [];
+  if (tem) out.push("<b>Seu ritmo</b>" + infoBtn("ritmo") + ": " + [R.exec ? "execução " + fmtSec(R.exec) : "", R.rest != null ? "descanso " + (Math.abs(R.rest) < 5 ? "no previsto" : fmtSec(Math.abs(R.rest)) + (R.rest > 0 ? " acima do previsto" : " abaixo do previsto")) : "", R.trans ? "troca de exercício " + fmtSec(R.trans) : ""].filter(Boolean).join(" · ") + ". O previsto já usa esses tempos.");
+  if (R.rest && R.rest > RITMO_FOLGA && t.folga > 0) out.push("Descansar só o previsto economiza cerca de " + t.folga + " min neste treino.");
+  if (t.opt) out.push("Opcionais" + infoBtn("opcional") + ": +" + t.opt + " min se fizer todos" + (sobra >= t.opt ? " (cabem no limite)." : sobra > 0 ? " (sobram " + sobra + " min no limite)." : " (não cabem no limite)."));
+  return out.length ? '<p class="lead" style="margin-top:8px">' + out.join(" ") + "</p>" : "";
 }
 // Atualiza o painel de tempo sem redesenhar a tela
 function updateDayTime() { const el = document.getElementById("dayTime"); if (!el || app.tab !== "semana") return; const wk = computeWeeks(app.week)[app.week]; el.innerHTML = dayTimeHtml(app.week, app.day, wk); }
@@ -2945,7 +3066,7 @@ function exCard(d, p, entry, W) {
     return '<tr><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">Fora da prescrição</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '"></td><td></td></tr>';
   }).join("") : "";
   return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
-    '<div class="card-h"><div><h3>' + esc(d.n) + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
+    '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' + infoBtn("opcional") : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
     (p.why ? '<div class="why">' + esc(p.why) + (p.elo ? infoBtn("elo") : "") + "</div>" : "") + ordemLine(p) +
     ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
@@ -3520,10 +3641,29 @@ function uniAgg(s) {
   const kg = uniKg(L, w); if (kg != null) s.kg = kg;
   s.reps = +x.reps; s.rir = x.rir != null && x.rir !== "" ? +x.rir : null; s.parc = Array.isArray(x.parc) ? x.parc.slice() : []; s.fraco = se != null && sd != null ? w : null;
 }
+// Bloco "Cargas da máquina" do cartão: as placas conhecidas, o tipo (automático, placas fixas, carga livre) e o campo para declarar as placas
+function maqBoxHtml(d) {
+  if (d.bw) return "";
+  const cfg = ((app.settings || {}).maq || {})[d.n] || {}, tipo = cfg.tipo || "auto", x = MAQ[d.n], kn = x ? x.known : [];
+  const f1 = v => fmt(Math.round(v * 10) / 10), lista = a => a.map(f1).join(" · ");
+  const curto = kn.length > 5 ? f1(kn[0]) + " a " + f1(kn[kn.length - 1]) + " kg (" + kn.length + " cargas)" : lista(kn) + " kg";
+  const res = tipo === "livre" ? "carga livre" : kn.length ? curto + (x.fixa ? " · placas fixas" : "") : "ainda sem cargas anotadas";
+  const det = tipo === "livre" || !kn.length ? "" : '<p class="maqd">Cargas guardadas: <b>' + lista(kn) + " kg</b>." + (x.ded.length ? " Deduzidas pelo intervalo entre elas: " + lista(x.ded) + " kg." : "") + (x.fixa && tipo === "auto" ? " Reconhecida como máquina de placas fixas." : "") + "</p>";
+  return '<details class="maq" data-maqk="' + d.k + '"' + (app.maqOpen === d.k ? " open" : "") + '><summary><span class="rl">Cargas da máquina</span> <span class="muted">' + res + "</span></summary>" + det +
+    '<div class="unitg">' + [["auto", "Automático"], ["fixa", "Placas fixas"], ["livre", "Carga livre"]].map(([v, t]) => '<button type="button" class="rbtn" aria-pressed="' + (tipo === v) + '" data-maq="' + d.k + "|" + v + '">' + t + "</button>").join("") + infoBtn("maquina") + "</div>" +
+    '<label class="maqp">Placas desta máquina, em kg (separe com espaço)<input type="text" inputmode="decimal" autocomplete="off" data-maqp="' + d.k + '" value="' + esc((cfg.placas || []).map(v => fmt(v)).join(" ")) + '" placeholder="ex.: 58,5 65,3 72 78,8 85,5"></label></details>';
+}
+// Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias)
+function maqSet(k, campo, valor) {
+  const d = EXBY[k]; if (!d) return;
+  app.settings.maq = Object.assign({}, app.settings.maq || {}); const c = Object.assign({}, app.settings.maq[d.n] || {});
+  if (campo === "tipo") c.tipo = valor; else c.placas = String(valor).replace(/,/g, ".").split(/[^0-9.]+/).map(Number).filter(v => v > 0).sort((a, b) => a - b);
+  app.settings.maq[d.n] = c; app.maqOpen = k; saveSettings(); renderWeek();
+}
 // Botões Bilateral / Unilateral do cartão
 function uniToggleHtml(d) {
   const u = isUni(d);
-  return '<div class="unitg"><span class="rl">Execução' + infoBtn("unilateral") + '</span><button type="button" class="rbtn" aria-pressed="' + !u + '" data-uni="' + d.k + '|0">Bilateral</button><button type="button" class="rbtn" aria-pressed="' + u + '" data-uni="' + d.k + '|1">Unilateral (cada lado)</button></div>';
+  return maqBoxHtml(d) + '<div class="unitg"><span class="rl">Execução' + infoBtn("unilateral") + '</span><button type="button" class="rbtn" aria-pressed="' + !u + '" data-uni="' + d.k + '|0">Bilateral</button><button type="button" class="rbtn" aria-pressed="' + u + '" data-uni="' + d.k + '|1">Unilateral (cada lado)</button></div>';
 }
 // Diferença entre os lados no exercício de hoje
 function uniLine(entry) {
@@ -4736,6 +4876,7 @@ document.addEventListener("click", ev => {
   if (b.dataset.share) { shareAct(b.dataset.share); return; }
   if (b.dataset.fotodel) { fotoDel(b); return; }
   if (b.dataset.wake) { try { localStorage.setItem(WAKE_KEY, b.dataset.wake); } catch (e) { } wakeSync(); updateDayTime(); return; }
+  if (b.dataset.maq) { const [mk, mv] = b.dataset.maq.split("|"); maqSet(mk, "tipo", mv); return; }
   if (b.dataset.uni) { const [uk, uv] = b.dataset.uni.split("|"); app.settings.uni = Object.assign({}, app.settings.uni || {}); app.settings.uni[uk] = uv === "1"; saveSettings(); renderWeek(); return; }
   if (b.dataset.unidif) {
     const [dk, di, dv] = b.dataset.unidif.split("|");
@@ -4813,8 +4954,11 @@ document.addEventListener("input", ev => {
     const nh = document.getElementById("nh-day"); if (nh) nh.textContent = noteEffect(dayFlags(doc), "dia");
   }
 });
+// Bloco "Cargas da máquina": lembra qual está aberto, para continuar aberto depois de salvar (o evento toggle não sobe, por isso a captura)
+document.addEventListener("toggle", ev => { const el = ev.target; if (el && el.dataset && el.dataset.maqk) { if (el.open) app.maqOpen = el.dataset.maqk; else if (app.maqOpen === el.dataset.maqk) app.maqOpen = null; } }, true);
 // Campos de escolha (listas e caixas de marcar)
 document.addEventListener("change", ev => { const el = ev.target;
+  if (el.dataset && el.dataset.maqp) { maqSet(el.dataset.maqp, "placas", el.value); return; }
   if (el.dataset && el.dataset.djnt != null) { djNotaSave(el); return; }
   if (el.dataset && el.dataset.fotoin) { fotoAdd(el.files && el.files[0], el.dataset.fotoin, el.dataset.fotoin === "treino" ? "fotoMsg" : "fotoEvoMsg"); el.value = ""; return; }
   if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); return; }
