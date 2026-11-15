@@ -22,7 +22,7 @@
    1 Cores e fontes · 2 Base e cabeçalho · 3 Cardio · 4 Telas, avisos e barra da semana · 5 Cartão do exercício e séries
    6 Botões · 7 Campos, painéis, números, tabelas e gráficos · 8 Barra de salvar, botão "i" e pesagem · 9 Janela de explicação
    10 Perfil e Objetivo · 11 Aquecimento, Feito, intervalo e blocos de observação · 12 Cronômetro · 13 Unilateral
-   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso */
+   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso · 19 Dieta: diário de alimentos */
 /* ---- 1. Cores e fontes (tema claro; o escuro vem logo abaixo) ---- */
 :root {
   --bg: #eef1f4;
@@ -103,7 +103,7 @@ section.view.on { display: block; }
 .targets { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
 .tchip { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 13px; }
 .tchip b { font-weight: 700; }
-.days { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 8px 0 14px; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 8px 0 14px; }
 .daybtn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 2px; cursor: pointer; text-align: center; }
 .daybtn .dn { font-size: 12px; color: var(--muted); display: block; }
 .daybtn .dl { font-family: var(--font-display); font-weight: 700; font-size: 20px; display: block; }
@@ -573,6 +573,76 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .rmtab tr.vals td { padding-top: 4px; }
 .rmtab th:nth-child(-n+2), .rmtab tr.vals td:nth-child(-n+2) { width: 30%; }
 .rmtab tr.grp td { font-family: var(--font-display); font-weight: 700; font-size: 16px; background: var(--surface-2); padding-top: 8px; }
+/* ---- 19. Dieta: diário de alimentos ---- */
+.dtmenu { display: flex; gap: 2px; padding: 3px; margin: 0 0 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.dtmenu button { flex: 1 1 0; min-height: 40px; padding: 6px 4px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+.dtmenu button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 4px rgba(0, 0, 0, .14); }
+.dtnav { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
+.dtnav input[type="date"] { flex: 1 1 130px; min-width: 0; min-height: 40px; }
+.dtnav .rbtn { min-width: 40px; min-height: 40px; font-size: 20px; }
+.dtnav .dtwk { flex: 1 1 auto; text-align: center; font-variant-numeric: tabular-nums; }
+.dtdw { color: var(--muted); font-size: 14px; }
+.dttot { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); margin: 0 0 12px; }
+.dtk1 { font-size: 15px; margin-bottom: 6px; }
+.dtk1 b { font-family: var(--font-display); font-size: 30px; font-variant-numeric: tabular-nums; }
+.dts { font-weight: 700; font-size: 13px; white-space: nowrap; }
+.dtbar { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--neutral-bar) 35%, transparent); overflow: hidden; }
+.dtbar.g { height: 10px; }
+.dtbar i { display: block; height: 100%; border-radius: 999px; transition: width .25s; }
+.dtmac { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.dtmac span { display: block; font-size: 12px; color: var(--muted); }
+.dtmac b { display: block; font-size: 14px; font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.dtref { padding: 10px 0; border-top: 1px solid var(--line); }
+.dtrh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.dtrh > span { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+.dtref .dtbar { margin-bottom: 6px; }
+.dtit { display: grid; grid-template-columns: minmax(0, 1fr) 62px auto auto 36px; align-items: center; gap: 6px; padding: 4px 0; font-size: 14px; }
+.dtit .dtn { overflow-wrap: anywhere; }
+.dtit .dtq { width: 62px; min-height: 36px; padding: 2px 4px; text-align: right; }
+.dtit .dtu { color: var(--muted); font-size: 12px; }
+.dtit .dtk { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 13px; }
+.dtx { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.dtx0 { width: 36px; }
+.dtadd { margin-top: 6px; padding: 10px; border: 1px solid var(--accent); border-radius: 12px; background: var(--surface-2); }
+.dtadd input[type="search"] { width: 100%; min-height: 42px; }
+#dtRes { margin: 6px 0; max-height: 300px; overflow-y: auto; }
+.dtr { display: block; width: 100%; text-align: left; padding: 7px 8px; margin: 0 0 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.dtr b { display: block; font-size: 14px; font-weight: 600; }
+.dtr > span { display: block; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.dtr[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.dtvz { margin: 4px 0; font-size: 13px; }
+.dtpk { margin: 8px 0; padding: 8px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); }
+.dtpk2 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; font-size: 13px; }
+.dtpk2 input { width: 84px; min-height: 40px; text-align: right; }
+#dtPrev { color: var(--muted); font-variant-numeric: tabular-nums; }
+.dtf4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.dtmsg { margin: 6px 0; font-size: 13px; color: var(--down); }
+.dtmsg:empty { display: none; }
+.dtper { display: flex; gap: 6px; align-items: center; margin: 0 0 10px; }
+.dtc { padding: 8px 0; border-top: 1px solid var(--line); }
+.dtb2 { display: grid; grid-template-columns: 64px minmax(0, 1fr) 52px; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.dtb2 b { text-align: right; color: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+.dtb2 .dtbar { height: 10px; }
+.dtfim { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.5; }
+.dtdias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 0 0 4px; }
+.dtd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; min-width: 0; }
+.dtdn { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.dtdv { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.dtds { font-size: 10px; font-weight: 700; }
+.dtdb { position: relative; width: 60%; height: 84px; border-radius: 4px; background: color-mix(in srgb, var(--neutral-bar) 22%, transparent); }
+.dtdb .v { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 4px 4px 0 0; }
+.dtdb .m { position: absolute; left: -22%; right: -22%; height: 2px; background: var(--ink); z-index: 1; }
+.dtleg { font-size: 12px; margin: 0 0 10px; }
+.dtt { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.dtt th, .dtt td { padding: 6px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.dtt th:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); font-weight: 600; }
+.dtt thead th { color: var(--muted); font-weight: 600; font-size: 12px; }
+.dtt tr.tot th, .dtt tr.tot td { font-weight: 700; }
+.dtcfg { margin-top: 14px; padding-top: 8px; border-top: 1px solid var(--line); }
+.dtcfg summary { cursor: pointer; padding: 6px 0; font-size: 14px; }
+.dtcr { display: grid; grid-template-columns: minmax(0, 1fr) 64px auto 36px; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
+.dtcr input { min-height: 38px; min-width: 0; }
+.dtcr > span { white-space: nowrap; }
 .login { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .login.hide { display: none; }
 .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px 18px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
@@ -786,6 +856,12 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     <div id="fotosEvo"></div>
   </section>
 
+  <!-- Tela: Dieta (meta do dia e diário de alimentos com a tabela TACO) -->
+  <section class="view" id="v-dieta">
+    <div id="dtFase"></div>
+    <div class="panel"><h2>Diário de alimentos<button class="info" type="button" data-info="dt_diario" aria-label="Explicar: diário de alimentos">i</button></h2><div id="dtBox"></div></div>
+  </section>
+
   <!-- Tela: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames) -->
   <section class="view" id="v-diario">
     <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
@@ -951,7 +1027,8 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 //  23. Hormônios e peptídeos ........ referência para estudo, substâncias, aplicações, calendário, controle de doses, curva e exames
 //  24. Edição e salvamento ........... cliques, digitação e gravação
 //  25. Conexão com o armazenamento
-//  26. Partida
+//  26. Dieta ......................... diário de alimentos com a tabela TACO: registro, por refeição e por dia da semana
+//  27. Partida
 //
 // COMO OS DADOS SÃO GUARDADOS (um documento por item):
 //   semanas/w01-A ..... um dia de treino: { semana, dia, nota, tags, cardio, ex: { A1: {...} } }
@@ -961,7 +1038,9 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 //         lados = cada lado no unilateral · dif = lado mais difícil · trans = intervalo antes do exercício (s)
 //   corpo/2026-11-10 .. pesagem e medidas do dia
 //   meta/perfil ....... Perfil e Objetivo
-//   meta/ajustes ...... deload escolhido, palavras-chave criadas e exercícios unilaterais
+//   meta/ajustes ...... deload escolhido, palavras-chave criadas, exercícios unilaterais, cargas das máquinas e refeições da dieta
+//   dieta/2026-11-15 .. alimentos do dia: { data, itens: [{ r: refeição, a: alimento, n: nome, q: quantidade, u: "g" | "porção", kcal, p, c, g }] }
+//   dieta/meus ........ alimentos fora da tabela cadastrados por você
 //   O cronômetro em andamento fica só no aparelho (parâmetro CLK_KEY).
 //
 // COMO UMA MUDANÇA PERCORRE O APP:
@@ -1039,7 +1118,8 @@ const DAYS = [
   { id: "C1", dow: 2, nome: "Qua", titulo: "C1 · Pernas (quadríceps) e core" },
   { id: "D", dow: 3, nome: "Qui", titulo: "D · Ombros, peito (moderado) e core" },
   { id: "E", dow: 4, nome: "Sex", titulo: "E · Costas (moderado) e braços" },
-  { id: "C2", dow: 5, nome: "Sáb", titulo: "C2 · Pernas (posterior e glúteo) e core" }
+  { id: "C2", dow: 5, nome: "Sáb", titulo: "C2 · Pernas (posterior e glúteo) e core" },
+  { id: "DOM", dow: 6, nome: "Dom", titulo: "Domingo · atividade livre", livre: true } // sem musculação: só para registrar cardio ou outra atividade
 ];
 // Monta um exercício da ficha: k = código, d = dia, n = nome, m = músculo. O resto tem padrão: sc ("st" séries iguais, "top" 1 pesada + back-offs), sets, faixa lo–hi, kg inicial, inc e mic (salto e microcarga), step (arredondamento), t (comp, iso ou core), rest, obs, bw (peso do corpo), opt (opcional)
 function ex(k, d, n, m, o) { return Object.assign({ k, d, n, m, sc: "st", sets: 3, lo: 8, hi: 10, kg: null, inc: 2.5, mic: 1.25, step: 0.5, t: "iso", rest: "2 min", obs: "", bw: false, opt: false, junto: false, semPlus: false, desde: 1 }, o); }
@@ -1094,6 +1174,8 @@ const EX = [
 // Exercício pelo código (EXBY.A1)
 const EXBY = Object.fromEntries(EX.map(e => [e.k, e]));
 // Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase
+// Conta para o dia e a semana: não é opcional e já estava na ficha naquela semana (exercício novo não vira pendência nas semanas anteriores)
+function contaEx(d, w) { return !d.opt && w >= d.desde; }
 const CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
 // Exercícios de um dia, na ordem da ficha
 function dayEx(day) { return EX.filter(e => e.d === day); }
@@ -1843,12 +1925,13 @@ function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
   // previsto no seu ritmo (ou no padrão, enquanto houver poucos tempos anotados); os opcionais ficam fora do previsto e entram à parte
   const R = ritmo(app.records), rx = R.rest || 0, trN = R.trans || TRANS_DEF;
-  let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0, optSec = 0, nPrev = 0, folga = 0;
+  const livre = !!(DAYS.find(x => x.id === day) || {}).livre; // dia livre: sem aquecimento geral nem cardio previsto
+  let prev = livre ? 0 : AQUEC_SEC, reg = livre ? 0 : AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0, optSec = 0, nPrev = 0, folga = 0;
   defs.forEach((d, idx) => {
     const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? (R.uni || 2 * EXEC_DEF + UNI_TROCA) : (R.exec || EXEC_DEF), tr = d.junto === true ? TRANS_JUNTO : d.junto ? Math.min(+d.junto, trN) : trN;
     const plan = warmPlan(d) || [], warm = plan.length, wp = warmTime(plan);
     const custo = wp.serie + wp.antes + n * ex1 + (n - 1) * Math.max(30, rs + rx);
-    if (d.opt) optSec += custo + tr; else { prev += custo + (nPrev ? tr : 0); nPrev++; aqPrev += wp.serie + wp.antes; aqN += warm; folga += (n - 1) * rx; }
+    if (W < d.desde) { } else if (d.opt) optSec += custo + tr; else { prev += custo + (nPrev ? tr : 0); nPrev++; aqPrev += wp.serie + wp.antes; aqN += warm; folga += (n - 1) * rx; }
     const e = doc && doc.ex ? doc.ex[d.k] : null;
     if (!e || e.st === "nao") return;
     const sets = (e.sets || []).filter(x => x && +x.reps > 0);
@@ -1870,7 +1953,7 @@ function dayTime(W, day, wk) {
     }
   });
   const c = doc && doc.cardio && doc.cardio.st === "feito" ? (doc.cardio.min || 0) : 0;
-  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: cardioPlan(W).min, cardio: c, aqPrev, aqReg, aqN, aqDone, ritmo: R, opt: Math.round(optSec / 60), folga: Math.round(folga / 60) };
+  return { prev: Math.round(prev / 60), reg: Math.round(reg / 60), regEst, nReg, restAvg: restN ? restSum / restN : null, restPrev: restN ? restPrevSum / restN : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, cardioPrev: livre ? 0 : cardioPlan(W).min, cardio: c, aqPrev, aqReg, aqN, aqDone, ritmo: R, opt: Math.round(optSec / 60), folga: Math.round(folga / 60) };
 }
 // Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha
 function dayOrder(doc, day) {
@@ -2191,7 +2274,7 @@ function computePlan(pf) {
   R.faltaPerfil = fp; R.faltaObj = fo;
   return R;
 }
-// Medida atual: registro mais recente do Corpo e dieta que tenha o campo; senão, o perfil
+// Medida atual: registro mais recente da aba Corpo que tenha o campo; senão, o perfil
 function medidaAtual(pf, k) {
   const ent = Object.values(app.body || {}).filter(x => x && x.data && num(x[k]) > 0).sort((a, b) => a.data < b.data ? 1 : -1);
   if (ent.length) return { v: num(ent[0][k]), src: "registro de " + dm(ent[0].data) };
@@ -2401,7 +2484,7 @@ function renderObjResult() {
   if (!R.ok) { el.innerHTML = '<div class="panel"><h2>Seu plano' + infoBtn("pf_calc") + '</h2><p class="lead">Preencha pelo menos o peso na aba Perfil para calcular o plano.</p><div class="row-btns"><a class="btn" href="#perfil">Ir para o Perfil</a></div></div>'; return; }
   const sign = v => (v > 0 ? "+" : "") + fmt(v);
   let h = '<div class="panel"><h2>Seu plano para o objetivo' + infoBtn("pf_calc") + "</h2>";
-  if (pf.usaPlanoAnual) h += '<p class="lead">Você segue o plano anual de fases: Corpo e dieta e Plano usam ele. Os números abaixo são o cálculo do objetivo, para comparar.</p>';
+  if (pf.usaPlanoAnual) h += '<p class="lead">Você segue o plano anual de fases: Dieta, Corpo e Plano usam ele. Os números abaixo são o cálculo do objetivo, para comparar.</p>';
   h += '<div class="tiles">' +
     tile("Calorias da fase", R.kcal.toLocaleString("pt-BR") + " kcal", OBJ_NOME[R.obj], "kcal") +
     tile("Ritmo previsto", R.kgSem ? sign(R.kgSem) + " kg/sem" : "estável", R.kgSem ? fmt(Math.round(Math.abs(R.kgSem) / R.peso * 1000) / 10) + "% do peso por semana" : "manutenção", "ritmo") +
@@ -2426,7 +2509,7 @@ function renderObjResult() {
     F.map(f => "<tr><td>" + esc(f.label) + "</td><td>" + esc(f.fase) + "</td><td>" + esc(f.kcal) + "</td><td>" + f.p + " / " + f.c + " / " + f.g + "</td><td>" + fmt(f.w0) + (f.w1 !== f.w0 ? " → " + fmt(f.w1) : "") + "</td></tr>").join("") + "</tbody></table></div>";
   if (Array.isArray(pf.prioridades) && pf.prioridades.length) h += '<p class="lead">Prioridades: ' + esc(pf.prioridades.join(", ")) + ".</p>";
   if (R.faltaObj.length) h += '<p class="lead">Para afinar, preencha: ' + esc(R.faltaObj.join(", ")) + ".</p>";
-  h += '<div class="row-btns"><a class="btn primary" href="#semana">Ver a semana de treino</a><a class="btn" href="#corpo">Corpo e dieta</a><a class="btn" href="#plano">Plano</a></div></div>';
+  h += '<div class="row-btns"><a class="btn primary" href="#semana">Ver a semana de treino</a><a class="btn" href="#dieta">Dieta</a><a class="btn" href="#corpo">Corpo</a><a class="btn" href="#plano">Plano</a></div></div>';
   el.innerHTML = h;
 }
 // Salva Perfil e Objetivo, registra peso e medidas do dia e recalcula tudo
@@ -2641,7 +2724,7 @@ Object.assign(GLOSS, {
   pf_ffm: ["Massa magra", "<p>Peso menos a gordura: músculo, ossos, órgãos e água. Num cutting bem feito ela fica estável enquanto o peso cai.</p>"],
   pf_bmr: ["Metabolismo basal", "<p>Gasto em repouso absoluto. As calorias da dieta não devem ficar abaixo dele.</p>"],
   pf_agua: ["Água", "<p>Cerca de 35 ml por kg por dia, mais o que perder no suor do treino.</p>"],
-  pf_medidas: ["Medidas e referências", "<ul><li><b>Atual</b>: o registro mais recente da aba Corpo e dieta; sem registro, a medida do Perfil.</li><li><b>Referência</b>: faixas de saúde e proporções estéticas.</li><li><b>Sua meta</b>: o que você definiu na aba Objetivo.</li><li><b>Na meta</b>: projeção para o peso-alvo.</li></ul><p>O que tem a etiqueta <b>estimativa</b> vem de fórmulas, não de medição: serve de norte, não de regra.</p>"],
+  pf_medidas: ["Medidas e referências", "<ul><li><b>Atual</b>: o registro mais recente da aba Corpo; sem registro, a medida do Perfil.</li><li><b>Referência</b>: faixas de saúde e proporções estéticas.</li><li><b>Sua meta</b>: o que você definiu na aba Objetivo.</li><li><b>Na meta</b>: projeção para o peso-alvo.</li></ul><p>O que tem a etiqueta <b>estimativa</b> vem de fórmulas, não de medição: serve de norte, não de regra.</p>"],
   pf_imc: ["IMC", "<p>Peso ÷ altura². Faixa saudável: 18,5–24,9.</p><p>Em quem treina, o IMC pode ficar alto por músculo e não por gordura. Por isso o app olha também cintura e % de gordura.</p>"],
   pf_ffmi: ["FFMI (estimativa)", "<p>Massa magra ÷ altura², o “IMC do músculo”. O valor ajustado corrige para 1,80 m de altura.</p><ul><li>18–20: média de quem treina pouco.</li><li>20–23: bem treinado.</li><li>Acima de ~25: raro sem hormônios.</li></ul>"],
   pf_rca: ["Cintura ÷ altura", "<p>Abaixo de 0,50 indica menor risco cardiometabólico, para homens e mulheres. Em outras palavras: cintura menor que metade da altura.</p>"],
@@ -2684,6 +2767,10 @@ GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força esti
 GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos, trocas de exercício e o cardio do dia. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
 GLOSS.ritmo = ["Seu ritmo", "<p>O app mede como você treina de verdade e usa isso para prever o tempo do dia.</p><ul><li><b>Execução</b>: média do tempo cronometrado de uma série.</li><li><b>Descanso</b>: quantos segundos, em média, você descansa além do previsto na ficha (30 s acima = 2:30 onde a ficha pede 2:00).</li><li><b>Troca de exercício</b>: média do intervalo entre um exercício e o seguinte.</li></ul><p>Vale a partir de 8 tempos anotados de cada tipo (4 trocas) e olha os 60 mais recentes. Se o descanso real passa do previsto em mais de 10 s, o painel mostra quantos minutos isso custa no treino.</p>"];
 GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O painel <b>Tempo do treino</b> mostra quantos minutos os opcionais somam e se cabem no limite.</p>"];
+GLOSS.domingo = ["Domingo: dia livre", "<p>Não há musculação prevista no domingo.</p><ul><li>Se fizer cardio ou outra atividade, registre o tempo (e a distância, se tiver) e toque em <b>Feito</b>.</li><li>O que for registrado entra no cardio da semana.</li><li>Não registrar nada não conta como falta.</li></ul>"];
+GLOSS.dt_diario = ["Diário de alimentos", "<p>Registre o que comeu em cada refeição. O app soma calorias e macros e compara com a meta do dia.</p><ul><li><b>Tabela</b>: TACO (Tabela Brasileira de Composição de Alimentos, 4ª edição, NEPA/UNICAMP), com 597 alimentos. Os valores valem para <b>100 g da parte comestível</b>.</li><li><b>Cru ou cozido</b>: escolha a linha que corresponde ao que você pesou. Arroz cru e arroz cozido têm calorias muito diferentes.</li><li><b>Quantidade</b>: em gramas. Dá para corrigir depois, direto na linha do alimento.</li><li><b>Dentro</b>: até 10% acima ou abaixo da meta. Fora disso aparece <b>acima</b> ou <b>abaixo</b>.</li><li><b>O que a tabela não tem</b>: produtos de marca e suplementos. Na 4ª edição, o leite de vaca integral e o desnatado UHT também estão sem composição. Use <b>Fora da tabela</b> com os valores do rótulo.</li></ul>"];
+GLOSS.dt_proposto = ["Proposto por refeição", "<p>O plano define a meta de calorias do dia. O proposto de cada refeição é essa meta vezes a parte da refeição: almoço com 35% de 2.450 kcal dá cerca de 860 kcal.</p><ul><li>As partes começam de um padrão pelo número de refeições do Perfil. Ajuste em <b>Refeições e proposto</b>, no fim da aba.</li><li><b>Por refeição</b> usa a média dos dias com registro no período escolhido.</li><li><b>Por dia</b> mostra cada dia da semana contra a meta daquele dia, e a tabela de refeição por dia.</li></ul>"];
+GLOSS.dt_fora = ["Alimento fora da tabela", "<p>Para produtos de marca, suplementos e refeições prontas.</p><ul><li><b>100 g</b>: copie do rótulo os valores de 100 g (ou converta) e depois informe os gramas que comeu.</li><li><b>1 porção inteira</b>: informe os valores da porção (um scoop, uma fatia, a refeição livre) e depois quantas porções.</li></ul><p>O alimento fica guardado e aparece na busca marcado como <b>seu</b>.</p>"];
 GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um exercício e começar o seguinte: trocar de máquina, ajustar o banco, beber água. O tracejado marca 1:30, o valor usado quando você não registra.</p><p>Entra no tempo registrado do treino.</p>"];
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
@@ -2853,7 +2940,8 @@ function dayBtns(W) {
 // Situação do dia: feito, parcial, não feito ou pendente
 function dayStatus(w, day) {
   const doc = app.records[docId(w, day)];
-  const defs = EX.filter(e => e.d === day && !e.opt);
+  const defs = EX.filter(e => e.d === day && contaEx(e, w));
+  if ((DAYS.find(x => x.id === day) || {}).livre) return doc && doc.cardio && doc.cardio.st === "feito" ? { s: "✓", t: "Atividade registrada" } : { s: "–", t: "Dia livre" };
   if (!doc) return { s: "○", t: "Pendente" };
   const f = defs.filter(e => doc.ex[e.k] && doc.ex[e.k].st === "feito").length;
   const n = defs.filter(e => doc.ex[e.k] && doc.ex[e.k].st === "nao").length;
@@ -2866,20 +2954,20 @@ function dayStatus(w, day) {
 function renderDay(wk) {
   const W = app.week, day = app.day;
   const D = DAYS.find(d => d.id === day);
-  const defs = dayEx(day);
   const doc = app.records[docId(W, day)];
+  const defs = dayEx(day).filter(d => W >= d.desde || (doc && doc.ex && doc.ex[d.k] && doc.ex[d.k].st));
   const counts = {};
   defs.forEach(d => { const a = wk.pres[d.k].action; counts[a] = (counts[a] || 0) + 1; });
   let h = '<div class="dayhead"><h2>' + esc(D.titulo) + '</h2><span class="meta">' + D.nome + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + infoBtn("dias") + "</span></div>";
-  h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
-  h += '<div class="row-btns" style="margin:0 0 12px"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button>' + infoBtn("diatodo") + "</div>";
-  h += '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
+  if (!D.livre) h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
+  if (!D.livre) h += '<div class="row-btns" style="margin:0 0 12px"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button>' + infoBtn("diatodo") + "</div>";
+  h += D.livre ? '<div class="warm day"><b>Dia livre</b>: sem musculação prevista. Se fizer cardio ou outra atividade, registre abaixo e toque em Feito. Entra no cardio da semana e não conta como treino faltando.' + infoBtn("domingo") + "</div>" : '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
   app.dayOrd = dayOrder(doc, day);
   defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
   h += cardioCard(W, day);
-  h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
+  if (!D.livre) h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
   h += fotoDiaHtml(W, day);
-  h += '<div class="row-btns" style="margin:4px 0 14px"><a class="btn" href="#resumo">📋 Ver o resumo do dia</a></div>';
+  if (!D.livre) h += '<div class="row-btns" style="margin:4px 0 14px"><a class="btn" href="#resumo">📋 Ver o resumo do dia</a></div>';
   h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
   const dv = document.getElementById("dayView");
   dv.innerHTML = h;
@@ -3095,6 +3183,7 @@ function renderNext() {
   if (nx.flags.deload) h += '<div class="banner">⤓ A semana ' + N + " será de deload: metade das séries, mesma carga.</div>";
   h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
   for (const day of DAYS) {
+    if (day.livre) continue;
     h += '<div class="panel"><h2>' + esc(day.nome + " · " + day.titulo) + "</h2>";
     for (const d of dayEx(day.id)) {
       const a = cur.pres[d.k], b = nx.pres[d.k];
@@ -3141,12 +3230,12 @@ function weekAgg(weeks, lastW) {
     let setsP = 0, setsD = 0, ton = 0, done = 0, planned = 0; const pcts = [], acts = {}, musD = {}, musP = {};
     for (const d of EX) {
       const p = weeks[w].pres[d.k];
-      if (!d.opt) { planned++; setsP += p.sets.length; musP[d.m] = (musP[d.m] || 0) + p.sets.length; }
+      if (contaEx(d, w)) { planned++; setsP += p.sets.length; musP[d.m] = (musP[d.m] || 0) + p.sets.length; }
       const g = actGroup(p.action); acts[g] = (acts[g] || 0) + 1;
       const r = recOf(app.records, w, d);
       if (r && r.st === "feito") {
         const ss = (r.sets || []).filter(x => x && +x.reps > 0 && x.kg != null && x.kg !== "");
-        if (!d.opt) done++;
+        if (contaEx(d, w)) done++;
         setsD += ss.length; musD[d.m] = (musD[d.m] || 0) + ss.length;
         ton += ss.reduce((acc, x) => acc + (+x.kg) * (+x.reps), 0);
         const base = markOf(app.perfil || {}, d);
@@ -3531,20 +3620,20 @@ function cardioCard(W, day) {
   const pl = cardioPlan(W);
   const e = cardioEff(c, pl);
   const est = cardioKcal(e.min, e.incl, e.vel, lastWeight(), e.tipo);
-  const legDay = day === "C1" || day === "C2";
+  const legDay = day === "C1" || day === "C2", livre = !!(DAYS.find(x => x.id === day) || {}).livre;
   const tipo = c.tipo || pl.tipo;
   const tbtn = (v, label) => '<button class="btn small" data-cardiotipo="' + v + '" aria-pressed="' + (tipo === v) + '">' + label + "</button>";
   return '<article class="card' + (c.st === "feito" ? " done" : c.st === "nao" ? " skip" : "") + '" style="--act:var(--deload)" id="card-cardio">' +
-    '<div class="card-h"><div><h3>Cardio na esteira' + infoBtn("cardiodia") + '</h3><div class="mus">' + (legDay ? "Dia de perna: faça depois da musculação" : "Depois da musculação ou em outro horário") + "</div></div></div>" +
+    '<div class="card-h"><div><h3>' + (livre ? "Atividade do dia" : "Cardio na esteira") + infoBtn(livre ? "domingo" : "cardiodia") + '</h3><div class="mus">' + (livre ? "Cardio ou outra atividade, no horário que quiser" : legDay ? "Dia de perna: faça depois da musculação" : "Depois da musculação ou em outro horário") + "</div></div></div>" +
     '<div class="row-btns" style="margin-top:8px" role="group" aria-label="Tipo de cardio">' + tbtn("caminhada", "Caminhada") + tbtn("corrida", "Corrida") + infoBtn("cardiotipo") + "</div>" +
-    '<div class="pres"><span class="vchip">Previsto: <b>' + pl.min + " min</b> · " + pl.tipo + " · " + fmt(pl.incl) + "% · " + fmt(pl.vel) + " km/h · pace " + paceFmt(60 / pl.vel) + (pl.vezes < 6 ? " · " + pl.vezes + "x na semana" : "") + infoBtn("cardio") + "</span></div>" +
+    (livre ? '<div class="pres"><span class="vchip">Sem meta: dia livre</span></div>' : "") + '<div class="pres"' + (livre ? ' style="display:none"' : "") + '><span class="vchip">Previsto: <b>' + pl.min + " min</b> · " + pl.tipo + " · " + fmt(pl.incl) + "% · " + fmt(pl.vel) + " km/h · pace " + paceFmt(60 / pl.vel) + (pl.vezes < 6 ? " · " + pl.vezes + "x na semana" : "") + infoBtn("cardio") + "</span></div>" +
     '<table class="sets"><thead><tr><th>Tempo</th><th>Distância (km)</th><th>Inclinação (%)</th><th>Velocidade (km/h)</th></tr></thead><tbody><tr>' +
     '<td><input type="text" autocomplete="off" aria-label="Tempo mostrado pela esteira, em minutos ou minutos:segundos" data-cardio="tempo" value="' + esc(c.tempo != null ? c.tempo : (c.min != null ? c.min : "")) + '" placeholder="' + pl.min + ':00"></td>' +
     '<td><input type="number" inputmode="decimal" step="0.01" aria-label="Distância mostrada pela esteira em km" data-cardio="km" value="' + (c.km == null ? "" : c.km) + '" placeholder="' + fmt(Math.round(pl.vel * pl.min / 60 * 100) / 100) + '"></td>' +
     '<td><input type="number" inputmode="decimal" step="0.5" aria-label="Inclinação da esteira em porcentagem" data-cardio="incl" value="' + (c.incl == null ? "" : c.incl) + '" placeholder="' + fmt(pl.incl) + '"></td>' +
     '<td><input type="number" inputmode="decimal" step="0.1" aria-label="Velocidade da esteira em km/h" data-cardio="vel" value="' + (c.vel == null ? "" : c.vel) + '" placeholder="' + fmt(pl.vel) + '"></td></tr></tbody></table>' +
     '<div class="cout" id="cardioOut" aria-live="polite">' + cardioOutHtml(c, pl) + "</div>" +
-    '<div class="row-btns"><button class="btn ok" data-cardiost="feito" aria-pressed="' + (c.st === "feito") + '">✓ Feito</button><button class="btn no" data-cardiost="nao" aria-pressed="' + (c.st === "nao") + '">✗ Não fiz</button></div>' +
+    '<div class="row-btns"><button class="btn ok" data-cardiost="feito" aria-pressed="' + (c.st === "feito") + '">✓ Feito</button><button class="btn no" data-cardiost="nao" aria-pressed="' + (c.st === "nao") + '"' + (livre ? ' style="display:none"' : "") + '>✗ Não fiz</button></div>' +
     '<textarea data-cardio="nota" rows="1" placeholder="Observação do cardio (segurou no corrimão? cansaço?)">' + esc(c.nota || "") + "</textarea></article>";
 }
 // Pace automático: tempo ÷ distância; sem distância, pela velocidade digitada; sem nada, o previsto
@@ -3726,7 +3815,7 @@ function clkRecord(W, k, i, field, sec, side) {
   touch(def.d, W);
 }
 // Exercícios do dia que ainda faltam (fora o atual)
-function clkLeft(W, day, k) { const doc = getDoc(W, day, false); return EX.filter(d => d.d === day && !d.opt && d.k !== k && !(doc && doc.ex[d.k] && (doc.ex[d.k].st === "feito" || doc.ex[d.k].st === "nao"))).length; }
+function clkLeft(W, day, k) { const doc = getDoc(W, day, false); return EX.filter(d => d.d === day && contaEx(d, W) && d.k !== k && !(doc && doc.ex[d.k] && (doc.ex[d.k].st === "feito" || doc.ex[d.k].st === "nao"))).length; }
 // Saída de som do aviso (criada no primeiro toque, exigência dos navegadores)
 let clkAudio = null;
 // Libera o som no primeiro toque (exigência dos navegadores)
@@ -4028,15 +4117,21 @@ function kgTxt(x) { return Math.round(x).toLocaleString("pt-BR") + " kg"; }
 function dayStats(W, day) {
   const weeks = computeWeeks(Math.min(W + 1, MAXW)), wk = weeks[W], nx = W < MAXW ? weeks[W + 1] : null;
   const doc = getDoc(W, day, false), rows = sumEx(W, day, wk, nx), t = dayTime(W, day, wk);
-  const req = rows.filter(r => !r.d.opt || r.st === "feito" || r.sets.length);
+  // opcional só entra na conta quando foi feito; começado e não terminado soma as séries feitas, sem virar pendência
+  const req = rows.filter(r => contaEx(r.d, W) || r.st === "feito"), opc = rows.filter(r => !contaEx(r.d, W) && r.st !== "feito").reduce((a, r) => a + r.sets.length, 0);
   const feitos = req.filter(r => r.st === "feito"), nao = req.filter(r => r.st === "nao"), pend = req.filter(r => r.st !== "feito" && r.st !== "nao");
-  const setsDone = req.reduce((a, r) => a + r.sets.length, 0), setsPrev = req.filter(r => r.st !== "nao").reduce((a, r) => a + r.n, 0);
+  const setsDone = req.reduce((a, r) => a + r.sets.length, 0) + opc, setsPrev = req.filter(r => r.st !== "nao").reduce((a, r) => a + r.n, 0) + opc;
   const tonR = rows.filter(r => r.tonPrev != null), ton = tonR.reduce((a, r) => a + r.ton, 0), tonPrev = tonR.reduce((a, r) => a + r.tonPrev, 0);
   const pr = rows.filter(r => r.perf != null), perf = pr.length ? pr.reduce((a, r) => a + r.perf, 0) / pr.length : null;
   return { doc, rows, t, req, feitos, nao, pend, setsDone, setsPrev, ton, tonPrev, pr, perf, c: doc && doc.cardio || {}, pl: cardioPlan(W) };
 }
 // Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício
 function daySummaryHtml(W, day) {
+  const livre = DAYS.find(x => x.id === day && x.livre);
+  if (livre) { // dia livre: só a atividade registrada, sem análise de treino
+    const c0 = (app.records[docId(W, day)] || {}).cardio || {}, ok = c0.st === "feito";
+    return '<div class="panel"><h2>' + esc(livre.titulo) + '</h2><p class="lead">' + (ok ? "Atividade registrada: " + fmt(Math.round(c0.min || 0)) + " min" + (c0.km > 0 ? " · " + fmt(c0.km) + " km" : "") + ". Entra no cardio da semana." : "Dia livre, sem musculação prevista. Nada registrado.") + '</p><div class="row-btns"><button type="button" class="btn" data-go="semana|' + W + "|" + day + '">' + (ok ? "Abrir o registro" : "Registrar atividade") + "</button></div></div>";
+  }
   const { doc, rows, t, req, feitos, nao, pend, setsDone, setsPrev, ton, tonPrev, pr, perf, c, pl } = dayStats(W, day), max = maxMin();
   const dd = DAYS.find(x => x.id === day);
   const dateStr = isoDate(dayDate(W, day)), past = dateStr <= todayStr();
@@ -4098,7 +4193,7 @@ function daySummaryHtml(W, day) {
   if (!dir.length) dir.push(["up", "Tudo dentro do planejado. Mantenha o ritmo: a próxima carga de cada exercício está logo abaixo."]);
   h += '<h2>Direcionamentos</h2><ul class="dirs">' + dir.map(([k, x]) => '<li class="d-' + k + '">' + x + "</li>").join("") + "</ul>";
   // exercício por exercício
-  h += '<h2>Exercício por exercício</h2><div class="sxl">' + rows.filter(r => !r.d.opt || r.st || r.sets.length).map(r => {
+  h += '<h2>Exercício por exercício</h2><div class="sxl">' + rows.filter(r => contaEx(r.d, W) || r.st || r.sets.length).map(r => {
     const stc = r.st === "feito" ? "ok" : r.st === "nao" ? "no" : r.sets.length ? "mid" : "";
     const stt = r.st === "feito" ? "feito" : r.st === "nao" ? "não feito" : r.sets.length ? "em aberto" : "sem registro";
     const bar = r.perf == null ? "" : '<div class="pbar" role="img" aria-label="Desempenho ' + pctTxt(r.perf) + ' contra o previsto"><span class="' + (r.perf >= 0 ? "pos" : "neg") + '" style="--v:' + Math.min(1, Math.abs(r.perf) / 0.1).toFixed(3) + '"></span></div><span class="pv ' + (r.perf >= PERF_ACIMA ? "up" : r.perf <= PERF_ABAIXO ? "lo" : "") + '">' + pctTxt(r.perf) + "</span>";
@@ -4128,24 +4223,24 @@ function renderResumo() {
 function todayPlan() {
   const t = todayStr(), W = weekOfDateStr(t);
   if (W < 1 || W > MAXW) return { W: Math.max(1, Math.min(MAXW, W)), day: null };
-  const d = DAYS.find(x => isoDate(dayDate(W, x.id)) === t);
+  const d = DAYS.find(x => !x.livre && isoDate(dayDate(W, x.id)) === t);
   return { W, day: d ? d.id : null };
 }
 // Card de hoje e números principais
 function homeToday() {
   const tp = todayPlan(), W = tp.W;
-  const doneDays = DAYS.filter(d => { const doc = app.records[docId(W, d.id)]; return doc && doc.ex && EX.filter(e => e.d === d.id && !e.opt).every(e => doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")); }).length;
+  const doneDays = DAYS.filter(d => { const doc = app.records[docId(W, d.id)]; return !d.livre && doc && doc.ex && EX.filter(e => e.d === d.id && contaEx(e, W)).every(e => doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")); }).length;
   let h;
   if (tp.day) {
-    const dd = DAYS.find(x => x.id === tp.day), doc = app.records[docId(W, tp.day)], defs = EX.filter(e => e.d === tp.day && !e.opt);
+    const dd = DAYS.find(x => x.id === tp.day), doc = app.records[docId(W, tp.day)], defs = EX.filter(e => e.d === tp.day && contaEx(e, W));
     const n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length, p = defs.length ? n / defs.length : 0;
     const c = doc && doc.cardio;
     h = '<div class="hm-today"><div class="hm-ring" style="--p:' + p.toFixed(3) + '"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19"/><circle class="f" cx="22" cy="22" r="19" pathLength="100" stroke-dasharray="' + (p * 100).toFixed(1) + ' 100"/></svg><b>' + n + "/" + defs.length + '</b></div><div class="hm-tt"><div class="k">Hoje · ' + dd.nome + " " + dayDate(W, tp.day).getUTCDate() + "/" + MES[dayDate(W, tp.day).getUTCMonth()] + "</div><div class=\"t\">" + esc(dd.titulo) + '</div><div class="s">' + (n === defs.length ? "Treino concluído" + (c && c.st === "feito" ? " · cardio feito" : " · falta o cardio") : n ? n + " de " + defs.length + " exercícios feitos" : "Ainda não começou") + "</div></div></div>" +
       '<div class="row-btns"><button type="button" class="btn primary" data-go="semana|' + W + "|" + tp.day + '">' + (n ? "Continuar o treino" : "Começar o treino de hoje") + "</button>" + (n ? '<button type="button" class="btn" data-go="resumo|' + W + "|" + tp.day + '">Ver o resumo</button>' : "") + "</div>";
   } else {
-    const nxt = DAYS[0];
+    const nxt = DAYS[0], dom = DAYS.find(x => x.livre && isoDate(dayDate(W, x.id)) === todayStr()), feitoDom = dom && ((app.records[docId(W, dom.id)] || {}).cardio || {}).st === "feito";
     h = '<div class="hm-today"><div class="hm-ring rest"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19"/></svg><b>☾</b></div><div class="hm-tt"><div class="k">Hoje</div><div class="t">Dia de descanso</div><div class="s">Recuperar também é treino. Próximo: ' + esc(nxt.titulo) + "</div></div></div>" +
-      '<div class="row-btns"><button type="button" class="btn primary" data-go="semana|' + Math.min(MAXW, W + (todayStr() > isoDate(dayDate(W, "C2")) ? 1 : 0)) + '|A">Ver o próximo treino</button><button type="button" class="btn" data-go="resumo|' + W + '|C2">Resumo de sábado</button></div>';
+      '<div class="row-btns">' + (dom ? '<button type="button" class="btn" data-go="semana|' + W + "|" + dom.id + '">' + (feitoDom ? "Atividade de hoje registrada ✓" : "Registrar atividade de hoje") + "</button>" : "") + '<button type="button" class="btn primary" data-go="semana|' + Math.min(MAXW, W + (todayStr() > isoDate(dayDate(W, "C2")) ? 1 : 0)) + '|A">Ver o próximo treino</button><button type="button" class="btn" data-go="resumo|' + W + '|C2">Resumo de sábado</button></div>';
   }
   const R = app.plan || {}, pf = app.perfil || {}, peso = lastWeight();
   const alvo = R.alvo, dAlvo = pf.dataAlvo ? Date.parse(pf.dataAlvo + "T00:00:00Z") : null, dias = dAlvo ? Math.ceil((dAlvo - Date.parse(todayStr() + "T00:00:00Z")) / 864e5) : null;
@@ -4161,7 +4256,7 @@ function homeLogo() {
 // Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia.
 function hojeFill() {
   const tp = todayPlan(), btn = document.getElementById("hojeBtn");
-  if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => !e.opt) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
+  if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => contaEx(e, tp.W)) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
   const pop = document.getElementById("hoje"); if (!pop || pop.classList.contains("hide")) return;
   if (!(document.activeElement && pop.contains(document.activeElement) && document.activeElement.matches("input"))) document.getElementById("hojeBody").innerHTML = homeToday();
 }
@@ -4184,7 +4279,8 @@ function renderHome() {
     ["resumo", "Resumo do dia", "A análise depois do treino: o que rendeu, o que ficou abaixo e o que fazer na próxima. Vira imagem para compartilhar."],
     ["proxima", "Próxima semana", "O que sobe, o que segura e o motivo de cada mudança, antes de você chegar na academia."],
     ["progresso", "Progresso", "Força estimada, volume e tempo de treino semana a semana, exercício por exercício."],
-    ["corpo", "Corpo e dieta", "Peso, gordura e medidas, com calorias, macros e cardio ajustados à meta."],
+    ["dieta", "Dieta", "Diário de alimentos com a tabela TACO: calorias de cada refeição e de cada dia contra a meta."],
+    ["corpo", "Corpo", "Peso, gordura e medidas, com calorias, macros e cardio ajustados à meta."],
     ["diario", "Hormônios e peptídeos", "Controle de substâncias, doses e exames, com calendário, curva pela meia-vida e dados de bula para estudo."],
     ["perfil", "Perfil e objetivo", "Seus dados, medidas, cargas máximas e onde você quer chegar."],
     ["plano", "Plano e regras", "Como o app decide cada carga: tudo explicado, sem caixa-preta."]
@@ -4242,6 +4338,7 @@ function render() {
   else if (app.tab === "progresso") renderProgress();
   else if (app.tab === "corpo") { renderGoal(); const fe = document.getElementById("fotosEvo"); fe.innerHTML = fotoEvoHtml(); fotoFill(fe); }
   else if (app.tab === "diario") renderDiario();
+  else if (app.tab === "dieta") renderDieta();
   else if (app.tab === "perfil") renderPerfilTab();
   else if (app.tab === "objetivo") renderObjTab();
   else renderPlan();
@@ -4260,7 +4357,7 @@ const NAVG = [
   { id: "inicio", t: "Início", tabs: [["inicio", "Início"]], ic: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>' },
   { id: "treino", t: "Treino", tabs: [["semana", "Semana"], ["proxima", "Próxima semana"]], ic: '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12"/>' },
   { id: "resumo", t: "Resumo", tabs: [["resumo", "Resumo do dia"]], ic: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 11l2 2 4-4M8.5 17h7"/>' },
-  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo e dieta"], ["diario", "Hormônios"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
+  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["dieta", "Dieta"], ["corpo", "Corpo"], ["diario", "Hormônios"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
   { id: "voce", t: "Você", tabs: [["perfil", "Perfil"], ["objetivo", "Objetivo"], ["plano", "Plano e regras"]], ic: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>' }
 ];
 // Todas as abas
@@ -4329,7 +4426,7 @@ async function putDoc(coll, id, data, msgEl) {
 }
 // Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos
 function subExtras(db, P) {
-  [["diario", ["diario"]], ["fotos", ["corpo", "semana", "resumo"]]].forEach(([c, tabs]) => db.collection(P + c).onSnapshot(snap => {
+  [["diario", ["diario"]], ["dieta", ["dieta"]], ["fotos", ["corpo", "semana", "resumo"]]].forEach(([c, tabs]) => db.collection(P + c).onSnapshot(snap => {
     const o = {}; for (const d of snap.docs) { const v = d.data(); if (v && !v.apagado) o[d.id] = v; }
     app[c] = o; if (tabs.includes(app.tab)) render();
   }, () => { }));
@@ -5155,7 +5252,268 @@ async function startSession(session) {
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !app.dirty.size && !app.saving.size) db.load().then(ok).catch(() => { }); });
 }
 
-// ===== 26. PARTIDA =====
+// ===== 26. DIETA: diário de alimentos com a tabela TACO =====
+// Tabela TACO (Tabela Brasileira de Composição de Alimentos, 4ª edição revisada e ampliada, NEPA/UNICAMP, 2011).
+// Cada linha vale para 100 g de parte comestível: [nome, grupo, kcal, proteína g, carboidrato g, gordura g, fibra g]. kcal −1: a tabela não traz a composição desse alimento
+const TACO_CAT = ["Cereais e derivados","Verduras, hortaliças e derivados","Frutas e derivados","Gorduras e óleos","Pescados e frutos do mar","Carnes e derivados","Leite e derivados","Bebidas (alcoólicas e não alcoólicas)","Ovos e derivados","Produtos açucarados","Miscelâneas","Outros alimentos industrializados","Alimentos preparados","Leguminosas e derivados","Nozes e sementes"];
+const TACO = [["Arroz, integral, cozido",0,124,2.6,25.8,1.0,2.7],["Arroz, integral, cru",0,360,7.3,77.5,1.9,4.8],["Arroz, tipo 1, cozido",0,128,2.5,28.1,0.2,1.6],["Arroz, tipo 1, cru",0,358,7.2,78.8,0.3,1.6],["Arroz, tipo 2, cozido",0,130,2.6,28.2,0.4,1.1],["Arroz, tipo 2, cru",0,358,7.2,78.9,0.3,1.7],["Aveia, flocos, crua",0,394,13.9,66.6,8.5,9.1],["Biscoito, doce, maisena",0,443,8.1,75.2,12.0,2.1],["Biscoito, doce, recheado com chocolate",0,472,6.4,70.5,19.6,3.0],["Biscoito, doce, recheado com morango",0,471,5.7,71.0,19.6,1.5],["Biscoito, doce, wafer, recheado de chocolate",0,502,5.6,67.5,24.7,1.8],["Biscoito, doce, wafer, recheado de morango",0,513,4.5,67.4,26.4,0.8],["Biscoito, salgado, cream cracker",0,432,10.1,68.7,14.4,2.5],["Bolo, mistura para",0,419,6.2,84.7,6.1,1.7],["Bolo, pronto, aipim",0,324,4.4,47.9,12.7,0.7],["Bolo, pronto, chocolate",0,410,6.2,54.7,18.5,1.4],["Bolo, pronto, coco",0,333,5.7,52.3,11.3,1.1],["Bolo, pronto, milho",0,311,4.8,45.1,12.4,0.7],["Canjica, branca, crua",0,358,7.2,78.1,1.0,5.5],["Canjica, com leite integral",0,112,2.4,23.6,1.2,1.2],["Cereais, milho, flocos, com sal",0,370,7.3,80.8,1.6,5.3],["Cereais, milho, flocos, sem sal",0,363,6.9,80.4,1.2,1.8],["Cereais, mingau, milho, infantil",0,394,6.4,87.3,1.1,3.2],["Cereais, mistura para vitamina, trigo, cevada e aveia",0,381,8.9,81.6,2.1,5.0],["Cereal matinal, milho",0,365,7.2,83.8,1.0,4.1],["Cereal matinal, milho, açúcar",0,377,4.7,88.8,0.7,2.1],["Creme de arroz, pó",0,386,7.0,83.9,1.2,1.1],["Creme de milho, pó",0,333,4.8,86.1,1.6,3.7],["Curau, milho verde",0,78,2.4,13.9,1.6,0.5],["Curau, milho verde, mistura para",0,402,2.2,79.8,13.4,2.5],["Farinha, de arroz, enriquecida",0,363,1.3,85.5,0.3,0.6],["Farinha, de centeio, integral",0,336,12.5,73.3,1.8,15.5],["Farinha, de milho, amarela",0,351,7.2,79.1,1.5,5.5],["Farinha, de rosca",0,371,11.4,75.8,1.5,4.8],["Farinha, de trigo",0,360,9.8,75.1,1.4,2.3],["Farinha, láctea, de cereais",0,415,11.9,77.8,5.8,1.9],["Lasanha, massa fresca, cozida",0,164,5.8,32.5,1.2,1.6],["Lasanha, massa fresca, crua",0,220,7.0,45.1,1.3,1.6],["Macarrão, instantâneo",0,436,8.8,62.4,17.2,5.6],["Macarrão, trigo, cru",0,371,10.0,77.9,1.3,2.9],["Macarrão, trigo, cru, com ovos",0,371,10.3,76.6,2.0,2.3],["Milho, amido, cru",0,361,0.6,87.1,0.0,0.7],["Milho, fubá, cru",0,353,7.2,78.9,1.9,4.7],["Milho, verde, cru",0,138,6.6,28.6,0.6,3.9],["Milho, verde, enlatado, drenado",0,98,3.2,17.1,2.4,4.6],["Mingau tradicional, pó",0,373,0.6,89.3,0.4,0.9],["Pamonha, barra para cozimento, pré-cozida",0,171,2.6,30.7,4.8,2.4],["Pão, aveia, forma",0,343,12.4,59.6,5.7,6.0],["Pão, de soja",0,309,11.3,56.5,3.6,5.7],["Pão, glúten, forma",0,253,12.0,44.1,2.7,2.5],["Pão, milho, forma",0,292,8.3,56.4,3.1,4.3],["Pão, trigo, forma, integral",0,253,9.4,49.9,3.7,6.9],["Pão, trigo, francês",0,300,8.0,58.6,3.1,2.3],["Pão, trigo, sovado",0,311,8.4,61.5,2.8,2.4],["Pastel, de carne, cru",0,289,10.7,42.0,8.8,1.0],["Pastel, de carne, frito",0,388,10.1,43.8,20.1,1.0],["Pastel, de queijo, cru",0,308,9.9,45.9,9.6,1.1],["Pastel, de queijo, frito",0,422,8.7,48.1,22.7,0.9],["Pastel, massa, crua",0,310,6.9,57.4,5.5,1.4],["Pastel, massa, frita",0,570,6.0,49.3,40.9,1.3],["Pipoca, com óleo de soja, sem sal",0,448,9.9,70.3,15.9,14.3],["Polenta, pré-cozida",0,103,2.3,23.3,0.3,2.4],["Torrada, pão francês",0,377,10.5,74.6,3.3,3.4],["Abóbora, cabotian, cozida",1,48,1.4,10.8,0.7,2.5],["Abóbora, cabotian, crua",1,39,1.7,8.4,0.5,2.2],["Abóbora, menina brasileira, crua",1,14,0.6,3.3,0.0,1.2],["Abóbora, moranga, crua",1,12,1.0,2.7,0.1,1.7],["Abóbora, moranga, refogada",1,29,0.4,6.0,0.8,1.5],["Abóbora, pescoço, crua",1,24,0.7,6.1,0.1,2.3],["Abobrinha, italiana, cozida",1,15,1.1,3.0,0.2,1.6],["Abobrinha, italiana, crua",1,19,1.1,4.3,0.1,1.4],["Abobrinha, italiana, refogada",1,24,1.1,4.2,0.8,1.4],["Abobrinha, paulista, crua",1,31,0.6,7.9,0.1,2.6],["Acelga, crua",1,21,1.4,4.6,0.1,1.1],["Agrião, cru",1,17,2.7,2.3,0.2,2.1],["Aipo, cru",1,19,0.8,4.3,0.1,1.0],["Alface, americana, crua",1,9,0.6,1.7,0.1,1.0],["Alface, crespa, crua",1,11,1.3,1.7,0.2,1.8],["Alface, lisa, crua",1,14,1.7,2.4,0.1,2.3],["Alface, roxa, crua",1,13,0.9,2.5,0.2,2.0],["Alfavaca, crua",1,29,2.7,5.2,0.5,4.1],["Alho, cru",1,113,7.0,23.9,0.2,4.3],["Alho-poró, cru",1,32,1.4,6.9,0.1,2.5],["Almeirão, cru",1,18,1.8,3.3,0.2,2.6],["Almeirão, refogado",1,65,1.7,5.7,4.8,3.4],["Batata, baroa, cozida",1,80,0.9,18.9,0.2,1.8],["Batata, baroa, crua",1,101,1.0,24.0,0.2,2.1],["Batata, doce, cozida",1,77,0.6,18.4,0.1,2.2],["Batata, doce, crua",1,118,1.3,28.2,0.1,2.6],["Batata, frita, tipo chips, industrializada",1,543,5.6,51.2,36.6,2.5],["Batata, inglesa, cozida",1,52,1.2,11.9,0.0,1.3],["Batata, inglesa, crua",1,64,1.8,14.7,0.0,1.2],["Batata, inglesa, frita",1,267,5.0,35.6,13.1,8.1],["Batata, inglesa, sauté",1,68,1.3,14.1,0.9,1.4],["Berinjela, cozida",1,19,0.7,4.5,0.1,2.5],["Berinjela, crua",1,20,1.2,4.4,0.1,2.9],["Beterraba, cozida",1,32,1.3,7.2,0.1,1.9],["Beterraba, crua",1,49,1.9,11.1,0.1,3.4],["Biscoito, polvilho doce",1,438,1.3,80.5,12.2,1.2],["Brócolis, cozido",1,25,2.1,4.4,0.5,3.4],["Brócolis, cru",1,25,3.6,4.0,0.3,2.9],["Cará, cozido",1,78,1.5,18.9,0.1,2.6],["Cará, cru",1,96,2.3,23.0,0.1,7.3],["Caruru, cru",1,34,3.2,6.0,0.6,4.5],["Catalonha, crua",1,24,1.9,4.8,0.3,2.0],["Catalonha, refogada",1,63,2.0,4.8,4.8,3.7],["Cebola, crua",1,39,1.7,8.9,0.1,2.2],["Cebolinha, crua",1,20,1.9,3.4,0.4,3.6],["Cenoura, cozida",1,30,0.8,6.7,0.2,2.6],["Cenoura, crua",1,34,1.3,7.7,0.2,3.2],["Chicória, crua",1,14,1.1,2.9,0.1,2.2],["Chuchu, cozido",1,19,0.4,4.8,0.0,1.0],["Chuchu, cru",1,17,0.7,4.1,0.1,1.3],["Coentro, folhas desidratadas",1,309,20.9,48.0,10.4,37.3],["Couve, manteiga, crua",1,27,2.9,4.3,0.5,3.1],["Couve, manteiga, refogada",1,90,1.7,8.7,6.6,5.7],["Couve-flor, crua",1,23,1.9,4.5,0.2,2.4],["Couve-flor, cozida",1,19,1.2,3.9,0.3,2.1],["Espinafre, Nova Zelândia, cru",1,16,2.0,2.6,0.2,2.1],["Espinafre, Nova Zelândia, refogado",1,67,2.7,4.2,5.4,2.5],["Farinha, de mandioca, crua",1,361,1.6,87.9,0.3,6.4],["Farinha, de mandioca, torrada",1,365,1.2,89.2,0.3,6.5],["Farinha, de puba",1,360,1.6,87.3,0.5,4.2],["Fécula, de mandioca",1,331,0.5,81.1,0.3,0.6],["Feijão, broto, cru",1,39,4.2,7.8,0.1,2.0],["Inhame, cru",1,97,2.1,23.2,0.2,1.7],["Jiló, cru",1,27,1.4,6.2,0.2,4.8],["Jurubeba, crua",1,126,4.4,23.1,3.9,23.9],["Mandioca, cozida",1,125,0.6,30.1,0.3,1.6],["Mandioca, crua",1,151,1.1,36.2,0.3,1.9],["Mandioca, farofa, temperada",1,406,2.1,80.3,9.1,7.8],["Mandioca, frita",1,300,1.4,50.3,11.2,1.9],["Manjericão, cru",1,21,2.0,3.6,0.4,3.3],["Maxixe, cru",1,14,1.4,2.7,0.1,2.2],["Mostarda, folha, crua",1,18,2.1,3.2,0.2,1.9],["Nhoque, batata, cozido",1,181,5.9,36.8,1.9,1.8],["Nabo, cru",1,18,1.2,4.1,0.1,2.6],["Palmito, juçara, em conserva",1,23,1.8,4.3,0.4,3.2],["Palmito, pupunha, em conserva",1,29,2.5,5.5,0.5,2.6],["Pão, de queijo, assado",1,363,5.1,34.2,24.6,0.6],["Pão, de queijo, cru",1,295,3.6,38.5,14.0,1.0],["Pepino, cru",1,10,0.9,2.0,0.0,1.1],["Pimentão, amarelo, cru",1,28,1.2,6.0,0.4,1.9],["Pimentão, verde, cru",1,21,1.1,4.9,0.2,2.6],["Pimentão, vermelho, cru",1,23,1.0,5.5,0.1,1.6],["Polvilho, doce",1,351,0.4,86.8,0.0,0.2],["Quiabo, cru",1,30,1.9,6.4,0.3,4.6],["Rabanete, cru",1,14,1.4,2.7,0.1,2.2],["Repolho, branco, cru",1,17,0.9,3.9,0.1,1.9],["Repolho, roxo, cru",1,31,1.9,7.2,0.1,2.0],["Repolho, roxo, refogado",1,42,1.8,7.6,1.2,1.8],["Rúcula, crua",1,13,1.8,2.2,0.1,1.7],["Salsa, crua",1,33,3.3,5.7,0.6,1.9],["Seleta de legumes, enlatada",1,57,3.4,12.7,0.4,3.1],["Serralha, crua",1,30,2.7,4.9,0.7,3.5],["Taioba, crua",1,34,2.9,5.4,0.9,4.5],["Tomate, com semente, cru",1,15,1.1,3.1,0.2,1.2],["Tomate, extrato",1,61,2.4,15.0,0.2,2.8],["Tomate, molho industrializado",1,38,1.4,7.7,0.9,3.1],["Tomate, purê",1,28,1.4,6.9,0.0,1.0],["Tomate, salada",1,21,0.8,5.1,0.0,2.3],["Vagem, crua",1,25,1.8,5.3,0.2,2.4],["Abacate, cru",2,96,1.2,6.0,8.4,6.3],["Abacaxi, cru",2,48,0.9,12.3,0.1,1.0],["Abacaxi, polpa, congelada",2,31,0.5,7.8,0.1,0.3],["Abiu, cru",2,62,0.8,14.9,0.7,1.7],["Açaí, polpa, com xarope de guaraná e glucose",2,110,0.7,21.5,3.7,1.7],["Açaí, polpa, congelada",2,58,0.8,6.2,3.9,2.6],["Acerola, crua",2,33,0.9,8.0,0.2,1.5],["Acerola, polpa, congelada",2,22,0.6,5.5,0.0,0.7],["Ameixa, calda, enlatada",2,183,0.4,46.9,0.0,0.5],["Ameixa, crua",2,53,0.8,13.9,0.0,2.4],["Ameixa, em calda, enlatada, drenada",2,177,1.0,47.7,0.3,4.5],["Atemóia, crua",2,97,1.0,25.3,0.3,2.1],["Banana, da terra, crua",2,128,1.4,33.7,0.2,1.5],["Banana, doce em barra",2,280,2.2,75.7,0.1,3.8],["Banana, figo, crua",2,105,1.1,27.8,0.1,2.8],["Banana, maçã, crua",2,87,1.8,22.3,0.1,2.6],["Banana, nanica, crua",2,92,1.4,23.8,0.1,1.9],["Banana, ouro, crua",2,112,1.5,29.3,0.2,2.0],["Banana, pacova, crua",2,78,1.2,20.3,0.1,2.0],["Banana, prata, crua",2,98,1.3,26.0,0.1,2.0],["Cacau, cru",2,74,1.0,19.4,0.1,2.2],["Cajá-Manga, cru",2,46,1.3,11.4,0.0,2.6],["Cajá, polpa, congelada",2,26,0.6,6.4,0.2,1.4],["Caju, cru",2,43,1.0,10.3,0.3,1.7],["Caju, polpa, congelada",2,37,0.5,9.4,0.2,0.8],["Caju, suco concentrado, envasado",2,45,0.4,10.7,0.2,0.6],["Caqui, chocolate, cru",2,71,0.4,19.3,0.1,6.5],["Carambola, crua",2,46,0.9,11.5,0.2,2.0],["Ciriguela, crua",2,76,1.4,18.9,0.4,3.9],["Cupuaçu, cru",2,49,1.2,10.4,1.0,3.1],["Cupuaçu, polpa, congelada",2,49,0.8,11.4,0.6,1.6],["Figo, cru",2,41,1.0,10.2,0.2,1.8],["Figo, enlatado, em calda",2,184,0.6,50.3,0.2,2.0],["Fruta-pão, crua",2,67,1.1,17.2,0.2,5.5],["Goiaba, branca, com casca, crua",2,52,0.9,12.4,0.5,6.3],["Goiaba, doce em pasta",2,269,0.6,74.1,0.0,3.7],["Goiaba, doce, cascão",2,286,0.4,78.7,0.1,4.4],["Goiaba, vermelha, com casca, crua",2,54,1.1,13.0,0.4,6.2],["Graviola, crua",2,62,0.8,15.8,0.2,1.9],["Graviola, polpa, congelada",2,38,0.6,9.8,0.1,1.2],["Jabuticaba, crua",2,58,0.6,15.3,0.1,2.3],["Jaca, crua",2,88,1.4,22.5,0.3,2.4],["Jambo, cru",2,27,0.9,6.5,0.1,5.1],["Jamelão, cru",2,41,0.5,10.6,0.1,1.8],["Kiwi, cru",2,51,1.3,11.5,0.6,2.7],["Laranja, baía, crua",2,45,1.0,11.5,0.1,1.1],["Laranja, baía, suco",2,37,0.7,8.7,0.0,0.0],["Laranja, da terra, crua",2,51,1.1,12.9,0.2,4.0],["Laranja, da terra, suco",2,41,0.7,9.6,0.1,1.0],["Laranja, lima, crua",2,46,1.1,11.5,0.1,1.8],["Laranja, lima, suco",2,39,0.7,9.2,0.1,0.4],["Laranja, pêra, crua",2,37,1.0,8.9,0.1,0.8],["Laranja, pêra, suco",2,33,0.7,7.6,0.1,0.0],["Laranja, valência, crua",2,46,0.8,11.7,0.2,1.7],["Laranja, valência, suco",2,36,0.5,8.6,0.1,0.4],["Limão, cravo, suco",2,14,0.3,5.2,0.0,0.0],["Limão, galego, suco",2,22,0.6,7.3,0.1,0.0],["Limão, tahiti, cru",2,32,0.9,11.1,0.1,1.2],["Maçã, Argentina, com casca, crua",2,63,0.2,16.6,0.2,2.0],["Maçã, Fuji, com casca, crua",2,56,0.3,15.2,0.0,1.3],["Macaúba, crua",2,404,2.1,13.9,40.7,13.4],["Mamão, doce em calda, drenado",2,196,0.2,54.0,0.1,1.3],["Mamão, Formosa, cru",2,45,0.8,11.6,0.1,1.8],["Mamão, Papaia, cru",2,40,0.5,10.4,0.1,1.0],["Mamão verde, doce em calda, drenado",2,209,0.3,57.6,0.1,1.2],["Manga, Haden, crua",2,64,0.4,16.7,0.3,1.6],["Manga, Palmer, crua",2,72,0.4,19.4,0.2,1.6],["Manga, polpa, congelada",2,48,0.4,12.5,0.2,1.1],["Manga, Tommy Atkins, crua",2,51,0.9,12.8,0.2,2.1],["Maracujá, cru",2,68,2.0,12.3,2.1,1.1],["Maracujá, polpa, congelada",2,39,0.8,9.6,0.2,0.5],["Maracujá, suco concentrado, envasado",2,42,0.8,9.6,0.2,0.4],["Melancia, crua",2,33,0.9,8.1,0.0,0.1],["Melão, cru",2,29,0.7,7.5,0.0,0.3],["Mexerica, Murcote, crua",2,58,0.9,14.9,0.1,3.1],["Mexerica, Rio, crua",2,37,0.7,9.3,0.1,2.7],["Morango, cru",2,30,0.9,6.8,0.3,1.7],["Nêspera, crua",2,43,0.3,11.5,0.0,3.0],["Pequi, cru",2,205,2.3,13.0,18.0,19.0],["Pêra, Park, crua",2,61,0.2,16.1,0.2,3.0],["Pêra, Williams, crua",2,53,0.6,14.0,0.1,3.0],["Pêssego, Aurora, cru",2,36,0.8,9.3,0.0,1.4],["Pêssego, enlatado, em calda",2,63,0.7,16.9,0.0,1.0],["Pinha, crua",2,88,1.5,22.4,0.3,3.4],["Pitanga, crua",2,41,0.9,10.2,0.2,3.2],["Pitanga, polpa, congelada",2,19,0.3,4.8,0.1,0.7],["Romã, crua",2,56,0.4,15.1,0.0,0.4],["Tamarindo, cru",2,276,3.2,72.5,0.5,6.4],["Tangerina, Poncã, crua",2,38,0.8,9.6,0.1,0.9],["Tangerina, Poncã, suco",2,36,0.5,8.8,0.0,0.0],["Tucumã, cru",2,262,2.1,26.5,19.1,12.7],["Umbu, cru",2,37,0.8,9.4,0.0,2.0],["Umbu, polpa, congelada",2,34,0.5,8.8,0.1,1.3],["Uva, Itália, crua",2,53,0.7,13.6,0.2,0.9],["Uva, Rubi, crua",2,49,0.6,12.7,0.2,0.9],["Uva, suco concentrado, envasado",2,58,0.0,14.7,0.0,0.2],["Azeite, de dendê",3,884,0,0,100.0,0],["Azeite, de oliva, extra virgem",3,884,0,0,100.0,0],["Manteiga, com sal",3,726,0.4,0.1,82.4,0],["Manteiga, sem sal",3,758,0.4,0.0,86.0,0],["Margarina, com óleo hidrogenado, com sal (65% de lipídeos)",3,596,0.0,0.0,67.4,0],["Margarina, com óleo hidrogenado, sem sal (80% de lipídeos)",3,723,0.0,0.0,81.7,0],["Margarina, com óleo interesterificado, com sal (65%de lipídeos)",3,594,0.0,0.0,67.2,0],["Margarina, com óleo interesterificado, sem sal (65% de lipídeos)",3,593,0.0,0.0,67.1,0],["Óleo, de babaçu",3,884,0,0,100.0,0],["Óleo, de canola",3,884,0,0,100.0,0],["Óleo, de girassol",3,884,0,0,100.0,0],["Óleo, de milho",3,884,0,0,100.0,0],["Óleo, de pequi",3,884,0,0,100.0,0],["Óleo, de soja",3,884,0,0,100.0,0],["Abadejo, filé, congelado, assado",4,112,23.5,0.0,1.2,0],["Abadejo, filé, congelado,cozido",4,91,19.3,0.0,0.9,0],["Abadejo, filé, congelado, cru",4,59,13.1,0.0,0.4,0],["Abadejo, filé, congelado, grelhado",4,130,27.6,0.0,1.3,0],["Atum, conserva em óleo",4,166,26.2,0.0,6.0,0],["Atum, fresco, cru",4,118,25.7,0.0,0.9,0],["Bacalhau, salgado, cru",4,136,29.0,0.0,1.3,0],["Bacalhau, salgado, refogado",4,140,24.0,1.2,3.6,0],["Cação, posta, com farinha de trigo, frita",4,208,25.0,3.1,10.0,0.5],["Cação, posta, cozida",4,116,25.6,0.0,0.7,0],["Cação, posta, crua",4,83,17.9,0.0,0.8,0],["Camarão, Rio Grande, grande, cozido",4,90,19.0,0.0,1.0,0],["Camarão, Rio Grande, grande, cru",4,47,10.0,0.0,0.5,0],["Camarão, Sete Barbas, sem cabeça, com casca, frito",4,231,18.4,2.9,15.6,0],["Caranguejo, cozido",4,83,18.5,0.0,0.4,0],["Corimba, cru",4,128,17.4,0.0,6.0,0],["Corimbatá, assado",4,261,19.9,0.0,19.6,0],["Corimbatá, cozido",4,239,20.1,0.0,16.9,0],["Corvina de água doce, crua",4,101,18.9,0.0,2.2,0],["Corvina do mar, crua",4,94,18.6,0.0,1.6,0],["Corvina grande, assada",4,147,26.8,0.0,3.6,0],["Corvina grande, cozida",4,100,23.4,0.0,2.6,0],["Dourada de água doce, fresca",4,131,18.8,0.0,5.6,0],["Lambari, congelado, cru",4,131,16.8,0.0,6.5,0],["Lambari, congelado, frito",4,327,28.4,0.0,22.8,0],["Lambari, fresco, cru",4,152,15.7,0.0,9.4,0],["Manjuba, com farinha de trigo, frita",4,344,23.5,10.2,22.6,0.4],["Manjuba, frita",4,349,30.1,0.0,24.5,0],["Merluza, filé, assado",4,122,26.6,0.0,0.9,0],["Merluza, filé, cru",4,89,16.6,0.0,2.0,0],["Merluza, filé, frito",4,192,26.9,0.0,8.5,0],["Pescada, branca, crua",4,111,16.3,0.0,4.6,0],["Pescada, branca, frita",4,223,27.4,0.0,11.8,0],["Pescada, filé, com farinha de trigo, frito",4,283,21.4,5.0,19.1,0.0],["Pescada, filé, cru",4,107,16.7,0.0,4.0,0],["Pescada, filé, frito",4,154,28.6,0.0,3.6,0],["Pescada, filé, molho escabeche",4,142,11.8,5.0,8.0,0.8],["Pescadinha, crua",4,76,15.5,0.0,1.1,0],["Pintado, assado",4,192,36.5,0.0,4.0,0],["Pintado, cru",4,91,18.6,0.0,1.3,0],["Pintado, grelhado",4,152,30.8,0.0,2.3,0],["Porquinho, cru",4,93,20.5,0.0,0.6,0],["Salmão, filé, com pele, fresco, grelhado",4,229,23.9,0.0,14.0,0],["Salmão, sem pele, fresco, cru",4,170,19.3,0.0,9.7,0],["Salmão, sem pele, fresco, grelhado",4,243,26.1,0.0,14.5,0],["Sardinha, assada",4,164,32.2,0.0,3.0,0],["Sardinha, conserva em óleo",4,285,15.9,0.0,24.0,0],["Sardinha, frita",4,257,33.4,0.0,12.7,0],["Sardinha, inteira, crua",4,114,21.1,0.0,2.7,0],["Tucunaré, filé, congelado, cru",4,88,18.0,0.0,1.2,0],["Apresuntado",5,129,13.5,2.9,6.7,0],["Caldo de carne, tablete",5,241,7.8,15.1,16.6,0.6],["Caldo de galinha, tablete",5,251,6.3,10.6,20.4,11.8],["Carne, bovina, acém, moído, cozido",5,212,26.7,0.0,10.9,0],["Carne, bovina, acém, moído, cru",5,137,19.4,0.0,5.9,0],["Carne, bovina, acém, sem gordura, cozido",5,215,27.3,0.0,10.9,0],["Carne, bovina, acém, sem gordura, cru",5,144,20.8,0.0,6.1,0],["Carne, bovina, almôndegas, cruas",5,189,12.3,9.8,11.2,0],["Carne, bovina, almôndegas, fritas",5,272,18.2,14.3,15.8,0],["Carne, bovina, bucho, cozido",5,133,21.6,0.0,4.5,0],["Carne, bovina, bucho, cru",5,137,20.5,0.0,5.5,0],["Carne, bovina, capa de contra-filé, com gordura, crua",5,217,19.2,0.0,15.0,0],["Carne, bovina, capa de contra-filé, com gordura, grelhada",5,312,30.7,0.0,20.0,0],["Carne, bovina, capa de contra-filé, sem gordura, crua",5,131,21.5,0.0,4.3,0],["Carne, bovina, capa de contra-filé, sem gordura, grelhada",5,239,35.1,0.0,10.0,0],["Carne, bovina, charque, cozido",5,263,36.4,0.0,11.9,0],["Carne, bovina, charque, cru",5,249,22.7,0.0,16.8,0],["Carne, bovina, contra-filé, à milanesa",5,352,20.6,12.2,24.0,0.4],["Carne, bovina, contra-filé de costela, cru",5,202,19.8,0.0,13.1,0],["Carne, bovina, contra-filé de costela, grelhado",5,275,29.9,0.0,16.3,0],["Carne, bovina, contra-filé, com gordura, cru",5,206,21.2,0.0,12.8,0],["Carne, bovina, contra-filé, com gordura, grelhado",5,278,32.4,0.0,15.5,0],["Carne, bovina, contra-filé, sem gordura, cru",5,157,24.0,0.0,6.0,0],["Carne, bovina, contra-filé, sem gordura, grelhado",5,194,35.9,0.0,4.5,0],["Carne, bovina, costela, assada",5,373,28.8,0.0,27.7,0],["Carne, bovina, costela, crua",5,358,16.7,0.0,31.8,0],["Carne, bovina, coxão duro, sem gordura, cozido",5,217,31.9,0.0,8.9,0],["Carne, bovina, coxão duro, sem gordura, cru",5,148,21.5,0.0,6.2,0],["Carne, bovina, coxão mole, sem gordura, cozido",5,219,32.4,0.0,8.9,0],["Carne, bovina, coxão mole, sem gordura, cru",5,169,21.2,0.0,8.7,0],["Carne, bovina, cupim, assado",5,330,28.6,0.0,23.0,0],["Carne, bovina, cupim, cru",5,221,19.5,0.0,15.3,0],["Carne, bovina, fígado, cru",5,141,20.7,1.1,5.4,0],["Carne, bovina, fígado, grelhado",5,225,29.9,4.2,9.0,0],["Carne, bovina, filé mingnon, sem gordura, cru",5,143,21.6,0.0,5.6,0],["Carne, bovina, filé mingnon, sem gordura, grelhado",5,220,32.8,0.0,8.8,0],["Carne, bovina, flanco, sem gordura, cozido",5,196,29.4,0.0,7.8,0],["Carne, bovina, flanco, sem gordura, cru",5,141,20.0,0.0,6.2,0],["Carne, bovina, fraldinha, com gordura, cozida",5,338,24.2,0.0,26.0,0],["Carne, bovina, fraldinha, com gordura, crua",5,221,17.6,0.0,16.1,0],["Carne, bovina, lagarto, cozido",5,222,32.9,0.0,9.1,0],["Carne, bovina, lagarto, cru",5,135,20.5,0.0,5.2,0],["Carne, bovina, língua, cozida",5,315,21.4,0.0,24.8,0],["Carne, bovina, língua, crua",5,215,17.1,0.0,15.8,0],["Carne, bovina, maminha, crua",5,153,20.9,0.0,7.0,0],["Carne, bovina, maminha, grelhada",5,153,30.7,0.0,2.4,0],["Carne, bovina, miolo de alcatra, sem gordura, cru",5,163,21.6,0.0,7.8,0],["Carne, bovina, miolo de alcatra, sem gordura, grelhado",5,241,31.9,0.0,11.6,0],["Carne, bovina, músculo, sem gordura, cozido",5,194,31.2,0.0,6.7,0],["Carne, bovina, músculo, sem gordura, cru",5,142,21.6,0.0,5.5,0],["Carne, bovina, paleta, com gordura, crua",5,159,21.4,0.0,7.5,0],["Carne, bovina, paleta, sem gordura, cozida",5,194,29.7,0.0,7.4,0],["Carne, bovina, paleta, sem gordura, crua",5,141,21.0,0.0,5.7,0],["Carne, bovina, patinho, sem gordura, cru",5,133,21.7,0.0,4.5,0],["Carne, bovina, patinho, sem gordura, grelhado",5,219,35.9,0.0,7.3,0],["Carne, bovina, peito, sem gordura, cozido",5,338,22.2,0.0,27.0,0],["Carne, bovina, peito, sem gordura, cru",5,259,17.6,0.0,20.4,0],["Carne, bovina, picanha, com gordura, crua",5,213,18.8,0.0,14.7,0],["Carne, bovina, picanha, com gordura, grelhada",5,289,26.4,0.0,19.5,0],["Carne, bovina, picanha, sem gordura, crua",5,134,21.3,0.0,4.7,0],["Carne, bovina, picanha, sem gordura, grelhada",5,238,31.9,0.0,11.3,0],["Carne, bovina, seca, cozida",5,313,26.9,0.0,21.9,0],["Carne, bovina, seca, crua",5,313,19.7,0.0,25.4,0],["Coxinha de frango, frita",5,283,9.6,34.5,11.8,5.0],["Croquete, de carne, cru",5,246,12.0,13.9,15.6,0],["Croquete, de carne, frito",5,347,16.9,18.1,22.7,0],["Empada de frango, pré-cozida, assada",5,358,6.9,47.5,15.6,2.2],["Empada, de frango, pré-cozida",5,377,7.3,35.5,22.9,2.2],["Frango, asa, com pele, crua",5,213,18.1,0.0,15.1,0],["Frango, caipira, inteiro, com pele, cozido",5,243,23.9,0.0,15.6,0],["Frango, caipira, inteiro, sem pele, cozido",5,196,29.6,0.0,7.7,0],["Frango, coração, cru",5,222,12.6,0.0,18.6,0],["Frango, coração, grelhado",5,207,22.4,0.6,12.1,0],["Frango, coxa, com pele, assada",5,215,28.5,0.1,10.4,0],["Frango, coxa, com pele, crua",5,161,17.1,0.0,9.8,0],["Frango, coxa, sem pele, cozida",5,167,26.9,0.0,5.8,0],["Frango, coxa, sem pele, crua",5,120,17.8,0.0,4.9,0],["Frango, fígado, cru",5,106,17.6,0.0,3.5,0],["Frango, filé, à milanesa",5,221,28.5,7.5,7.8,1.1],["Frango, inteiro, com pele, cru",5,226,16.4,0.0,17.3,0],["Frango, inteiro, sem pele, assado",5,187,28.0,0.0,7.5,0],["Frango, inteiro, sem pele, cozido",5,170,25.0,0.0,7.1,0],["Frango, inteiro, sem pele, cru",5,129,20.6,0.0,4.6,0],["Frango, peito, com pele, assado",5,212,33.4,0.0,7.6,0],["Frango, peito, com pele, cru",5,149,20.8,0.0,6.7,0],["Frango, peito, sem pele, cozido",5,163,31.5,0.0,3.2,0],["Frango, peito, sem pele, cru",5,119,21.5,0.0,3.0,0],["Frango, peito, sem pele, grelhado",5,159,32.0,0.0,2.5,0],["Frango, sobrecoxa, com pele, assada",5,260,28.7,0.0,15.2,0],["Frango, sobrecoxa, com pele, crua",5,255,15.5,0.0,20.9,0],["Frango, sobrecoxa, sem pele, assada",5,233,29.2,0.0,12.0,0],["Frango, sobrecoxa, sem pele, crua",5,162,17.6,0.0,9.6,0],["Hambúrguer, bovino, cru",5,215,13.2,4.2,16.2,0],["Hambúrguer, bovino, frito",5,258,20.0,6.3,17.0,0],["Hambúrguer, bovino, grelhado",5,210,13.2,11.3,12.4,0],["Lingüiça, frango, crua",5,218,14.2,0.0,17.4,0],["Lingüiça, frango, frita",5,245,18.3,0.0,18.5,0],["Lingüiça, frango, grelhada",5,244,18.2,0.0,18.4,0],["Lingüiça, porco, crua",5,227,16.1,0.0,17.6,0],["Lingüiça, porco, frita",5,280,20.5,0.0,21.3,0],["Lingüiça, porco, grelhada",5,296,23.2,0.0,21.9,0],["Mortadela",5,269,12.0,5.8,21.6,0],["Peru, congelado, assado",5,163,26.2,0.0,5.7,0],["Peru, congelado, cru",5,94,18.1,0.0,1.8,0],["Porco, bisteca, crua",5,164,21.5,0.0,8.0,0],["Porco, bisteca, frita",5,311,33.7,0.0,18.5,0],["Porco, bisteca, grelhada",5,280,28.9,0.0,17.4,0],["Porco, costela, assada",5,402,30.2,0.0,30.3,0],["Porco, costela, crua",5,256,18.0,0.0,19.8,0],["Porco, lombo, assado",5,210,35.7,0.0,6.4,0],["Porco, lombo, cru",5,176,22.6,0.0,8.8,0],["Porco, orelha, salgada, crua",5,258,18.5,0.0,19.9,0],["Porco, pernil, assado",5,262,32.1,0.0,13.9,0],["Porco, pernil, cru",5,186,20.1,0.0,11.1,0],["Porco, rabo, salgado, cru",5,377,15.6,0.0,34.5,0],["Presunto, com capa de gordura",5,128,14.4,1.4,6.8,0],["Presunto, sem capa de gordura",5,94,14.3,2.1,2.7,0],["Quibe, assado",5,136,14.6,12.9,2.7,1.9],["Quibe, cru",5,109,12.4,10.8,1.7,1.6],["Quibe, frito",5,254,14.9,12.3,15.8,0],["Salame",5,398,25.8,2.9,30.6,0],["Toucinho, cru",5,593,11.5,0.0,60.3,0],["Toucinho, frito",5,697,27.3,0.0,64.3,0],["Bebida láctea, pêssego",6,55,2.1,7.6,1.9,0.3],["Creme de Leite",6,221,1.5,4.5,22.5,0],["Iogurte, natural",6,51,4.1,1.9,3.0,0],["Iogurte, natural, desnatado",6,41,3.8,5.8,0.3,0],["Iogurte, sabor abacaxi",6,-1,0,0,0,0],["Iogurte, sabor morango",6,70,2.7,9.7,2.3,0.2],["Iogurte, sabor pêssego",6,68,2.5,9.4,2.3,0.7],["Leite, condensado",6,313,7.7,57.0,6.7,0],["Leite, de cabra",6,66,3.1,5.2,3.8,0],["Leite, de vaca, achocolatado",6,83,2.1,14.2,2.2,0.6],["Leite, de vaca, desnatado, pó",6,362,34.7,53.0,0.9,0],["Leite, de vaca, desnatado, UHT",6,-1,0,0,0,0],["Leite, de vaca, integral",6,-1,0,0,0,0],["Leite, de vaca, integral, pó",6,497,25.4,39.2,26.9,0],["Leite, fermentado",6,70,1.9,15.7,0.1,0],["Queijo, minas, frescal",6,264,17.4,3.2,20.2,0],["Queijo, minas, meia cura",6,321,21.2,3.6,24.6,0],["Queijo, mozarela",6,330,22.6,3.0,25.2,0],["Queijo, parmesão",6,453,35.6,1.7,33.5,0],["Queijo, pasteurizado",6,303,9.4,5.7,27.4,0],["Queijo, petit suisse, morango",6,121,5.8,18.5,2.8,0],["Queijo, prato",6,360,22.7,1.9,29.1,0],["Queijo, requeijão, cremoso",6,257,9.6,2.4,23.4,0],["Queijo, ricota",6,140,12.6,3.8,8.1,0],["Bebida isotônica, sabores variados",7,26,0.0,6.4,0.0,0],["Café, infusão 10%",7,9,0.7,1.5,0.1,0],["Cana, aguardente 1",7,216,0,0,0,0],["Cana, caldo de",7,65,0.0,18.2,0.0,0.1],["Cerveja, pilsen 2",7,41,0.6,3.3,0.0,0],["Chá, erva-doce, infusão 5%",7,1,0.0,0.4,0.0,0],["Chá, mate, infusão 5%",7,3,0.0,0.6,0.1,0],["Chá, preto, infusão 5%",7,2,0.0,0.6,0.0,0],["Coco, água de",7,22,0.0,5.3,0.0,0.1],["Refrigerante, tipo água tônica",7,31,0.0,8.0,0.0,0],["Refrigerante, tipo cola",7,34,0.0,8.7,0.0,0],["Refrigerante, tipo guaraná",7,39,0.0,10.0,0.0,0],["Refrigerante, tipo laranja",7,46,0.0,11.8,0.0,0],["Refrigerante, tipo limão",7,40,0.0,10.3,0.0,0],["Omelete, de queijo",8,268,15.6,0.4,22.0,0],["Ovo, de codorna, inteiro, cru",8,177,13.7,0.8,12.7,0],["Ovo, de galinha, clara, cozida/10minutos",8,59,13.4,0.0,0.1,0],["Ovo, de galinha, gema, cozida/10minutos",8,353,15.9,1.6,30.8,0],["Ovo, de galinha, inteiro, cozido/10minutos",8,146,13.3,0.6,9.5,0],["Ovo, de galinha, inteiro, cru",8,143,13.0,1.6,8.9,0],["Ovo, de galinha, inteiro, frito",8,240,15.6,1.2,18.6,0],["Achocolatado, pó",9,401,4.2,91.2,2.2,3.9],["Açúcar, cristal",9,387,0.3,99.6,0.0,0],["Açúcar, mascavo",9,369,0.8,94.5,0.1,0],["Açúcar, refinado",9,387,0.3,99.5,0.0,0],["Chocolate, ao leite",9,540,7.2,59.6,30.3,2.2],["Chocolate, ao leite, com castanha do Pará",9,559,7.4,55.4,34.2,2.5],["Chocolate, ao leite, dietético",9,557,6.9,56.3,33.8,2.8],["Chocolate, meio amargo",9,475,4.9,62.4,29.9,4.9],["Cocada branca",9,449,1.1,81.4,13.6,3.6],["Doce, de abóbora, cremoso",9,199,0.9,54.6,0.2,2.3],["Doce, de leite, cremoso",9,306,5.5,59.5,6.0,0],["Geléia, mocotó, natural",9,106,2.1,24.2,0.1,0],["Glicose de milho",9,292,0.0,79.4,0.0,0],["Maria mole",9,301,3.8,73.6,0.2,0.7],["Maria mole, coco queimado",9,307,3.9,75.1,0.1,0.6],["Marmelada",9,257,0.4,70.8,0.1,4.1],["Mel, de abelha",9,309,0.0,84.0,0.0,0],["Melado",9,297,0.0,76.6,0.0,0],["Quindim",9,411,4.7,46.3,24.4,3.2],["Rapadura",9,352,1.0,90.8,0.1,0],["Café, pó, torrado",10,419,14.7,65.8,11.9,51.2],["Capuccino, pó",10,417,11.3,73.6,8.6,2.4],["Fermento em pó, químico",10,90,0.5,43.9,0.1,0],["Fermento, biológico, levedura, tablete",10,90,17.0,7.7,1.5,4.2],["Gelatina, sabores variados, pó",10,380,8.9,89.2,0.0,0],["Sal, dietético",10,-1,0,0,0,0],["Sal, grosso",10,-1,0,0,0,0],["Shoyu",10,61,3.3,11.6,0.3,0],["Tempero a base de sal",10,21,2.7,2.1,0.3,0.6],["Azeitona, preta, conserva",11,194,1.2,5.5,20.3,4.6],["Azeitona, verde, conserva",11,137,0.9,4.1,14.2,3.8],["Chantilly, spray, com gordura vegetal",11,315,0.5,16.9,27.3,0],["Leite, de coco",11,166,1.0,2.2,18.4,0.7],["Maionese, tradicional com ovos",11,302,0.6,7.9,30.5,0],["Acarajé",12,289,8.3,19.1,19.9,9.4],["Arroz carreteiro",12,154,10.8,11.6,7.1,1.5],["Baião de dois, arroz e feijão-de-corda",12,136,6.2,20.4,3.2,5.1],["Barreado",12,165,18.3,0.2,9.5,0.1],["Bife à cavalo, com contra filé",12,291,23.7,0.0,21.1,0],["Bolinho de arroz",12,274,8.0,41.7,8.3,2.7],["Camarão à baiana",12,101,7.9,3.2,6.0,0.4],["Charuto, de repolho",12,78,6.8,10.1,1.1,1.5],["Cuscuz, de milho, cozido com sal",12,113,2.2,25.3,0.7,2.1],["Cuscuz, paulista",12,142,2.6,22.5,4.6,2.4],["Cuxá, molho",12,80,5.6,5.7,3.6,3.0],["Dobradinha",12,125,19.8,0.0,4.4,0],["Estrogonofe de carne",12,173,15.0,3.0,10.8,0],["Estrogonofe de frango",12,157,17.6,2.6,8.0,0],["Feijão tropeiro mineiro",12,152,10.2,19.6,6.8,3.6],["Feijoada",12,117,8.7,11.6,6.5,5.1],["Frango, com açafrão",12,113,9.7,4.1,6.2,0.2],["Macarrão, molho bolognesa",12,120,4.9,22.5,0.9,0.8],["Maniçoba",12,134,10.0,3.4,8.7,2.2],["Quibebe",12,86,8.6,6.6,2.7,1.7],["Salada, de legumes, com maionese",12,96,1.1,8.9,7.0,2.2],["Salada, de legumes, cozida no vapor",12,35,2.0,7.1,0.3,2.5],["Salpicão, de frango",12,148,13.9,4.6,7.8,0.4],["Sarapatel",12,123,18.5,1.1,4.4,0],["Tabule",12,57,2.0,10.6,1.2,2.1],["Tacacá",12,47,7.0,3.4,0.4,0.2],["Tapioca, com manteiga",12,348,0.1,63.6,10.9,0.0],["Tucupi, com pimenta-de-cheiro",12,27,2.1,4.7,0.3,0.2],["Vaca atolada",12,145,5.1,10.1,9.3,2.3],["Vatapá",12,255,6.0,9.7,23.2,1.7],["Virado à paulista",12,307,10.2,14.1,25.6,2.2],["Yakisoba",12,113,7.5,18.3,2.6,1.1],["Amendoim, grão, cru",13,544,27.2,20.3,43.9,8.0],["Amendoim, torrado, salgado",13,606,22.5,18.7,54.0,7.8],["Ervilha, em vagem",13,88,7.5,14.2,0.5,9.7],["Ervilha, enlatada, drenada",13,74,4.6,13.4,0.4,5.1],["Feijão, carioca, cozido",13,76,4.8,13.6,0.5,8.5],["Feijão, carioca, cru",13,329,20.0,61.2,1.3,18.4],["Feijão, fradinho, cozido",13,78,5.1,13.5,0.6,7.5],["Feijão, fradinho, cru",13,339,20.2,61.2,2.4,23.6],["Feijão, jalo, cozido",13,93,6.1,16.5,0.5,13.9],["Feijão, jalo, cru",13,328,20.1,61.5,0.9,30.3],["Feijão, preto, cozido",13,77,4.5,14.0,0.5,8.4],["Feijão, preto, cru",13,324,21.3,58.8,1.2,21.8],["Feijão, rajado, cozido",13,85,5.5,15.3,0.4,9.3],["Feijão, rajado, cru",13,326,17.3,62.9,1.2,24.0],["Feijão, rosinha, cozido",13,68,4.5,11.8,0.5,4.8],["Feijão, rosinha, cru",13,337,20.9,62.2,1.3,20.6],["Feijão, roxo, cozido",13,77,5.7,12.9,0.5,11.5],["Feijão, roxo, cru",13,331,22.2,60.0,1.2,33.8],["Grão-de-bico, cru",13,355,21.2,57.9,5.4,12.4],["Guandu, cru",13,344,19.0,64.0,2.1,21.3],["Lentilha, cozida",13,93,6.3,16.3,0.5,7.9],["Lentilha, crua",13,339,23.2,62.0,0.8,16.9],["Paçoca, amendoim",13,487,16.0,52.4,26.1,7.3],["Pé-de-moleque, amendoim",13,503,13.2,54.7,28.0,3.4],["Soja, farinha",13,404,36.0,38.4,14.6,20.2],["Soja, extrato solúvel, natural, fluido",13,39,2.4,4.3,1.6,0.4],["Soja, extrato solúvel, pó",13,459,35.7,28.5,26.2,7.3],["Soja, queijo (tofu)",13,64,6.6,2.1,4.0,0.8],["Tremoço, cru",13,381,33.6,43.8,10.3,32.3],["Tremoço, em conserva",13,121,11.1,12.4,3.8,14.4],["Amêndoa, torrada, salgada",14,581,18.6,29.5,47.3,11.6],["Castanha-de-caju, torrada, salgada",14,570,18.5,29.1,46.3,3.7],["Castanha-do-Brasil, crua",14,643,14.5,15.1,63.5,7.9],["Coco, cru",14,406,3.7,10.4,42.0,5.4],["Coco, verde, cru",14,-1,0,0,0,0],["Farinha, de mesocarpo de babaçu, crua",14,329,1.4,79.2,0.2,17.9],["Gergelim, semente",14,584,21.2,21.6,50.4,11.9],["Linhaça, semente",14,495,14.1,43.3,32.3,33.5],["Pinhão, cozido",14,174,3.0,43.9,0.7,15.6],["Pupunha, cozida",14,219,2.5,29.6,12.8,4.3],["Noz, crua",14,620,14.0,18.4,59.4,7.2]];
+// Texto sem acento e em minúsculas, para a busca
+function semAcento(s) { return String(s == null ? "" : s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+const TACO_N = TACO.map(t => semAcento(t[0]));
+// Refeições padrão conforme o número de refeições do Perfil: nome e parte das calorias do dia (%)
+const DT_REF = {
+  3: [["Café da manhã", 30], ["Almoço", 40], ["Jantar", 30]],
+  4: [["Café da manhã", 25], ["Almoço", 35], ["Lanche da tarde", 15], ["Jantar", 25]],
+  5: [["Café da manhã", 20], ["Lanche da manhã", 10], ["Almoço", 30], ["Lanche da tarde", 15], ["Jantar", 25]],
+  6: [["Café da manhã", 20], ["Lanche da manhã", 10], ["Almoço", 25], ["Lanche da tarde", 15], ["Jantar", 20], ["Ceia", 10]]
+};
+const DT_RES = 12;                 // alimentos mostrados na busca
+const DT_FOLGA = 0.1;              // até 10% acima ou abaixo do proposto conta como "dentro"
+const DT_PER = [7, 14, 30];        // períodos (dias) da comparação por refeição
+const DT_SEM = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+// Estado da aba Dieta: menu aberto, dia mostrado, refeição recebendo alimento, busca e alimento escolhido
+function dtS() { return app.dt || (app.dt = { view: "dia", data: todayStr(), add: null, q: "", pick: null, per: 7, fora: false, cfg: false, msg: "" }); }
+// Soma dias a uma data AAAA-MM-DD
+function dtAdd(d, n) { return isoDate(new Date(Date.parse(d + "T12:00:00Z") + n * 864e5)); }
+// Dia da semana de uma data (0 = segunda)
+function dtDow(d) { return (new Date(d + "T12:00:00Z").getUTCDay() + 6) % 7; }
+// Calorias arredondadas, com ponto de milhar
+function dtKc(v) { return Math.round(v).toLocaleString("pt-BR"); }
+// Meta do dia pela fase do plano: calorias (primeiro número do texto da fase) e macros
+function dtMeta(dateStr) {
+  const ph = phaseAt(dateStr); if (!ph || ph.kcal == null) return null;
+  const m = /\d[\d.]*/.exec(String(ph.kcal)), kcal = typeof ph.kcal === "number" ? Math.round(ph.kcal) : m ? +m[0].replace(/\./g, "") : null;
+  return kcal ? { kcal, p: +ph.p || null, c: +ph.c || null, g: +ph.g || null, fase: ph.fase } : null;
+}
+// Refeições do dia: as que você definiu ou o padrão pelo número de refeições do Perfil
+function dtRefs() {
+  const c = app.settings && app.settings.dieta && app.settings.dieta.refs;
+  if (Array.isArray(c) && c.length) return c.map(r => ({ n: String(r.n || "Refeição"), pct: Math.max(0, +r.pct || 0) }));
+  const n = Math.min(8, Math.max(1, Math.round(num((app.perfil || {}).refeicoes) || 4)));
+  return (DT_REF[n] || Array.from({ length: n }, (x, i) => ["Refeição " + (i + 1), Math.round(1000 / n) / 10])).map(r => ({ n: r[0], pct: r[1] }));
+}
+// Parte de cada refeição no dia, ajustada para as partes somarem 1
+function dtPartes(refs) { const s = refs.reduce((a, r) => a + r.pct, 0) || 1; return refs.map(r => r.pct / s); }
+// Alimentos cadastrados por você (fora da tabela)
+function dtMeus() { const d = app.dieta && app.dieta.meus; return d && Array.isArray(d.itens) ? d.itens : []; }
+// Alimento pela chave: número = linha da TACO; texto = alimento seu
+function dtFood(key) {
+  if (typeof key === "number") { const t = TACO[key - 1]; return t && t[2] >= 0 ? { key, n: t[0], kcal: t[2], p: t[3], c: t[4], g: t[5], por: "100g" } : null; }
+  const m = dtMeus().find(x => x.id === key);
+  return m ? { key, n: m.n, kcal: +m.kcal || 0, p: +m.p || 0, c: +m.c || 0, g: +m.g || 0, por: m.por === "porcao" ? "porcao" : "100g", meu: true } : null;
+}
+// Calorias e macros de uma quantidade (gramas, ou número de porções quando o alimento é por porção)
+function dtCalc(f, q) { const k = f.por === "porcao" ? q : q / 100, r1 = v => Math.round(v * k * 10) / 10; return { kcal: Math.round(f.kcal * k), p: r1(f.p), c: r1(f.c), g: r1(f.g) }; }
+// Soma de calorias e macros de uma lista de itens
+function dtSum(itens) { const t = { kcal: 0, p: 0, c: 0, g: 0 }; (itens || []).forEach(x => { t.kcal += +x.kcal || 0; t.p += +x.p || 0; t.c += +x.c || 0; t.g += +x.g || 0; }); return t; }
+// Alimentos registrados em um dia
+function dtItens(dateStr) { const d = app.dieta && app.dieta[dateStr]; return d && Array.isArray(d.itens) ? d.itens : []; }
+// Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela palavra
+function dtBusca(q) {
+  const tk = semAcento(q).split(/[^a-z0-9]+/).filter(Boolean); if (!tk.length) return [];
+  const out = [];
+  dtMeus().forEach(m => { const nn = semAcento(m.n); if (tk.every(t => nn.includes(t))) out.push([0, nn.length, m.id]); });
+  TACO_N.forEach((nn, i) => { if (TACO[i][2] >= 0 && tk.every(t => nn.includes(t))) out.push([nn.startsWith(tk[0]) ? 1 : 2, nn.length, i + 1]); });
+  return out.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, DT_RES).map(x => dtFood(x[2])).filter(Boolean);
+}
+// Alimentos que você mais registrou (aparecem antes de digitar)
+function dtUsados(n) {
+  const c = {};
+  Object.keys(app.dieta || {}).forEach(id => { if (/^\d{4}-\d\d-\d\d$/.test(id)) dtItens(id).forEach(x => { if (x.a != null) c[x.a] = (c[x.a] || 0) + 1; }); });
+  return Object.keys(c).sort((a, b) => c[b] - c[a]).slice(0, n).map(k => dtFood(/^\d+$/.test(k) ? +k : k)).filter(Boolean);
+}
+// Grava um registro da dieta (um dia ou a lista dos seus alimentos)
+function dtGrava(id, doc) {
+  app.dieta = app.dieta || {}; app.dieta[id] = doc;
+  if (!app.db || app.P == null) return;
+  try { const p = app.db.doc(app.P + "dieta/" + id).set(JSON.parse(JSON.stringify(doc))); if (p && p.catch) p.catch(() => { dtS().msg = "Não consegui salvar. Confira a conexão."; renderDieta(true); }); } catch (e) { }
+}
+// Grava a lista de alimentos de um dia
+function dtPoe(dateStr, itens) { dtGrava(dateStr, { data: dateStr, itens, atualizado: new Date().toISOString() }); }
+// Situação contra o proposto: dentro (até 10%), acima ou abaixo, com a cor de cada uma
+function dtSit(v, meta) { if (!meta) return null; const d = v / meta - 1; return Math.abs(d) <= DT_FOLGA ? ["dentro", "--up"] : d > 0 ? ["acima", "--down"] : ["abaixo", "--keep"]; }
+// Barra de progresso: ingerido contra o proposto
+function dtBar(v, meta, cls) { const s = dtSit(v, meta); return '<div class="dtbar' + (cls ? " " + cls : "") + '"><i style="width:' + (meta ? Math.min(100, v / meta * 100) : 0).toFixed(1) + "%;background:var(" + (s && v > 0 ? s[1] : "--neutral-bar") + ')"></i></div>'; }
+// Diferença com sinal e situação: "+120 · acima"
+function dtDif(v, meta) { const s = dtSit(v, meta); return s ? '<span class="dts" style="color:var(' + s[1] + ')">' + (v >= meta ? "+" : "−") + dtKc(Math.abs(v - meta)) + " · " + s[0] + "</span>" : ""; }
+// Desenha a aba Dieta: meta da fase, menu e a visão escolhida
+function renderDieta(force) {
+  const box = document.getElementById("dtBox"); if (!box) return;
+  const ae = document.activeElement;
+  if (!force && ae && box.contains(ae) && ae.matches("input, select, textarea")) return; // não desmancha o que está sendo digitado
+  const S = dtS(), M = dtMeta(todayStr());
+  document.getElementById("dtFase").innerHTML = M ? '<div class="panel"><h2>Meta de hoje' + infoBtn("kcal") + '</h2><div class="pres"><span class="vchip"><b>' + dtKc(M.kcal) + '</b> kcal</span><span class="vchip">Proteína <b>' + (M.p || "—") + " g</b> · Carbo <b>" + (M.c || "—") + " g</b> · Gordura <b>" + (M.g || "—") + " g</b></span></div>" + '<p class="muted" style="margin:6px 0 0;font-size:13px">Fase: ' + esc(M.fase || "") + '. <a href="#plano">Ver todas as fases</a></p></div>'
+    : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
+  box.innerHTML = '<div class="dtmenu" role="group" aria-label="Visões da dieta">' + [["dia", "Registrar"], ["ref", "Por refeição"], ["sem", "Por dia"]].map(v => '<button type="button" data-dt="view|' + v[0] + '" aria-pressed="' + (S.view === v[0]) + '">' + v[1] + "</button>").join("") + "</div>" +
+    (S.view === "ref" ? dtRefHtml() : S.view === "sem" ? dtSemHtml() : dtDiaHtml()) + dtCfgHtml();
+}
+// Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição
+function dtDiaHtml() {
+  const S = dtS(), d = S.data, itens = dtItens(d), refs = dtRefs(), pt = dtPartes(refs), M = dtMeta(d), tot = dtSum(itens);
+  let h = '<div class="dtnav"><button class="rbtn" type="button" data-dt="dia|-1" aria-label="Dia anterior">‹</button><input type="date" id="dtData" value="' + d + '" aria-label="Dia do registro"><span class="dtdw">' + DT_SEM[dtDow(d)].toLowerCase() + '</span><button class="rbtn" type="button" data-dt="dia|1" aria-label="Dia seguinte">›</button>' + (d === todayStr() ? "" : '<button class="btn small" type="button" data-dt="hoje">Hoje</button>') + "</div>";
+  h += '<div class="dttot"><div class="dtk1"><b>' + dtKc(tot.kcal) + "</b>" + (M ? " de " + dtKc(M.kcal) + " kcal" : " kcal") + (M && itens.length ? " " + dtDif(tot.kcal, M.kcal) : "") + infoBtn("dt_diario") + "</div>" + dtBar(tot.kcal, M && M.kcal, "g") +
+    '<div class="dtmac">' + [["Proteína", tot.p, M && M.p], ["Carboidrato", tot.c, M && M.c], ["Gordura", tot.g, M && M.g]].map(x => "<div><span>" + x[0] + "</span><b>" + Math.round(x[1]) + (x[2] ? " / " + x[2] : "") + " g</b>" + dtBar(x[1], x[2]) + "</div>").join("") + "</div></div>";
+  if (S.msg) h += '<p class="dtmsg" role="status">' + esc(S.msg) + "</p>";
+  refs.forEach((r, i) => {
+    const li = itens.map((x, j) => [x, j]).filter(z => Math.min(z[0].r | 0, refs.length - 1) === i), sm = dtSum(li.map(z => z[0])), prop = M ? M.kcal * pt[i] : null;
+    h += '<div class="dtref"><div class="dtrh"><b>' + esc(r.n) + "</b><span>" + dtKc(sm.kcal) + (prop ? " de " + dtKc(prop) : "") + " kcal</span></div>" + (prop ? dtBar(sm.kcal, prop) : "") +
+      li.map(z => dtItemHtml(z[0], z[1])).join("") +
+      (S.add === i ? dtAddHtml() : '<div class="row-btns"><button class="btn small" type="button" data-dt="add|' + i + '">+ Alimento</button></div>') + "</div>";
+  });
+  if (!itens.length && dtItens(dtAdd(d, -1)).length) h += '<div class="row-btns"><button class="btn small" type="button" data-dt="copia">Copiar o dia anterior</button></div>';
+  return h;
+}
+// Linha de um alimento registrado: nome, quantidade (editável), calorias e remover
+function dtItemHtml(x, j) {
+  return '<div class="dtit"><span class="dtn">' + esc(x.n) + '</span><input class="dtq" type="number" inputmode="decimal" min="0" step="any" value="' + (x.q != null ? x.q : "") + '" data-dtq="' + j + '" aria-label="Quantidade de ' + esc(x.n) + '"><span class="dtu">' + (x.u === "porção" ? "porç." : "g") + '</span><span class="dtk">' + dtKc(+x.kcal || 0) + ' kcal</span><button class="dtx" type="button" data-dt="del|' + j + '" aria-label="Remover ' + esc(x.n) + '">×</button></div>';
+}
+// Texto da prévia: calorias e macros da quantidade digitada
+function dtPrevTxt(f, q) { const v = dtCalc(f, q || 0); return dtKc(v.kcal) + " kcal · P " + fmt(v.p) + " · C " + fmt(v.c) + " · G " + fmt(v.g); }
+// Lista da busca (ou os mais usados, antes de digitar)
+function dtResHtml() {
+  const S = dtS(), tem = S.q.trim().length > 0, L = tem ? dtBusca(S.q) : dtUsados(6);
+  if (!L.length) return '<p class="muted dtvz">' + (tem ? 'Nada encontrado. Tente outra palavra ou use "Fora da tabela".' : "Digite parte do nome. Os valores são por 100 g.") + "</p>";
+  return (tem ? "" : '<p class="muted dtvz">Mais usados por você</p>') + L.map(f => '<button class="dtr" type="button" data-dt="pick|' + f.key + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " (por porção)" : " (por 100 g)") + "</span></button>").join("");
+}
+// Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela
+function dtAddHtml() {
+  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, q0 = f && f.por === "porcao" ? 1 : 100;
+  let h = '<div class="dtadd">';
+  if (S.fora) {
+    h += "<b>Alimento fora da tabela</b>" + infoBtn("dt_fora") + '<div class="field"><label for="dtFn">Nome</label><input id="dtFn" type="text" autocomplete="off" placeholder="ex.: whey, pão da padaria"></div><div class="dtf4">' +
+      [["dtFk", "kcal"], ["dtFp", "Proteína (g)"], ["dtFc", "Carbo (g)"], ["dtFg", "Gordura (g)"]].map(c => '<div class="field"><label for="' + c[0] + '">' + c[1] + '</label><input id="' + c[0] + '" type="number" inputmode="decimal" min="0" step="any"></div>').join("") +
+      '</div><div class="field"><label for="dtFpor">Esses valores são de</label><select id="dtFpor"><option value="100g">100 g (como no rótulo)</option><option value="porcao">1 porção inteira</option></select></div><p class="dtmsg" id="dtFmsg" role="status"></p><div class="row-btns"><button class="btn primary small" type="button" data-dt="forasalva">Salvar e usar</button><button class="btn small" type="button" data-dt="foracancela">Voltar à busca</button></div>';
+  } else {
+    h += '<input type="search" id="dtQ" autocomplete="off" placeholder="Buscar na tabela TACO (ex.: arroz cozido)" value="' + esc(S.q) + '" aria-label="Buscar alimento"><div id="dtRes">' + dtResHtml() + "</div>";
+    if (f) h += '<div class="dtpk"><b>' + esc(f.n) + '</b><div class="dtpk2"><input id="dtG" type="number" inputmode="decimal" min="0" step="any" value="' + q0 + '" aria-label="Quantidade"><span>' + (f.por === "porcao" ? "porção" : "g") + '</span><span id="dtPrev">' + dtPrevTxt(f, q0) + '</span></div><p class="dtmsg" id="dtGmsg" role="status"></p><div class="row-btns"><button class="btn primary small" type="button" data-dt="ok">Adicionar</button></div></div>';
+    h += '<div class="row-btns"><button class="btn small" type="button" data-dt="fora">Fora da tabela</button><button class="btn small" type="button" data-dt="fechar">Fechar</button></div>';
+  }
+  return h + "</div>";
+}
+// Visão "Por refeição": média de cada refeição nos dias com registro, contra o proposto
+function dtRefHtml() {
+  const S = dtS(), refs = dtRefs(), pt = dtPartes(refs), fim = todayStr(), dias = [];
+  for (let i = 0; i < S.per; i++) { const d = dtAdd(fim, -i); if (dtItens(d).length) dias.push(d); }
+  let h = '<div class="dtper" role="group" aria-label="Período">' + DT_PER.map(n => '<button class="rbtn" type="button" data-dt="per|' + n + '" aria-pressed="' + (S.per === n) + '">' + n + " dias</button>").join("") + infoBtn("dt_proposto") + "</div>";
+  if (!dias.length) return h + '<p class="lead">Sem alimentos registrados nos últimos ' + S.per + " dias. Use <b>Registrar</b> para começar; a comparação aparece aqui.</p>";
+  const n = dias.length, soma = refs.map(() => 0); let metaSum = 0, metaN = 0, tot = 0;
+  dias.forEach(d => { dtItens(d).forEach(x => { soma[Math.min(x.r | 0, refs.length - 1)] += +x.kcal || 0; tot += +x.kcal || 0; }); const M = dtMeta(d); if (M) { metaSum += M.kcal; metaN++; } });
+  const meta = metaN ? metaSum / metaN : null, mx = Math.max.apply(null, refs.map((r, i) => Math.max(soma[i] / n, meta ? meta * pt[i] : 0)).concat(1));
+  h += '<p class="lead">Média de cada refeição nos ' + n + " dia" + (n > 1 ? "s" : "") + " com registro, contra o proposto.</p><div class=\"dtcmp\">" + refs.map((r, i) => {
+    const v = soma[i] / n, p = meta ? meta * pt[i] : null, s = dtSit(v, p);
+    return '<div class="dtc"><div class="dtrh"><b>' + esc(r.n) + "</b><span>" + dtDif(v, p) + "</span></div>" +
+      '<div class="dtb2"><span>Ingerido</span><div class="dtbar"><i style="width:' + (v / mx * 100).toFixed(1) + "%;background:var(" + (s ? s[1] : "--series-1") + ')"></i></div><b>' + dtKc(v) + "</b></div>" +
+      (p ? '<div class="dtb2"><span>Proposto</span><div class="dtbar"><i style="width:' + (p / mx * 100).toFixed(1) + '%;background:var(--neutral-bar)"></i></div><b>' + dtKc(p) + "</b></div>" : "") + "</div>";
+  }).join("") + "</div>";
+  return h + '<p class="dtfim"><b>Média do dia: ' + dtKc(tot / n) + " kcal</b>" + (meta ? " de " + dtKc(meta) + " · " + dtDif(tot / n, meta) : "") + "</p>";
+}
+// Visão "Por dia da semana": barras do total de cada dia contra a meta e a tabela refeição × dia
+function dtSemHtml() {
+  const S = dtS(), refs = dtRefs(), pt = dtPartes(refs), seg = dtAdd(S.data, -dtDow(S.data)), lab = d => +d.slice(8) + "/" + MES[+d.slice(5, 7) - 1];
+  const cel = DT_SEM.map((x, i) => { const d = dtAdd(seg, i), it = dtItens(d), por = refs.map(() => 0); it.forEach(y => { por[Math.min(y.r | 0, refs.length - 1)] += +y.kcal || 0; }); return { d, tem: it.length > 0, por, tot: dtSum(it), meta: dtMeta(d) }; });
+  const mx = Math.max.apply(null, cel.map(c => Math.max(c.tot.kcal, c.meta ? c.meta.kcal : 0)).concat(1)), cm = cel.filter(c => c.meta), mMed = cm.length ? cm.reduce((a, c) => a + c.meta.kcal, 0) / cm.length : null;
+  let h = '<div class="dtnav"><button class="rbtn" type="button" data-dt="sem|-1" aria-label="Semana anterior">‹</button><b class="dtwk">' + lab(cel[0].d) + " a " + lab(cel[6].d) + '</b><button class="rbtn" type="button" data-dt="sem|1" aria-label="Semana seguinte">›</button>' + (cel.some(c => c.d === todayStr()) ? "" : '<button class="btn small" type="button" data-dt="hoje">Esta semana</button>') + "</div>";
+  h += '<div class="dtdias">' + cel.map((c, i) => { const s = c.tem && c.meta ? dtSit(c.tot.kcal, c.meta.kcal) : null;
+    return '<button class="dtd" type="button" data-dt="vai|' + c.d + '" aria-label="Abrir ' + DT_SEM[i] + " " + lab(c.d) + '"><span class="dtdn">' + DT_SEM[i] + " " + +c.d.slice(8) + '</span><span class="dtdb">' + (c.meta ? '<i class="m" style="bottom:' + (c.meta.kcal / mx * 100).toFixed(1) + '%"></i>' : "") + '<i class="v" style="height:' + (c.tot.kcal / mx * 100).toFixed(1) + "%;background:var(" + (s ? s[1] : "--neutral-bar") + ')"></i></span><span class="dtdv">' + (c.tem ? dtKc(c.tot.kcal) : "–") + '</span><span class="dtds"' + (s ? ' style="color:var(' + s[1] + ')">' + s[0] : ">&nbsp;") + "</span></button>"; }).join("") + "</div>" +
+    '<p class="muted dtleg">Barra: calorias do dia. Traço: meta do dia. Toque num dia para abrir o registro.</p>';
+  h += '<div class="tablewrap"><table class="dtt"><thead><tr><th>Refeição</th>' + DT_SEM.map(x => "<th>" + x + "</th>").join("") + "<th>Proposto</th></tr></thead><tbody>" +
+    refs.map((r, i) => "<tr><th>" + esc(r.n) + "</th>" + cel.map(c => "<td>" + (c.tem ? dtKc(c.por[i]) : "–") + "</td>").join("") + "<td>" + (mMed ? dtKc(mMed * pt[i]) : "–") + "</td></tr>").join("") +
+    '<tr class="tot"><th>Total</th>' + cel.map(c => "<td>" + (c.tem ? dtKc(c.tot.kcal) : "–") + "</td>").join("") + "<td>" + (mMed ? dtKc(mMed) : "–") + "</td></tr>" +
+    "<tr><th>Diferença</th>" + cel.map(c => { if (!c.tem || !c.meta) return "<td>–</td>"; const df = c.tot.kcal - c.meta.kcal; return '<td style="color:var(' + dtSit(c.tot.kcal, c.meta.kcal)[1] + ')">' + (df >= 0 ? "+" : "−") + dtKc(Math.abs(df)) + "</td>"; }).join("") + "<td></td></tr></tbody></table></div>";
+  const reg = cel.filter(c => c.tem);
+  if (!reg.length) return h + '<p class="lead">Nenhum alimento registrado nesta semana.</p>';
+  const n = reg.length, av = k => reg.reduce((a, c) => a + c.tot[k], 0) / n, rm = reg.filter(c => c.meta), mk = rm.length ? rm.reduce((a, c) => a + c.meta.kcal, 0) / rm.length : null, M0 = rm.length ? rm[0].meta : {};
+  return h + '<p class="dtfim"><b>Média dos ' + n + " dia" + (n > 1 ? "s" : "") + " registrados: " + dtKc(av("kcal")) + " kcal</b>" + (mk ? " de " + dtKc(mk) + " · " + dtDif(av("kcal"), mk) : "") + "<br>Proteína " + Math.round(av("p")) + (M0.p ? " / " + M0.p : "") + " g · Carboidrato " + Math.round(av("c")) + (M0.c ? " / " + M0.c : "") + " g · Gordura " + Math.round(av("g")) + (M0.g ? " / " + M0.g : "") + " g</p>";
+}
+// Bloco "Refeições e proposto": nomes e parte de cada refeição nas calorias do dia
+function dtCfgHtml() {
+  const S = dtS(), refs = dtRefs(), M = dtMeta(S.data), soma = refs.reduce((a, r) => a + r.pct, 0);
+  return '<details class="dtcfg"' + (S.cfg ? " open" : "") + '><summary><span class="rl">Refeições e proposto</span> <span class="muted">' + refs.length + " refeições</span></summary>" +
+    '<p class="muted" style="font-size:13px;margin:4px 0 8px">O proposto de cada refeição é a meta de calorias do dia vezes a parte (%) da refeição. Ajuste os nomes e as partes ao seu plano.</p>' +
+    refs.map((r, i) => '<div class="dtcr"><input type="text" value="' + esc(r.n) + '" data-dtrn="' + i + '" aria-label="Nome da refeição ' + (i + 1) + '"><input type="number" inputmode="decimal" min="0" max="100" step="any" value="' + Math.round(r.pct * 10) / 10 + '" data-dtrp="' + i + '" aria-label="Parte de ' + esc(r.n) + ', em %"><span>%' + (M ? " · " + dtKc(M.kcal * r.pct / (soma || 1)) + " kcal" : "") + "</span>" + (i === refs.length - 1 && refs.length > 1 ? '<button class="dtx" type="button" data-dt="refdel" aria-label="Remover ' + esc(r.n) + '">×</button>' : '<span class="dtx0"></span>') + "</div>").join("") +
+    (Math.abs(soma - 100) > 0.5 ? '<p class="dtmsg">As partes somam ' + fmt(Math.round(soma * 10) / 10) + "%. O app ajusta na proporção para fechar 100%.</p>" : "") +
+    '<div class="row-btns"><button class="btn small" type="button" data-dt="refadd">+ Refeição</button><button class="btn small" type="button" data-dt="refpad">Restaurar o padrão</button></div></details>';
+}
+// Guarda as refeições definidas (ou volta ao padrão) nos ajustes
+function dtRefsSalva(refs) {
+  app.settings = app.settings || {}; app.settings.dieta = app.settings.dieta || {};
+  if (refs) app.settings.dieta.refs = refs; else delete app.settings.dieta.refs;
+  dtS().cfg = true; saveSettings(); renderDieta(true);
+}
+// Adiciona o alimento escolhido à refeição aberta
+function dtOk() {
+  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, el = document.getElementById("dtG"), q = el ? +String(el.value).replace(",", ".") : 0;
+  if (!f || !(q > 0)) { const m = document.getElementById("dtGmsg"); if (m) m.textContent = "Informe a quantidade."; return; }
+  const v = dtCalc(f, q), it = dtItens(S.data).slice();
+  it.push({ r: S.add, a: f.key, n: f.n, q, u: f.por === "porcao" ? "porção" : "g", kcal: v.kcal, p: v.p, c: v.c, g: v.g });
+  dtPoe(S.data, it); S.pick = null; S.q = ""; S.msg = "";
+  renderDieta(true); const qi = document.getElementById("dtQ"); if (qi) qi.focus();
+}
+// Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade
+function dtForaSalva() {
+  const S = dtS(), val = id => { const e = document.getElementById(id); return e ? String(e.value).trim().replace(",", ".") : ""; }, nome = val("dtFn"), k = val("dtFk");
+  if (!nome || k === "" || !(+k >= 0)) { const m = document.getElementById("dtFmsg"); if (m) m.textContent = "Preencha o nome e as calorias."; return; }
+  const id = "m" + Date.now().toString(36), meus = dtMeus().slice();
+  meus.push({ id, n: nome, kcal: +k, p: +val("dtFp") || 0, c: +val("dtFc") || 0, g: +val("dtFg") || 0, por: val("dtFpor") === "porcao" ? "porcao" : "100g" });
+  dtGrava("meus", { itens: meus, atualizado: new Date().toISOString() });
+  S.fora = false; S.pick = id; S.q = nome;
+  renderDieta(true); const g = document.getElementById("dtG"); if (g) { g.focus(); g.select(); }
+}
+// Toques na aba Dieta
+function dtClick(ev) {
+  const b = ev.target.closest("[data-dt]"); if (!b) return;
+  const S = dtS(), p = b.dataset.dt.split("|"), a = p[0], v = p[1];
+  if (a === "ok") { dtOk(); return; }
+  if (a === "forasalva") { dtForaSalva(); return; }
+  if (a === "refadd") { const r = dtRefs(); r.push({ n: "Refeição " + (r.length + 1), pct: 0 }); dtRefsSalva(r); return; }
+  if (a === "refdel") { const r = dtRefs(); if (r.length > 1) { r.pop(); dtRefsSalva(r); } return; }
+  if (a === "refpad") { dtRefsSalva(null); return; }
+  if (a === "view") { S.view = v; S.add = null; S.msg = ""; }
+  else if (a === "dia") { S.data = dtAdd(S.data, +v); S.add = null; S.msg = ""; }
+  else if (a === "sem") S.data = dtAdd(S.data, 7 * +v);
+  else if (a === "hoje") { S.data = todayStr(); S.add = null; S.msg = ""; }
+  else if (a === "vai") { S.data = v; S.view = "dia"; S.add = null; S.msg = ""; }
+  else if (a === "per") S.per = +v;
+  else if (a === "add") { S.add = +v; S.q = ""; S.pick = null; S.fora = false; S.msg = ""; }
+  else if (a === "fechar") { S.add = null; S.pick = null; S.q = ""; }
+  else if (a === "pick") S.pick = /^\d+$/.test(v) ? +v : v;
+  else if (a === "del") { const it = dtItens(S.data).slice(); it.splice(+v, 1); dtPoe(S.data, it); }
+  else if (a === "copia") { dtPoe(S.data, JSON.parse(JSON.stringify(dtItens(dtAdd(S.data, -1))))); S.msg = "Copiado do dia anterior. Ajuste as quantidades."; }
+  else if (a === "fora") { S.fora = true; S.pick = null; }
+  else if (a === "foracancela") S.fora = false;
+  renderDieta(true);
+  const foco = a === "add" || a === "foracancela" ? "dtQ" : a === "pick" ? "dtG" : a === "fora" ? "dtFn" : null, el = foco ? document.getElementById(foco) : null;
+  if (el) { el.focus(); if (foco === "dtG") el.select(); }
+}
+// Digitação: a busca atualiza só a lista; a quantidade atualiza a prévia
+function dtInput(ev) {
+  const t = ev.target, S = dtS();
+  if (t.id === "dtQ") { S.q = t.value; S.pick = null; const r = document.getElementById("dtRes"); if (r) r.innerHTML = dtResHtml(); const pk = document.querySelector("#dtBox .dtpk"); if (pk) pk.remove(); }
+  else if (t.id === "dtG") { const f = S.pick != null ? dtFood(S.pick) : null, o = document.getElementById("dtPrev"); if (f && o) o.textContent = dtPrevTxt(f, +String(t.value).replace(",", ".") || 0); }
+}
+// Campos alterados: dia, quantidade de um item e nomes ou partes das refeições
+function dtChange(ev) {
+  const t = ev.target, S = dtS();
+  if (t.id === "dtData") { if (t.value) { S.data = t.value; S.add = null; } renderDieta(true); return; }
+  if (t.dataset.dtq != null) {
+    const it = dtItens(S.data).slice(), j = +t.dataset.dtq, x = it[j], q = +String(t.value).replace(",", ".");
+    if (x && q > 0) { const f = x.a != null ? dtFood(x.a) : null, k = q / (x.q || q), r1 = v => Math.round((+v || 0) * k * 10) / 10; it[j] = Object.assign({}, x, { q }, f ? dtCalc(f, q) : { kcal: Math.round((+x.kcal || 0) * k), p: r1(x.p), c: r1(x.c), g: r1(x.g) }); dtPoe(S.data, it); }
+    renderDieta(true); return;
+  }
+  if (t.dataset.dtrn != null || t.dataset.dtrp != null) {
+    const r = dtRefs(), i = +(t.dataset.dtrn != null ? t.dataset.dtrn : t.dataset.dtrp); if (!r[i]) return;
+    if (t.dataset.dtrn != null) r[i].n = t.value.trim() || r[i].n; else r[i].pct = Math.max(0, +String(t.value).replace(",", ".") || 0);
+    dtRefsSalva(r);
+  }
+}
+// Liga os toques e a digitação da aba Dieta
+(function () {
+  const v = document.getElementById("v-dieta"); if (!v) return;
+  v.addEventListener("click", dtClick); v.addEventListener("input", dtInput); v.addEventListener("change", dtChange);
+  v.addEventListener("keydown", ev => { if (ev.key === "Enter" && (ev.target.id === "dtG" || ev.target.id === "dtQ")) { ev.preventDefault(); if (ev.target.id === "dtG") dtOk(); } });
+})();
+
+// ===== 27. PARTIDA =====
 initBodyForm();
 initDates();
 clkLoad(); wakeSync();

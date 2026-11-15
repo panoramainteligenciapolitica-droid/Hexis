@@ -21,13 +21,13 @@ Pontos de atenção:
 
 É um arquivo só, com três partes:
 
-1. **Estilos** (`<style>`): a aparência, em 18 blocos numerados.
+1. **Estilos** (`<style>`): a aparência, em 19 blocos numerados.
 2. **Telas** (`<main>` e as barras): a estrutura vazia de cada aba.
-3. **Programa** (`<script>`): 26 seções numeradas, que preenchem as telas e guardam os dados.
+3. **Programa** (`<script>`): 27 seções numeradas, que preenchem as telas e guardam os dados.
 
 Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 26 seções.
 
-### Estilos (18 blocos)
+### Estilos (19 blocos)
 
 1. Cores e fontes (tema claro; o escuro vem logo abaixo)
 2. Base e cabeçalho
@@ -47,6 +47,7 @@ Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` le
 16. Transições e animações
 17. Resumo do dia
 18. Série: execução, parciais, descanso e aviso das observações
+19. Dieta: diário de alimentos
 
 ### Telas
 
@@ -60,6 +61,7 @@ Cada aba é uma `<section class="view">`. Só a aba aberta fica visível.
 - `v-proxima`: Próxima semana
 - `v-progresso`: Progresso (gráficos)
 - `v-corpo`: Corpo e dieta
+- `v-dieta`: Dieta (meta do dia e diário de alimentos com a tabela TACO)
 - `v-diario`: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames)
 - `v-plano`: Plano e regras
 
@@ -88,6 +90,9 @@ Cada item é um documento separado, com um caminho:
 | `meta/perfil` | Perfil e Objetivo |
 | `meta/ajustes` | Deload e semanas leves escolhidos, palavras-chave criadas, quais exercícios são unilaterais e as cargas de cada máquina (`maq[nome do exercício] = { tipo, placas }`) |
 | `diario/sub-…`, `diario/ap-…`, `diario/ex-…` | Hormônios e peptídeos: substância, aplicação e exame |
+| `dieta/2026-11-15` | Alimentos de um dia: `itens[] = { r: refeição, a: alimento, n: nome, q: quantidade, u, kcal, p, c, g }` |
+| `dieta/meus` | Alimentos fora da tabela cadastrados pela pessoa |
+| `semanas/w01-DOM` | Domingo (dia livre): só o registro de cardio ou atividade |
 | `fotos/2026-11-12-…` | Registro de uma foto: data, tipo (`treino` ou `evolucao`) e onde o arquivo está |
 
 Dentro de um dia, `ex` tem um registro por exercício:
@@ -215,7 +220,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 284 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 320 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -232,7 +237,6 @@ Dias, exercícios, regras de cada semana do primeiro bloco e os blocos do resto 
 | `DAYS` | Dias de treino: código, dia da semana (0 = segunda), nome curto e título |
 | `EX` | A ficha: todos os exercícios, na ordem em que aparecem em cada dia |
 | `EXBY` | Exercício pelo código (EXBY.A1) |
-| `CORE_BASE` | Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase |
 | `WT` | Semanas do bloco: RIR-alvo [mín, máx] da série pesada (top), dos compostos (comp) e dos isoladores (iso), séries extras de core e a alavanca da semana |
 | `WT_NORMAL` | Semana comum, usada quando a semana 7 ou 8 não cai nas festas do calendário |
 | `RIR_FORCA`, `RIR_HIPER`, `RIR_PICO` | Rampa de RIR por semana do bloco, na ordem [série pesada, compostos, isoladores]; ao chegar ao fim, recomeça |
@@ -244,6 +248,7 @@ Dias, exercícios, regras de cada semana do primeiro bloco e os blocos do resto 
 | Função | O que faz |
 | --- | --- |
 | `ex()` | Monta um exercício da ficha: k = código, d = dia, n = nome, m = músculo. O resto tem padrão: sc ("st" séries iguais, "top" 1 pesada + back-offs), sets, faixa lo–hi, kg inicial, inc e mic (salto e microcarga), step (arredondamento), t (comp, iso ou core), rest, obs, bw (peso do corpo), opt (opcional) |
+| `contaEx()` | Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase Conta para o dia e a semana: não é opcional e já estava na ficha naquela semana (exercício novo não vira pendência nas semanas anteriores) |
 | `dayEx()` | Exercícios de um dia, na ordem da ficha |
 | `exShort()` | Nome curto do exercício (sem o que vem entre parênteses) |
 | `isFestas()` | Semana com 24, 25 ou 31/dez ou 1º/jan |
@@ -385,7 +390,7 @@ Campos do Perfil e do Objetivo e os cálculos que saem deles: gordura, metabolis
 | `cardioSessionKcal()` | Gasto estimado de uma sessão de cardio (esteira, bicicleta ou elíptico) |
 | `bfDobras()` | % de gordura por dobras cutâneas: 7 dobras ou 3 dobras (densidade corporal -> %) |
 | `computePlan()` | Calcula ponto de partida e plano com o que estiver preenchido; marca o que é estimativa |
-| `medidaAtual()` | Medida atual: registro mais recente do Corpo e dieta que tenha o campo; senão, o perfil |
+| `medidaAtual()` | Medida atual: registro mais recente da aba Corpo que tenha o campo; senão, o perfil |
 | `medidasRef()` | Medidas: atual, referência, sua meta e estimativa na meta |
 | `buildPhases()` | Fases do plano: plano anual (dono) ou geradas pelo objetivo |
 | `phaseAt()` | Fase do plano em uma data |
@@ -774,7 +779,57 @@ Login e ligação com o banco de dados: carrega os dados da pessoa e grava cada 
 | --- | --- |
 | `connect()` | Dono: dados na raiz (como antes). Outras pessoas: espaço privado data/users/<id>/app/, que nem o dono lê. |
 
-### 26. Partida
+### 26. Dieta: diário de alimentos com a tabela TACO
+
+A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as comparações por refeição e por dia da semana contra a meta.
+
+| Dado | O que guarda |
+| --- | --- |
+| `TACO_CAT`, `TACO` | Tabela TACO (Tabela Brasileira de Composição de Alimentos, 4ª edição revisada e ampliada, NEPA/UNICAMP, 2011). Cada linha vale para 100 g de parte comestível: [nome, grupo, kcal, proteína g, carboidrato g, gordura g, fibra g]. kcal −1: a tabela não traz a composição desse alimento |
+| `DT_REF` | Refeições padrão conforme o número de refeições do Perfil: nome e parte das calorias do dia (%) |
+| `DT_RES` | alimentos mostrados na busca |
+| `DT_FOLGA` | até 10% acima ou abaixo do proposto conta como "dentro" |
+| `DT_PER`, `DT_SEM` | períodos (dias) da comparação por refeição |
+
+| Função | O que faz |
+| --- | --- |
+| `semAcento()` | Texto sem acento e em minúsculas, para a busca |
+| `dtS()` | Estado da aba Dieta: menu aberto, dia mostrado, refeição recebendo alimento, busca e alimento escolhido |
+| `dtAdd()` | Soma dias a uma data AAAA-MM-DD |
+| `dtDow()` | Dia da semana de uma data (0 = segunda) |
+| `dtKc()` | Calorias arredondadas, com ponto de milhar |
+| `dtMeta()` | Meta do dia pela fase do plano: calorias (primeiro número do texto da fase) e macros |
+| `dtRefs()` | Refeições do dia: as que você definiu ou o padrão pelo número de refeições do Perfil |
+| `dtPartes()` | Parte de cada refeição no dia, ajustada para as partes somarem 1 |
+| `dtMeus()` | Alimentos cadastrados por você (fora da tabela) |
+| `dtFood()` | Alimento pela chave: número = linha da TACO; texto = alimento seu |
+| `dtCalc()` | Calorias e macros de uma quantidade (gramas, ou número de porções quando o alimento é por porção) |
+| `dtSum()` | Soma de calorias e macros de uma lista de itens |
+| `dtItens()` | Alimentos registrados em um dia |
+| `dtBusca()` | Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela palavra |
+| `dtUsados()` | Alimentos que você mais registrou (aparecem antes de digitar) |
+| `dtGrava()` | Grava um registro da dieta (um dia ou a lista dos seus alimentos) |
+| `dtPoe()` | Grava a lista de alimentos de um dia |
+| `dtSit()` | Situação contra o proposto: dentro (até 10%), acima ou abaixo, com a cor de cada uma |
+| `dtBar()` | Barra de progresso: ingerido contra o proposto |
+| `dtDif()` | Diferença com sinal e situação: "+120 · acima" |
+| `renderDieta()` | Desenha a aba Dieta: meta da fase, menu e a visão escolhida |
+| `dtDiaHtml()` | Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição |
+| `dtItemHtml()` | Linha de um alimento registrado: nome, quantidade (editável), calorias e remover |
+| `dtPrevTxt()` | Texto da prévia: calorias e macros da quantidade digitada |
+| `dtResHtml()` | Lista da busca (ou os mais usados, antes de digitar) |
+| `dtAddHtml()` | Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela |
+| `dtRefHtml()` | Visão "Por refeição": média de cada refeição nos dias com registro, contra o proposto |
+| `dtSemHtml()` | Visão "Por dia da semana": barras do total de cada dia contra a meta e a tabela refeição × dia |
+| `dtCfgHtml()` | Bloco "Refeições e proposto": nomes e parte de cada refeição nas calorias do dia |
+| `dtRefsSalva()` | Guarda as refeições definidas (ou volta ao padrão) nos ajustes |
+| `dtOk()` | Adiciona o alimento escolhido à refeição aberta |
+| `dtForaSalva()` | Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade |
+| `dtClick()` | Toques na aba Dieta |
+| `dtInput()` | Digitação: a busca atualiza só a lista; a quantidade atualiza a prévia |
+| `dtChange()` | Campos alterados: dia, quantidade de um item e nomes ou partes das refeições |
+
+### 27. Partida
 
 Ordem em que o app liga.
 
@@ -856,6 +911,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run32` | Anotações livres e posologia preenchida pelo usuário na aba de hormônios e peptídeos |
 | `run33` | Conversa entre treinos: carga trazida do exercício irmão e ajuste pelo desempenho no outro dia |
 | `run34` | Cargas da máquina: placas guardadas, reconhecimento de placa fixa, placas deduzidas, declaração manual e carga livre |
+| `run36` | Opcionais e exercícios novos fora das pendências; domingo como dia livre; aba Dieta: busca na TACO, registro, alimento fora da tabela, comparação por refeição e por dia |
 | `run35` | Tempo no ritmo real (semana 1 de verdade): todos os dias do ano cabem no limite; abdômen abre o treino; panturrilha no leg press; opcionais fora do previsto |
 | `tbudget` | Duração prevista de cada dia de treino |
 | `tbudget2` | Maior duração prevista de cada dia ao longo das 60 semanas |
@@ -864,6 +920,9 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 
 ## 10. Limites conhecidos
 
+- A **tabela TACO** (4ª edição, NEPA/UNICAMP, 597 alimentos) fica embutida no programa, conferida linha a linha contra a planilha original. Seis linhas não têm composição na tabela e ficam fora da busca. A meta por refeição é a meta do dia vezes a parte de cada refeição (`settings.dieta.refs`).
+- O **domingo** (`DOM`, `livre: true`) não tem exercícios: só registra atividade, entra no cardio da semana e não conta como falta.
+- Um exercício só conta como pendente a partir da semana em que entrou na ficha (`desde`); opcional (`opt`) nunca conta.
 - O **tempo previsto** usa o ritmo medido (`ritmo`): média da execução por série, segundos de descanso além do previsto e troca de exercício, a partir de 8 tempos de cada tipo. Antes disso vale o padrão. Exercícios opcionais (`opt`) ficam fora do previsto; exercício na mesma máquina do anterior (`junto`) conta 30 s de troca.
 - As **placas deduzidas** de uma máquina partem do passo entre as cargas já usadas; com só duas cargas o passo pode estar errado. O campo "Placas desta máquina" corrige.
 - O app calcula **60 semanas**, até o fim de 2027 (`MAXW`). Os blocos seguem a lista `BLOCOS_ANO`; a troca de variações de exercício entre blocos ainda é manual.
