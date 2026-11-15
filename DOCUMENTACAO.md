@@ -232,6 +232,7 @@ Dias, exercícios, regras de cada semana do primeiro bloco e os blocos do resto 
 | `DAYS` | Dias de treino: código, dia da semana (0 = segunda), nome curto e título |
 | `EX` | A ficha: todos os exercícios, na ordem em que aparecem em cada dia |
 | `EXBY` | Exercício pelo código (EXBY.A1) |
+| `CORE_BASE` | Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase |
 | `WT` | Semanas do bloco: RIR-alvo [mín, máx] da série pesada (top), dos compostos (comp) e dos isoladores (iso), séries extras de core e a alavanca da semana |
 | `WT_NORMAL` | Semana comum, usada quando a semana 7 ou 8 não cai nas festas do calendário |
 | `RIR_FORCA`, `RIR_HIPER`, `RIR_PICO` | Rampa de RIR por semana do bloco, na ordem [série pesada, compostos, isoladores]; ao chegar ao fim, recomeça |
