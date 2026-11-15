@@ -996,7 +996,7 @@ const DELOAD_DIAS = 2;             // dias abaixo da faixa na semana 4 que ligam
 // Tempo, descanso e recuperação
 const EXEC_DEF = 40;               // segundos de execução por série, quando não anotado
 const TRANS_DEF = 90;              // segundos de intervalo entre exercícios, quando não anotado
-const TRANS_JUNTO = 30;            // troca quando o exercício é na mesma máquina do anterior (só muda a carga)
+const TRANS_JUNTO = 30;            // troca quando o exercício é na mesma máquina do anterior (só muda a carga); na ficha, junto: true usa este valor e junto: 100 usa 100 s (mesma polia, troca de puxador)
 const RITMO_MIN = 8;               // tempos cronometrados necessários para o app passar a usar o seu ritmo no lugar do padrão
 const RITMO_N = 60;                // o ritmo olha os tempos mais recentes (até este número de cada tipo)
 const RITMO_FOLGA = 10;            // descanso real mais de 10 s acima do previsto, em média: o painel mostra quanto tempo isso custa
@@ -1052,15 +1052,14 @@ const EX = [
   ex("A4", "A", "Tríceps francês na polia", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min" }),
   ex("A5", "A", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
   ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
-  ex("B8", "B", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 2.5, bw: true, t: "core", rest: "2 min", desde: 2, obs: "Abre o treino, já com o halter do sábado entre os pés" }),
+  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos. Abre o treino" }),
   ex("B1", "B", "Puxada barra Y", "Costas", { sc: "top", kg: 88.5, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("B2", "B", "Remada triângulo", "Costas", { sets: 3, lo: 8, hi: 10, kg: 141, t: "comp", obs: "Alongar as escápulas à frente" }),
   ex("B3", "B", "Remada sentada", "Costas", { sets: 2, lo: 8, hi: 10, kg: 92.5, t: "comp" }),
   ex("B4", "B", "Bíceps extendido 45°", "Bíceps", { sets: 3, lo: 8, hi: 10, kg: 16, inc: 1, mic: 0.5, step: 0.5, rest: "2 min", obs: "Bíceps alongado" }),
   ex("B5", "B", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 12, hi: 15, kg: 20, inc: 1.25, mic: 0.5, rest: "2 min" }),
-  ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos. Opcional: só se sobrar tempo", opt: true }),
   ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
-  ex("C1f", "C1", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "2 min", obs: "Abre o treino; alongar o abdômen no topo" }),
+  ex("C1h", "C1", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 2.5, bw: true, t: "core", rest: "2 min", desde: 2, obs: "Abre o treino, já com o halter do sábado entre os pés" }),
   ex("C1a", "C1", "Leg press 45° ou hack", "Quadríceps", { sc: "top", kg: null, inc: 5, mic: 2.5, t: "comp", rest: "3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
   ex("C1g", "C1", "Panturrilha no leg press", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: null, inc: 5, mic: 2.5, rest: "2 min", junto: true, desde: 2, obs: "Na mesma máquina, logo depois do leg press: só troque a carga. Pausa de 1 s embaixo" }),
   ex("C1b", "C1", "Cadeira extensora unilateral", "Quadríceps", { sets: 3, lo: 8, hi: 10, kg: 26.5, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna, sem descanso entre elas" }),
@@ -1074,13 +1073,13 @@ const EX = [
   ex("D4", "D", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 10, hi: 12, kg: 44.5, rest: "2 min", obs: "Dia pesado de lateral" }),
   ex("D5", "D", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 15, hi: 20, kg: 18.5, inc: 1.25, mic: 0.5, rest: "2 min" }),
   ex("D7", "D", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
+  ex("E8", "E", "Rotação de tronco", "Core", { sets: 3, lo: 12, hi: 15, kg: null, t: "core", rest: "2 min", semPlus: true, desde: 2, obs: "Cada lado; oblíquos. Abre o treino" }),
   ex("E1", "E", "Puxada barra grande", "Costas", { sets: 3, lo: 10, hi: 12, kg: 73, t: "comp" }),
   ex("E2", "E", "Remada sentada", "Costas", { sets: 3, lo: 10, hi: 12, kg: 89, t: "comp" }),
-  ex("E8", "E", "Abdominal na polia (ajoelhado)", "Core", { sets: 3, lo: 10, hi: 15, kg: null, t: "core", rest: "2 min", semPlus: true, desde: 2, obs: "Depois das costas, na polia dos braços (o bíceps vem em seguida, na mesma polia)" }),
-  ex("E3", "E", "Bíceps 45° na polia alta", "Bíceps", { sets: 3, lo: 10, hi: 12, kg: 30, inc: 1.25, mic: 0.5, junto: true, rest: "Bi-set com o tríceps cruzado (mesma polia)" }),
-  ex("E4", "E", "Tríceps polia alta cruzado", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min após o par" }),
-  ex("E5", "E", "Bíceps corda na polia", "Bíceps", { sets: 2, lo: 12, hi: 15, kg: 70, rest: "Bi-set com o coice (mesma polia)" }),
-  ex("E6", "E", "Tríceps coice na polia", "Tríceps", { sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s após o par" }),
+  ex("E3", "E", "Bíceps 45° na polia alta", "Bíceps", { sets: 3, lo: 10, hi: 12, kg: 30, inc: 1.25, mic: 0.5, rest: "Bi-set com o tríceps cruzado (mesma polia)" }),
+  ex("E4", "E", "Tríceps polia alta cruzado", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, junto: 100, rest: "2 min após o par" }),
+  ex("E5", "E", "Bíceps corda na polia", "Bíceps", { junto: 100, semPlus: true, sets: 2, lo: 12, hi: 15, kg: 70, rest: "Bi-set com o coice (mesma polia)" }),
+  ex("E6", "E", "Tríceps coice na polia", "Tríceps", { junto: 100, semPlus: true, sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s após o par" }),
   ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("C2a", "C2", "Stiff (barra ou halteres)", "Posteriores de coxa", { sets: 3, lo: 6, hi: 10, kg: null, t: "comp", rest: "2–3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
   ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "2 min", obs: "Logo depois do stiff. Passou de 15: halter entre os pés" }),
@@ -1239,7 +1238,7 @@ function prescribe(def, st, w, flags) {
   const t = wt(w);
   let sets = baseSets(def, t);
   let extra = plusSets(def, t);
-  if (def.k === "C1f" && t.core >= 1) extra = 1;
+  if (def.k === "C1h" && t.core >= 1) extra = 1;
   if (def.k === "C2g" && t.core >= 2) extra = 1;
   for (let i = 0; i < extra; i++) sets.push(Object.assign({}, sets[sets.length - 1]));
   const festas = !!t.festas && def.t !== "core";
@@ -1832,7 +1831,7 @@ function ritmo(records) {
   const bi = [], un = [], rest = [], tr = [];
   Object.keys(records || {}).sort().forEach(id => { const doc = records[id]; if (!doc || !doc.ex) return;
     Object.keys(doc.ex).forEach(k => { const d = EXBY[k], e = doc.ex[k]; if (!d || !e || e.st === "nao") return;
-      if (+e.trans >= 20 && +e.trans <= 900 && !d.junto) tr.push(+e.trans);
+      if (+e.trans >= 20 && +e.trans <= 900 && d.junto !== true) tr.push(+e.trans);
       (e.sets || []).forEach(x => { if (!x || !(+x.reps > 0)) return;
         if (+x.exec >= 10 && +x.exec <= 300) { if (x.lados) un.push(+x.exec + (+x.troca > 0 ? +x.troca : 0)); else bi.push(+x.exec); }
         if (+x.desc >= 30 && +x.desc <= 600) rest.push(+x.desc - restSec(d)); }); }); });
@@ -1846,7 +1845,7 @@ function dayTime(W, day, wk) {
   const R = ritmo(app.records), rx = R.rest || 0, trN = R.trans || TRANS_DEF;
   let prev = AQUEC_SEC, reg = AQUEC_SEC, regEst = false, nReg = 0, restSum = 0, restN = 0, restPrevSum = 0, recs = [], aqPrev = 0, aqReg = 0, aqN = 0, aqDone = 0, optSec = 0, nPrev = 0, folga = 0;
   defs.forEach((d, idx) => {
-    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? (R.uni || 2 * EXEC_DEF + UNI_TROCA) : (R.exec || EXEC_DEF), tr = d.junto ? TRANS_JUNTO : trN;
+    const p = wk.pres[d.k]; const n = p.sets.length, rs = restSec(d), un = isUni(d), ex1 = un ? (R.uni || 2 * EXEC_DEF + UNI_TROCA) : (R.exec || EXEC_DEF), tr = d.junto === true ? TRANS_JUNTO : d.junto ? Math.min(+d.junto, trN) : trN;
     const plan = warmPlan(d) || [], warm = plan.length, wp = warmTime(plan);
     const custo = wp.serie + wp.antes + n * ex1 + (n - 1) * Math.max(30, rs + rx);
     if (d.opt) optSec += custo + tr; else { prev += custo + (nPrev ? tr : 0); nPrev++; aqPrev += wp.serie + wp.antes; aqN += warm; folga += (n - 1) * rx; }
@@ -2534,7 +2533,7 @@ const GLOSS = {
   descanso: ["Descanso", "<p>Tempo entre as séries do exercício. Acima de ~90 s não há diferença clara de hipertrofia; nos compostos pesados, 2–3 min ajudam a manter a carga.</p>"],
   comp: ["Compostos", "<p>Exercícios que movem mais de uma articulação e muita carga: chest press, peito 45°, puxadas, remadas, leg press, stiff, elevação pélvica, desenvolvimento.</p><p>Ficam com um pouco mais de repetições sobrando (RIR) para controlar a fadiga.</p>"],
   iso: ["Isoladores e core", "<p>Exercícios de uma articulação (crucifixo, extensora, flexora, elevações, roscas, tríceps) e os de abdômen.</p><p>Podem ir mais perto da falha (RIR 0–1) com pouco risco.</p>"],
-  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é a prioridade até janeiro: há abdômen nos 6 dias de treino, com 19 séries por semana, 20 na semana 2 e 21 a partir da semana 3.</p><p>Por ser a prioridade, o abdômen abre o treino (na sexta, vem depois das costas, na polia dos braços; no sábado, logo depois do stiff): é feito descansado e não fica para o fim, onde o tempo costuma acabar.</p>"],
+  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é a prioridade até janeiro: há abdômen nos 6 dias de treino, com 19 séries por semana, 20 na semana 2 e 21 a partir da semana 3. São três exercícios, cada um em dois dias com três dias entre eles: abdominal na máquina (segunda e quinta), rotação de tronco (terça e sexta) e elevação de pernas (quarta e sábado).</p><p>Por ser a prioridade, o abdômen abre o treino (no sábado, vem logo depois do stiff): é feito descansado e não fica para o fim, onde o tempo costuma acabar.</p>"],
   alavanca: ["Alavanca da semana", "<p>O que a semana prioriza para progredir: repetições, carga ou volume. Muda de semana para semana (periodização ondulatória), o que dá variação sem perder a direção.</p><p>A tabela mostra também o RIR alvo de cada tipo de série.</p>"],
   carga: ["Carga da semana", "<p>A carga prevista para as séries de trabalho.</p><ul><li><b>▲ verde</b>: subiu, porque você bateu o topo da faixa.</li><li><b>▼ laranja</b>: desceu, porque ficou abaixo do previsto ou passou 2 semanas sem fazer.</li><li><b>●</b>: mesma carga.</li></ul>"],
   series: ["Séries × repetições", "<p>Quantas séries e a faixa de repetições de cada uma. Nos exercícios com série pesada aparece <b>1 × 6–8 + 2 × 8–10</b>: 1 pesada e 2 de back-off.</p><p><b>+1 série</b> ou <b>−1 série</b> mostram mudanças da semana: core extra, deload ou festas.</p>"],
@@ -2653,7 +2652,7 @@ Object.assign(GLOSS, {
   pf_cinturaMeta: ["Cintura na meta (estimativa)", "<p>Projeção pela regra prática de ~1 cm de cintura a menos por kg de gordura perdido. A cintura real depende de onde o seu corpo guarda gordura.</p>" + FITA],
   medidastempo: ["Medidas ao longo do tempo", "<p>Escolha a medida para ver a evolução. O tracejado é a referência: na cintura, metade da altura; nas outras, a proporção clássica pelo punho (estimativa).</p><p>No cutting, cintura caindo com braço e coxa estáveis indica perda de gordura com músculo preservado.</p>"],
   festas: ["Semana de festas", "<p>As semanas do Natal e do Ano-Novo: 1/3 a menos de séries com a mesma carga, para manter a força com menos tempo e recuperação. O core mantém o volume. O resultado dessas semanas não muda a progressão.</p>"],
-  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é prioridade nesta ficha: há abdômen nos 6 dias de treino, com 19 séries por semana, 20 na semana 2 e 21 a partir da semana 3.</p><p>Por ser a prioridade, o abdômen abre o treino (na sexta, vem depois das costas, na polia dos braços; no sábado, logo depois do stiff).</p>"],
+  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é prioridade nesta ficha: há abdômen nos 6 dias de treino, com 19 séries por semana, 20 na semana 2 e 21 a partir da semana 3. São três exercícios, cada um em dois dias com três dias entre eles: abdominal na máquina (segunda e quinta), rotação de tronco (terça e sexta) e elevação de pernas (quarta e sábado).</p><p>Por ser a prioridade, o abdômen abre o treino (no sábado, vem logo depois do stiff).</p>"],
   pesoprev: ["Peso previsto hoje", "<p>O peso que o plano espera para hoje, interpolado entre o início e o fim de cada fase.</p>"],
   gorduratempo: ["Gordura corporal ao longo do tempo", "<p>Suas medidas de gordura (%) e a meta definida na aba Objetivo. Meça sempre nas mesmas condições: a bioimpedância oscila alguns pontos de um dia para outro.</p>"],
   indice: ["Índice de força", "<p>Média da força estimada (1RM) dos exercícios feitos na semana, em porcentagem do 1RM das cargas máximas do seu Perfil. 100% = suas marcas.</p><p>Em déficit, ficar estável já é bom resultado. Queda de mais de ~5% por 2 semanas pede atenção a sono, dieta e deload.</p>"],

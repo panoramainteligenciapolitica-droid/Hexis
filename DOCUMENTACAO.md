@@ -165,7 +165,7 @@ São 53 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | --- | --- | --- |
 | `EXEC_DEF` | `40` | segundos de execução por série, quando não anotado |
 | `TRANS_DEF` | `90` | segundos de intervalo entre exercícios, quando não anotado |
-| `TRANS_JUNTO` | `30` | troca quando o exercício é na mesma máquina do anterior (só muda a carga) |
+| `TRANS_JUNTO` | `30` | troca quando o exercício é na mesma máquina do anterior (só muda a carga); na ficha, junto: true usa este valor e junto: 100 usa 100 s (mesma polia, troca de puxador) |
 | `RITMO_MIN` | `8` | tempos cronometrados necessários para o app passar a usar o seu ritmo no lugar do padrão |
 | `RITMO_N` | `60` | o ritmo olha os tempos mais recentes (até este número de cada tipo) |
 | `RITMO_FOLGA` | `10` | descanso real mais de 10 s acima do previsto, em média: o painel mostra quanto tempo isso custa |
