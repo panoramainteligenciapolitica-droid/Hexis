@@ -5211,7 +5211,7 @@ function djAct(a, b) {
     const R = app.djLido, q = (at, i) => { const el = document.querySelector("[" + at + '="' + i + '"]'); return el ? el.value.trim() : ""; }, nn = t => { const x = parseFloat(String(t).replace(/\./g, m => /,/.test(t) ? "" : m).replace(",", ".")); return isFinite(x) ? x : null; }; if (!R) return;
     const data = v("djLerData") || todayStr(); let k = 0;
     R.itens.forEach((x, i) => { const cb = document.querySelector('[data-djl="' + i + '"]'), val = nn(q("data-djlv", i)); if (!cb || !cb.checked || val == null) return;
-      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, Object.assign({ tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data }, x.op ? { op: x.op } : {}), "djExMsg"); k++; app.djMarc = x.marc; });
+      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, Object.assign({ tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data: x.data || data }, x.op ? { op: x.op } : {}), "djExMsg"); k++; app.djMarc = x.marc; });
     app.djLido = null; document.getElementById("djLerOut").innerHTML = '<p class="lead">' + (k ? k + " marcador" + (k > 1 ? "es salvos" : " salvo") + " com a data " + dCurta(data) + "." : "Nada marcado para salvar.") + "</p>"; document.getElementById("djLerArq").value = ""; renderDiario(); return;
   }
   if (op === "del") {
@@ -5274,7 +5274,7 @@ function djRefTxt(txt, un) {
 function djAcha(texto) {
   const bruto = String(texto || "").replace(/[ \t\u00a0]+/g, " "), dm = /colet\w*[^0-9]{0,40}(\d{1,2})\/(\d{1,2})\/(\d{4})/i.exec(bruto) || /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(bruto);
   const branco = m => " ".repeat(m.length), T = bruto.replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g, branco).replace(/\d{1,2}:\d{2}(:\d{2})?/g, branco).replace(/\d+\s*anos?\b/gi, branco), itens = [], faltam = [];
-  const L = T.split("\n").map(x => x.trim()), unDe = nome => (DJ_MARC.find(x => x[0] === nome) || [])[1] || "", met = x => /^m[ée]todo\s*:/i.test(x);
+  const LB = bruto.split("\n"), iso = m => m[3] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2), L = T.split("\n").map(x => x.trim()), unDe = nome => (DJ_MARC.find(x => x[0] === nome) || [])[1] || "", met = x => /^m[ée]todo\s*:/i.test(x);
   const marcDe = tit => { if (/n[aã]o[\s-]*hdl/i.test(tit)) return null; const t = DJ_LER.find(x => new RegExp(x[1].source, "i").test(tit)); return t ? t[0] : null; };
   L.forEach((ln, i) => {
     const r = /^resultado\s*:\s*([<>]=?)?\s*(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(.*)$/i.exec(ln); if (!r) return;
@@ -5287,6 +5287,8 @@ function djAcha(texto) {
       break;
     }
     const fx = ref ? djRefTxt(ref, un) : null, it = { marc: marc || tit.charAt(0) + tit.slice(1).toLowerCase(), valor: djNum(r[2]), un, rmin: fx ? fx[0] : null, rmax: fx ? fx[1] : null }; if (r[1]) it.op = r[1].charAt(0); if (!marc) it.novo = true;
+    // cada exame do laudo pode ter a própria data de coleta (linha "Coleta:" no fim do bloco)
+    for (let k = i + 1; k < Math.min(L.length, i + 90) && !met(L[k]); k++) { const c = /coleta\s*:\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/i.exec(LB[k] || ""); if (c) { it.data = iso(c); break; } }
     const ja = itens.findIndex(x => x.marc === it.marc);
     if (ja < 0) itens.push(it); else if (marc && un.toLowerCase() === unDe(marc).toLowerCase() && itens[ja].un.toLowerCase() !== un.toLowerCase()) itens[ja] = it; // dois resultados do mesmo exame: fica o da unidade que o app usa
   });
@@ -5304,7 +5306,8 @@ function djAcha(texto) {
     }
     if (!achou) faltam.push(nome);
   });
-  return { data: dm ? dm[3] + "-" + ("0" + dm[2]).slice(-2) + "-" + ("0" + dm[1]).slice(-2) : "", itens, faltam };
+  const data = dm ? iso(dm) : ""; itens.forEach(x => { if (x.data === data) delete x.data; }); // só fica no item a data que difere da data geral do laudo
+  return { data, itens, faltam };
 }
 // Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha)
 async function djPdfTexto(file) {
@@ -5323,7 +5326,7 @@ function djLerHtml(res) {
   const inp = (attr, i, v, rot) => '<label><span>' + rot + '</span><input type="text" inputmode="decimal" autocomplete="off" ' + attr + '="' + i + '" value="' + (v == null ? "" : esc(String(v).replace(".", ","))) + '"></label>';
   return '<p class="lead">Encontrei ' + res.itens.length + " marcador" + (res.itens.length > 1 ? "es" : "") + '. <b>Confira cada valor com o laudo antes de salvar</b>: a leitura é automática e pode errar.</p>' +
     '<div class="field"><label for="djLerData">Data do exame</label><input id="djLerData" type="date" value="' + (res.data || todayStr()) + '"></div>' +
-    res.itens.map((x, i) => '<div class="djler"><label class="djlh"><input type="checkbox" data-djl="' + i + '"' + (x.novo ? "" : " checked") + "> <b>" + esc(x.marc) + "</b>" + (x.op ? ' <span class="muted">resultado "' + (x.op === "<" ? "menor que" : "maior que") + '"</span>' : "") + (x.novo ? ' <span class="optb">fora da lista</span>' : "") + "</label>" + inp("data-djlv", i, x.valor, "Valor") + '<label><span>Unidade</span><input type="text" autocomplete="off" data-djlu="' + i + '" value="' + esc(x.un) + '"></label>' + inp("data-djlmin", i, x.rmin, "Ref. mín.") + inp("data-djlmax", i, x.rmax, "Ref. máx.") + "</div>").join("") +
+    res.itens.map((x, i) => '<div class="djler"><label class="djlh"><input type="checkbox" data-djl="' + i + '"' + (x.novo ? "" : " checked") + "> <b>" + esc(x.marc) + "</b>" + (x.op ? ' <span class="muted">resultado "' + (x.op === "<" ? "menor que" : "maior que") + '"</span>' : "") + (x.novo ? ' <span class="optb">fora da lista</span>' : "") + (x.data ? ' <span class="muted">coleta em ' + dCurta(x.data) + "</span>" : "") + "</label>" + inp("data-djlv", i, x.valor, "Valor") + '<label><span>Unidade</span><input type="text" autocomplete="off" data-djlu="' + i + '" value="' + esc(x.un) + '"></label>' + inp("data-djlmin", i, x.rmin, "Ref. mín.") + inp("data-djlmax", i, x.rmax, "Ref. máx.") + "</div>").join("") +
     (res.faltam.length ? '<details class="pfsec sub"><summary><h3>Não achei no laudo (' + res.faltam.length + ')</h3></summary><p class="muted" style="font-size:13px">' + res.faltam.map(esc).join(", ") + ".</p></details>" : "") +
     '<div class="row-btns"><button type="button" class="btn primary" data-dj="lersalva">Salvar os marcados</button><button type="button" class="btn" data-dj="lerlimpa">Descartar</button></div>';
 }
