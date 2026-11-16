@@ -222,7 +222,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 334 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 343 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -547,6 +547,8 @@ A aba Corpo e dieta e a pesagem rápida.
 | `BIO_ZONA` | onde começa e termina a faixa "normal" nas barras, em % da largura |
 | `BIO_COL` | largura de cada exame no histórico (px) |
 | `BIO_LIN`, `BIO_HIS` | Linhas do histórico e da análise músculo-gordura: [chave, rótulo, unidade, cor, menos é melhor] |
+| `BIO_CSV` | Colunas do arquivo exportado pelo aplicativo do InBody: [campo do exame, expressão que reconhece o título da coluna] |
+| `BIO_CSV_SEG` | Colunas por segmento do corpo (massa muscular e massa gorda de cada um) |
 
 | Função | O que faz |
 | --- | --- |
@@ -565,6 +567,9 @@ A aba Corpo e dieta e a pesagem rápida.
 | `bioPos()` | Posição de um valor na barra (0 a 100%): abaixo, dentro e acima da faixa normal ocupam zonas fixas |
 | `bioFig()` | Figura do corpo (desenho simples) com os segmentos pintados na cor do cartão |
 | `bioHtml()` | Painel "Evolução corporal": gordura contra a meta, análise músculo-gordura, análise segmentar e histórico |
+| `bioCsv()` | Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora) |
+| `bioImporta()` | Importa o arquivo: exame novo entra; exame que já existe é atualizado, guardando o que só o laudo tem (% do padrão e faixas) |
+| `bioEspelha()` | O peso e a gordura de um exame do período do plano entram também nas medidas do dia |
 | `bioFormHtml()` | Formulário do exame: os campos seguem a ordem do laudo |
 | `bioGrava()` | Grava (ou apaga) um exame |
 | `bioSalva()` | Lê o formulário e salva o exame; o peso e a gordura do exame entram também nas medidas do dia, quando ele é do período do plano |
@@ -754,6 +759,9 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `DJ_BULA` | O que foi conferido em bula ou estudo para substâncias que também têm ficha: entra por cima do dado da ficha |
 | `DJ_M` | Citados só nas tabelas do material, sem ficha: [nome, classe, via, padrão descrito] |
 | `DJ_REF` | Lista final da referência: hormônios, fichas (com o conferido em bula por cima) e os citados sem ficha |
+| `DJ_PDF` | leitor de PDF, carregado só quando um laudo é escolhido |
+| `DJ_LER` | Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome] |
+| `DJ_LER_JANELA` | caracteres depois do nome do marcador em que o valor é procurado |
 
 | Função | O que faz |
 | --- | --- |
@@ -763,6 +771,7 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
 | `djRefHtml()` | Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e regras |
 | `djCtrlHtml()` | Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida |
+| `djTipo()` | Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t") ou peptídeo |
 | `djList()` | Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome) |
 | `djLevel()` | Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue. |
 | `djNext()` | Próxima aplicação prevista: a última mais o intervalo informado (dias) |
@@ -770,6 +779,11 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `djDelBtn()` | Botão de apagar com confirmação no segundo toque |
 | `renderDiario()` | Desenha a aba Hormônios e peptídeos: referência, substâncias, calendário, aplicações, controle de doses, curva estimada e exames |
 | `djAct()` | Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar substância, aplicação ou exame |
+| `djNum()` | Número escrito à brasileira ("1.234,5" ou "45,2") para número |
+| `djAcha()` | Procura os marcadores conhecidos no texto de um laudo: o primeiro número depois do nome é o valor; unidade e faixa de referência entram quando vêm logo em seguida |
+| `djPdfTexto()` | Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha) |
+| `djLerHtml()` | Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis |
+| `djLerArquivo()` | Lê o laudo escolhido e mostra a lista de conferência |
 
 ### 24. Edição e salvamento
 
@@ -936,6 +950,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run32` | Anotações livres e posologia preenchida pelo usuário na aba de hormônios e peptídeos |
 | `run33` | Conversa entre treinos: carga trazida do exercício irmão e ajuste pelo desempenho no outro dia |
 | `run34` | Cargas da máquina: placas guardadas, reconhecimento de placa fixa, placas deduzidas, declaração manual e carga livre |
+| `run38` | Hormônios: fontes num menu recolhido, seletor e edição no cadastro, selo de tipo; leitura do texto de um laudo; importação do arquivo do InBody conferida com o arquivo real |
 | `run37` | Exames de bioimpedância: painel Evolução corporal com 11 exames reais, faixas do laudo e estimadas, formulário (salvar, editar, só o mês, excluir) e espelho nas medidas do dia |
 | `run36` | Opcionais e exercícios novos fora das pendências; domingo como dia livre; aba Dieta: busca na TACO, registro, alimento fora da tabela, comparação por refeição e por dia |
 | `run35` | Tempo no ritmo real (semana 1 de verdade): todos os dias do ano cabem no limite; abdômen abre o treino; panturrilha no leg press; opcionais fora do previsto |
@@ -946,6 +961,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 
 ## 10. Limites conhecidos
 
+- A **leitura de laudo em PDF** usa a biblioteca pdf.js, baixada na hora (versão fixa). Ela só acha os marcadores de `DJ_LER` e nada é salvo sem conferência. A **importação do InBody** reconhece as colunas pelo título (`BIO_CSV`).
 - O painel **Evolução corporal** (aba Corpo) sai dos exames de bioimpedância: o pico é o exame de maior gordura; as faixas de peso, massa magra e massa gorda vêm do laudo ou são estimadas pela altura (peso ideal = IMC 22 no homem e 21,5 na mulher; faixa de 85% a 115%).
 - A **tabela TACO** (4ª edição, NEPA/UNICAMP, 597 alimentos) fica embutida no programa, conferida linha a linha contra a planilha original. Seis linhas não têm composição na tabela e ficam fora da busca. A meta por refeição é a meta do dia vezes a parte de cada refeição (`settings.dieta.refs`).
 - O **domingo** (`DOM`, `livre: true`) não tem exercícios: só registra atividade, entra no cardio da semana e não conta como falta.

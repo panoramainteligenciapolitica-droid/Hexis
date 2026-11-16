@@ -746,6 +746,19 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
   .biosw { grid-template-columns: 1fr 1fr; }
   .biozh, .biorow { grid-template-columns: 150px minmax(0, 1fr) 70px; }
 }
+.djfontes > summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.djfontes > summary::-webkit-details-marker { display: none; }
+.djfontes > summary h2 { margin: 0; }
+.djfontes > summary .muted { font-size: 13px; }
+.djfontes > summary::after { content: "▸"; margin-left: auto; color: var(--muted); }
+.djfontes[open] > summary::after { content: "▾"; }
+.djfontes[open] > summary { margin-bottom: 12px; }
+.djfh { margin: 14px 0 6px; font-size: 16px; }
+.djler { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+.djler .djlh { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.djler label span { display: block; font-size: 11px; color: var(--muted); }
+.djler input[type="text"] { width: 100%; min-height: 38px; min-width: 0; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--ink); font: inherit; }
+#djLerArq, #bioArq { max-width: 100%; margin: 4px 0; }
 .login { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .login.hide { display: none; }
 .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px 18px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
@@ -969,23 +982,12 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 
   <!-- Tela: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames) -->
   <section class="view" id="v-diario">
-    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
-    <div class="panel">
-      <h2>Hormônios e peptídeos</h2>
-      <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (classe, via e meia-vida de 95 substâncias, com busca), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
-    </div>
-    <div class="panel">
-      <h2>Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h2>
-      <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. A posologia é você quem preenche, em <b>Sua anotação</b>: ela fica guardada só na sua conta.</p>
-      <div class="field"><label for="djRefQ">Buscar substância</label><input id="djRefQ" type="search" autocomplete="off" placeholder="nome ou classe" data-djq></div>
-      <p class="muted" id="djRefN"></p>
-      <div id="djRef"></div>
-    </div>
     <div class="panel">
       <h2>Substâncias</h2>
       <div id="djSubs"></div>
       <details class="pfsec sub" id="djSubForm"><summary><h3>Cadastrar substância</h3></summary>
         <div class="grid2">
+          <div class="field wide"><label for="djSubRef">Escolher da lista (hormônios e peptídeos)</label><select id="djSubRef"><option value="">Outra: digitar o nome abaixo</option></select></div>
           <div class="field wide"><label for="djSubNome">Nome</label><input id="djSubNome" type="text" autocomplete="off"></div>
           <div class="field"><label for="djSubUn">Unidade da dose</label><select id="djSubUn"><option>mg</option><option>mcg</option><option>UI</option><option>mL</option><option>g</option></select></div>
           <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
@@ -994,7 +996,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
           <div class="field wide"><label for="djSubPos">Posologia (você preenche)</label><input id="djSubPos" type="text" autocomplete="off" placeholder="a da sua prescrição: dose, frequência e duração"></div>
           <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação, concentração, quem prescreveu…"></div>
         </div>
-        <div class="row-btns"><button type="button" class="btn primary" data-dj="addsub">Salvar substância</button></div>
+        <div class="row-btns"><button type="button" class="btn primary" data-dj="addsub" id="djSubSave">Salvar substância</button><button type="button" class="btn" data-dj="cancsub" id="djSubCanc" style="display:none">Cancelar edição</button></div>
         <div class="muted" id="djSubMsg" aria-live="polite"></div>
       </details>
     </div>
@@ -1014,7 +1016,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div id="djApList"></div>
     </div>
     <div class="panel">
-      <h2>Controle de doses<button class="info" type="button" data-info="dj_ctrl" aria-label="Explicar: controle de doses">i</button></h2>
+      <h2>Controle de doses: hormônios e peptídeos<button class="info" type="button" data-info="dj_ctrl" aria-label="Explicar: controle de doses">i</button></h2>
       <div id="djCtrl"></div>
     </div>
     <div class="panel">
@@ -1024,6 +1026,11 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     </div>
     <div class="panel">
       <h2>Exames e sinais</h2>
+      <details class="pfsec sub" id="djLerBox"><summary><h3>Ler laudo em PDF</h3></summary>
+        <p class="muted" style="font-size:13px;margin:6px 0">Escolha o PDF do laboratório. O app procura os marcadores que acompanha e mostra o que achou para você conferir antes de salvar. Foto ou PDF digitalizado não tem texto e não dá para ler.</p>
+        <input type="file" id="djLerArq" accept="application/pdf,.pdf">
+        <div id="djLerOut"></div>
+      </details>
       <div class="grid2">
         <div class="field"><label for="djExMarc">Marcador</label><select id="djExMarc"></select></div>
         <div class="field hide" id="djExOutroF"><label for="djExOutro">Qual marcador</label><input id="djExOutro" type="text"></div>
@@ -1041,6 +1048,16 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <div class="chartbox"><canvas id="chDjEx" aria-label="Gráfico: evolução do marcador escolhido"></canvas></div>
       <div class="tablewrap" id="djExHist"></div>
     </div>
+    <details class="panel djfontes" id="djFontes">
+      <summary><h2>Fontes e referência</h2><span class="muted">avisos, o que tem nesta aba e a referência de 95 substâncias</span></summary>
+    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
+      <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (classe, via e meia-vida de 95 substâncias, com busca), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
+      <h3 class="djfh">Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h3>
+      <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. A posologia é você quem preenche, em <b>Sua anotação</b>: ela fica guardada só na sua conta.</p>
+      <div class="field"><label for="djRefQ">Buscar substância</label><input id="djRefQ" type="search" autocomplete="off" placeholder="nome ou classe" data-djq></div>
+      <p class="muted" id="djRefN"></p>
+      <div id="djRef"></div>
+    </details>
   </section>
 
   <!-- Tela: Plano e regras -->
@@ -2873,6 +2890,7 @@ GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força esti
 GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos, trocas de exercício e o cardio do dia. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
 GLOSS.ritmo = ["Seu ritmo", "<p>O app mede como você treina de verdade e usa isso para prever o tempo do dia.</p><ul><li><b>Execução</b>: média do tempo cronometrado de uma série.</li><li><b>Descanso</b>: quantos segundos, em média, você descansa além do previsto na ficha (30 s acima = 2:30 onde a ficha pede 2:00).</li><li><b>Troca de exercício</b>: média do intervalo entre um exercício e o seguinte.</li></ul><p>Vale a partir de 8 tempos anotados de cada tipo (4 trocas) e olha os 60 mais recentes. Se o descanso real passa do previsto em mais de 10 s, o painel mostra quantos minutos isso custa no treino.</p>"];
 GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O painel <b>Tempo do treino</b> mostra quantos minutos os opcionais somam e se cabem no limite.</p>"];
+GLOSS.dj_ler = ["Ler laudo em PDF", "<p>O app abre o PDF do laboratório, procura o nome de cada marcador que acompanha e pega o primeiro número que vem depois dele.</p><ul><li>Funciona com PDF que tem texto. Foto e PDF digitalizado não têm texto para ler.</li><li>Cada laboratório monta o laudo de um jeito: confira valor, unidade e referência antes de salvar.</li><li>Nada é salvo sem você tocar em <b>Salvar os marcados</b>.</li></ul>"];
 GLOSS.bio = ["Exame de bioimpedância", "<p>O painel <b>Evolução corporal</b> é montado com os exames que você registra (InBody ou parecido).</p><ul><li><b>Gordura e meta</b>: a gordura do último exame contra a meta do Perfil. A barra mostra quanto do caminho já foi feito desde o <b>pico</b>, que é o exame com a maior gordura.</li><li><b>Análise músculo-gordura</b>: cada barra fica numa escala com as zonas abaixo, normal e acima. O contorno tracejado é o exame do pico.</li><li><b>Faixas normais</b>: as de peso, massa magra e massa de gordura vêm do laudo, quando você preenche. Sem elas, o app estima pela altura. Gordura (%) e IMC usam a referência padrão.</li><li><b>Análise segmentar</b>: massa magra de cada braço, tronco e perna, com o percentual do padrão que o laudo informa.</li><li><b>Histórico</b>: um ponto por exame. O pico e o último ficam destacados.</li></ul><p>Um exame do período do plano também entra nas medidas do dia (peso e gordura). Bioimpedância varia com hidratação, horário e aparelho: compare exames feitos em condições parecidas.</p>"];
 GLOSS.domingo = ["Domingo: dia livre", "<p>Não há musculação prevista no domingo.</p><ul><li>Se fizer cardio ou outra atividade, registre o tempo (e a distância, se tiver) e toque em <b>Feito</b>.</li><li>O que for registrado entra no cardio da semana.</li><li>Não registrar nada não conta como falta.</li></ul>"];
 GLOSS.dt_diario = ["Diário de alimentos", "<p>Registre o que comeu em cada refeição. O app soma calorias e macros e compara com a meta do dia.</p><ul><li><b>Tabela</b>: TACO (Tabela Brasileira de Composição de Alimentos, 4ª edição, NEPA/UNICAMP), com 597 alimentos. Os valores valem para <b>100 g da parte comestível</b>.</li><li><b>Cru ou cozido</b>: escolha a linha que corresponde ao que você pesou. Arroz cru e arroz cozido têm calorias muito diferentes.</li><li><b>Quantidade</b>: em gramas. Dá para corrigir depois, direto na linha do alimento.</li><li><b>Dentro</b>: até 10% acima ou abaixo da meta. Fora disso aparece <b>acima</b> ou <b>abaixo</b>.</li><li><b>O que a tabela não tem</b>: produtos de marca e suplementos. Na 4ª edição, o leite de vaca integral e o desnatado UHT também estão sem composição. Use <b>Fora da tabela</b> com os valores do rótulo.</li></ul>"];
@@ -3802,12 +3820,54 @@ function bioHtml() {
   const ap = Array.from(new Set(list.map(e => e.aparelho).filter(Boolean)));
   return h + '<p class="muted biofn">Fonte: ' + list.length + " exame" + (list.length > 1 ? "s" : "") + (ap.length ? " (" + ap.join("; ") + ")" : "") + ". Faixas de peso, massa magra e massa gorda: " + (fx.src ? "do laudo de " + bioDia(fx.src) : "estimadas pela altura do Perfil") + ". Gordura (%) e IMC: referências padrão.</p></div>";
 }
+// Colunas do arquivo exportado pelo aplicativo do InBody: [campo do exame, expressão que reconhece o título da coluna]
+const BIO_CSV = [["peso", /^peso|^weight/i], ["smm", /^massa muscular\(|skeletal muscle mass\(/i], ["gorduraKg", /^massa gorda\(|^body fat mass\(/i], ["gordura", /gordura corporal\(%|percent body fat/i], ["imc", /^imc|^bmi/i],
+  ["agua", /total body water|água corporal total/i], ["proteina", /^prote[ií]n/i], ["minerais", /^minera/i], ["score", /inbody score/i], ["fase", /phase angle|ângulo de fase/i], ["ecw", /^r[áa]cio aec|^ecw ratio/i],
+  ["tmb", /basal metabolic|metab[óo]lica basal/i], ["visceral", /gordura visceral\(level|visceral fat level/i], ["rcq", /waist hip|cintura-quadril/i], ["smi", /^smi/i], ["aic", /^intracellular/i], ["aec", /^extracellular/i], ["osso", /bone mineral/i], ["celular", /body cell mass/i]];
+// Colunas por segmento do corpo (massa muscular e massa gorda de cada um)
+const BIO_CSV_SEG = [["bd", /bra[çc]o direito|right arm/i], ["be", /bra[çc]o esquerdo|left arm/i], ["tr", /tronc|trunk/i], ["pd", /perna direita|right leg/i], ["pe", /perna esquerda|left leg/i]];
+// Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora)
+function bioCsv(txt) {
+  const linhas = String(txt || "").replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim()); if (linhas.length < 2) return [];
+  const limpa = x => x.trim().replace(/^"|"$/g, ""), sep = (linhas[0].match(/;/g) || []).length > (linhas[0].match(/,/g) || []).length ? ";" : ",", head = linhas[0].split(sep).map(limpa);
+  const iData = head.findIndex(h => /^data$|^date|test date/i.test(h)), iAp = head.findIndex(h => /equipamento|device|model/i.test(h)); if (iData < 0) return [];
+  const cols = head.map(h => {
+    if (/r[áa]cio|ratio|n[ií]vel muscular|leg lean/i.test(h) && !/^r[áa]cio aec|waist hip/i.test(h)) return null;
+    const sg = BIO_CSV_SEG.find(x => x[1].test(h)); if (sg) return /muscular|musculaire|lean/i.test(h) ? [sg[0], "kg"] : /gorda|grasse|fat/i.test(h) ? [sg[0], "g"] : null;
+    const c = BIO_CSV.find(x => x[1].test(h)); return c ? [c[0]] : null;
+  });
+  return linhas.slice(1).map(l => {
+    const v = l.split(sep).map(limpa), m = /(\d{4})\D?(\d{2})\D?(\d{2})(?:\D*(\d{2})\D?(\d{2}))?/.exec(v[iData] || ""); if (!m) return null;
+    const d = { data: m[1] + "-" + m[2] + "-" + m[3] }; if (m[4]) d.hora = m[4] + ":" + m[5]; if (iAp >= 0 && v[iAp]) d.aparelho = /^\d+$/.test(v[iAp]) ? "InBody " + v[iAp] : v[iAp];
+    cols.forEach((c, i) => { const x = parseFloat(String(v[i] == null ? "" : v[i]).replace(",", ".")); if (!c || !isFinite(x)) return; if (c.length === 2) { d.seg = d.seg || {}; (d.seg[c[0]] = d.seg[c[0]] || {})[c[1]] = x; } else d[c[0]] = x; });
+    return d.peso > 0 ? d : null;
+  }).filter(Boolean);
+}
+// Importa o arquivo: exame novo entra; exame que já existe é atualizado, guardando o que só o laudo tem (% do padrão e faixas)
+function bioImporta(txt) {
+  const L = bioCsv(txt); let novos = 0, atual = 0;
+  if (!L.length) { const m = document.getElementById("bioArqMsg"); if (m) m.textContent = "Não reconheci este arquivo. Use o CSV exportado pelo aplicativo do InBody."; return; }
+  L.forEach(nv => {
+    const old = (app.exames || {})[nv.data], seg = Object.assign({}, old && old.seg); Object.keys(nv.seg || {}).forEach(k => { seg[k] = Object.assign({}, seg[k], nv.seg[k]); });
+    const doc = Object.assign({}, old, nv, { atualizado: new Date().toISOString() }); if (Object.keys(seg).length) doc.seg = seg; if (!doc.nota) doc.nota = "Importado do arquivo do InBody"; delete doc.soMes;
+    if (old) atual++; else novos++; bioGrava(nv.data, doc); bioEspelha(nv.data, doc);
+  });
+  renderGoal(); renderBio(true);
+  const m2 = document.getElementById("bioArqMsg"); if (m2) m2.textContent = L.length + " exame" + (L.length > 1 ? "s" : "") + " no arquivo: " + novos + " novo" + (novos === 1 ? "" : "s") + " e " + atual + " atualizado" + (atual === 1 ? "" : "s") + ".";
+}
+// O peso e a gordura de um exame do período do plano entram também nas medidas do dia
+function bioEspelha(id, doc) {
+  const ini = (app.perfil || {}).inicio; if (doc.soMes || !ini || id < ini) return;
+  const b = Object.assign({ data: id, peso: null, gordura: null, cintura: null, nota: "" }, app.body[id] || {}); b.peso = doc.peso; if (doc.gordura) b.gordura = doc.gordura; if (!b.nota) b.nota = "Exame de bioimpedância";
+  app.body[id] = b; if (app.db && app.P != null) { try { const p = app.db.doc(app.P + "corpo/" + id).set(JSON.parse(JSON.stringify(b))); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
+}
 // Formulário do exame: os campos seguem a ordem do laudo
 function bioFormHtml() {
   const S = app.bioEd || (app.bioEd = { data: "" }), list = bioList(), e = (S.data && app.exames && app.exames[S.data]) || {};
   const inp = (id, v, rot) => '<input id="' + id + '" type="number" inputmode="decimal" step="any" min="0" value="' + (v != null && v !== "" ? v : "") + '"' + (rot ? ' aria-label="' + rot + '"' : "") + ">";
   const campo = c => '<div class="field"><label for="bio-' + c[0] + '">' + c[1] + (c[2] ? " (" + c[2] + ")" : "") + "</label>" + inp("bio-" + c[0], e[c[0]]) + "</div>";
-  return '<div class="panel"><h2>Exame de bioimpedância' + infoBtn("bio") + '</h2><p class="lead">Copie os números do laudo (InBody ou parecido). Só a data e o peso são obrigatórios.</p>' +
+  return '<div class="panel"><h2>Exame de bioimpedância' + infoBtn("bio") + '</h2><p class="lead">Importe o arquivo do InBody ou copie os números do laudo. À mão, só a data e o peso são obrigatórios.</p>' +
+    '<details class="pfsec sub" open><summary><h3>Importar arquivo do InBody</h3></summary><p class="muted" style="font-size:13px;margin:6px 0">No aplicativo do InBody, exporte o histórico (arquivo CSV) e escolha o arquivo aqui. Os exames novos entram e os que já existem são atualizados.</p><input type="file" id="bioArq" accept=".csv,text/csv,text/plain"><p class="muted" id="bioArqMsg" aria-live="polite" style="margin:6px 0 0"></p></details>' +
     (list.length ? '<div class="field"><label for="bioSel">Exames salvos</label><select id="bioSel"><option value="">Novo exame</option>' + list.slice().reverse().map(x => '<option value="' + x.data + '"' + (x.data === S.data ? " selected" : "") + ">" + bioDia(x) + " · " + fmt(x.peso) + " kg" + (bioVal(x, "gordura") ? " · " + fmt(bioVal(x, "gordura")) + "%" : "") + "</option>").join("") + "</select></div>" : "") +
     '<form id="bioForm"><div class="grid2"><div class="field"><label for="bio-data">Data do exame</label><input id="bio-data" type="date" required value="' + (e.data || "") + '"></div><div class="field"><label for="bio-aparelho">Aparelho</label><input id="bio-aparelho" type="text" autocomplete="off" value="' + esc(e.aparelho || "") + '" placeholder="ex.: InBody 380"></div></div>' +
     '<label class="biochk"><input type="checkbox" id="bio-soMes"' + (e.soMes ? " checked" : "") + '> Só sei o mês do exame</label>' +
@@ -3840,11 +3900,7 @@ function bioSalva() {
   if (Object.keys(fx).length) doc.faixas = fx;
   if (S.data && S.data !== id && app.exames && app.exames[S.data]) bioGrava(S.data, { data: S.data, apagado: true }); // a data foi corrigida: o registro antigo sai
   bioGrava(id, doc); S.data = id;
-  const ini = (app.perfil || {}).inicio;
-  if (!soMes && ini && id >= ini) {
-    const b = Object.assign({ data: id, peso: null, gordura: null, cintura: null, nota: "" }, app.body[id] || {}); b.peso = doc.peso; if (doc.gordura) b.gordura = doc.gordura; if (!b.nota) b.nota = "Exame de bioimpedância";
-    app.body[id] = b; if (app.db && app.P != null) { try { const p = app.db.doc(app.P + "corpo/" + id).set(JSON.parse(JSON.stringify(b))); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
-  }
+  bioEspelha(id, doc);
   renderGoal(); renderBio(true);
   const m2 = document.getElementById("bioMsg"); if (m2) m2.textContent = "Exame salvo ✓";
 }
@@ -3860,7 +3916,7 @@ function renderBio(force) {
 (function () {
   const fb = document.getElementById("bioFormBox"); if (!fb) return;
   fb.addEventListener("submit", ev => { if (ev.target.id === "bioForm") { ev.preventDefault(); bioSalva(); } });
-  fb.addEventListener("change", ev => { if (ev.target.id === "bioSel") { (app.bioEd || (app.bioEd = {})).data = ev.target.value; renderBio(true); } });
+  fb.addEventListener("change", ev => { if (ev.target.id === "bioArq") { const f = ev.target.files && ev.target.files[0]; if (f) f.text().then(bioImporta); return; } if (ev.target.id === "bioSel") { (app.bioEd || (app.bioEd = {})).data = ev.target.value; renderBio(true); } });
   fb.addEventListener("click", ev => {
     const b = ev.target.closest("[data-bio]"); if (!b) return;
     const S = app.bioEd || {};
@@ -5034,10 +5090,12 @@ function djCtrlHtml(subs, aps) {
   const now = Date.now(), rows = subs.map((s, i) => {
     const L = aps.filter(x => x.sub === s.id && Date.parse(x.quando) <= now); if (!L.length) return "";
     const last = L[L.length - 1], dias = Math.floor((now - Date.parse(last.quando)) / 864e5), soma = d => L.filter(x => now - Date.parse(x.quando) <= d * 864e5), s7 = soma(7), s30 = soma(30), tot = a => fmt(Math.round(a.reduce((t, x) => t + (+x.dose || 0), 0) * 100) / 100), lv = djLevel(s, aps, now);
-    return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + '</b><div class="muted">em ' + esc(s.un) + (s.pos ? " · posologia: " + esc(s.pos) : "") + "</div></td><td>" + fmt(last.dose) + '<div class="muted">' + (dias ? "há " + dias + (dias === 1 ? " dia" : " dias") : "hoje") + "</div></td><td>" + tot(s7) + '<div class="muted">' + s7.length + "×</div></td><td>" + tot(s30) + '<div class="muted">' + s30.length + "×</div></td><td>" + (lv == null ? "—" : fmt(Math.round(lv * 100) / 100)) + "</td></tr>";
+    return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b>" + djTipo(s) + '<div class="muted">em ' + esc(s.un) + (s.pos ? " · posologia: " + esc(s.pos) : "") + "</div></td><td>" + fmt(last.dose) + '<div class="muted">' + (dias ? "há " + dias + (dias === 1 ? " dia" : " dias") : "hoje") + "</div></td><td>" + tot(s7) + '<div class="muted">' + s7.length + "×</div></td><td>" + tot(s30) + '<div class="muted">' + s30.length + "×</div></td><td>" + (lv == null ? "—" : fmt(Math.round(lv * 100) / 100)) + "</td></tr>";
   }).join("");
   return rows ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Última</th><th>7 dias</th><th>30 dias</th><th>Estimado hoje</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : '<p class="muted">Aparece depois da primeira aplicação registrada.</p>';
 }
+// Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t") ou peptídeo
+function djTipo(s) { return s.g === "t" ? ' <span class="optb">hormônio</span>' : /^b/.test(s.g || "") ? ' <span class="optb">peptídeo</span>' : ""; }
 // Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)
 function djList(tipo) { const key = v => v.quando || v.data || (v.nome || "").toLowerCase(); return Object.entries(app.diario || {}).filter(([, v]) => v.tipo === tipo).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0); }
 // Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue.
@@ -5061,7 +5119,11 @@ function djDelBtn(id, nome) { return '<button type="button" class="btn small" da
 function renderDiario() {
   const subs = djList("sub"), aps = djList("ap"), exs = djList("ex"), byId = Object.fromEntries(subs.map(s => [s.id, s])), $ = id => document.getElementById(id);
   const hora = q => dCurta(q.slice(0, 10)) + " " + q.slice(11, 16);
-  $("djSubs").innerHTML = subs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Via</th><th>Meia-vida</th><th>Intervalo</th><th>Próxima</th><th></th></tr></thead><tbody>' + subs.map((s, i) => { const nx = djNext(s, aps); return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b> <span class=\"muted\">(" + esc(s.un) + ")</span>" + (s.pos ? "<div>Posologia: " + esc(s.pos) + "</div>" : "") + (s.obs ? '<div class="muted">' + esc(s.obs) + "</div>" : "") + "</td><td>" + esc(s.via || "—") + "</td><td>" + (s.mv ? fmt(s.mv) + " d" : "—") + "</td><td>" + (s.intervalo ? "a cada " + fmt(s.intervalo) + " d" : "—") + "</td><td>" + (nx ? dCurta(isoLocal(nx)) : "—") + "</td><td>" + djDelBtn(s.id, s.nome) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhuma substância cadastrada ainda.</p>';
+  $("djSubs").innerHTML = subs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Via</th><th>Meia-vida</th><th>Intervalo</th><th>Próxima</th><th></th></tr></thead><tbody>' + subs.map((s, i) => { const nx = djNext(s, aps); return '<tr><td><b class="dot c' + (i % 5) + '"></b> <b>' + esc(s.nome) + "</b>" + djTipo(s) + " <span class=\"muted\">(" + esc(s.un) + ")</span>" + (s.pos ? "<div>Posologia: " + esc(s.pos) + "</div>" : "") + (s.obs ? '<div class="muted">' + esc(s.obs) + "</div>" : "") + "</td><td>" + esc(s.via || "—") + "</td><td>" + (s.mv ? fmt(s.mv) + " d" : "—") + "</td><td>" + (s.intervalo ? "a cada " + fmt(s.intervalo) + " d" : "—") + "</td><td>" + (nx ? dCurta(isoLocal(nx)) : "—") + "</td><td>" + '<button type="button" class="btn small" data-dj="edsub|' + s.id + '" aria-label="Editar ' + esc(s.nome) + '">Editar</button> ' + djDelBtn(s.id, s.nome) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhuma substância cadastrada ainda.</p>';
+  // seletor do cadastro: as substâncias da referência, por grupo (preenchido uma vez)
+  const sr = $("djSubRef"); if (sr && sr.options.length < 2) sr.innerHTML = '<option value="">Outra: digitar o nome abaixo</option>' + DJ_GRUPOS.map(g => { const L = DJ_REF.map((r, i) => [r, i]).filter(x => x[0].g === g[0]); return L.length ? '<optgroup label="' + esc(g[1]) + '">' + L.map(x => '<option value="' + x[1] + '">' + esc(x[0].n) + "</option>").join("") + "</optgroup>" : ""; }).join("");
+  const ed = app.djEdit && byId[app.djEdit]; if (app.djEdit && !ed) app.djEdit = null;
+  $("djSubForm").querySelector("summary h3").textContent = ed ? "Editar " + ed.nome : "Cadastrar substância"; $("djSubSave").textContent = ed ? "Salvar alterações" : "Salvar substância"; $("djSubCanc").style.display = ed ? "" : "none";
   const sel = $("djApSub"), cur = sel.value; sel.innerHTML = subs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + " (" + esc(s.un) + ")</option>").join(""); if (cur && byId[cur]) sel.value = cur;
   if (!$("djApQuando").value) $("djApQuando").value = nowLocal();
   if (!$("djExData").value) $("djExData").value = todayStr();
@@ -5101,9 +5163,26 @@ function djAct(a, b) {
   if (op === "ref") {
     // copia o que é descritivo; dose e intervalo ficam por conta de quem registra
     const r = DJ_REF[+arg], set = (id, val) => { document.getElementById(id).value = val; }, f = document.getElementById("djSubForm");
+    app.djRefG = r.g || null; set("djSubRef", arg);
     set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubPos", (djNota(r.n) || {}).txt || ""); set("djSubObs", "");
     f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + (r.un ? "" : "; confira a unidade") + ". Dose e intervalo ficam por sua conta.");
     if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
+  }
+  if (op === "edsub") { // carrega a substância no formulário para corrigir
+    const x = (app.diario || {})[arg], set = (id, val) => { document.getElementById(id).value = val == null ? "" : val; }, f = document.getElementById("djSubForm"); if (!x) return;
+    app.djEdit = arg; app.djRefG = x.g || null; set("djSubRef", ""); set("djSubNome", x.nome); if (x.un) set("djSubUn", x.un); if (x.via) set("djSubVia", x.via);
+    set("djSubMv", x.mv != null ? String(x.mv).replace(".", ",") : ""); set("djSubInt", x.intervalo != null ? String(x.intervalo).replace(".", ",") : ""); set("djSubPos", x.pos || ""); set("djSubObs", x.obs || "");
+    f.open = true; renderDiario(); say("djSubMsg", "Editando " + x.nome + ". As aplicações já registradas continuam ligadas a ela.");
+    if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
+  }
+  if (op === "cancsub") { app.djEdit = null; app.djRefG = null; clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]); say("djSubMsg", ""); renderDiario(); return; }
+  if (op === "lerlimpa") { app.djLido = null; document.getElementById("djLerOut").innerHTML = ""; document.getElementById("djLerArq").value = ""; return; }
+  if (op === "lersalva") { // salva os marcadores marcados na lista de conferência do laudo
+    const R = app.djLido, q = (at, i) => { const el = document.querySelector("[" + at + '="' + i + '"]'); return el ? el.value.trim() : ""; }, nn = t => { const x = parseFloat(String(t).replace(/\./g, m => /,/.test(t) ? "" : m).replace(",", ".")); return isFinite(x) ? x : null; }; if (!R) return;
+    const data = v("djLerData") || todayStr(); let k = 0;
+    R.itens.forEach((x, i) => { const cb = document.querySelector('[data-djl="' + i + '"]'), val = nn(q("data-djlv", i)); if (!cb || !cb.checked || val == null) return;
+      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, { tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data }, "djExMsg"); k++; app.djMarc = x.marc; });
+    app.djLido = null; document.getElementById("djLerOut").innerHTML = '<p class="lead">' + (k ? k + " marcador" + (k > 1 ? "es salvos" : " salvo") + " com a data " + dCurta(data) + "." : "Nada marcado para salvar.") + "</p>"; document.getElementById("djLerArq").value = ""; renderDiario(); return;
   }
   if (op === "del") {
     if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Apagar"; } }, 4000); return; }
@@ -5112,7 +5191,8 @@ function djAct(a, b) {
   const id = op.slice(3) + "-" + Date.now().toString(36);
   if (op === "addsub") {
     if (!v("djSubNome")) { say("djSubMsg", "Informe o nome."); return; }
-    putDoc("diario", id, { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), pos: v("djSubPos"), obs: v("djSubObs") }, "djSubMsg"); clear(["djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
+    const sub = { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), pos: v("djSubPos"), obs: v("djSubObs") }; if (app.djRefG) sub.g = app.djRefG;
+    putDoc("diario", app.djEdit || id, sub, "djSubMsg"); app.djEdit = null; app.djRefG = null; clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
   } else if (op === "addap") {
     if (!v("djApSub") || !(n("djApDose") > 0) || !v("djApQuando")) { say("djMsg", "Cadastre e escolha a substância, e informe a dose e a data."); return; }
     putDoc("diario", id, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg"); clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal();
@@ -5123,6 +5203,74 @@ function djAct(a, b) {
   }
   renderDiario();
 }
+// ----- Laudo em PDF: leitura automática dos marcadores (a pessoa confere antes de salvar) -----
+const DJ_PDF = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/"; // leitor de PDF, carregado só quando um laudo é escolhido
+// Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome]
+const DJ_LER = [
+  ["Hematócrito", /hemat[oó]crito/], ["Hemoglobina", /hemoglobina(?!\s*(?:glic|corpus|a1c|\(hcm))/], ["Testosterona total", /testosterona\s+total/], ["Testosterona livre", /testosterona\s+livre/],
+  ["Estradiol", /estradiol/], ["PSA", /\bpsa\b(?!\s*-?\s*livre)|ant[ií]geno\s+prost[aá]tico\s+espec[ií]fico(?!\s*-?\s*livre)/], ["LDL", /\bldl\b/], ["HDL", /\bhdl\b/], ["Triglicerídeos", /triglic[eé]r[ií]d/],
+  ["TGO (AST)", /\btgo\b|aspartato\s+amino/], ["TGP (ALT)", /\btgp\b|alanina\s+amino/], ["Creatinina", /creatinina(?!\s*(?:-\s*)?urin)/], ["Glicemia", /glicemia|glicose(?!\s*(?:urin|p[oó]s))/]
+];
+const DJ_LER_JANELA = 220;         // caracteres depois do nome do marcador em que o valor é procurado
+// Número escrito à brasileira ("1.234,5" ou "45,2") para número
+function djNum(t) { t = String(t); if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, ""); return parseFloat(t.replace(",", ".")); }
+// Procura os marcadores conhecidos no texto de um laudo: o primeiro número depois do nome é o valor; unidade e faixa de referência entram quando vêm logo em seguida
+function djAcha(texto) {
+  const bruto = String(texto || ""), dm = /colet\w*[^0-9]{0,40}(\d{1,2})\/(\d{1,2})\/(\d{4})/i.exec(bruto) || /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(bruto);
+  const branco = m => " ".repeat(m.length), T = bruto.replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g, branco).replace(/\d{1,2}:\d{2}(:\d{2})?/g, branco).replace(/\d+\s*anos?\b/gi, branco), itens = [], faltam = [];
+  DJ_LER.forEach(([nome, re]) => {
+    const g = new RegExp(re.source, "gi"); let m, achou = false;
+    while (!achou && (m = g.exec(T))) {
+      if (/n[aã]o[\s-]*$/i.test(T.slice(Math.max(0, m.index - 6), m.index))) continue; // "não-HDL" não é HDL
+      const resto = T.slice(m.index + m[0].length, m.index + m[0].length + DJ_LER_JANELA), v = /(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)/.exec(resto);
+      if (!v) continue;
+      // a referência só vale na mesma linha do valor, ou na linha seguinte quando ela fala em referência (senão pegaria a faixa do exame de baixo)
+      const dep = resto.slice(v.index + v[0].length), un = /^\s*(%|[a-zµμ]+\s*\/\s*[a-zµμ³0-9]+)/i.exec(dep), ln = dep.split("\n"), jan = ln[0] + (ln[1] && /refer|\bvr\b|normal|desej/i.test(ln[1]) ? " " + ln[1] : "");
+      const fx = /(\d+(?:[.,]\d+)?)\s*(?:a|até|-|–)\s*(\d+(?:[.,]\d+)?)/i.exec(jan), so = fx ? null : /(?:at[ée]|inferior a|menor que|<)\s*(\d+(?:[.,]\d+)?)/i.exec(jan);
+      itens.push({ marc: nome, valor: djNum(v[0]), un: un ? un[1].replace(/\s+/g, "") : (DJ_MARC.find(x => x[0] === nome) || [])[1] || "", rmin: fx ? djNum(fx[1]) : null, rmax: fx ? djNum(fx[2]) : so ? djNum(so[1]) : null });
+      achou = true;
+    }
+    if (!achou) faltam.push(nome);
+  });
+  return { data: dm ? dm[3] + "-" + ("0" + dm[2]).slice(-2) + "-" + ("0" + dm[1]).slice(-2) : "", itens, faltam };
+}
+// Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha)
+async function djPdfTexto(file) {
+  const lib = await import(DJ_PDF + "pdf.min.mjs"); lib.GlobalWorkerOptions.workerSrc = DJ_PDF + "pdf.worker.min.mjs";
+  const pdf = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise; let txt = "";
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const c = await (await pdf.getPage(p)).getTextContent(), L = {};
+    c.items.forEach(i => { if (!i.str) return; const y = Math.round(i.transform[5] / 3); (L[y] = L[y] || []).push(i); });
+    Object.keys(L).sort((a, b) => b - a).forEach(y => { txt += L[y].sort((a, b) => a.transform[4] - b.transform[4]).map(i => i.str).join(" ") + "\n"; });
+  }
+  return txt;
+}
+// Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis
+function djLerHtml(res) {
+  if (!res.itens.length) return '<p class="lead">Não encontrei nenhum dos marcadores que o app acompanha neste laudo. Preencha à mão, logo abaixo.</p>';
+  const inp = (attr, i, v, rot) => '<label><span>' + rot + '</span><input type="text" inputmode="decimal" autocomplete="off" ' + attr + '="' + i + '" value="' + (v == null ? "" : esc(String(v).replace(".", ","))) + '"></label>';
+  return '<p class="lead">Encontrei ' + res.itens.length + " marcador" + (res.itens.length > 1 ? "es" : "") + '. <b>Confira cada valor com o laudo antes de salvar</b>: a leitura é automática e pode errar.</p>' +
+    '<div class="field"><label for="djLerData">Data do exame</label><input id="djLerData" type="date" value="' + (res.data || todayStr()) + '"></div>' +
+    res.itens.map((x, i) => '<div class="djler"><label class="djlh"><input type="checkbox" data-djl="' + i + '" checked> <b>' + esc(x.marc) + "</b></label>" + inp("data-djlv", i, x.valor, "Valor") + '<label><span>Unidade</span><input type="text" autocomplete="off" data-djlu="' + i + '" value="' + esc(x.un) + '"></label>' + inp("data-djlmin", i, x.rmin, "Ref. mín.") + inp("data-djlmax", i, x.rmax, "Ref. máx.") + "</div>").join("") +
+    (res.faltam.length ? '<p class="muted" style="font-size:13px">Não achei no laudo: ' + res.faltam.map(esc).join(", ") + ".</p>" : "") +
+    '<div class="row-btns"><button type="button" class="btn primary" data-dj="lersalva">Salvar os marcados</button><button type="button" class="btn" data-dj="lerlimpa">Descartar</button></div>';
+}
+// Lê o laudo escolhido e mostra a lista de conferência
+async function djLerArquivo(file) {
+  const out = document.getElementById("djLerOut"); if (!file || !out) return;
+  out.innerHTML = '<p class="muted">Lendo o laudo…</p>';
+  let txt;
+  try { txt = await djPdfTexto(file); }
+  catch (e) { out.innerHTML = '<p class="lead">Não consegui abrir este arquivo. Confira se é um PDF e se há internet (o leitor é baixado na hora).</p>'; return; }
+  if (txt.replace(/\s/g, "").length < 20) { out.innerHTML = '<p class="lead">Este PDF é uma imagem (foto ou digitalização): não tem texto para o app ler. Peça ao laboratório o PDF original ou preencha à mão.</p>'; return; }
+  app.djLido = djAcha(txt); out.innerHTML = djLerHtml(app.djLido);
+}
+// Liga o seletor de substância do cadastro e o campo do laudo
+(function () {
+  const s = document.getElementById("djSubRef"), a = document.getElementById("djLerArq");
+  if (s) s.addEventListener("change", ev => { if (ev.target.value !== "") djAct("ref|" + ev.target.value); else app.djRefG = null; });
+  if (a) a.addEventListener("change", ev => { const f = ev.target.files && ev.target.files[0]; if (f) djLerArquivo(f); });
+})();
 // ===== 24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação =====
 // Exercício pronto para editar: definição, prescrição da semana e registro (i = garante que a série i existe; W = outra semana)
 function ctx(k, i, W) {
