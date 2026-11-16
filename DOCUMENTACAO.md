@@ -222,7 +222,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 343 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 347 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -759,6 +759,7 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `DJ_BULA` | O que foi conferido em bula ou estudo para substâncias que também têm ficha: entra por cima do dado da ficha |
 | `DJ_M` | Citados só nas tabelas do material, sem ficha: [nome, classe, via, padrão descrito] |
 | `DJ_REF` | Lista final da referência: hormônios, fichas (com o conferido em bula por cima) e os citados sem ficha |
+| `DJ_LOCAIS` | locais de aplicação oferecidos na lista |
 | `DJ_PDF` | leitor de PDF, carregado só quando um laudo é escolhido |
 | `DJ_LER` | Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome] |
 | `DJ_LER_JANELA` | caracteres depois do nome do marcador em que o valor é procurado |
@@ -771,6 +772,9 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
 | `djRefHtml()` | Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e regras |
 | `djCtrlHtml()` | Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida |
+| `djIntSet()` | Intervalo do cadastro: a escala fixa ou, em "outro", o número de dias digitado |
+| `djApGuia()` | Guia da aplicação: unidade da substância, sua posologia anotada, a última aplicação e as doses que você já registrou (toque para repetir) |
+| `djExGuia()` | Guia do exame: unidade e referência do último exame daquele marcador já vêm preenchidas |
 | `djTipo()` | Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t") ou peptídeo |
 | `djList()` | Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome) |
 | `djLevel()` | Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue. |
@@ -780,7 +784,8 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `renderDiario()` | Desenha a aba Hormônios e peptídeos: referência, substâncias, calendário, aplicações, controle de doses, curva estimada e exames |
 | `djAct()` | Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar substância, aplicação ou exame |
 | `djNum()` | Número escrito à brasileira ("1.234,5" ou "45,2") para número |
-| `djAcha()` | Procura os marcadores conhecidos no texto de um laudo: o primeiro número depois do nome é o valor; unidade e faixa de referência entram quando vêm logo em seguida |
+| `djRefTxt()` | Faixa de referência escrita no laudo: prefere o trecho do sexo do Perfil e a faixa na mesma unidade do resultado. Devolve [mínimo, máximo]; um deles pode faltar |
+| `djAcha()` | Procura os marcadores no texto de um laudo. Primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO: valor unidade"); o que não veio em bloco é procurado no texto corrido (tabelas, como a do hemograma): o primeiro número depois do nome é o valor |
 | `djPdfTexto()` | Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha) |
 | `djLerHtml()` | Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis |
 | `djLerArquivo()` | Lê o laudo escolhido e mostra a lista de conferência |
@@ -961,6 +966,8 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 
 ## 10. Limites conhecidos
 
+- O leitor de laudo entende primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO:", como os do Sabin) e depois procura no texto corrido o que faltou. A referência escolhida é a do sexo do Perfil; quando o laudo só traz faixas por idade sem linha de adulto, fica em branco. Conferido com dois laudos reais.
+- Nos formulários de hormônios, o intervalo é uma escala fixa, o local tem lista, e a dose, o lote, a unidade e a referência do exame são guiados pelo último registro da própria pessoa.
 - A **leitura de laudo em PDF** usa a biblioteca pdf.js, baixada na hora (versão fixa). Ela só acha os marcadores de `DJ_LER` e nada é salvo sem conferência. A **importação do InBody** reconhece as colunas pelo título (`BIO_CSV`).
 - O painel **Evolução corporal** (aba Corpo) sai dos exames de bioimpedância: o pico é o exame de maior gordura; as faixas de peso, massa magra e massa gorda vêm do laudo ou são estimadas pela altura (peso ideal = IMC 22 no homem e 21,5 na mulher; faixa de 85% a 115%).
 - A **tabela TACO** (4ª edição, NEPA/UNICAMP, 597 alimentos) fica embutida no programa, conferida linha a linha contra a planilha original. Seis linhas não têm composição na tabela e ficam fora da busca. A meta por refeição é a meta do dia vezes a parte de cada refeição (`settings.dieta.refs`).

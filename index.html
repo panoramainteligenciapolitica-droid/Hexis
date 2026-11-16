@@ -754,6 +754,8 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .djfontes[open] > summary::after { content: "▾"; }
 .djfontes[open] > summary { margin-bottom: 12px; }
 .djfh { margin: 14px 0 6px; font-size: 16px; }
+.djguia { margin: 8px 0; font-size: 13px; line-height: 1.5; }
+.djguia .rbtn { min-height: 34px; padding: 2px 10px; margin: 2px 0; }
 .djler { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 6px; padding: 8px 0; border-top: 1px solid var(--line); }
 .djler .djlh { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .djler label span { display: block; font-size: 11px; color: var(--muted); }
@@ -984,6 +986,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
   <section class="view" id="v-diario">
     <div class="panel">
       <h2>Substâncias</h2>
+      <p class="lead">Três passos: <b>1.</b> cadastre cada substância uma vez; <b>2.</b> em Aplicações, registre cada dose; <b>3.</b> em Exames e sinais, lance o laudo.</p>
       <div id="djSubs"></div>
       <details class="pfsec sub" id="djSubForm"><summary><h3>Cadastrar substância</h3></summary>
         <div class="grid2">
@@ -991,10 +994,10 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
           <div class="field wide"><label for="djSubNome">Nome</label><input id="djSubNome" type="text" autocomplete="off"></div>
           <div class="field"><label for="djSubUn">Unidade da dose</label><select id="djSubUn"><option>mg</option><option>mcg</option><option>UI</option><option>mL</option><option>g</option></select></div>
           <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
-          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="da bula ou da referência"></div>
-          <div class="field"><label for="djSubInt">Intervalo, em dias<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
-          <div class="field wide"><label for="djSubPos">Posologia (você preenche)</label><input id="djSubPos" type="text" autocomplete="off" placeholder="a da sua prescrição: dose, frequência e duração"></div>
-          <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação, concentração, quem prescreveu…"></div>
+          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="em dias (12 horas = 0,5)"></div>
+          <div class="field"><label for="djSubIntSel">Intervalo entre aplicações<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><select id="djSubIntSel"><option value="">Sem intervalo fixo</option><option value="1">Todo dia</option><option value="2">A cada 2 dias</option><option value="3.5">2 vezes por semana</option><option value="7">1 vez por semana</option><option value="10">A cada 10 dias</option><option value="14">A cada 14 dias</option><option value="21">A cada 21 dias</option><option value="28">A cada 28 dias</option><option value="o">Outro: digitar em dias</option></select><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="dias" style="display:none;margin-top:6px"></div>
+          <div class="field wide"><label for="djSubPos">Posologia da sua prescrição (texto livre)</label><input id="djSubPos" type="text" autocomplete="off" placeholder="a da sua prescrição: dose, frequência e duração"></div>
+          <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação e concentração do rótulo, quem prescreveu…"></div>
         </div>
         <div class="row-btns"><button type="button" class="btn primary" data-dj="addsub" id="djSubSave">Salvar substância</button><button type="button" class="btn" data-dj="cancsub" id="djSubCanc" style="display:none">Cancelar edição</button></div>
         <div class="muted" id="djSubMsg" aria-live="polite"></div>
@@ -1006,10 +1009,11 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
         <div class="field wide"><label for="djApSub">Substância</label><select id="djApSub"></select></div>
         <div class="field"><label for="djApDose">Dose</label><input id="djApDose" type="text" inputmode="decimal" autocomplete="off"></div>
         <div class="field"><label for="djApQuando">Data e hora</label><input id="djApQuando" type="datetime-local"></div>
-        <div class="field"><label for="djApLocal">Local da aplicação</label><input id="djApLocal" type="text" placeholder="opcional"></div>
+        <div class="field"><label for="djApLocal">Local da aplicação</label><input id="djApLocal" type="text" list="djLocais" autocomplete="off" placeholder="escolha ou digite"><datalist id="djLocais"></datalist></div>
         <div class="field"><label for="djApLote">Lote</label><input id="djApLote" type="text" placeholder="opcional"></div>
         <div class="field wide"><label for="djApObs">Observação</label><input id="djApObs" type="text" placeholder="como se sentiu, reações…"></div>
       </div>
+      <p class="muted djguia" id="djApGuia"></p>
       <div class="row-btns"><button type="button" class="btn primary" data-dj="addap">Registrar aplicação</button></div>
       <div class="muted" id="djMsg" aria-live="polite"></div>
       <div id="djCal"></div>
@@ -1040,6 +1044,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
         <div class="field"><label for="djExMin">Referência mínima do laudo</label><input id="djExMin" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
         <div class="field"><label for="djExMax">Referência máxima do laudo</label><input id="djExMax" type="text" inputmode="decimal" autocomplete="off" placeholder="opcional"></div>
       </div>
+      <p class="muted djguia" id="djExGuia"></p>
       <div class="row-btns"><button type="button" class="btn primary" data-dj="addex">Salvar exame</button></div>
       <div class="muted" id="djExMsg" aria-live="polite"></div>
       <div id="djExTable"></div>
@@ -4909,7 +4914,7 @@ function shareAct(op) {
 }
 // ===== 23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto) =====
 // Marcadores comuns de exame e a unidade usual. A faixa de referência é a do laudo, digitada por quem registra.
-const DJ_MARC = [["Hematócrito", "%"], ["Hemoglobina", "g/dL"], ["Testosterona total", "ng/dL"], ["Testosterona livre", "pg/mL"], ["Estradiol", "pg/mL"], ["PSA", "ng/mL"], ["LDL", "mg/dL"], ["HDL", "mg/dL"], ["Triglicerídeos", "mg/dL"], ["TGO (AST)", "U/L"], ["TGP (ALT)", "U/L"], ["Creatinina", "mg/dL"], ["Glicemia", "mg/dL"], ["Pressão sistólica", "mmHg"], ["Pressão diastólica", "mmHg"], ["Frequência cardíaca de repouso", "bpm"]];
+const DJ_MARC = [["Hematócrito", "%"], ["Hemoglobina", "g/dL"], ["Leucócitos", "/mm³"], ["Plaquetas", "mil/mm³"], ["Testosterona total", "ng/dL"], ["Testosterona livre", "pg/mL"], ["Estradiol", "pg/mL"], ["DHT", "ng/dL"], ["SHBG", "nmol/L"], ["LH", "mIU/mL"], ["FSH", "mIU/mL"], ["TSH", "μUI/mL"], ["PSA", "ng/mL"], ["Colesterol total", "mg/dL"], ["LDL", "mg/dL"], ["HDL", "mg/dL"], ["Triglicerídeos", "mg/dL"], ["Lipoproteína (a)", "nmol/L"], ["Homocisteína", "μmol/L"], ["Glicemia", "mg/dL"], ["Insulina", "μUI/mL"], ["Hemoglobina glicada (HbA1c)", "%"], ["TGO (AST)", "U/L"], ["TGP (ALT)", "U/L"], ["GGT", "U/L"], ["CPK", "U/L"], ["Creatinina", "mg/dL"], ["Cistatina C", "mg/L"], ["Taxa de filtração (eTFG)", "mL/min/1,73m²"], ["Vitamina D", "ng/mL"], ["Pressão sistólica", "mmHg"], ["Pressão diastólica", "mmHg"], ["Frequência cardíaca de repouso", "bpm"]];
 // Grupos da referência: chave, título e nota do grupo
 const DJ_GRUPOS = [
   ["t", "Testosterona, anabolizantes e GH", "Medicamentos com bula. Testosterona e anabolizantes são de controle especial (lista C5): só com receita, que fica retida."],
@@ -5094,6 +5099,29 @@ function djCtrlHtml(subs, aps) {
   }).join("");
   return rows ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Substância</th><th>Última</th><th>7 dias</th><th>30 dias</th><th>Estimado hoje</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : '<p class="muted">Aparece depois da primeira aplicação registrada.</p>';
 }
+const DJ_LOCAIS = ["Glúteo direito", "Glúteo esquerdo", "Ventroglúteo direito", "Ventroglúteo esquerdo", "Deltoide direito", "Deltoide esquerdo", "Coxa direita", "Coxa esquerda", "Abdômen direito", "Abdômen esquerdo"]; // locais de aplicação oferecidos na lista
+// Intervalo do cadastro: a escala fixa ou, em "outro", o número de dias digitado
+function djIntSet(v) {
+  const sel = document.getElementById("djSubIntSel"), inp = document.getElementById("djSubInt"), t = v == null || v === "" ? "" : String(v), fixo = [...sel.options].some(o => o.value === t && t !== "o");
+  sel.value = t === "" ? "" : fixo ? t : "o"; inp.value = t.replace(".", ","); inp.style.display = sel.value === "o" ? "" : "none";
+}
+// Guia da aplicação: unidade da substância, sua posologia anotada, a última aplicação e as doses que você já registrou (toque para repetir)
+function djApGuia() {
+  const sel = document.getElementById("djApSub"), g = document.getElementById("djApGuia"), s = sel && (app.diario || {})[sel.value]; if (!g) return;
+  const lab = document.querySelector('label[for="djApDose"]'), dose = document.getElementById("djApDose"), lote = document.getElementById("djApLote"); if (lab) lab.textContent = "Dose" + (s && s.un ? " (" + s.un + ")" : "");
+  if (!s) { g.textContent = "Cadastre a substância primeiro, no quadro acima."; return; }
+  const L = djList("ap").filter(x => x.sub === sel.value), ult = L[L.length - 1], doses = Array.from(new Set(L.map(x => +x.dose).filter(x => x > 0).reverse())).slice(0, 4), locais = Array.from(new Set(DJ_LOCAIS.concat(djList("ap").map(x => x.local).filter(Boolean))));
+  dose.placeholder = ult ? "última: " + fmt(ult.dose) : "a da sua prescrição"; lote.placeholder = ult && ult.lote ? "último: " + ult.lote : "opcional";
+  document.getElementById("djLocais").innerHTML = locais.map(x => '<option value="' + esc(x) + '">').join("");
+  g.innerHTML = (s.pos ? "Sua posologia anotada: <b>" + esc(s.pos) + "</b>. " : "") + (ult ? "Última aplicação: " + fmt(ult.dose) + " " + esc(s.un || "") + " em " + dCurta(ult.quando.slice(0, 10)) + (ult.local ? ", " + esc(ult.local) : "") + "." + (doses.length ? " Doses que você já registrou: " + doses.map(x => '<button type="button" class="rbtn" data-dj="apdose|' + x + '">' + fmt(x) + "</button>").join(" ") : "") : "Primeira aplicação desta substância: informe a dose da sua prescrição" + (s.un ? ", em " + esc(s.un) : "") + ".");
+}
+// Guia do exame: unidade e referência do último exame daquele marcador já vêm preenchidas
+function djExGuia(limpa) {
+  const sel = document.getElementById("djExMarc"), g = document.getElementById("djExGuia"); if (!sel || !g) return;
+  const ult = djList("ex").filter(e => e.marc === sel.value).pop(), set = (id, v) => { const el = document.getElementById(id); if (limpa) el.value = ""; if (!el.value && v != null) el.value = String(v).replace(".", ","); };
+  set("djExMin", ult ? ult.rmin : null); set("djExMax", ult ? ult.rmax : null); if (ult && ult.un) document.getElementById("djExUn").value = ult.un;
+  g.textContent = sel.value === "outro" ? "Marcador novo: informe o nome, o valor, a unidade e a referência do laudo." : ult ? "Último registrado: " + (ult.op ? ult.op + " " : "") + fmt(ult.valor) + " " + (ult.un || "") + " em " + dCurta(ult.data) + ". A unidade e a referência já vêm do último exame; troque se o laudo novo trouxer outras." : "Primeiro registro deste marcador: copie do laudo o valor e a referência. A unidade já vem preenchida.";
+}
 // Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t") ou peptídeo
 function djTipo(s) { return s.g === "t" ? ' <span class="optb">hormônio</span>' : /^b/.test(s.g || "") ? ' <span class="optb">peptídeo</span>' : ""; }
 // Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)
@@ -5131,6 +5159,7 @@ function renderDiario() {
   if (!(ae && ref.contains(ae))) { const ab = [...ref.children].map(x => x.open); ref.innerHTML = djRefHtml($("djRefQ").value); if (!$("djRefQ").value) [...ref.children].forEach((x, i) => { if (ab[i]) x.open = true; }); }
   if (!$("djRefN").textContent) $("djRefN").textContent = DJ_REF.length + " substâncias em " + DJ_GRUPOS.length + " grupos.";
   $("djCal").innerHTML = djCalHtml(subs, aps);
+  djApGuia(); if (!(ae && /^djEx/.test(ae.id || ""))) djExGuia();
   $("djCtrl").innerHTML = djCtrlHtml(subs, aps);
   $("djApList").innerHTML = aps.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Quando</th><th>Substância e dose</th><th>Detalhes</th><th></th></tr></thead><tbody>' + aps.slice(-12).reverse().map(x => { const s = byId[x.sub]; return "<tr><td>" + hora(x.quando) + "</td><td><b>" + esc(s ? s.nome : "(apagada)") + "</b><div>" + fmt(x.dose) + " " + esc(s ? s.un : "") + "</div></td><td>" + esc([x.local, x.lote && "lote " + x.lote, x.obs].filter(Boolean).join(" · ") || "—") + "</td><td>" + djDelBtn(x.id, "a aplicação de " + hora(x.quando)) + "</td></tr>"; }).join("") + "</tbody></table></div>" + (aps.length > 12 ? '<p class="muted">Mostrando as 12 mais recentes de ' + aps.length + ".</p>" : "") : '<p class="muted">Nenhuma aplicação registrada ainda.</p>';
   // Curva estimada: 60 dias para trás e 30 para a frente, um ponto a cada meio dia; peso no eixo da direita
@@ -5146,7 +5175,7 @@ function renderDiario() {
   // Exames: último valor de cada marcador contra a referência do laudo, e a evolução do marcador escolhido
   const marcs = [...new Set(exs.map(x => x.marc))], ms = $("djExSel"), mc = app.djMarc || ms.value;
   const st = x => x.rmin != null && x.valor < x.rmin ? ["abaixo", "no"] : x.rmax != null && x.valor > x.rmax ? ["acima", "no"] : x.rmin != null || x.rmax != null ? ["dentro", "ok"] : ["sem referência", ""];
-  $("djExTable").innerHTML = marcs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Marcador</th><th>Último</th><th>Data</th><th>Referência do laudo</th><th></th></tr></thead><tbody>' + marcs.map(m => { const x = exs.filter(e => e.marc === m).pop(), s = st(x); return "<tr><td><b>" + esc(m) + "</b></td><td>" + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + dCurta(x.data) + "</td><td>" + (x.rmin != null || x.rmax != null ? (x.rmin != null ? fmt(x.rmin) : "…") + " a " + (x.rmax != null ? fmt(x.rmax) : "…") : "—") + '</td><td><span class="sst ' + s[1] + '">' + s[0] + "</span></td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhum exame registrado ainda.</p>';
+  $("djExTable").innerHTML = marcs.length ? '<div class="tablewrap"><table class="plain"><thead><tr><th>Marcador</th><th>Último</th><th>Data</th><th>Referência do laudo</th><th></th></tr></thead><tbody>' + marcs.map(m => { const x = exs.filter(e => e.marc === m).pop(), s = st(x); return "<tr><td><b>" + esc(m) + "</b></td><td>" + (x.op ? esc(x.op) + " " : "") + fmt(x.valor) + " " + esc(x.un || "") + "</td><td>" + dCurta(x.data) + "</td><td>" + (x.rmin != null || x.rmax != null ? (x.rmin != null ? fmt(x.rmin) : "…") + " a " + (x.rmax != null ? fmt(x.rmax) : "…") : "—") + '</td><td><span class="sst ' + s[1] + '">' + s[0] + "</span></td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="muted">Nenhum exame registrado ainda.</p>';
   const ht = exs.filter(e => e.marc === "Hematócrito").pop();
   $("djExAlerta").innerHTML = ht && +ht.valor > DJ_HT_ALERTA ? '<div class="banner warn"><b>Hematócrito de ' + fmt(ht.valor) + "% em " + dCurta(ht.data) + ".</b> Acima de " + DJ_HT_ALERTA + "%, a diretriz de reposição de testosterona manda suspender o uso até baixar e reavaliar. Leve este resultado ao seu médico.</div>" : "";
   ms.innerHTML = marcs.map(m => '<option value="' + esc(m) + '">' + esc(m) + "</option>").join(""); if (mc && marcs.includes(mc)) ms.value = mc;
@@ -5164,24 +5193,25 @@ function djAct(a, b) {
     // copia o que é descritivo; dose e intervalo ficam por conta de quem registra
     const r = DJ_REF[+arg], set = (id, val) => { document.getElementById(id).value = val; }, f = document.getElementById("djSubForm");
     app.djRefG = r.g || null; set("djSubRef", arg);
-    set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); set("djSubInt", ""); set("djSubPos", (djNota(r.n) || {}).txt || ""); set("djSubObs", "");
+    set("djSubNome", r.n); if (r.un) set("djSubUn", r.un); set("djSubVia", djVia(r.via)); set("djSubMv", r.mv ? String(r.mv).replace(".", ",") : ""); djIntSet(""); set("djSubPos", (djNota(r.n) || {}).txt || ""); set("djSubObs", "");
     f.open = true; say("djSubMsg", "Preenchido pela referência" + (r.mv ? "" : ", sem meia-vida (a fonte não traz um valor único)") + (r.un ? "" : "; confira a unidade") + ". Dose e intervalo ficam por sua conta.");
     if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
   }
   if (op === "edsub") { // carrega a substância no formulário para corrigir
     const x = (app.diario || {})[arg], set = (id, val) => { document.getElementById(id).value = val == null ? "" : val; }, f = document.getElementById("djSubForm"); if (!x) return;
     app.djEdit = arg; app.djRefG = x.g || null; set("djSubRef", ""); set("djSubNome", x.nome); if (x.un) set("djSubUn", x.un); if (x.via) set("djSubVia", x.via);
-    set("djSubMv", x.mv != null ? String(x.mv).replace(".", ",") : ""); set("djSubInt", x.intervalo != null ? String(x.intervalo).replace(".", ",") : ""); set("djSubPos", x.pos || ""); set("djSubObs", x.obs || "");
+    set("djSubMv", x.mv != null ? String(x.mv).replace(".", ",") : ""); djIntSet(x.intervalo); set("djSubPos", x.pos || ""); set("djSubObs", x.obs || "");
     f.open = true; renderDiario(); say("djSubMsg", "Editando " + x.nome + ". As aplicações já registradas continuam ligadas a ela.");
     if (f.scrollIntoView) f.scrollIntoView({ behavior: RM() ? "auto" : "smooth", block: "start" }); return;
   }
-  if (op === "cancsub") { app.djEdit = null; app.djRefG = null; clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]); say("djSubMsg", ""); renderDiario(); return; }
+  if (op === "apdose") { const dz = document.getElementById("djApDose"); dz.value = String(arg).replace(".", ","); dz.focus(); return; }
+  if (op === "cancsub") { djIntSet(""); app.djEdit = null; app.djRefG = null; clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]); say("djSubMsg", ""); renderDiario(); return; }
   if (op === "lerlimpa") { app.djLido = null; document.getElementById("djLerOut").innerHTML = ""; document.getElementById("djLerArq").value = ""; return; }
   if (op === "lersalva") { // salva os marcadores marcados na lista de conferência do laudo
     const R = app.djLido, q = (at, i) => { const el = document.querySelector("[" + at + '="' + i + '"]'); return el ? el.value.trim() : ""; }, nn = t => { const x = parseFloat(String(t).replace(/\./g, m => /,/.test(t) ? "" : m).replace(",", ".")); return isFinite(x) ? x : null; }; if (!R) return;
     const data = v("djLerData") || todayStr(); let k = 0;
     R.itens.forEach((x, i) => { const cb = document.querySelector('[data-djl="' + i + '"]'), val = nn(q("data-djlv", i)); if (!cb || !cb.checked || val == null) return;
-      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, { tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data }, "djExMsg"); k++; app.djMarc = x.marc; });
+      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, Object.assign({ tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data }, x.op ? { op: x.op } : {}), "djExMsg"); k++; app.djMarc = x.marc; });
     app.djLido = null; document.getElementById("djLerOut").innerHTML = '<p class="lead">' + (k ? k + " marcador" + (k > 1 ? "es salvos" : " salvo") + " com a data " + dCurta(data) + "." : "Nada marcado para salvar.") + "</p>"; document.getElementById("djLerArq").value = ""; renderDiario(); return;
   }
   if (op === "del") {
@@ -5192,7 +5222,7 @@ function djAct(a, b) {
   if (op === "addsub") {
     if (!v("djSubNome")) { say("djSubMsg", "Informe o nome."); return; }
     const sub = { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), pos: v("djSubPos"), obs: v("djSubObs") }; if (app.djRefG) sub.g = app.djRefG;
-    putDoc("diario", app.djEdit || id, sub, "djSubMsg"); app.djEdit = null; app.djRefG = null; clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
+    putDoc("diario", app.djEdit || id, sub, "djSubMsg"); app.djEdit = null; app.djRefG = null; djIntSet(""); clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
   } else if (op === "addap") {
     if (!v("djApSub") || !(n("djApDose") > 0) || !v("djApQuando")) { say("djMsg", "Cadastre e escolha a substância, e informe a dose e a data."); return; }
     putDoc("diario", id, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg"); clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal();
@@ -5207,27 +5237,69 @@ function djAct(a, b) {
 const DJ_PDF = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/"; // leitor de PDF, carregado só quando um laudo é escolhido
 // Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome]
 const DJ_LER = [
-  ["Hematócrito", /hemat[oó]crito/], ["Hemoglobina", /hemoglobina(?!\s*(?:glic|corpus|a1c|\(hcm))/], ["Testosterona total", /testosterona\s+total/], ["Testosterona livre", /testosterona\s+livre/],
-  ["Estradiol", /estradiol/], ["PSA", /\bpsa\b(?!\s*-?\s*livre)|ant[ií]geno\s+prost[aá]tico\s+espec[ií]fico(?!\s*-?\s*livre)/], ["LDL", /\bldl\b/], ["HDL", /\bhdl\b/], ["Triglicerídeos", /triglic[eé]r[ií]d/],
-  ["TGO (AST)", /\btgo\b|aspartato\s+amino/], ["TGP (ALT)", /\btgp\b|alanina\s+amino/], ["Creatinina", /creatinina(?!\s*(?:-\s*)?urin)/], ["Glicemia", /glicemia|glicose(?!\s*(?:urin|p[oó]s))/]
+  ["Hematócrito", /hemat[oó]crito/], ["Hemoglobina glicada (HbA1c)", /hemoglobina\s+glicada|hba1c/], ["Hemoglobina", /hemoglobina(?!\s*(?:glic|corpus|a1c|\(hcm))/], ["Leucócitos", /leuc[oó]citos/], ["Plaquetas", /plaquetas/],
+  ["Testosterona total", /testosterona\s+total/], ["Testosterona livre", /testosterona\s+livre/], ["Estradiol", /estradiol/], ["DHT", /\bdht\b|di-?hidrotestosterona/], ["SHBG", /\bshbg\b|globulina\s+ligadora/],
+  ["LH", /\blh\b/], ["FSH", /\bfsh\b/], ["TSH", /\btsh\b/], ["PSA", /\bpsa\b(?!\s*-?\s*livre)|ant[ií]geno\s+prost[aá]tico\s+espec[ií]fico(?!\s*-?\s*livre)/], ["Colesterol total", /colesterol\s+total/], ["LDL", /\bldl\b/], ["HDL", /\bhdl\b/],
+  ["Triglicerídeos", /triglic[eé]r[ií]d/], ["Lipoproteína (a)", /lipoprote[ií]na\s*\(?\s*a\s*\)?(?![a-z])/], ["Homocisteína", /homociste[ií]na/], ["Insulina", /insulina/], ["Glicemia", /glicemia(?!\s+m[ée]dia)|glicose(?!\s*(?:urin|p[oó]s))/],
+  ["TGO (AST)", /\btgo\b|aspartato\s+amino/], ["TGP (ALT)", /\btgp\b|alanina\s+amino/], ["GGT", /\bggt\b|gama\s*-?\s*glutamil/], ["CPK", /\bcpk\b|creatina\s*-?\s*(?:fosfo)?quinase/], ["Cistatina C", /cistatina/],
+  ["Taxa de filtração (eTFG)", /filtra[çc][ãa]o\s+glomerular|\betfg\b/], ["Creatinina", /creatinina(?!\s*(?:-\s*)?urin)/], ["Vitamina D", /vitamina\s+d/]
 ];
 const DJ_LER_JANELA = 220;         // caracteres depois do nome do marcador em que o valor é procurado
 // Número escrito à brasileira ("1.234,5" ou "45,2") para número
 function djNum(t) { t = String(t); if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t = t.replace(/\./g, ""); return parseFloat(t.replace(",", ".")); }
-// Procura os marcadores conhecidos no texto de um laudo: o primeiro número depois do nome é o valor; unidade e faixa de referência entram quando vêm logo em seguida
+// Faixa de referência escrita no laudo: prefere o trecho do sexo do Perfil e a faixa na mesma unidade do resultado. Devolve [mínimo, máximo]; um deles pode faltar
+function djRefTxt(txt, un) {
+  const fem = (app.perfil || {}).sexo === "F", H = /homens?|masculino/i, M = /mulher(?:es)?|feminino/i, sx = fem ? M : H, ou = fem ? H : M, N = "(\\d{1,3}(?:\\.\\d{3})+(?:,\\d+)?|\\d+(?:[.,]\\d+)?)";
+  const faixas = t => Array.from(t.matchAll(new RegExp(N + "\\s*(?:a|até|-|–)\\s*" + N + "\\s*([^\\s\\d()]*)", "gi")));
+  // o primeiro limite que aparece no trecho: faixa "x a y", teto ("até x") ou piso ("acima de x")
+  const lim = t => {
+    const fs = faixas(t), fx = fs.find(m => un && m[3] && m[3].toLowerCase() === un.toLowerCase()) || fs[0], c = [];
+    if (fx) c.push([fx.index, [djNum(fx[1]), djNum(fx[2])]]);
+    const mx = new RegExp("(?:at[ée]|inferior a|menor que|<)\\s*" + N, "i").exec(t); if (mx) c.push([mx.index, [null, djNum(mx[1])]]);
+    const mn = new RegExp("(?:maior ou igual a|superior a|maior que|acima de|>=?)\\s*" + N, "i").exec(t); if (mn) c.push([mn.index, [djNum(mn[1]), null]]);
+    return c.length ? c.sort((p, q) => p[0] - q[0])[0][1] : null;
+  };
+  const L = txt.split("\n");
+  for (let i = 0; i < L.length; i++) {
+    const k = sx.exec(L[i]); if (!k) continue;
+    let r = lim(L[i].slice(k.index));
+    if (!r && L[i + 1]) { const o = ou.exec(L[i]), fs = faixas(L[i + 1]); r = o && fs.length > 1 ? (m => [djNum(m[1]), djNum(m[2])])(fs[o.index < k.index ? 1 : 0]) : lim(L[i + 1]); } // os dois sexos como títulos de coluna: vale a faixa da coluna certa
+    if (r) return r;
+  }
+  if (/\b(dias|meses|semanas)\b/i.test(txt)) { const ad = /adultos?[^\n]*|acima de\s*:[^\n]*/i.exec(txt); return ad ? lim(ad[0]) : null; } // faixa por idade sem linha de adulto: melhor em branco do que errada
+  return lim(txt);
+}
+// Procura os marcadores no texto de um laudo. Primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO: valor unidade");
+// o que não veio em bloco é procurado no texto corrido (tabelas, como a do hemograma): o primeiro número depois do nome é o valor
 function djAcha(texto) {
-  const bruto = String(texto || ""), dm = /colet\w*[^0-9]{0,40}(\d{1,2})\/(\d{1,2})\/(\d{4})/i.exec(bruto) || /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(bruto);
+  const bruto = String(texto || "").replace(/[ \t\u00a0]+/g, " "), dm = /colet\w*[^0-9]{0,40}(\d{1,2})\/(\d{1,2})\/(\d{4})/i.exec(bruto) || /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(bruto);
   const branco = m => " ".repeat(m.length), T = bruto.replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g, branco).replace(/\d{1,2}:\d{2}(:\d{2})?/g, branco).replace(/\d+\s*anos?\b/gi, branco), itens = [], faltam = [];
+  const L = T.split("\n").map(x => x.trim()), unDe = nome => (DJ_MARC.find(x => x[0] === nome) || [])[1] || "", met = x => /^m[ée]todo\s*:/i.test(x);
+  const marcDe = tit => { if (/n[aã]o[\s-]*hdl/i.test(tit)) return null; const t = DJ_LER.find(x => new RegExp(x[1].source, "i").test(tit)); return t ? t[0] : null; };
+  L.forEach((ln, i) => {
+    const r = /^resultado\s*:\s*([<>]=?)?\s*(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(.*)$/i.exec(ln); if (!r) return;
+    let j = i - 1; while (j > 0 && i - j <= 6 && !met(L[j])) j--;
+    const tit = j > 0 && met(L[j]) ? L[j - 1] : ""; if (!tit) return;
+    const marc = marcDe(tit), un = r[3].trim().slice(0, 18); let ref = "";
+    for (let k = i + 1; k < Math.min(L.length, i + 60) && !met(L[k]); k++) {
+      const m = /^valor(?:es)? de refer[êe]ncia\s*:?(.*)$/i.exec(L[k]); if (!m) continue;
+      ref = m[1]; for (let q = k + 1; q < Math.min(L.length, k + 14) && L[q] && !/^(aten[çc][ãa]o|nota|obs|fonte|\*)/i.test(L[q]) && !/^[\d\s.,]+$/.test(L[q]); q++) ref += "\n" + L[q];
+      break;
+    }
+    const fx = ref ? djRefTxt(ref, un) : null, it = { marc: marc || tit.charAt(0) + tit.slice(1).toLowerCase(), valor: djNum(r[2]), un, rmin: fx ? fx[0] : null, rmax: fx ? fx[1] : null }; if (r[1]) it.op = r[1].charAt(0); if (!marc) it.novo = true;
+    const ja = itens.findIndex(x => x.marc === it.marc);
+    if (ja < 0) itens.push(it); else if (marc && un.toLowerCase() === unDe(marc).toLowerCase() && itens[ja].un.toLowerCase() !== un.toLowerCase()) itens[ja] = it; // dois resultados do mesmo exame: fica o da unidade que o app usa
+  });
   DJ_LER.forEach(([nome, re]) => {
+    if (itens.some(x => x.marc === nome)) return;
     const g = new RegExp(re.source, "gi"); let m, achou = false;
     while (!achou && (m = g.exec(T))) {
       if (/n[aã]o[\s-]*$/i.test(T.slice(Math.max(0, m.index - 6), m.index))) continue; // "não-HDL" não é HDL
       const resto = T.slice(m.index + m[0].length, m.index + m[0].length + DJ_LER_JANELA), v = /(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)/.exec(resto);
-      if (!v) continue;
+      if (!v || /\n[^\n]*\n/.test(resto.slice(0, v.index))) continue; // o valor tem de estar na linha do nome ou na seguinte
       // a referência só vale na mesma linha do valor, ou na linha seguinte quando ela fala em referência (senão pegaria a faixa do exame de baixo)
-      const dep = resto.slice(v.index + v[0].length), un = /^\s*(%|[a-zµμ]+\s*\/\s*[a-zµμ³0-9]+)/i.exec(dep), ln = dep.split("\n"), jan = ln[0] + (ln[1] && /refer|\bvr\b|normal|desej/i.test(ln[1]) ? " " + ln[1] : "");
-      const fx = /(\d+(?:[.,]\d+)?)\s*(?:a|até|-|–)\s*(\d+(?:[.,]\d+)?)/i.exec(jan), so = fx ? null : /(?:at[ée]|inferior a|menor que|<)\s*(\d+(?:[.,]\d+)?)/i.exec(jan);
-      itens.push({ marc: nome, valor: djNum(v[0]), un: un ? un[1].replace(/\s+/g, "") : (DJ_MARC.find(x => x[0] === nome) || [])[1] || "", rmin: fx ? djNum(fx[1]) : null, rmax: fx ? djNum(fx[2]) : so ? djNum(so[1]) : null });
+      const dep = resto.slice(v.index + v[0].length), un = /^\s*(%|[a-zµμ]+\s*\/\s*[a-zµμ³0-9]+)/i.exec(dep), ln = dep.split("\n"), jan = ln[0] + (ln[1] && /refer|\bvr\b|normal|desej/i.test(ln[1]) ? " " + ln[1] : ""), fx = djRefTxt(jan, un ? un[1].replace(/\s+/g, "") : "");
+      itens.push({ marc: nome, valor: djNum(v[0]), un: un ? un[1].replace(/\s+/g, "") : unDe(nome), rmin: fx ? fx[0] : null, rmax: fx ? fx[1] : null });
       achou = true;
     }
     if (!achou) faltam.push(nome);
@@ -5251,8 +5323,8 @@ function djLerHtml(res) {
   const inp = (attr, i, v, rot) => '<label><span>' + rot + '</span><input type="text" inputmode="decimal" autocomplete="off" ' + attr + '="' + i + '" value="' + (v == null ? "" : esc(String(v).replace(".", ","))) + '"></label>';
   return '<p class="lead">Encontrei ' + res.itens.length + " marcador" + (res.itens.length > 1 ? "es" : "") + '. <b>Confira cada valor com o laudo antes de salvar</b>: a leitura é automática e pode errar.</p>' +
     '<div class="field"><label for="djLerData">Data do exame</label><input id="djLerData" type="date" value="' + (res.data || todayStr()) + '"></div>' +
-    res.itens.map((x, i) => '<div class="djler"><label class="djlh"><input type="checkbox" data-djl="' + i + '" checked> <b>' + esc(x.marc) + "</b></label>" + inp("data-djlv", i, x.valor, "Valor") + '<label><span>Unidade</span><input type="text" autocomplete="off" data-djlu="' + i + '" value="' + esc(x.un) + '"></label>' + inp("data-djlmin", i, x.rmin, "Ref. mín.") + inp("data-djlmax", i, x.rmax, "Ref. máx.") + "</div>").join("") +
-    (res.faltam.length ? '<p class="muted" style="font-size:13px">Não achei no laudo: ' + res.faltam.map(esc).join(", ") + ".</p>" : "") +
+    res.itens.map((x, i) => '<div class="djler"><label class="djlh"><input type="checkbox" data-djl="' + i + '"' + (x.novo ? "" : " checked") + "> <b>" + esc(x.marc) + "</b>" + (x.op ? ' <span class="muted">resultado "' + (x.op === "<" ? "menor que" : "maior que") + '"</span>' : "") + (x.novo ? ' <span class="optb">fora da lista</span>' : "") + "</label>" + inp("data-djlv", i, x.valor, "Valor") + '<label><span>Unidade</span><input type="text" autocomplete="off" data-djlu="' + i + '" value="' + esc(x.un) + '"></label>' + inp("data-djlmin", i, x.rmin, "Ref. mín.") + inp("data-djlmax", i, x.rmax, "Ref. máx.") + "</div>").join("") +
+    (res.faltam.length ? '<details class="pfsec sub"><summary><h3>Não achei no laudo (' + res.faltam.length + ')</h3></summary><p class="muted" style="font-size:13px">' + res.faltam.map(esc).join(", ") + ".</p></details>" : "") +
     '<div class="row-btns"><button type="button" class="btn primary" data-dj="lersalva">Salvar os marcados</button><button type="button" class="btn" data-dj="lerlimpa">Descartar</button></div>';
 }
 // Lê o laudo escolhido e mostra a lista de conferência
@@ -5505,7 +5577,9 @@ document.addEventListener("change", ev => { const el = ev.target;
   if (el.dataset && el.dataset.maqp) { maqSet(el.dataset.maqp, "placas", el.value); return; }
   if (el.dataset && el.dataset.djnt != null) { djNotaSave(el); return; }
   if (el.dataset && el.dataset.fotoin) { fotoAdd(el.files && el.files[0], el.dataset.fotoin, el.dataset.fotoin === "treino" ? "fotoMsg" : "fotoEvoMsg"); el.value = ""; return; }
-  if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); return; }
+  if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); djExGuia(true); return; }
+  if (el.id === "djApSub") { djApGuia(); return; }
+  if (el.id === "djSubIntSel") { const i = document.getElementById("djSubInt"); i.value = el.value === "o" ? "" : el.value.replace(".", ","); i.style.display = el.value === "o" ? "" : "none"; if (el.value === "o") i.focus(); return; }
   if (el.id === "djExSel") { app.djMarc = el.value; renderDiario(); return; }
   if (el.dataset && el.dataset.parcin) { const v = Math.round(+el.value), [pk, pi, ps] = el.dataset.parcin.split("|"); if (v >= 1 && v <= 99) parcEdit("add", pk, +pi, v, ps); else el.value = ""; return; }
   if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
