@@ -5,7 +5,7 @@
 <!-- Segurança (CSP): o navegador só roda o programa embutido cuja impressão digital (sha256) está na regra, e as bibliotecas só destas
      versões exatas do CDN; só conversa com o Supabase do app e com a pasta do leitor de PDF. Um texto malicioso que escape para a tela
      não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode testes/atualiza-csp.py, senão o app não abre. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-OfGHlhNuuOQyhX72Mi0Kp6Wfb+XE24T9Dt/TnO3zvTk=' https://cdn.jsdelivr.net/npm/chart.js@4.4.1/ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/ blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-SjkFM9gDUPJ9PQr+dFlvDxo8fWMl6brz416uKqgQ0l0=' https://cdn.jsdelivr.net/npm/chart.js@4.4.1/ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/ blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Hexis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1055,7 +1055,7 @@ details.grp[open] > summary { margin-bottom: 10px; }
 @media (max-width: 480px) { .acct span { max-width: 84px; } .brandr { min-width: 0; } .hd-r { gap: 6px; } }
 /* Revisão 18/nov: tabelas de Plano e regras. A quebra "em qualquer letra" deixava colunas com uma letra por linha.
    Agora as palavras quebram inteiras, a coluna do símbolo tem largura fixa e a tabela rola para o lado dentro do próprio quadro (a tela não rola) */
-.tablewrap table.plain th, .tablewrap table.plain td { overflow-wrap: normal; hyphens: auto; }
+.tablewrap table.plain th, .tablewrap table.plain td { overflow-wrap: normal; hyphens: manual; }
 #legendTable td:first-child, #fixTable td:first-child { width: 34%; }
 #legendTable .act { white-space: normal; text-align: left; }
 #legendTable table, #fixTable table { min-width: 480px; }
@@ -1065,6 +1065,47 @@ input.bad { border-color: var(--down) !important; box-shadow: 0 0 0 2px color-mi
 body.carregando main { opacity: .72; transition: opacity .2s; }
 .sync.err { color: var(--down); font-weight: 600; }
 #conn .btn { margin-left: 6px; }
+/* ---- 22. Ajustes do celular (18/nov): nada se sobrepõe, texto de botão sempre na horizontal ---- */
+/* Palavras só quebram inteiras: a regra antiga ("em qualquer letra") deixava botões e colunas com uma letra por linha */
+p, li, dd, td, .why, .lead { overflow-wrap: break-word; }
+button, .btn, .rbtn, .tag, .vchip, .tchip, th { overflow-wrap: normal; word-break: normal; hyphens: manual; }
+table.plain .btn, .btn.small { white-space: nowrap; font-size: 12.5px; padding: 4px 10px; min-height: 30px; }
+table.plain .btn { margin: 0 0 4px; }
+/* Campos de data e hora: no iPhone eles têm largura própria e passavam por cima do campo vizinho; agora cabem na coluna */
+input[type="date"], input[type="datetime-local"], input[type="time"], input[type="month"] { -webkit-appearance: none; appearance: none; display: block; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; text-align: left; }
+input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value { text-align: left; min-height: 1.3em; }
+.field, .field > *, .grid2 > *, .formgrid > *, .qw-row > *, .dtnav > * { min-width: 0; }
+.qw-row { grid-template-columns: auto minmax(0, 1fr) 84px auto; }
+@media (max-width: 440px) { .qw-row { grid-template-columns: minmax(0, 1fr) 84px auto; } }
+/* Cabeçalho: no celular fica a logo, o estado da conexão e o botão Hoje; o e-mail e o Sair vão para o topo do Perfil */
+.acctp { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+.acctt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.acctt b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 640px) {
+  .acct { display: none; }
+  .brandr { flex-direction: row; align-items: center; }
+  .hd-r .sync { max-width: 110px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-width: 641px) { #acctBox { display: none; } }
+/* Hormônios no celular: substâncias e aplicações viram cartões (nome e botões em cima, os dados em etiquetas embaixo) */
+@media (max-width: 640px) {
+  #djSubs table.plain, #djSubs tbody, #djApList table.plain, #djApList tbody { display: block; }
+  #djSubs thead, #djApList thead { display: none; }
+  #djSubs tr, #djApList tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  #djSubs td, #djApList td { display: block; border: 0; padding: 0; }
+  #djSubs td:first-child, #djApList td:nth-child(2) { order: 1; flex: 1 1 calc(100% - 96px); min-width: 0; }
+  #djSubs td:last-child, #djApList td:last-child { order: 2; flex: 0 0 82px; display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+  #djSubs td:last-child .btn, #djApList td:last-child .btn { margin: 0; }
+  #djSubs td:nth-child(n+2):not(:last-child) { order: 3; font-size: 12.5px; color: var(--muted); padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); white-space: nowrap; }
+  #djSubs td:nth-child(2)::before { content: "Via "; }
+  #djSubs td:nth-child(3)::before { content: "Meia-vida "; }
+  #djSubs td:nth-child(4)::before { content: "Intervalo "; }
+  #djSubs td:nth-child(5)::before { content: "Próxima "; }
+  #djApList td:nth-child(1), #djApList td:nth-child(3) { order: 3; font-size: 13px; color: var(--muted); }
+  #djApList td:nth-child(1) { white-space: nowrap; }
+  #djApList td:nth-child(1)::after { content: " ·"; }
+  #djApList td:nth-child(3) { flex: 1 1 0; min-width: 0; }
+}
 </style>
 </head>
 <body>
@@ -1099,6 +1140,7 @@ body.carregando main { opacity: .72; transition: opacity .2s; }
 
   <!-- Tela: Perfil -->
   <section class="view" id="v-perfil">
+    <div id="acctBox"></div>
     <div id="perfilBanner"></div>
     <div id="perfilForm"></div>
     <div class="panel pfsave"><button class="btn primary" type="button" id="pfSave">Salvar perfil</button><span class="muted" id="pfMsg" aria-live="polite">Nenhum campo é obrigatório além do peso.</span></div>
@@ -6328,8 +6370,8 @@ document.getElementById("lgUp").addEventListener("click", () => lgGo(true));
 // 2ª banca: sai mesmo sem internet (a sessão é apagada no aparelho, scope "local", sem esperar o servidor); antes tenta gravar o
 // que falta e, se ainda sobrar algo, pergunta com o número de registros que se perderiam. Recarrega uma vez só (app.saindo).
 document.addEventListener("click", async ev => {
-  if (!(ev.target.closest && ev.target.closest("#logout") && sb) || app.saindo) return;
-  const b = ev.target.closest("#logout"); b.disabled = true; b.textContent = "Saindo…";
+  if (!(ev.target.closest && ev.target.closest("#logout, .sair") && sb) || app.saindo) return;
+  const b = ev.target.closest("#logout, .sair"); b.disabled = true; b.textContent = "Saindo…";
   if (app.db && app.db.pronto()) { gravaJa(); await app.db.vazia(navigator.onLine === false ? 300 : 4000); }
   const n = app.db ? app.db.pendentes() + app.dirty.size : 0;
   if (n && !confirm((n > 1 ? n + " registros ainda não foram gravados" : "1 registro ainda não foi gravado") + " (sem conexão). Se sair agora, " + (n > 1 ? "eles se perdem" : "ele se perde") + ". Sair mesmo assim?")) { b.disabled = false; b.textContent = "Sair"; return; }
@@ -6344,7 +6386,7 @@ document.addEventListener("click", async ev => {
 ["click", "input", "change", "beforeinput", "submit"].forEach(t => document.addEventListener(t, ev => {
   if (!document.body.classList.contains("carregando")) return;
   const el = ev.target; if (!el || !el.closest) return;
-  if (el.closest("#login, #conn, .bnav, #subnav, .home-link, #logout, #hojeBtn, #hojeX, #popX, .info, [data-info], details > summary, a[href^='#']")) return; // navegar e ler continuam livres
+  if (el.closest("#login, #conn, .bnav, #subnav, .home-link, #logout, .sair, #hojeBtn, #hojeX, #popX, .info, [data-info], details > summary, a[href^='#']")) return; // navegar e ler continuam livres
   if (t === "click" && !el.closest("button, input, select, textarea, label, [data-dt], [data-dj]")) return;
   ev.preventDefault(); ev.stopImmediatePropagation();
   const c = document.getElementById("sync"); if (c) c.textContent = "Carregando seus dados…";
@@ -6453,6 +6495,8 @@ async function startSession(session) {
   document.body.classList.add("carregando");
   const sync = document.getElementById("sync"), conn = document.getElementById("conn");
   document.getElementById("acct").innerHTML = "<span>" + esc(session.user.email || "") + '</span><button class="btn small" type="button" id="logout">Sair</button>';
+  // 18/nov (celular): no cabeçalho, e-mail, Sair, estado e Hoje se espremiam; no celular a conta fica no topo do Perfil (o botão tem a classe "sair")
+  const ab = document.getElementById("acctBox"); if (ab) ab.innerHTML = '<div class="panel acctp"><div class="acctt"><span class="muted">Conta</span><b>' + esc(session.user.email || "") + '</b></div><button class="btn small sair" type="button">Sair</button></div>';
   const db = makeDb(session.user.id);
   app.db = db; app.uid = session.user.id; app.P = ""; app.isOwner = false;
   sync.textContent = "Sincronizando…";
