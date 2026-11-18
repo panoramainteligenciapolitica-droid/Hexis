@@ -21,13 +21,13 @@ Pontos de atenção:
 
 É um arquivo só, com três partes:
 
-1. **Estilos** (`<style>`): a aparência, em 20 blocos numerados.
+1. **Estilos** (`<style>`): a aparência, em 21 blocos numerados. O bloco 21 (Liquid Glass) vem por último e prevalece sobre os anteriores: cores, vidro, cápsulas, tela travada e quadros fixos das séries.
 2. **Telas** (`<main>` e as barras): a estrutura vazia de cada aba.
 3. **Programa** (`<script>`): 27 seções numeradas, que preenchem as telas e guardam os dados.
 
 Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 26 seções.
 
-### Estilos (20 blocos)
+### Estilos (21 blocos)
 
 1. Cores e fontes (tema claro; o escuro vem logo abaixo)
 2. Base e cabeçalho
@@ -49,6 +49,7 @@ Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` le
 18. Série: execução, parciais, descanso e aviso das observações
 19. Dieta: diário de alimentos
 20. Corpo: evolução corporal (exames de bioimpedância)
+21. Liquid Glass: vidro em camadas, cantos concêntricos, barras flutuantes; tela travada e quadros fixos
 
 ### Telas
 
@@ -75,9 +76,9 @@ A barra de baixo tem 5 grupos; cada grupo pode ter subabas no topo. Tudo sai da 
 | Grupo | Abas |
 | --- | --- |
 | Início | Início |
-| Treino | Semana · Próxima semana |
-| Resumo | Resumo do dia |
-| Evolução | Progresso · Corpo e dieta · Hormônios |
+| Treino | Semana · Resumo do dia · Próxima |
+| Dieta | Dieta |
+| Evolução | Progresso · Corpo · Hormônios |
 | Você | Perfil · Objetivo · Plano e regras |
 
 ## 3. Como os dados são guardados
@@ -199,7 +200,7 @@ São 53 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `DJ_ATRAS` | `60, DJ_FRENTE = 30` | curva do diário: dias para trás e para a frente |
 | `DJ_EQUIL` | `5` | meias-vidas até o nível estabilizar com doses repetidas (e até a substância praticamente sair depois da última dose) |
 | `DJ_HT_ALERTA` | `54` | hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar |
-| `WAKE_KEY` | `"hexis.wake"` | preferência "tela acesa durante o cronômetro", guardada no aparelho |
+| `KEEP_KEY` | `"hexis.abertos"` | blocos recolhíveis abertos ou fechados por você, guardados no aparelho       // preferência "tela acesa durante o cronômetro", guardada no aparelho |
 | `CLK_SEG_REP` | `4` | segundos por repetição, para a barra de execução |
 | `UNI_TROCA` | `30` | troca de lado na série unilateral: referência da barra e tempo previsto (o que você levar é anotado) |
 
@@ -222,7 +223,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 347 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 360 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -296,6 +297,7 @@ Decide carga, repetições e técnica de cada exercício em cada semana, a parti
 | `howFor()` | Texto de como aplicar cada técnica de destrave |
 | `initState()` | Estado inicial do exercício: carga calculada pelo Perfil (1RM), carga da ficha, ou a definir |
 | `maqTol()` | Tolerância, em kg, para uma carga contar como a placa vizinha da prevista |
+| `maqMin()` | Peso base da máquina (a carga com que ela começa, sem nenhuma placa): nenhuma carga prevista fica abaixo dele. 0 = sem peso base |
 | `maqAll()` | Cargas conhecidas de cada máquina, por nome do exercício: primeiro as declaradas, depois as anotadas nos registros |
 | `maqPick()` | Escolhe uma carga conhecida da máquina: a mais próxima de L (dir 0), a seguinte acima de base (dir 1) ou a mais próxima de L abaixo de base (dir -1). Sem candidata, null |
 | `maqEntrada()` | Carga que veio da ficha, de outra faixa ou de outro treino (ou qualquer carga fora de placa, em máquina de placas fixas): se há uma placa conhecida perto, usa a placa |
@@ -440,11 +442,13 @@ Textos das explicações (botões "i") e a janela que os mostra.
 | `GLOSS` | Textos dos botões "i": chave → [título, explicação] |
 | `FITA` | Regra geral da fita métrica, repetida nas medidas |
 | `DOBRA_REGRA` | Regra geral das dobras cutâneas, repetida em cada dobra |
+| `INFO_COMUM` | Botão "i" que abre a explicação de uma chave Termos de uso comum em prescrição de treino, dieta e medidas: ficam sem o botão "i" (a explicação continua no Glossário, em Plano e regras) |
+| `INFO_ACT_COMUM` | Ações óbvias pelo próprio nome (subir, manter, reduzir…) também ficam sem "i"; destrave, nova faixa, conversa entre treinos e festas mantêm |
 | `popReturn` | Botão que abriu a janela de explicação (o foco volta para ele ao fechar) |
 
 | Função | O que faz |
 | --- | --- |
-| `infoBtn()` | Botão "i" que abre a explicação de uma chave |
+| `infoRaro()`, `infoBtn()` | O termo merece o botão "i"? |
 | `glossEntry()` | Explicação de uma chave (inclui as geradas na hora: ações e técnicas) |
 | `openInfo()` | Abre a janela de explicação |
 | `closeInfo()` | Fecha a janela e devolve o foco ao botão que abriu |
@@ -483,7 +487,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 
 | Função | O que faz |
 | --- | --- |
-| `renderWeek()` | Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia |
+| `medeQuadros()` | Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia Quadros das séries com largura fixa: mede a carga e as repetições mais longas já anotadas (e as da ficha) e fixa as colunas para todos os cartões |
 | `dayBtns()` | Botões dos dias da semana, com a situação de cada um (usados em Semana e em Resumo) |
 | `dayStatus()` | Situação do dia: feito, parcial, não feito ou pendente |
 | `renderDay()` | Treino do dia: cartões dos exercícios, intervalos, cardio, tempo e observações do dia |
@@ -503,6 +507,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 | `setCells()` | Células de carga, repetições e RIR de uma série (side "e"/"d": um dos lados, no unilateral) |
 | `execField()` | Campo do tempo de execução, com o selo que converte para minutos |
 | `exCard()` | Cartão do exercício: prescrição, motivo, aquecimento, séries, observações e Feito / Não fiz |
+| `keepOpen()` | Bloco recolhível que lembra se estava aberto (chave em data-keep); "padrao" abre na primeira vez |
 
 ### 12. Tela: Próxima semana
 
@@ -603,7 +608,7 @@ A aba Plano e regras.
 
 | Função | O que faz |
 | --- | --- |
-| `renderPlan()` | Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual |
+| `gloHtml()` | Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual Glossário: todos os termos do app, com busca; cada um abre a mesma explicação do botão "i" |
 
 ### 17. Exercício unilateral
 
@@ -808,7 +813,7 @@ Tudo o que acontece quando você toca ou digita, e a gravação dos dados.
 | `touch()` | Marca o dia como alterado e agenda o salvamento (1,2 s depois da última mudança) |
 | `flush()` | Salva o registro de um dia; se falhar, tenta de novo |
 | `saveErr()` | Mensagem de erro ao salvar (retry: o app tenta de novo sozinho) |
-| `setSaveMsg()` | Mensagem da barra de salvar |
+| `setSaveMsg()` | Mensagem da barra de salvar Situação do salvamento: aparece na barra de baixo só enquanto importa (salvando, erro); "Salvo" some sozinho |
 | `tapSel()` | Seletor do botão tocado, para reencontrá-lo depois de redesenhar |
 | `playTap()` | Efeito de toque no botão |
 | `flashBtn()` | Mostra "✓ Salvo" no botão por um instante |
@@ -834,11 +839,17 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `DT_RES` | alimentos mostrados na busca |
 | `DT_FOLGA` | até 10% acima ou abaixo do proposto conta como "dentro" |
 | `DT_PER`, `DT_SEM` | períodos (dias) da comparação por refeição |
+| `DT_GRAMAS` | quantidades prontas (g) na escolha do alimento |
+| `DT_PORCOES` | quantidades prontas para alimento por porção |
+| `DT_FREQ` | alimentos frequentes mostrados antes de digitar |
+| `DT_HORA` | Horário típico de cada refeição pelo nome (horas do dia), para a refeição já vir escolhida |
 
 | Função | O que faz |
 | --- | --- |
 | `semAcento()` | Texto sem acento e em minúsculas, para a busca |
 | `dtS()` | Estado da aba Dieta: menu aberto, dia mostrado, refeição recebendo alimento, busca e alimento escolhido |
+| `dtRefAgora()` | Refeição da hora: a do horário típico mais próximo; nomes sem horário conhecido dividem o dia (5h às 23h) em partes iguais |
+| `dtCurto()` | Nome curto da refeição para os botões |
 | `dtAdd()` | Soma dias a uma data AAAA-MM-DD |
 | `dtDow()` | Dia da semana de uma data (0 = segunda) |
 | `dtKc()` | Calorias arredondadas, com ponto de milhar |
@@ -851,7 +862,9 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `dtSum()` | Soma de calorias e macros de uma lista de itens |
 | `dtItens()` | Alimentos registrados em um dia |
 | `dtBusca()` | Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela palavra |
-| `dtUsados()` | Alimentos que você mais registrou (aparecem antes de digitar) |
+| `dtUsados()` | Alimentos que você mais registrou (aparecem antes de digitar), cada um com a última quantidade usada |
+| `dtUltQ()` | Última quantidade usada de um alimento (ou 100 g / 1 porção) |
+| `dtQtd()` | Quantidade com unidade: "150 g" ou "1,5 porção" |
 | `dtGrava()` | Grava um registro da dieta (um dia ou a lista dos seus alimentos) |
 | `dtPoe()` | Grava a lista de alimentos de um dia |
 | `dtSit()` | Situação contra o proposto: dentro (até 10%), acima ou abaixo, com a cor de cada uma |
@@ -859,6 +872,7 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `dtDif()` | Diferença com sinal e situação: "+120 · acima" |
 | `renderDieta()` | Desenha a aba Dieta: meta da fase, menu e a visão escolhida |
 | `dtDiaHtml()` | Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição |
+| `dtHeroHtml()` | Cartão do total do dia: anel das calorias contra a meta, o que falta e os macros |
 | `dtItemHtml()` | Linha de um alimento registrado: nome, quantidade (editável), calorias e remover |
 | `dtPrevTxt()` | Texto da prévia: calorias e macros da quantidade digitada |
 | `dtResHtml()` | Lista da busca (ou os mais usados, antes de digitar) |
@@ -868,6 +882,7 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `dtCfgHtml()` | Bloco "Refeições e proposto": nomes e parte de cada refeição nas calorias do dia |
 | `dtRefsSalva()` | Guarda as refeições definidas (ou volta ao padrão) nos ajustes |
 | `dtOk()` | Adiciona o alimento escolhido à refeição aberta |
+| `dtPoeItem()` | Põe um alimento na refeição escolhida e deixa a busca pronta para o próximo |
 | `dtForaSalva()` | Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade |
 | `dtClick()` | Toques na aba Dieta |
 | `dtInput()` | Digitação: a busca atualiza só a lista; a quantidade atualiza a prévia |
@@ -876,6 +891,11 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 ### 27. Partida
 
 Ordem em que o app liga.
+
+| Função | O que faz |
+| --- | --- |
+| `travaTela()` | O app fica nos limites da tela: sem zoom de pinça nem de toque duplo, sem zoom ao entrar num campo e sem rolagem para os lados |
+| `largos()` | Elementos que passam da largura da tela (conferência) |
 
 ## 7. Como fazer as mudanças mais comuns
 
@@ -955,6 +975,7 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `run32` | Anotações livres e posologia preenchida pelo usuário na aba de hormônios e peptídeos |
 | `run33` | Conversa entre treinos: carga trazida do exercício irmão e ajuste pelo desempenho no outro dia |
 | `run34` | Cargas da máquina: placas guardadas, reconhecimento de placa fixa, placas deduzidas, declaração manual e carga livre |
+| `run36` (Dieta) | Também cobre a inserção rápida: refeição da hora, busca, escolha, quantidade pronta e alimento fora da tabela |
 | `run38` | Hormônios: fontes num menu recolhido, seletor e edição no cadastro, selo de tipo; leitura do texto de um laudo; importação do arquivo do InBody conferida com o arquivo real |
 | `run37` | Exames de bioimpedância: painel Evolução corporal com 11 exames reais, faixas do laudo e estimadas, formulário (salvar, editar, só o mês, excluir) e espelho nas medidas do dia |
 | `run36` | Opcionais e exercícios novos fora das pendências; domingo como dia livre; aba Dieta: busca na TACO, registro, alimento fora da tabela, comparação por refeição e por dia |
@@ -981,3 +1002,14 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 - O site não tem recuperação de senha por e-mail.
 - No plano gratuito do Supabase, um projeto sem uso por uma semana é pausado e precisa ser reativado no painel.
 - A versão de origem e o site têm dados separados.
+
+
+## Desenho (Liquid Glass) e tela
+
+- **Camadas**: fundo em degradê fixo (`body::before`); conteúdo em vidro claro (`--surface`, borda de luz `--edge`); navegação em vidro com desfoque (`--glass`, `--blur`): cabeçalho, subabas, barra de abas flutuante, barra do cronômetro e janelas.
+- **Tela travada**: `travaTela()` (seção 27) fixa o viewport sem zoom, bloqueia a pinça no iPhone e desfaz o zoom ao sair de um campo; todos os campos têm 16 px; `largos()` lista o que passar da largura (conferência).
+- **Quadros fixos das séries**: `medeQuadros()` mede a carga e as repetições mais longas já anotadas e fixa as colunas (`--kgc`, `--rpc`); a tabela usa `table-layout: fixed`; cada série tem uma linha de altura fixa para situação e ajuste (`.sline`, texto curto `curto` da sugestão; o completo fica no toque); descanso e intervalo em grades fixas (`.rgrid`).
+- **Informação em camadas**: blocos recolhíveis `details.mais` lembram se estavam abertos (`data-keep`, guardado no aparelho em `KEEP_KEY`); "Por que" do cartão, observações e ajustes, metas da semana, tempo do treino, opções do dia, grupos de gráficos de Progresso e Corpo.
+- **Botão "i"**: só nos termos menos comuns (`INFO_COMUM`, `INFO_ACT_COMUM`, `infoRaro`); todos os termos ficam no Glossário (Plano e regras, `gloHtml`).
+- **Dieta**: aba própria; refeição escolhida pelo horário (`dtRefAgora`, `DT_HORA`); frequentes com a última quantidade (`dtUsados`, `dtUltQ`) adicionados em um toque (`dtPoeItem`); quantidades prontas (`DT_GRAMAS`, `DT_PORCOES`); repetir a refeição de ontem; desfazer o último.
+- **Peso base da máquina**: `settings.maq[nome].min`; `maqMin` impede carga prevista, back-off, ajuste entre séries e aquecimento abaixo dele.

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Hexis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
 <meta name="theme-color" content="#2a78d6">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,14 +15,15 @@
 <title>Hexis · treino, corpo e dieta em progressão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Caderno de treino: fundo frio de academia, tinta grafite, azul como acento; ações com cor + símbolo + texto. Layout: uma coluna para celular, abas no topo. */
+/* Liquid Glass: fundo em degradê suave, conteúdo em vidro claro, navegação em vidro com desfoque; ações com cor + símbolo + texto. Layout: uma coluna para celular, barra de abas flutuante embaixo. */
 /* ==== MAPA DOS ESTILOS ====
    1 Cores e fontes · 2 Base e cabeçalho · 3 Cardio · 4 Telas, avisos e barra da semana · 5 Cartão do exercício e séries
    6 Botões · 7 Campos, painéis, números, tabelas e gráficos · 8 Barra de salvar, botão "i" e pesagem · 9 Janela de explicação
    10 Perfil e Objetivo · 11 Aquecimento, Feito, intervalo e blocos de observação · 12 Cronômetro · 13 Unilateral
-   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso · 19 Dieta: diário de alimentos · 20 Corpo: evolução corporal */
+   14 Navegação · 15 Início · 16 Transições e animações · 17 Resumo do dia · 18 Série: execução, parciais e descanso · 19 Dieta: diário de alimentos · 20 Corpo: evolução corporal
+   21 Liquid Glass: vidro em camadas, tela travada e quadros fixos (vem por último e prevalece) */
 /* ---- 1. Cores e fontes (tema claro; o escuro vem logo abaixo) ---- */
 :root {
   --bg: #eef1f4;
@@ -43,7 +44,7 @@
   --deload: #158f66;
   --new: #d0561f;
   --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
-  --font-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -761,6 +762,273 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
 .djler label span { display: block; font-size: 11px; color: var(--muted); }
 .djler input[type="text"] { width: 100%; min-height: 38px; min-width: 0; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--ink); font: inherit; }
 #djLerArq, #bioArq { max-width: 100%; margin: 4px 0; }
+/* ---- 21. Liquid Glass: vidro em camadas, cantos concêntricos, barras flutuantes; tela travada e quadros fixos ---- */
+/* Fundo: degradê suave e fixo; o conteúdo é vidro claro por cima; a navegação (topo, abas, barra de baixo, janelas) é vidro com desfoque */
+:root {
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-head: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bg: #eef1f6;
+  --bg-grad: radial-gradient(1100px 680px at 8% -12%, #cddfff 0%, transparent 62%), radial-gradient(900px 620px at 112% 6%, #ffdccb 0%, transparent 56%), radial-gradient(1000px 760px at 46% 112%, #c8efe2 0%, transparent 62%), #eef1f6;
+  --surface: rgba(255, 255, 255, .68);
+  --surface-2: rgba(255, 255, 255, .55);
+  --field: rgba(255, 255, 255, .82);
+  --solid: #f8fafc;
+  --glass: rgba(250, 252, 255, .58);
+  --glass-strong: rgba(252, 253, 255, .78);
+  --blur: saturate(180%) blur(24px);
+  --edge: rgba(255, 255, 255, .85);
+  --line: rgba(22, 32, 52, .11);
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 10px 28px rgba(16, 24, 40, .08);
+  --shadow-float: 0 2px 6px rgba(16, 24, 40, .08), 0 18px 44px rgba(16, 24, 40, .16);
+  --ink: #0e1520;
+  --muted: #5a6474;
+  --accent: #0a74f0;
+  --series-1: #0a74f0;
+  --keep: #0a74f0;
+  --r-card: 22px;
+  --r-ctl: 14px;
+  --bnh: 84px;
+  --kgc: 4; --rpc: 2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #07090d;
+    --bg-grad: radial-gradient(1000px 640px at 0% -12%, rgba(40, 96, 210, .34) 0%, transparent 60%), radial-gradient(820px 620px at 112% 0%, rgba(210, 96, 60, .20) 0%, transparent 56%), radial-gradient(960px 740px at 50% 112%, rgba(30, 166, 124, .18) 0%, transparent 62%), #07090d;
+    --surface: rgba(255, 255, 255, .065); --surface-2: rgba(255, 255, 255, .06); --field: rgba(255, 255, 255, .09); --solid: #12161d;
+    --glass: rgba(26, 30, 38, .56); --glass-strong: rgba(30, 34, 43, .80); --edge: rgba(255, 255, 255, .13); --line: rgba(255, 255, 255, .10);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .32); --shadow-float: 0 2px 8px rgba(0, 0, 0, .4), 0 20px 48px rgba(0, 0, 0, .5);
+    --ink: #f1f4f8; --muted: #a2acba; --accent: #3d9bff; --series-1: #3d9bff; --keep: #5aa9ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #07090d;
+  --bg-grad: radial-gradient(1000px 640px at 0% -12%, rgba(40, 96, 210, .34) 0%, transparent 60%), radial-gradient(820px 620px at 112% 0%, rgba(210, 96, 60, .20) 0%, transparent 56%), radial-gradient(960px 740px at 50% 112%, rgba(30, 166, 124, .18) 0%, transparent 62%), #07090d;
+  --surface: rgba(255, 255, 255, .065); --surface-2: rgba(255, 255, 255, .06); --field: rgba(255, 255, 255, .09); --solid: #12161d;
+  --glass: rgba(26, 30, 38, .56); --glass-strong: rgba(30, 34, 43, .80); --edge: rgba(255, 255, 255, .13); --line: rgba(255, 255, 255, .10);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .32); --shadow-float: 0 2px 8px rgba(0, 0, 0, .4), 0 20px 48px rgba(0, 0, 0, .5);
+  --ink: #f1f4f8; --muted: #a2acba; --accent: #3d9bff; --series-1: #3d9bff; --keep: #5aa9ff;
+}
+/* Tela travada: sem zoom de toque duplo, sem aumento de texto do sistema, sem rolagem lateral */
+html { background: var(--bg); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: manipulation; overflow-x: hidden; }
+body { background: transparent; font-family: var(--font-body); letter-spacing: -.005em; overflow-x: hidden; width: 100%; max-width: 100vw; overscroll-behavior-x: none; -webkit-tap-highlight-color: transparent; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--bg-grad); pointer-events: none; }
+img, video, canvas, svg { max-width: 100%; }
+.wrap, main, section.view { min-width: 0; max-width: 100%; }
+.wrap { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+/* campos com 16 px: o iPhone não aproxima a tela ao tocar num campo */
+input, select, textarea { font-size: 16px !important; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+p, li, dd, td, .why, .lead { overflow-wrap: anywhere; }
+/* Títulos no estilo do sistema */
+.panel h2, .dayhead h2, .pop-h h2, .weektitle .wk, .subh, .biohd h2, details.pfsec > summary h2 { font-family: var(--font-head); font-weight: 700; letter-spacing: -.02em; }
+.panel h2 { font-size: 19px; }
+.dayhead h2 { font-size: 24px; }
+.weektitle .wk { font-size: 22px; }
+.card-h h3 { font-family: var(--font-head); font-size: 17px; letter-spacing: -.015em; }
+/* Camada de navegação: vidro com desfoque e borda de luz */
+header.top { background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border-bottom: 1px solid var(--line); box-shadow: inset 0 -1px 0 var(--edge); padding-top: env(safe-area-inset-top); }
+nav.subnav { border-radius: 999px; background: color-mix(in srgb, var(--ink) 6%, transparent); border: 1px solid var(--line); padding: 3px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .06); }
+nav.subnav a { border-radius: 999px; padding: 7px 12px; font-weight: 600; font-size: 14px; }
+nav.subnav a[aria-current="page"] { color: var(--ink); }
+nav.subnav .sn-ind { top: 3px; bottom: 3px; border-radius: 999px; background: var(--glass-strong); box-shadow: 0 1px 2px rgba(0, 0, 0, .10), 0 4px 12px rgba(0, 0, 0, .08), inset 0 1px 0 var(--edge); }
+.bnav { left: 0; right: 0; bottom: calc(10px + env(safe-area-inset-bottom)); margin: 0 auto; width: calc(100% - 24px); max-width: 560px; padding: 0; border: 1px solid var(--line); border-radius: 30px; background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); box-shadow: var(--shadow-float), inset 0 1px 0 var(--edge), inset 0 -1px 0 rgba(255, 255, 255, .08); }
+.bn-in { padding: 5px; gap: 2px; }
+.bnav a { border-radius: 24px; padding: 6px 2px 5px; font-size: 11px; font-weight: 600; transition: color .25s, background-color .3s; }
+.bn-ic { width: 44px; height: 28px; background: none !important; }
+.bnav a[aria-current="page"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, var(--glass-strong)); box-shadow: inset 0 1px 0 var(--edge), 0 1px 3px rgba(0, 0, 0, .06); }
+.savebar { left: 0; right: 0; margin: 0 auto; width: calc(100% - 24px); max-width: 736px; bottom: calc(var(--bnh) + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); box-shadow: var(--shadow-float), inset 0 1px 0 var(--edge); }
+.savebar .inner { padding: 8px 14px; font-size: 13px; }
+.savebar.only-clk { border-radius: 20px; }
+.wrap { padding-bottom: calc(118px + var(--bnh)); }
+body.clk-on .wrap { padding-bottom: calc(200px + var(--bnh)); }
+.pop { background: rgba(8, 12, 20, .32); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); padding: 12px; }
+.pop-card { background: var(--glass-strong); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 1px solid var(--line); border-radius: 28px; box-shadow: var(--shadow-float), inset 0 1px 0 var(--edge); padding: 16px 18px 20px; }
+.pop-b .eg { background: var(--surface-2); border-color: var(--line); border-radius: 14px; }
+/* Conteúdo: cartões de vidro claro com borda de luz, cantos grandes */
+.card, .panel, .tile, .hm-w, .hm-f, .sxe, ul.dirs li, .djr, .biocard, .banner, .tcard, .verdict { border-radius: var(--r-card); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow), inset 0 1px 0 var(--edge); }
+.panel { padding: 14px 14px 12px; }
+.card { padding: 14px; border-left-width: 1px; box-shadow: var(--shadow), inset 0 1px 0 var(--edge), inset 4px 0 0 var(--act, transparent); }
+.card.done { background: color-mix(in srgb, var(--up) 7%, var(--surface)); border-color: color-mix(in srgb, var(--up) 30%, var(--line)); }
+.card.skip { background: color-mix(in srgb, var(--down) 6%, var(--surface)); }
+.banner { border-left-width: 1px; box-shadow: var(--shadow), inset 4px 0 0 var(--accent); padding: 10px 14px; }
+.banner.warn { box-shadow: var(--shadow), inset 4px 0 0 var(--down); }
+.tile { border-radius: 18px; }
+.hm-k, .cbox, .dttot, .djr, .biosc, .dtadd, .dtpk, .tagform, .subtags, .warm, .how, .djsit { border-radius: 16px; }
+.hm-k, .cbox { background: var(--surface-2); border-color: var(--line); box-shadow: inset 0 1px 0 var(--edge); }
+.verdict { border-left-width: 1px; }
+.tcard { margin: -2px 6px 12px; border-style: dashed; border-color: color-mix(in srgb, var(--deload) 40%, var(--line)); background: color-mix(in srgb, var(--deload) 5%, var(--surface)); box-shadow: none; }
+.warm { border-left: 0; background: color-mix(in srgb, var(--new) 8%, var(--surface-2)); box-shadow: inset 3px 0 0 var(--new); }
+.how { border-radius: 14px; }
+/* Controles: cápsulas de vidro */
+.btn { border-radius: 999px; padding: 9px 16px; border: 1px solid var(--line); background: var(--glass-strong); box-shadow: 0 1px 2px rgba(0, 0, 0, .06), inset 0 1px 0 var(--edge); font-weight: 600; }
+.btn.small { padding: 6px 12px; font-size: 14px; }
+.btn.primary { border-color: transparent; color: #fff; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, #fff) 0%, var(--accent) 100%); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, .45); }
+.btn.primary:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 90%, #fff) 0%, color-mix(in srgb, var(--accent) 90%, #000) 100%); }
+.btn[aria-pressed="true"] { box-shadow: 0 4px 14px color-mix(in srgb, var(--b) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, .35); }
+.iconbtn { border-radius: 999px; border: 1px solid var(--line); background: var(--glass-strong); box-shadow: 0 1px 2px rgba(0, 0, 0, .06), inset 0 1px 0 var(--edge); }
+.vchip, .tchip, .act, .tag, .rbtn, .pchip, .padd, .pbtn, .hojebtn, .optb, .rq, .ordtag { border-radius: 999px; }
+.vchip, .tchip { background: var(--surface-2); border-color: var(--line); box-shadow: inset 0 1px 0 var(--edge); padding: 4px 10px; }
+.rbtn { background: var(--glass-strong); border-color: var(--line); box-shadow: inset 0 1px 0 var(--edge); }
+.tag { background: var(--glass-strong); border-color: var(--line); }
+.hojebtn { background: color-mix(in srgb, var(--accent) 12%, var(--glass-strong)); box-shadow: inset 0 1px 0 var(--edge); }
+textarea, .field input, .field select, table.sets input, table.sets select, .qw input, .maqp input, .clkfix input, .rmtab .cin, .djler input[type="text"], .dtcr input, .dtpk2 input, .dtit .dtq, .parc .pin, .exec input, table.sets .exec input { border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .05); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 70%, transparent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.info { width: 17px; height: 17px; border-width: 1.2px; font: 600 11px/1 var(--font-body); font-style: normal; opacity: .75; }
+.dtt th:first-child { background: var(--solid); }
+fieldset.checks .ck { background: var(--glass-strong); }
+/* Controles segmentados (menus de visão): trilho de vidro com o escolhido em relevo */
+.dtmenu, .seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; padding: 3px; margin: 0 0 12px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 6%, transparent); border: 1px solid var(--line); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .06); }
+.dtmenu button, .seg button { min-width: 0; min-height: 36px; padding: 4px 6px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: background-color .25s, color .25s, box-shadow .25s; }
+.dtmenu button[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--glass-strong); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .10), 0 4px 12px rgba(0, 0, 0, .07), inset 0 1px 0 var(--edge); }
+/* Blocos recolhíveis ("Saiba mais"): informação complexa fica a um toque */
+details.mais > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 30px; }
+details.mais > summary::-webkit-details-marker { display: none; }
+details.mais > summary::after { content: ""; flex: none; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform .25s; }
+details.mais[open] > summary::after { transform: rotate(45deg); }
+details.mais > summary h2 { margin: 0; }
+details.mais > summary .muted { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+details.panel.mais[open] > summary { margin-bottom: 10px; }
+.tn { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 9px; background: var(--fix); color: #fff; font-size: 12px; font-weight: 700; line-height: 18px; text-align: center; }
+.targets { display: block; margin: 10px 0; }
+.metas > summary { padding: 6px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); font-size: 14px; font-weight: 600; box-shadow: inset 0 1px 0 var(--edge); }
+.metas .tchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+/* Cartão do exercício: "Por que" numa linha; observações e ajustes recolhidos */
+.pres { gap: 6px; }
+details.pq { margin: 2px 0 8px; font-size: 14px; color: var(--muted); }
+details.pq > summary { min-height: 26px; }
+details.pq > summary .pqt { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+details.pq[open] > summary .pqt { display: none; }
+details.pq[open] > summary::before { content: "Por que esta prescrição"; font-weight: 600; color: var(--ink); }
+details.pq .why { margin: 4px 0 6px; color: var(--ink); }
+details.aj { margin: 10px 0 0; padding-top: 8px; border-top: 1px solid var(--line); font-size: 14px; }
+details.aj > summary { font-weight: 600; color: var(--muted); }
+details.aj[open] > summary { margin-bottom: 6px; }
+.donebar { margin-top: 10px; padding-top: 10px; }
+.donebar .btn { min-height: 46px; font-size: 16px; }
+/* Séries: colunas de largura fixa, medidas pelas cargas já anotadas; dicas e situação numa linha de altura fixa */
+table.sets { table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+table.sets col.c-kg { width: calc(var(--kgc) * .62em + 26px); }
+table.sets col.c-rp { width: calc(var(--rpc) * .62em + 26px); }
+table.sets col.c-rir { width: 54px; }
+table.sets th { padding: 2px 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+table.sets td { padding: 2px 3px; }
+table.sets tr.srow td { vertical-align: top; padding-top: 6px; }
+table.sets input, table.sets select { height: 44px; padding: 0 6px; text-align: center; font-variant-numeric: tabular-nums; }
+table.sets select { padding: 0 2px; text-align-last: center; }
+table.sets td.lbl { overflow: hidden; white-space: nowrap; }
+table.sets td.lbl b { display: block; font-size: 14px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+table.sets td.lbl b .info { vertical-align: 1px; }
+table.sets .tgt { font-size: 12px; line-height: 15px; height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+table.sets tr.hrow td { padding: 0 3px; }
+.sline { display: flex; align-items: center; gap: 8px; height: 20px; overflow: hidden; font-size: 12px; white-space: nowrap; }
+.sline .sstat { flex: none; margin: 0; }
+.sline .adj { flex: 1 1 auto; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; text-align: right; color: var(--muted); cursor: help; }
+.sline .adj.dn { color: var(--down); } .sline .adj.upx { color: var(--up); }
+.adj:empty, .sstat:empty { display: inline; }
+.execrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-height: 36px; }
+.exec input, table.sets .exec input { width: 64px; height: 34px; text-align: center; }
+.exmm:empty { display: inline-block; visibility: hidden; }
+.exmm { min-width: 62px; }
+.parcwrap { flex: 1 1 0; min-width: 0; display: flex; justify-content: flex-end; }
+.parcwrap:has(.parc) { flex-basis: 100%; justify-content: flex-start; }
+.rest, .tcard { display: block; padding: 6px 8px 8px; }
+.rest { border-radius: 14px; background: color-mix(in srgb, var(--deload) 6%, var(--surface-2)); }
+.rhd { display: flex; align-items: center; gap: 6px; height: 22px; margin-bottom: 4px; overflow: hidden; white-space: nowrap; }
+.rhd .rl { margin-right: auto; font-size: 13px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; }
+.rhd .rq { flex: none; }
+.rgrid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; }
+.rgrid.t7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.rgrid .rbtn { min-width: 0; min-height: 34px; padding: 0; font-size: 12.5px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; }
+.tcard .trun { margin-bottom: 6px; }
+.clk { border-radius: 12px; min-height: 40px; background: var(--surface-2); }
+/* Dieta: total do dia, caixa de adicionar sempre aberta, frequentes em um toque */
+.dthero { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 4px 14px; align-items: center; }
+.dtring { position: relative; width: 72px; height: 72px; color: var(--c, var(--accent)); }
+.dtring svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+.dtring .rb { fill: none; stroke: currentColor; opacity: .16; stroke-width: 7; }
+.dtring .rf { fill: none; stroke: currentColor; stroke-width: 7; stroke-linecap: round; transition: stroke-dasharray .5s cubic-bezier(.2, .8, .25, 1); }
+.dtring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.dthero .dtk1 { margin: 0; font-size: 15px; }
+.dthero .dtk1 > b { font-family: var(--font-head); font-size: 32px; letter-spacing: -.02em; }
+.dtfalta { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.dthero .dtmac { grid-column: 1 / -1; margin-top: 8px; }
+.dtfase { grid-column: 1 / -1; margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+.dtquick { padding-top: 12px; border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: var(--shadow), inset 0 1px 0 var(--edge), 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent); scroll-margin-top: 90px; }
+.dtqh { display: flex; align-items: center; gap: 8px; min-height: 24px; margin-bottom: 8px; font-size: 14px; }
+.dtok { flex: 1 1 auto; min-width: 0; text-align: right; font-size: 12.5px; color: var(--up); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lnk { border: 0; background: none; padding: 0 0 0 4px; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+.dtrefs { grid-auto-flow: row; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); border-radius: 18px; margin-bottom: 10px; }
+.dtrefs button { border-radius: 14px; font-size: 13px; }
+.dtadd { margin: 0; padding: 0; border: 0; background: none; }
+.dtbusca { position: relative; }
+.dtbusca input[type="search"] { width: 100%; min-height: 46px; padding: 0 44px 0 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23889' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='m16 16 4.5 4.5'/%3E%3C/svg%3E") no-repeat 14px center / 18px; -webkit-appearance: none; appearance: none; }
+.dtbusca input[type="search"]::-webkit-search-cancel-button { display: none; }
+.dtbusca .dtx { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 999px; }
+#dtRes { margin: 8px 0 4px; max-height: 340px; overflow-y: auto; overscroll-behavior: contain; }
+.dtvz { margin: 6px 2px; font-size: 12.5px; }
+.dtfreq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.dtfq { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass-strong); box-shadow: inset 0 1px 0 var(--edge); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.dtfq span { width: 100%; font-size: 13px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dtfq b { font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.dtfq b::before { content: "+ "; }
+.dtfq:active, .dtqk:active { transform: scale(.96); }
+.dtrr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: stretch; margin-bottom: 6px; }
+.dtr { margin: 0; border-radius: 14px; background: var(--glass-strong); border-color: var(--line); padding: 8px 10px; min-width: 0; }
+.dtr b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dtqk { min-width: 76px; padding: 4px 8px; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line)); border-radius: 14px; background: color-mix(in srgb, var(--accent) 10%, var(--glass-strong)); color: var(--accent); font: inherit; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+.dtpk { margin: 10px 0 4px; padding: 10px 12px; border-radius: 16px; background: color-mix(in srgb, var(--accent) 6%, var(--surface-2)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); }
+.dtpkh { display: flex; align-items: center; gap: 8px; }
+.dtpkh b { flex: 1 1 auto; min-width: 0; font-size: 15px; }
+.dtqs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin-top: 8px; }
+.dtqs .rbtn { min-width: 0; min-height: 36px; padding: 0; font-variant-numeric: tabular-nums; }
+.dtqs .rbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dtpk2 { display: grid; grid-template-columns: 92px auto minmax(0, 1fr); align-items: center; gap: 8px; margin-top: 8px; }
+.dtpk2 input { width: 100%; min-height: 44px; text-align: center; }
+#dtPrev { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dtpk .row-btns .btn.primary { width: 100%; min-height: 46px; }
+.dtref { padding: 10px 14px; }
+.dtref.on { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.dtrh b { font-size: 15px; }
+.dtit { grid-template-columns: minmax(0, 1fr) 64px 30px 44px 34px; gap: 6px; border-top: 1px solid var(--line); padding: 6px 0; }
+.dtit .dtn { font-size: 13.5px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.dtit .dtq { width: 64px; min-height: 36px; text-align: center; }
+.dtit .dtk { text-align: right; }
+.dtx { border-radius: 999px; background: var(--glass-strong); }
+.dtrfoot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.dtnav { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 40px auto; align-items: center; gap: 6px; }
+.dtnav input[type="date"] { width: 100%; border-radius: 999px; text-align: center; }
+.dtnav .rbtn { border-radius: 999px; }
+/* Glossário */
+.glo { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.glob { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--glass-strong); color: var(--ink); font: inherit; font-size: 13.5px; cursor: pointer; box-shadow: inset 0 1px 0 var(--edge); }
+/* Movimento: as cápsulas respondem ao toque como vidro líquido */
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .rbtn, .tag, .dtfq, .dtqk, .seg button, .dtmenu button, .bnav a, .glob { transition: transform .35s cubic-bezier(.3, 1.6, .5, 1), background-color .25s, color .25s, box-shadow .25s, border-color .25s; }
+  .bnav a[aria-current="page"] .bn-ic svg { transform: translateY(-1px) scale(1.08); }
+}
+/* Barra de baixo: só aparece com o cronômetro ou enquanto salva; a instrução fixa saiu (o estado da conexão fica no topo) */
+.savebar .inner { display: none; }
+.savebar.msg:not(.only-clk) .inner { display: flex; }
+.savebar:not(.msg):not(:has(#clkbar:not(.hide))):not(:has(#clkToast:not(.hide))) { display: none; }
+#saveWeek, .savebar .inner .info { display: none; }
+.daybtn { border-radius: 16px; background: var(--glass-strong); border-color: var(--line); box-shadow: inset 0 1px 0 var(--edge); padding: 7px 0; min-width: 0; }
+.daybtn .dn { white-space: nowrap; font-size: 11.5px; }
+.daybtn[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 14%, var(--glass-strong)); }
+.dtfalta b { font: inherit; font-weight: 700; color: var(--ink); }
+.dtnav input[type="date"] { min-height: 40px; padding: 0 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); box-shadow: inset 0 1px 2px rgba(0, 0, 0, .05); }
+main a:not(.btn):not(.hm-f):not([class]) { color: var(--accent); text-decoration: none; font-weight: 600; }
+.hm-acoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 16px 0 6px; }
+.hm-acoes a, .hm-acoes button { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; padding: 12px 6px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow), inset 0 1px 0 var(--edge); color: var(--ink); font: inherit; font-size: 13px; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; }
+.hm-acoes span { font-size: 22px; line-height: 1; }
+.hm-acoes a:active, .hm-acoes button:active { transform: scale(.96); }
+details.grp { margin: 0 0 12px; }
+details.grp > summary { padding: 12px 16px; border-radius: var(--r-card); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow), inset 0 1px 0 var(--edge); }
+details.grp[open] > summary { margin-bottom: 10px; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  header.top, .bnav, .savebar, .pop-card { background: var(--solid); }
+}
 .login { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .login.hide { display: none; }
 .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px 20px 18px; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
@@ -847,86 +1115,94 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
   <!-- Tela: Progresso (gráficos) -->
   <section class="view" id="v-progresso">
     <div class="tiles" id="progTiles"></div>
-    <div class="panel">
-      <h2>Índice de força<button class="info" type="button" data-info="indice" aria-label="Explicar: índice de força">i</button></h2>
-      <p class="lead">Força estimada média dos exercícios feitos, em % das suas marcas de referência (100% = o 1RM das cargas máximas do Perfil).</p>
-      <div class="chartbox"><canvas id="chIdx" aria-label="Gráfico: Índice de força"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Prescrições de cada semana<button class="info" type="button" data-info="acoessem" aria-label="Explicar: prescrições de cada semana">i</button></h2>
-      <p class="lead">Quantos exercícios tiveram subida, manutenção, redução, destrave ou repetição em cada semana.</p>
-      <div class="chartbox"><canvas id="chActs" aria-label="Gráfico: Prescrições de cada semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Séries por semana<button class="info" type="button" data-info="seriessem" aria-label="Explicar: séries por semana">i</button></h2>
-      <p class="lead">Séries planejadas e feitas em cada semana.</p>
-      <div class="chartbox"><canvas id="chSets" aria-label="Gráfico: Séries por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Tonelagem por semana<button class="info" type="button" data-info="tonelagem" aria-label="Explicar: tonelagem por semana">i</button></h2>
-      <p class="lead">Soma de carga × repetições de todas as séries feitas.</p>
-      <div class="chartbox"><canvas id="chTon" aria-label="Gráfico: Tonelagem por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Exercícios feitos por semana<button class="info" type="button" data-info="feitos" aria-label="Explicar: exercícios feitos por semana">i</button></h2>
-      <p class="lead">Parte da prescrição cumprida em cada semana do plano.</p>
-      <div class="chartbox"><canvas id="chDone" aria-label="Gráfico: Exercícios feitos por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Cardio por semana<button class="info" type="button" data-info="cardiodia" aria-label="Explicar: cardio por semana">i</button></h2>
-      <p class="lead">Minutos de esteira previstos e feitos em cada semana.</p>
-      <div class="chartbox"><canvas id="chCardio" aria-label="Gráfico: Cardio por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Pace médio por semana<button class="info" type="button" data-info="pace" aria-label="Explicar: pace">i</button></h2>
-      <p class="lead">Minutos por quilômetro, separado entre caminhada e corrida. Quanto menor, mais rápido.</p>
-      <div class="chartbox"><canvas id="chPace2" aria-label="Gráfico: pace médio por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Calorias do cardio por semana<button class="info" type="button" data-info="cardiokcal" aria-label="Explicar: calorias do cardio por semana">i</button></h2>
-      <p class="lead">Estimativa do gasto da esteira somado na semana.</p>
-      <div class="chartbox"><canvas id="chCardioKcal" aria-label="Gráfico: Calorias do cardio por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Tempo de treino e recuperação<button class="info" type="button" data-info="tempotreino" aria-label="Explicar: tempo de treino">i</button></h2>
-      <p class="lead">Duração média dos treinos registrados em cada semana (musculação + cardio) contra o seu limite diário. No toque, a recuperação média entre as séries.</p>
-      <div class="chartbox"><canvas id="chTempo" aria-label="Gráfico: tempo de treino por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Séries por músculo na semana<button class="info" type="button" data-info="musculo" aria-label="Explicar: séries por músculo na semana">i</button></h2>
-      <p class="lead"><span id="musLead">Planejadas e feitas na semana selecionada.</span></p>
-      <div class="chartbox tall"><canvas id="chMus" aria-label="Gráfico: Séries por músculo na semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Um músculo ao longo das semanas<button class="info" type="button" data-info="musculotempo" aria-label="Explicar: um músculo ao longo das semanas">i</button></h2>
-      <p class="lead">Séries planejadas e feitas do músculo escolhido.</p>
-      <div class="field" style="margin-bottom:8px"><label for="musSel">Músculo</label><select id="musSel"></select></div>
-      <div class="chartbox"><canvas id="chMusT" aria-label="Gráfico: Um músculo ao longo das semanas"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Força estimada por exercício<button class="info" type="button" data-info="epley" aria-label="Explicar: força estimada">i</button></h2>
-      <p class="lead">Melhor série de cada semana convertida em 1RM estimado; a linha tracejada é o 1RM da sua carga máxima do Perfil.</p>
-      <div class="field" style="margin-bottom:8px"><label for="exSel">Exercício</label><select id="exSel"></select></div>
-      <div class="chartbox"><canvas id="chEx" aria-label="Gráfico de força estimada"></canvas></div>
-      <h3 class="subh">Descanso e execução deste exercício<button class="info" type="button" data-info="g_descexec" aria-label="Explicar: descanso e execução do exercício">i</button></h3>
-      <div class="chartbox"><canvas id="chExRest" aria-label="Gráfico: descanso e tempo de execução do exercício por semana"></canvas></div>
-      <div class="tablewrap" id="exTable"></div>
-    </div>
-    <div class="panel">
-      <h2>Tempo de execução por série<button class="info" type="button" data-info="tempoexec" aria-label="Explicar: tempo de execução">i</button></h2>
-      <p class="lead">Média da semana, em segundos, de todas as séries cronometradas.</p>
-      <div class="chartbox"><canvas id="chExec" aria-label="Gráfico: tempo médio de execução por série, por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Séries com repetições parciais<button class="info" type="button" data-info="parciais" aria-label="Explicar: repetições parciais">i</button></h2>
-      <p class="lead">Quantas séries da semana terminaram com parciais. Muitas parciais indicam carga no limite.</p>
-      <div class="chartbox"><canvas id="chParc" aria-label="Gráfico: séries com repetições parciais por semana"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Diferença entre os lados<button class="info" type="button" data-info="unilateral" aria-label="Explicar: exercício unilateral">i</button></h2>
-      <p class="lead" id="ladosLead"></p>
-      <div class="chartbox"><canvas id="chLados" aria-label="Gráfico: diferença de força entre o lado direito e o esquerdo, por semana"></canvas></div>
-    </div>
+    <details class="grp mais" data-keep="pg-forca" open><summary><h2>Força</h2><span class="muted">índice e cada exercício</span></summary>
+      <div class="panel">
+        <h2>Índice de força<button class="info" type="button" data-info="indice" aria-label="Explicar: índice de força">i</button></h2>
+        <p class="lead">Força estimada média dos exercícios feitos, em % das suas marcas de referência (100% = o 1RM das cargas máximas do Perfil).</p>
+        <div class="chartbox"><canvas id="chIdx" aria-label="Gráfico: Índice de força"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Força estimada por exercício</h2>
+        <p class="lead">Melhor série de cada semana convertida em 1RM estimado; a linha tracejada é o 1RM da sua carga máxima do Perfil.</p>
+        <div class="field" style="margin-bottom:8px"><label for="exSel">Exercício</label><select id="exSel"></select></div>
+        <div class="chartbox"><canvas id="chEx" aria-label="Gráfico de força estimada"></canvas></div>
+        <h3 class="subh">Descanso e execução deste exercício</h3>
+        <div class="chartbox"><canvas id="chExRest" aria-label="Gráfico: descanso e tempo de execução do exercício por semana"></canvas></div>
+        <div class="tablewrap" id="exTable"></div>
+      </div>
+    </details>
+    <details class="grp mais" data-keep="pg-volume"><summary><h2>Volume e prescrições</h2><span class="muted">séries, tonelagem e músculos</span></summary>
+      <div class="panel">
+        <h2>Prescrições de cada semana</h2>
+        <p class="lead">Quantos exercícios tiveram subida, manutenção, redução, destrave ou repetição em cada semana.</p>
+        <div class="chartbox"><canvas id="chActs" aria-label="Gráfico: Prescrições de cada semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Séries por semana</h2>
+        <p class="lead">Séries planejadas e feitas em cada semana.</p>
+        <div class="chartbox"><canvas id="chSets" aria-label="Gráfico: Séries por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Tonelagem por semana</h2>
+        <p class="lead">Soma de carga × repetições de todas as séries feitas.</p>
+        <div class="chartbox"><canvas id="chTon" aria-label="Gráfico: Tonelagem por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Exercícios feitos por semana</h2>
+        <p class="lead">Parte da prescrição cumprida em cada semana do plano.</p>
+        <div class="chartbox"><canvas id="chDone" aria-label="Gráfico: Exercícios feitos por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Séries por músculo na semana</h2>
+        <p class="lead"><span id="musLead">Planejadas e feitas na semana selecionada.</span></p>
+        <div class="chartbox tall"><canvas id="chMus" aria-label="Gráfico: Séries por músculo na semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Um músculo ao longo das semanas</h2>
+        <p class="lead">Séries planejadas e feitas do músculo escolhido.</p>
+        <div class="field" style="margin-bottom:8px"><label for="musSel">Músculo</label><select id="musSel"></select></div>
+        <div class="chartbox"><canvas id="chMusT" aria-label="Gráfico: Um músculo ao longo das semanas"></canvas></div>
+      </div>
+    </details>
+    <details class="grp mais" data-keep="pg-tempo"><summary><h2>Tempo e execução</h2><span class="muted">duração, execução, parciais e lados</span></summary>
+      <div class="panel">
+        <h2>Tempo de treino e recuperação</h2>
+        <p class="lead">Duração média dos treinos registrados em cada semana (musculação + cardio) contra o seu limite diário. No toque, a recuperação média entre as séries.</p>
+        <div class="chartbox"><canvas id="chTempo" aria-label="Gráfico: tempo de treino por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Tempo de execução por série</h2>
+        <p class="lead">Média da semana, em segundos, de todas as séries cronometradas.</p>
+        <div class="chartbox"><canvas id="chExec" aria-label="Gráfico: tempo médio de execução por série, por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Séries com repetições parciais<button class="info" type="button" data-info="parciais" aria-label="Explicar: repetições parciais">i</button></h2>
+        <p class="lead">Quantas séries da semana terminaram com parciais. Muitas parciais indicam carga no limite.</p>
+        <div class="chartbox"><canvas id="chParc" aria-label="Gráfico: séries com repetições parciais por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Diferença entre os lados</h2>
+        <p class="lead" id="ladosLead"></p>
+        <div class="chartbox"><canvas id="chLados" aria-label="Gráfico: diferença de força entre o lado direito e o esquerdo, por semana"></canvas></div>
+      </div>
+    </details>
+    <details class="grp mais" data-keep="pg-cardio"><summary><h2>Cardio</h2><span class="muted">minutos, pace e calorias</span></summary>
+      <div class="panel">
+        <h2>Cardio por semana</h2>
+        <p class="lead">Minutos de esteira previstos e feitos em cada semana.</p>
+        <div class="chartbox"><canvas id="chCardio" aria-label="Gráfico: Cardio por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Pace médio por semana</h2>
+        <p class="lead">Minutos por quilômetro, separado entre caminhada e corrida. Quanto menor, mais rápido.</p>
+        <div class="chartbox"><canvas id="chPace2" aria-label="Gráfico: pace médio por semana"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Calorias do cardio por semana</h2>
+        <p class="lead">Estimativa do gasto da esteira somado na semana.</p>
+        <div class="chartbox"><canvas id="chCardioKcal" aria-label="Gráfico: Calorias do cardio por semana"></canvas></div>
+      </div>
+    </details>
   </section>
 
   <!-- Tela: Corpo e dieta -->
@@ -935,51 +1211,52 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     <div id="phaseCard"></div>
     <div class="tiles" id="bodyTiles"></div>
     <div class="panel">
-      <h2>Peso e meta<button class="info" type="button" data-info="grafpeso" aria-label="Explicar: gráfico de peso">i</button></h2>
+      <h2>Peso e meta</h2>
       <p class="lead">Pontos: pesagens. Linha: média de 7 dias. Tracejado: peso previsto no plano.</p>
       <div class="row-btns" style="margin:0 0 8px"><button class="btn small" id="rangeBtn" aria-pressed="false">Ver o plano todo</button></div>
       <div class="chartbox"><canvas id="chWeight" aria-label="Gráfico de peso"></canvas></div>
     </div>
-    <div class="panel">
-      <h2>Ritmo semanal<button class="info" type="button" data-info="ritmosem" aria-label="Explicar: ritmo semanal">i</button></h2>
-      <p class="lead">Variação da média de peso de uma semana para a outra, contra o ritmo previsto no plano.</p>
-      <div class="chartbox"><canvas id="chPace" aria-label="Gráfico: Ritmo semanal"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Gordura corporal<button class="info" type="button" data-info="gorduratempo" aria-label="Explicar: gordura corporal">i</button></h2>
-      <p class="lead" id="fatLead">Medidas de gordura (%) e a sua meta.</p>
-      <div class="chartbox"><canvas id="chFat" aria-label="Gráfico: Gordura corporal"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Medidas ao longo do tempo<button class="info" type="button" data-info="medidastempo" aria-label="Explicar: medidas ao longo do tempo">i</button></h2>
-      <p class="lead">Escolha a medida. O tracejado é a referência, quando houver.</p>
-      <div class="field" style="margin-bottom:8px"><label for="medSel">Medida</label><select id="medSel"></select></div>
-      <div class="chartbox"><canvas id="chWaist" aria-label="Gráfico: medidas com fita"></canvas></div>
-    </div>
+    <details class="grp mais" data-keep="cp-graf"><summary><h2>Mais gráficos</h2><span class="muted">ritmo, gordura e medidas</span></summary>
+      <div class="panel">
+        <h2>Ritmo semanal</h2>
+        <p class="lead">Variação da média de peso de uma semana para a outra, contra o ritmo previsto no plano.</p>
+        <div class="chartbox"><canvas id="chPace" aria-label="Gráfico: Ritmo semanal"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Gordura corporal</h2>
+        <p class="lead" id="fatLead">Medidas de gordura (%) e a sua meta.</p>
+        <div class="chartbox"><canvas id="chFat" aria-label="Gráfico: Gordura corporal"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Medidas ao longo do tempo</h2>
+        <p class="lead">Escolha a medida. O tracejado é a referência, quando houver.</p>
+        <div class="field" style="margin-bottom:8px"><label for="medSel">Medida</label><select id="medSel"></select></div>
+        <div class="chartbox"><canvas id="chWaist" aria-label="Gráfico: medidas com fita"></canvas></div>
+      </div>
+    </details>
     <div id="bioFormBox"></div>
-    <div class="panel">
-      <h2>Registrar medidas</h2>
+    <details class="panel mais" data-keep="cp-reg"><summary><h2>Registrar medidas</h2><span class="muted">peso, gordura, cintura e fita</span></summary>
       <form id="bodyForm">
         <div class="grid2">
           <div class="field"><label for="bDate">Data</label><input id="bDate" type="date" required></div>
-          <div class="field"><label for="bWeight">Peso (kg)<button class="info" type="button" data-info="pf_peso" aria-label="Explicar: como se pesar">i</button></label><input id="bWeight" type="number" step="0.1" inputmode="decimal"></div>
-          <div class="field"><label for="bFat">Gordura (%)<button class="info" type="button" data-info="pf_metodoGordura" aria-label="Explicar: medida de gordura">i</button></label><input id="bFat" type="number" step="0.1" inputmode="decimal"></div>
-          <div class="field"><label for="bWaist">Cintura (cm)<button class="info" type="button" data-info="pf_cintura" aria-label="Explicar: como medir a cintura">i</button></label><input id="bWaist" type="number" step="0.1" inputmode="decimal"></div>
+          <div class="field"><label for="bWeight">Peso (kg)</label><input id="bWeight" type="number" step="0.1" inputmode="decimal"></div>
+          <div class="field"><label for="bFat">Gordura (%)</label><input id="bFat" type="number" step="0.1" inputmode="decimal"></div>
+          <div class="field"><label for="bWaist">Cintura (cm)</label><input id="bWaist" type="number" step="0.1" inputmode="decimal"></div>
         </div>
         <details class="pfsec sub"><summary><h3>Outras medidas com fita (cm)</h3></summary><div class="pfgrid" id="bMedidas"></div></details>
         <div class="field"><label for="bNote">Observação</label><textarea id="bNote" rows="2"></textarea></div>
         <div class="row-btns"><button class="btn primary" type="submit" id="bSave">Salvar medidas</button><span class="muted" id="bMsg" aria-live="polite"></span></div>
         <p class="muted" style="font-size:13px;margin:8px 0 0">Campos em branco não apagam o que já está salvo nessa data. As medidas aparecem também no Perfil.</p>
       </form>
-    </div>
-    <div class="panel"><h2>Últimas medidas</h2><div class="tablewrap" id="bodyList"></div></div>
+    </details>
+    <details class="panel mais" data-keep="cp-lista"><summary><h2>Últimas medidas</h2></summary><div class="tablewrap" id="bodyList"></div></details>
     <div id="fotosEvo"></div>
   </section>
 
   <!-- Tela: Dieta (meta do dia e diário de alimentos com a tabela TACO) -->
   <section class="view" id="v-dieta">
     <div id="dtFase"></div>
-    <div class="panel"><h2>Diário de alimentos<button class="info" type="button" data-info="dt_diario" aria-label="Explicar: diário de alimentos">i</button></h2><div id="dtBox"></div></div>
+    <div id="dtBox"></div>
   </section>
 
   <!-- Tela: Hormônios e peptídeos (referência para estudo, controle de doses, calendário e exames) -->
@@ -994,8 +1271,8 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
           <div class="field wide"><label for="djSubNome">Nome</label><input id="djSubNome" type="text" autocomplete="off"></div>
           <div class="field"><label for="djSubUn">Unidade da dose</label><select id="djSubUn"><option>mg</option><option>mcg</option><option>UI</option><option>mL</option><option>g</option></select></div>
           <div class="field"><label for="djSubVia">Via</label><select id="djSubVia"><option>Intramuscular</option><option>Subcutânea</option><option>Oral</option><option>Transdérmica</option><option>Outra</option></select></div>
-          <div class="field"><label for="djSubMv">Meia-vida, em dias<button class="info" type="button" data-info="dj_mv" aria-label="Explicar: meia-vida">i</button></label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="em dias (12 horas = 0,5)"></div>
-          <div class="field"><label for="djSubIntSel">Intervalo entre aplicações<button class="info" type="button" data-info="dj_int" aria-label="Explicar: intervalo">i</button></label><select id="djSubIntSel"><option value="">Sem intervalo fixo</option><option value="1">Todo dia</option><option value="2">A cada 2 dias</option><option value="3.5">2 vezes por semana</option><option value="7">1 vez por semana</option><option value="10">A cada 10 dias</option><option value="14">A cada 14 dias</option><option value="21">A cada 21 dias</option><option value="28">A cada 28 dias</option><option value="o">Outro: digitar em dias</option></select><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="dias" style="display:none;margin-top:6px"></div>
+          <div class="field"><label for="djSubMv">Meia-vida, em dias</label><input id="djSubMv" type="text" inputmode="decimal" autocomplete="off" placeholder="em dias (12 horas = 0,5)"></div>
+          <div class="field"><label for="djSubIntSel">Intervalo entre aplicações</label><select id="djSubIntSel"><option value="">Sem intervalo fixo</option><option value="1">Todo dia</option><option value="2">A cada 2 dias</option><option value="3.5">2 vezes por semana</option><option value="7">1 vez por semana</option><option value="10">A cada 10 dias</option><option value="14">A cada 14 dias</option><option value="21">A cada 21 dias</option><option value="28">A cada 28 dias</option><option value="o">Outro: digitar em dias</option></select><input id="djSubInt" type="text" inputmode="decimal" autocomplete="off" placeholder="dias" style="display:none;margin-top:6px"></div>
           <div class="field wide"><label for="djSubPos">Posologia da sua prescrição (texto livre)</label><input id="djSubPos" type="text" autocomplete="off" placeholder="a da sua prescrição: dose, frequência e duração"></div>
           <div class="field wide"><label for="djSubObs">Observação</label><input id="djSubObs" type="text" placeholder="apresentação e concentração do rótulo, quem prescreveu…"></div>
         </div>
@@ -1055,9 +1332,9 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     </div>
     <details class="panel djfontes" id="djFontes">
       <summary><h2>Fontes e referência</h2><span class="muted">avisos, o que tem nesta aba e a referência de 95 substâncias</span></summary>
-    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.<button class="info" type="button" data-info="diario" aria-label="Explicar: hormônios e peptídeos">i</button></div>
+    <div class="banner warn"><b>Para estudo e acompanhamento pessoal.</b> O app não sugere substância, dose nem esquema: a referência reúne dados de bula e do seu material de estudo, e o resto é o que você anotar. Hormônios só com prescrição e acompanhamento médico.</div>
       <p class="lead">O que tem nesta aba: <b>referência para estudo</b> (classe, via e meia-vida de 95 substâncias, com busca), <b>substâncias</b> que você usa, <b>aplicações</b> com calendário, <b>controle de doses</b>, <b>curva</b> pela meia-vida e <b>exames</b>.</p>
-      <h3 class="djfh">Referência para estudo<button class="info" type="button" data-info="dj_ref" aria-label="Explicar: referência para estudo">i</button></h3>
+      <h3 class="djfh">Referência para estudo</h3>
       <p class="lead">Classe, via, frequência descrita e meia-vida de cada substância. A posologia é você quem preenche, em <b>Sua anotação</b>: ela fica guardada só na sua conta.</p>
       <div class="field"><label for="djRefQ">Buscar substância</label><input id="djRefQ" type="search" autocomplete="off" placeholder="nome ou classe" data-djq></div>
       <p class="muted" id="djRefN"></p>
@@ -1090,11 +1367,16 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
       <p class="lead" id="yearLead"></p>
       <div class="tablewrap" id="yearTable"></div>
     </div>
+    <details class="panel mais" id="gloBox">
+      <summary><h2>Glossário</h2><span class="muted">todos os termos do app</span></summary>
+      <div class="field"><label for="gloQ">Buscar termo</label><input id="gloQ" type="search" autocomplete="off" placeholder="ex.: RIR, back-off, deload"></div>
+      <div id="gloList" class="glo"></div>
+    </details>
   </section>
 </main>
 <!-- Barra de navegação de baixo, barra de salvar com o cronômetro e janela de explicação -->
 <nav class="bnav" id="bnav" aria-label="Seções"></nav>
-<div class="savebar"><div id="clkToast" class="clktoast hide" role="status"></div><div id="clkbar" class="hide"></div><div class="inner"><span><span id="saveMsg" class="muted">Marque cada exercício como feito ou não feito.</span><button class="info" type="button" data-info="registrar" aria-label="Explicar: como registrar">i</button></span><span class="muted" id="saveWeek"></span></div></div>
+<div class="savebar"><div id="clkToast" class="clktoast hide" role="status"></div><div id="clkbar" class="hide"></div><div class="inner"><span><span id="saveMsg" class="muted">Marque cada exercício como feito ou não feito.</span></span><span class="muted" id="saveWeek"></span></div></div>
 <!-- Painel flutuante "Hoje": treino do dia, números principais e pesagem diária (abre pelo botão do cabeçalho, em qualquer aba) -->
 <div id="hoje" class="pop hoje hide" role="dialog" aria-modal="true" aria-labelledby="hojeT">
   <div class="pop-card">
@@ -1102,7 +1384,7 @@ table.sets tr:has(+ tr.prow) td { border-bottom: 0; }
     <div id="hojeBody"></div>
     <div class="qw" id="qwBox">
       <div class="qw-row">
-        <span class="qw-l">Peso de hoje<button class="info" type="button" data-info="pesodiario" aria-label="Explicar: pesagem diária">i</button></span>
+        <span class="qw-l">Peso de hoje</span>
         <input id="qwDate" type="date" aria-label="Data da pesagem">
         <input id="qwKg" type="number" step="0.1" inputmode="decimal" placeholder="kg" aria-label="Peso em kg">
         <button class="btn primary small" id="qwSave" type="button">Salvar</button>
@@ -1226,7 +1508,8 @@ const FOTO_MAX = 1280;               // lado maior da foto enviada, em pixels (f
 const DJ_ATRAS = 60, DJ_FRENTE = 30; // curva do diário: dias para trás e para a frente
 const DJ_EQUIL = 5;                // meias-vidas até o nível estabilizar com doses repetidas (e até a substância praticamente sair depois da última dose)
 const DJ_HT_ALERTA = 54;           // hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar
-const WAKE_KEY = "hexis.wake";       // preferência "tela acesa durante o cronômetro", guardada no aparelho
+const WAKE_KEY = "hexis.wake";
+const KEEP_KEY = "hexis.abertos";     // blocos recolhíveis abertos ou fechados por você, guardados no aparelho       // preferência "tela acesa durante o cronômetro", guardada no aparelho
 const CLK_SEG_REP = 4;             // segundos por repetição, para a barra de execução
 const UNI_TROCA = 30;              // troca de lado na série unilateral: referência da barra e tempo previsto (o que você levar é anotado)
 // Resumo do dia
@@ -1455,12 +1738,12 @@ function prescribe(def, st, w, flags) {
   if (festas) sets = sets.slice(0, Math.max(1, Math.round(sets.length * 2 / 3)));
   const deload = !!flags.deload;
   if (deload) sets = sets.slice(0, Math.max(1, Math.ceil(sets.length / 2)));
-  const L = st.load;
+  const mn = maqMin(def), L = st.load != null && mn && st.load < mn ? mn : st.load;
   const out = sets.map((s, i) => {
     const o = Object.assign({}, s);
     o.rir = deload ? [3, 3] : rirFor(def, s.kind, t);
     if (L == null) o.kg = null;
-    else if (s.kind === "back") { const b = rnd(L * BACKOFF, def.step), k = maqPick(MAQ, def, b, 0); o.kg = k != null ? k : b; }
+    else if (s.kind === "back") { const b = rnd(L * BACKOFF, def.step), k = maqPick(MAQ, def, b, 0); o.kg = Math.max(mn, k != null ? k : b); }
     else o.kg = L;
     if (st.mode === "topset" && i === 0) { o.kind = "over"; o.kg = st.heavy; o.lo = 3; o.hi = 5; }
     if (st.mode === "cluster") o.cluster = true;
@@ -1674,8 +1957,8 @@ function suggestSets(def, pres, entry) {
     const rirA = a.rir != null && a.rir !== "" ? +a.rir : (Array.isArray(a.parc) && a.parc.length ? 0 : mid(pj.rir));
     const rirT = mid(p.rir);
     if (kgA === 0 || p.kg === 0) {
-      if (+a.reps < pj.tr) { s.reps = Math.max(1, +a.reps); s.dir = -1; s.note = "▼ Série anterior: " + a.reps + " de " + pj.tr + " reps. Alvo desta: " + s.reps + "."; }
-      else s.note = "● Série anterior no previsto: alvo mantido em " + p.tr + " reps.";
+      if (+a.reps < pj.tr) { s.reps = Math.max(1, +a.reps); s.dir = -1; s.note = "▼ Série anterior: " + a.reps + " de " + pj.tr + " reps. Alvo desta: " + s.reps + "."; s.curto = "▼ Alvo desta: " + s.reps + " reps"; }
+      else { s.note = "● Série anterior no previsto: alvo mantido em " + p.tr + " reps."; s.curto = "● Alvo mantido: " + p.tr + " reps"; }
       return s;
     }
     const ratio = e1(kgA, +a.reps + rirA) / e1(pj.kg, pj.tr + mid(pj.rir));
@@ -1683,16 +1966,18 @@ function suggestSets(def, pres, entry) {
     L = Math.max(p.kg * AJUSTE_PISO, Math.min(p.kg + def.inc, L));
     L = rnd(L, def.step);
     const placa = maqPick(MAQ, def, L, 0); if (placa != null) L = placa;
+    L = Math.max(L, maqMin(def));
     const target = e1(p.kg, p.tr + rirT) * ratio;
     const repsAlt = Math.max(1, Math.floor((target / p.kg - 1) * 30 - rirT));
     const what = "Série anterior: " + fmt(kgA) + " × " + a.reps + (a.rir != null && a.rir !== "" ? " (RIR " + a.rir + ")" : "") + " contra " + fmt(pj.kg) + " × " + pj.tr + " previsto.";
     if (Math.abs(L - p.kg) >= def.step - 0.001) {
       s.kg = L; s.dir = L < p.kg ? -1 : 1;
       s.note = (s.dir < 0 ? "▼ " : "▲ ") + what + " Ajuste: " + fmt(L) + " kg × " + p.tr + (s.dir < 0 && repsAlt < p.tr && repsAlt >= p.lo ? ", ou manter " + fmt(p.kg) + " kg e fazer " + repsAlt + "." : ".");
+      s.curto = (s.dir < 0 ? "▼ " : "▲ ") + "Ajuste: " + fmt(L) + " kg × " + p.tr + (s.dir < 0 && repsAlt < p.tr && repsAlt >= p.lo ? " ou " + fmt(p.kg) + " × " + repsAlt : "");
     } else if (+a.reps < pj.tr) {
       s.reps = Math.max(p.lo, Math.min(p.tr, repsAlt)); s.dir = -1;
-      s.note = "● " + what + " Manter " + fmt(p.kg) + " kg; alvo desta: " + s.reps + " reps.";
-    } else s.note = "● Série anterior " + (ratio > 1.005 ? "um pouco acima do previsto, ainda sem margem para subir" : ratio < 0.995 ? "um pouco abaixo do previsto, dentro da margem" : "no previsto") + ": mantenha " + fmt(p.kg) + " kg × " + p.tr + ".";
+      s.note = "● " + what + " Manter " + fmt(p.kg) + " kg; alvo desta: " + s.reps + " reps."; s.curto = "● Manter " + fmt(p.kg) + " kg × " + s.reps;
+    } else { s.note = "● Série anterior " + (ratio > 1.005 ? "um pouco acima do previsto, ainda sem margem para subir" : ratio < 0.995 ? "um pouco abaixo do previsto, dentro da margem" : "no previsto") + ": mantenha " + fmt(p.kg) + " kg × " + p.tr + "."; s.curto = "● Mantenha " + fmt(p.kg) + " kg × " + p.tr; }
     return s;
   });
 }
@@ -1725,13 +2010,15 @@ function initState(def, sl) {
 let MAQ = {};
 // Tolerância, em kg, para uma carga contar como a placa vizinha da prevista
 function maqTol(P) { return Math.min(MAQ_TOL[2], Math.max(MAQ_TOL[1], P * MAQ_TOL[0])); }
+// Peso base da máquina (a carga com que ela começa, sem nenhuma placa): nenhuma carga prevista fica abaixo dele. 0 = sem peso base
+function maqMin(def, mq) { const x = (mq || MAQ)[def.n]; return x && x.min > 0 ? x.min : 0; }
 // Cargas conhecidas de cada máquina, por nome do exercício: primeiro as declaradas, depois as anotadas nos registros
 function maqAll(records, settings) {
   const cfg = (settings && settings.maq) || {}, m = {};
   const add = (a, kg) => { if (!a.some(v => Math.abs(v - kg) < MAQ_JUNTA)) a.push(kg); };
   // known = todas as cargas da máquina; base = as que servem para reconhecer placas (em série pesada + back-offs, só a 1ª série: o back-off é mais leve de propósito)
   const put = (n, kg, serve) => { if (!(kg > 0)) return; const x = m[n] = m[n] || { tipo: (cfg[n] || {}).tipo || "auto", known: [], base: [] }; add(x.known, kg); if (serve) add(x.base, kg); };
-  Object.keys(cfg).forEach(n => { m[n] = { tipo: cfg[n].tipo || "auto", known: [], base: [] }; (cfg[n].placas || []).forEach(kg => put(n, +kg, true)); });
+  Object.keys(cfg).forEach(n => { m[n] = { tipo: cfg[n].tipo || "auto", known: [], base: [] }; (cfg[n].placas || []).forEach(kg => put(n, +kg, true)); if (+cfg[n].min > 0) { m[n].min = +cfg[n].min; put(n, +cfg[n].min, true); } });
   Object.values(records || {}).forEach(doc => { const ex = doc && doc.ex; if (!ex) return; Object.keys(ex).forEach(k => { const d = EXBY[k]; if (!d || d.bw || !ex[k] || ex[k].st === "nao") return; (ex[k].sets || []).forEach((x, i) => { if (x && +x.reps > 0 && +x.kg > 0) put(d.n, +x.kg, d.sc !== "top" || i === 0); }); }); });
   Object.keys(m).forEach(n => {
     const x = m[n], k = x.known.sort((a, b) => a - b), gaps = k.slice(1).map((v, i) => v - k[i]), d0 = EX.find(d => d.n === n), g = gaps.length ? gaps.reduce((a, b) => a + b, 0) / gaps.length : 0;
@@ -1743,7 +2030,7 @@ function maqAll(records, settings) {
     const grade = g0 >= 2 && g0 <= MAQ_PLACA[1] && gaps.every((v, i) => Math.abs(v - nPas[i] * g0) <= 0.3 * nPas[i]);
     const passo = grade ? (k[k.length - 1] - k[0]) / nPas.reduce((a, c) => a + c, 0) : 0, ded = [];
     if (grade) { k.slice(1).forEach((v, i) => { for (let j = 1; j < nPas[i]; j++) ded.push(k[i] + j * (v - k[i]) / nPas[i]); }); ded.push(k[0] - 2 * passo, k[0] - passo, k[k.length - 1] + passo, k[k.length - 1] + 2 * passo); }
-    x.ded = ded.filter(v => v > 0).map(q).sort((a, c) => a - c);
+    x.ded = ded.filter(v => v > 0 && !(x.min && v < x.min - 0.3)).map(q).sort((a, c) => a - c);
     x.all = k.concat(x.ded).sort((a, c) => a - c);
   });
   return m;
@@ -1760,6 +2047,8 @@ function maqPick(mq, def, L, dir, base) {
 }
 // Carga que veio da ficha, de outra faixa ou de outro treino (ou qualquer carga fora de placa, em máquina de placas fixas): se há uma placa conhecida perto, usa a placa
 function maqEntrada(def, st, mq) {
+  const mn = maqMin(def, mq);
+  if (mn && st.load != null && st.load < mn - 0.01) return Object.assign({}, st, { load: mn, why: (st.why || "") + " Peso base da máquina: " + fmt(mn) + " kg, a menor carga possível nela." });
   if (st.load == null || !((mq[def.n] || {}).fixa || ["start", "elo", "fase"].includes(st.action))) return st;
   const k = maqPick(mq, def, st.load, 0); if (k == null || Math.abs(k - st.load) < 0.26) return st;
   return Object.assign({}, st, { load: k, why: (st.why || "") + " Ajustada para a placa que você já usou nesta máquina: " + fmt(k) + " kg (a conta dava " + fmt(st.load) + ")." });
@@ -2905,7 +3194,13 @@ GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um 
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 // Botão "i" que abre a explicação de uma chave
-function infoBtn(key, label) { return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
+// Termos de uso comum em prescrição de treino, dieta e medidas: ficam sem o botão "i" (a explicação continua no Glossário, em Plano e regras)
+const INFO_COMUM = new Set(["rir", "faixa", "alvo", "previsto", "series", "descanso", "biset", "carga", "comp", "iso", "core", "top", "backoff", "deload", "aquecimento", "unilateral", "tempoexec", "intervalo", "descanso_reg", "tempotreino", "dias", "diatodo", "opcional", "domingo", "cardio", "cardiodia", "cardiotipo", "cardiokcal", "pace", "kcal", "macros", "livre", "media7", "gordura", "grafpeso", "ritmosem", "gorduratempo", "medidastempo", "pesodiario", "feitos", "seriessem", "tonelagem", "musculo", "musculotempo", "acoessem", "epley", "g_descexec", "volume", "fotos", "registrar", "fichaant", "telaacesa", "dt_diario", "dt_fora", "dj_mv", "dj_int", "dj_ref", "diario", "status", "pf_peso", "pf_altura", "pf_cintura", "pf_quadril", "pf_peito", "pf_bracoRelax", "pf_bracoContr", "pf_coxa", "pf_panturrilha", "pf_metodoGordura", "pf_gordura", "pf_objetivo", "pf_metaPeso", "pf_metaGordura", "pf_dataAlvo", "pf_dias", "pf_tempoMax", "pf_tempoTreino", "pf_sono", "pf_estresse", "pf_passos", "pf_trabalho", "pf_imc", "pf_agua", "pf_inicio", "pf_prioridades", "pf_pressao", "pf_fcRepouso", "pf_kcalAtual", "pf_horasSentado", "pf_condicoes", "pf_liberacao", "pf_metaCintura", "pf_ritmo"]);
+// Ações óbvias pelo próprio nome (subir, manter, reduzir…) também ficam sem "i"; destrave, nova faixa, conversa entre treinos e festas mantêm
+const INFO_ACT_COMUM = /^act-(start|up|reps|keep|down|repeat|deload|pending)$/;
+// O termo merece o botão "i"?
+function infoRaro(key) { return !INFO_COMUM.has(key) && !INFO_ACT_COMUM.test(key); }
+function infoBtn(key, label) { if (!infoRaro(key)) return ""; return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 // Explicação de uma chave (inclui as geradas na hora: ações e técnicas)
 function glossEntry(key) {
   if (GLOSS[key]) return GLOSS[key];
@@ -2995,7 +3290,7 @@ function updateHints(k) {
   pres.sets.forEach((s, i) => {
     const g = sug[i];
     const adj = document.getElementById("adj-" + k + "-" + i);
-    if (adj) { adj.textContent = g.note; adj.className = "adj" + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : ""); }
+    if (adj) { adj.textContent = g.curto || g.note; adj.title = g.note; adj.className = "adj" + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : ""); }
     const st = document.getElementById("st-" + k + "-" + i);
     if (st) st.innerHTML = setStatus(entry && entry.sets ? entry.sets[i] : null, s);
     const ik = document.querySelector('[data-set="' + k + "|" + i + '|kg"]');
@@ -3025,7 +3320,15 @@ function fillDone(def, pres, entry) {
 
 // ===== 11. TELA: SEMANA (treino do dia) =====
 // Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia
+// Quadros das séries com largura fixa: mede a carga e as repetições mais longas já anotadas (e as da ficha) e fixa as colunas para todos os cartões
+function medeQuadros() {
+  let kg = 3, rp = 2; const tam = v => v == null || v === "" ? 0 : fmt(+v).length;
+  Object.values(app.records || {}).forEach(doc => { const ex = doc && doc.ex; if (!ex) return; Object.values(ex).forEach(e => (e && e.sets || []).forEach(x => { if (!x) return; [x].concat(x.lados ? Object.values(x.lados) : []).forEach(y => { if (!y) return; kg = Math.max(kg, tam(y.kg)); rp = Math.max(rp, tam(y.reps)); }); })); });
+  EX.forEach(d => { kg = Math.max(kg, tam(d.kg)); });
+  const r = document.documentElement.style; r.setProperty("--kgc", Math.min(7, kg)); r.setProperty("--rpc", Math.min(3, rp));
+}
 function renderWeek() {
+  medeQuadros();
   const W = app.week;
   const weeks = computeWeeks(W);
   const wk = weeks[W];
@@ -3037,13 +3340,12 @@ function renderWeek() {
   document.getElementById("wkNext").disabled = W >= MAXW;
   document.getElementById("saveWeek").textContent = "Semana " + W;
   const deload = wk.flags.deload;
-  document.getElementById("wkTargets").innerHTML =
+  document.getElementById("wkTargets").innerHTML = '<details class="mais metas" data-keep="metas"' + keepOpen("metas") + '><summary>Metas da semana <span class="muted">' + esc(t.label) + "</span></summary><div class=\"tchips\">" +
     '<span class="tchip">' + esc(t.label) + infoBtn("alavanca") + "</span>" +
     '<span class="tchip">Série pesada: <b>RIR ' + rirTxt(deload ? [3, 3] : t.top) + "</b>" + infoBtn("top") + "</span>" +
     '<span class="tchip">Compostos: <b>RIR ' + rirTxt(deload ? [3, 3] : t.comp) + "</b>" + infoBtn("comp") + "</span>" +
     '<span class="tchip">Isoladores e core: <b>RIR ' + rirTxt(deload ? [3, 3] : t.iso) + "</b>" + infoBtn("iso") + "</span>" +
-    '<span class="tchip">Core: <b>' + (CORE_BASE + t.core) + " séries</b>" + infoBtn("core") + "</span>" +
-    '<span class="tchip">O que é RIR' + infoBtn("rir") + "</span>";
+    '<span class="tchip">Core: <b>' + (CORE_BASE + t.core) + " séries</b></span></div></details>";
   let bn = "";
   if (t.deloadCheck) {
     const ch = wk.flags.deloadChoice;
@@ -3090,15 +3392,16 @@ function renderDay(wk) {
   defs.forEach(d => { const a = wk.pres[d.k].action; counts[a] = (counts[a] || 0) + 1; });
   let h = '<div class="dayhead"><h2>' + esc(D.titulo) + '</h2><span class="meta">' + D.nome + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + infoBtn("dias") + "</span></div>";
   if (!D.livre) h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
-  if (!D.livre) h += '<div class="row-btns" style="margin:0 0 12px"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button>' + infoBtn("diatodo") + "</div>";
-  h += D.livre ? '<div class="warm day"><b>Dia livre</b>: sem musculação prevista. Se fizer cardio ou outra atividade, registre abaixo e toque em Feito. Entra no cardio da semana e não conta como treino faltando.' + infoBtn("domingo") + "</div>" : '<div class="warm day"><b>Antes de começar</b>: 5 minutos leves de esteira ou bicicleta. Depois, faça as séries de aquecimento indicadas nos exercícios.' + infoBtn("aquecimento") + "</div>";
+  h += D.livre ? '<div class="warm day"><b>Dia livre</b>: registre o cardio ou outra atividade abaixo e toque em Feito. Não conta como treino faltando.</div>' : '<div class="warm day"><b>Antes</b>: 5 min leves de esteira ou bike; depois, o aquecimento de cada exercício.</div>';
   app.dayOrd = dayOrder(doc, day);
   defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
   h += cardioCard(W, day);
-  if (!D.livre) h += '<div class="panel" id="dayTime">' + dayTimeHtml(W, day, wk) + "</div>";
+  if (!D.livre) h += '<details class="panel mais" id="dayTime" data-keep="tempo"' + keepOpen("tempo") + ">" + dayTimeHtml(W, day, wk) + "</details>";
   h += fotoDiaHtml(W, day);
   if (!D.livre) h += '<div class="row-btns" style="margin:4px 0 14px"><a class="btn" href="#resumo">📋 Ver o resumo do dia</a></div>';
-  h += '<div class="panel"><h2>Observações do dia' + infoBtn("observacoes") + '</h2><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div></div>";
+  const nDia = (doc && Array.isArray(doc.tags) ? doc.tags.length : 0) + (doc && doc.nota && String(doc.nota).trim() ? 1 : 0);
+  h += '<details class="panel mais" data-keep="opdia"' + keepOpen("opdia") + '><summary><h2>Observações e opções do dia</h2>' + (nDia ? '<span class="tn">' + nDia + "</span>" : "") + '</summary><div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-dia">' + tagsHtml("dia", "dia", doc ? doc.tags : []) + '</div><textarea id="dayNote" data-daynote="1" rows="2" aria-label="Outra observação do dia" placeholder="Outra observação do dia (o app também lê o texto)">' + esc(doc ? doc.nota : "") + "</textarea>" + '<div class="nhint" id="nh-day">' + esc(noteEffect(dayFlags(doc), "dia")) + "</div>" +
+    (D.livre ? "" : '<div class="row-btns"><button class="btn small" data-dayall="feito">✓ Marcar o dia todo como feito</button><button class="btn small" data-dayall="nao">✗ Não treinei neste dia</button></div>') + "</details>";
   const dv = document.getElementById("dayView");
   dv.innerHTML = h;
   fotoFill(dv);
@@ -3123,13 +3426,13 @@ function warmHtml(d, p, e) {
   const plan = warmPlan(d); if (!plan) return "";
   const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load, st = d.step || 1, c = app.clk;
   const mine = c && c.W === app.week && c.k === d.k, run = mine && c.ph === "warm", pre = mine && c.ph === "pre", aq = (e && e.aq) || [], antes = warmTime(plan).antes;
-  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + '</button><span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span>").join("");
+  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, maqMin(d), rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + '</button><span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span>").join("");
   const feito = e && +e.aqT > 0 ? "⏱ " + clkFmt(e.aqT) + (+e.aqD > 0 ? " + " + clkFmt(e.aqD) + " de descanso" : "") + " · de novo" : "Cronometrar";
   const tm = run ? '<span class="clk run rs clkanim wq"><span class="clkfill"></span>' + clkRing() + '<span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Terminei o aquecimento: anotar e contar o descanso">⏸ Terminei</button></span>'
     : pre ? '<span class="clk run rs clkanim wq pre' + (clkEl() >= c.prev ? " ok" : "") + '" style="--p:' + Math.min(1, clkEl() / c.prev).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + "</span><small> / " + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="first" aria-label="Anotar o descanso e começar a 1ª série">▶ 1ª série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></span>'
     : '<button type="button" class="btn small clkgo" data-clk="warm|' + d.k + '" aria-label="Cronometrar o aquecimento">▶ ' + feito + "</button>";
-  const dica = plan.length > 1 ? "Uma atrás da outra, sem descanso cheio: a pausa ao lado de cada série é só a troca de peso. Descanse " + pausaTxt(antes) + " depois da última." : "Série leve, longe da falha. Depois dela, " + pausaTxt(antes) + " de descanso e comece a 1ª série.";
-  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b> <span class="muted">(não conta para a progressão)</span>' + infoBtn("aquecimento") + '</div><div class="wqrow">' + chips + '</div><p class="wqd">' + dica + ' <span class="muted">As pausas entram no tempo do treino.</span></p><div class="wqrow">' + tm + "</div></div>";
+  const dica = plan.length > 1 ? "Uma atrás da outra, só trocando o peso; " + pausaTxt(antes) + " antes da 1ª série." : "Leve, longe da falha; " + pausaTxt(antes) + " antes da 1ª série.";
+  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b></div><div class="wqrow">' + chips + '</div><p class="wqd muted">' + dica + '</p><div class="wqrow">' + tm + "</div></div>";
 }
 // Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
 function parcHtml(k, i, arr, side) {
@@ -3187,8 +3490,9 @@ function restHtml(d, i, v, entry, p) {
   const near = REST_OPTS.reduce((a, b) => Math.abs(b - prev) < Math.abs(a - prev) ? b : a, REST_OPTS[0]);
   const r = entry && entry.sets ? recov(entry.sets[i], entry.sets[i + 1], p.sets[i], p.sets[i + 1]) : null;
   const q = cur == null ? "" : cur < prev * REST_CURTO ? '<span class="rq lo">curto</span>' : cur > prev * REST_LONGO ? '<span class="rq hi">longo</span>' : '<span class="rq ok">no previsto</span>';
-  return '<div class="rest"><span class="rl">Descanso' + (i === 0 ? infoBtn("descanso_reg") : "") + "</span>" + REST_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === near ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-rest="' + d.k + "|" + i + "|" + sec + '" aria-label="Descanso de ' + fmtSec(sec) + (sec === near ? " (previsto)" : "") + '">' + (sec === 240 ? "4:00+" : fmtSec(sec)) + "</button>").join("") + (cur != null && !REST_OPTS.includes(cur) ? '<span class="rq meas">⏱ ' + clkFmt(cur) + " cronometrado</span>" : "") + q +
-    (r != null ? '<span class="rq ' + (r >= REC_BOA ? "ok" : r >= REC_REGULAR ? "mid" : "lo") + '">Recuperação ' + recovTxt(r) + "</span>" : "") + "</div>";
+  return '<div class="rest"><div class="rhd"><span class="rl">Descanso' + (i === 0 ? infoBtn("descanso_reg") : "") + "</span>" + (cur != null && !REST_OPTS.includes(cur) ? '<span class="rq meas">⏱ ' + clkFmt(cur) + "</span>" : "") + q +
+    (r != null ? '<span class="rq ' + (r >= REC_BOA ? "ok" : r >= REC_REGULAR ? "mid" : "lo") + '" title="Recuperação ' + recovTxt(r) + '">Rec. ' + Math.round(r * 100) + "%</span>" : "") + '</div><div class="rgrid">' +
+    REST_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === near ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-rest="' + d.k + "|" + i + "|" + sec + '" aria-label="Descanso de ' + fmtSec(sec) + (sec === near ? " (previsto)" : "") + '">' + (sec === 240 ? "4:00+" : fmtSec(sec)) + "</button>").join("") + "</div></div>";
 }
 // Painel "Tempo do treino": previsto, registrado, descanso médio, recuperação e ordem feita
 function dayTimeHtml(W, day, wk) {
@@ -3196,7 +3500,7 @@ function dayTimeHtml(W, day, wk) {
   const ord = Object.entries(dayOrder(getDoc(W, day, false), day)).sort((a, b) => a[1].pos - b[1].pos);
   const trocas = ord.filter(([, o]) => o.pos !== o.prev).length;
   const totPrev = t.prev + t.cardioPrev, totReg = t.reg + t.cardio;
-  return '<h2>Tempo do treino' + infoBtn("tempotreino") + '</h2><div class="tiles">' +
+  return '<summary><h2>Tempo do treino</h2><span class="muted">' + (t.nReg ? "~" + totReg + " de " : "previsto ") + totPrev + " min · limite " + max + "</span></summary><div class=\"tiles\">" +
     tile("Previsto", totPrev + " min", "musculação " + t.prev + " + cardio " + t.cardioPrev + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
     tile("Registrado", t.nReg ? "~" + totReg + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + t.cardio + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * REST_CURTO ? " · curto" : t.restAvg > t.restPrev * REST_LONGO ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
@@ -3230,7 +3534,7 @@ function transHtml(d, entry) {
   const run = c && c.ph === "trans" && c.W === app.week && pv && c.k === pv.k;
   const runTxt = run ? '<div class="trun' + (c.fixed != null ? "" : " clkanim") + '"><span class="clkfill"></span>' + (c.fixed != null ? "⏱ " : clkRing()) + "<span>" + (c.fixed != null ? "Intervalo corrigido: <b>" + clkFmt(c.fixed) + "</b>" : 'Intervalo rodando: <b data-clkt>' + clkFmt(clkEl()) + "</b>") + " · fica anotado no exercício que você começar</span></div>" : "";
   const meas = cur != null && !TRANS_OPTS.includes(cur) ? '<span class="rq ok">⏱ ' + clkFmt(cur) + " cronometrado</span>" : "";
-  return '<div class="tcard' + (run ? " run" : "") + '" id="tc-' + d.k + '"><span class="rl">Intervalo até o próximo exercício' + infoBtn("intervalo") + "</span>" + runTxt + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === TRANS_DEF ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + meas + "</div>";
+  return '<div class="tcard' + (run ? " run" : "") + '" id="tc-' + d.k + '"><div class="rhd"><span class="rl">Intervalo até o próximo exercício</span>' + meas + "</div>" + runTxt + '<div class="rgrid t7">' + TRANS_OPTS.map(sec => '<button type="button" class="rbtn' + (sec === TRANS_DEF ? " prev" : "") + '" aria-pressed="' + (cur === sec) + '" data-trans="' + d.k + "|" + sec + '" aria-label="Intervalo de ' + fmtSec(sec) + '">' + (sec === 420 ? "7:00+" : fmtSec(sec)) + "</button>").join("") + "</div></div>";
 }
 // Nome dos lados no unilateral
 const LADO = { e: "esquerdo", d: "direito" };
@@ -3254,52 +3558,58 @@ function exCard(d, p, entry, W) {
   let loadChip;
   if (L == null) loadChip = '<span class="vchip up">Carga: <span class="d up">definir</span>' + infoBtn("novo") + '</span>';
   else if (prev != null && Math.abs(L - prev) > 0.001) {
-    const up = L > prev; loadChip = '<span class="vchip ' + (up ? "up" : "down") + '">Carga: ' + fmt(prev) + ' → <span class="d ' + (up ? "up" : "down") + '">' + fmt(L) + " kg " + (up ? "▲" : "▼") + "</span>" + infoBtn("carga") + "</span>";
-  } else loadChip = '<span class="vchip">Carga: <span class="d keep">' + fmt(L) + " kg ●</span>" + infoBtn("carga") + "</span>";
-  if (d.bw && L === 0) loadChip = '<span class="vchip">Carga: <span class="d keep">peso corporal</span>' + infoBtn("carga") + '</span>';
+    const up = L > prev; loadChip = '<span class="vchip ' + (up ? "up" : "down") + '">' + fmt(prev) + ' → <span class="d ' + (up ? "up" : "down") + '">' + fmt(L) + " kg " + (up ? "▲" : "▼") + "</span></span>";
+  } else loadChip = '<span class="vchip"><span class="d keep">' + fmt(L) + " kg</span></span>";
+  if (d.bw && L === 0) loadChip = '<span class="vchip"><span class="d keep">peso corporal</span></span>';
   const work = p.sets.filter(s => s.kind !== "over");
   const repsTxt = d.sc === "top" ? "1 × " + p.sets[0].lo + "–" + p.sets[0].hi + " + " + (p.sets.length - 1) + " × 8–10" : p.sets.length + " × " + work[0].lo + "–" + work[0].hi;
-  const setsChip = '<span class="vchip">' + esc(repsTxt) + (p.setsDelta > 0 ? ' <span class="d up">+' + p.setsDelta + " série</span>" : p.setsDelta < 0 ? ' <span class="d down">' + p.setsDelta + " série</span>" : "") + infoBtn(d.sc === "top" ? "top" : "series") + "</span>";
-  const tgtReps = p.sets.map(s => s.tr);
-  const repChip = '<span class="vchip">Alvo: <span class="d ' + (p.action === "reps" ? "up" : "keep") + '">' + tgtReps.join(" / ") + " reps</span>" + infoBtn("alvo") + "</span>";
-  const rirChip = '<span class="vchip">RIR ' + rirTxt(p.sets[p.sets.length - 1].rir) + (p.sets[0].kind === "top" || p.sets[0].kind === "over" ? " (pesada " + rirTxt(p.sets[0].rir) + ")" : "") + infoBtn("rir") + "</span>";
-  const restChip = '<span class="vchip">' + esc(d.rest) + infoBtn(/bi-set/i.test(d.rest) ? "biset" : "descanso") + "</span>";
+  const setsChip = '<span class="vchip">' + esc(repsTxt) + (p.setsDelta > 0 ? ' <span class="d up">+' + p.setsDelta + "</span>" : p.setsDelta < 0 ? ' <span class="d down">' + p.setsDelta + "</span>" : "") + "</span>";
+  const rirChip = '<span class="vchip">RIR ' + rirTxt(p.sets[p.sets.length - 1].rir) + (p.sets[0].kind === "top" || p.sets[0].kind === "over" ? " · pesada " + rirTxt(p.sets[0].rir) : "") + "</span>";
+  const restChip = '<span class="vchip">⏱ ' + esc(d.rest) + "</span>";
   const modeChip = p.mode && p.mode !== "normal" ? '<span class="vchip fix"><span class="d fix">⟳ ' + esc(FIXNAME[p.mode]) + "</span>" + infoBtn("mode-" + p.mode, FIXNAME[p.mode]) + "</span>" : "";
-  const stallChip = p.stall > 0 ? '<span class="vchip down">' + "@".repeat(Math.min(p.stall, 4)) + " sem progresso" + infoBtn("arroba") + "</span>" : "";
+  const stallChip = p.stall > 0 ? '<span class="vchip down">' + "@".repeat(Math.min(p.stall, 4)) + infoBtn("arroba") + "</span>" : "";
   const base = markOf(app.perfil || {}, d);
-  const oldLine = base ? '<div class="old">Sua marca: ' + fmt(base.kg) + " kg × " + base.reps + " · 1RM ~" + fmt(Math.round(e1(base.kg, base.reps) * 10) / 10) + " kg" + infoBtn("fichaant") + "</div>" : "";
+  const oldLine = base ? '<div class="old">Sua marca: ' + fmt(base.kg) + " kg × " + base.reps + " · 1RM ~" + fmt(Math.round(e1(base.kg, base.reps) * 10) / 10) + " kg</div>" : "";
   const sug = suggestSets(d, p, entry);
   const uni = isUni(d);
   const rows = p.sets.map((s, i) => {
     const v = entry && entry.sets && entry.sets[i] ? entry.sets[i] : { kg: null, reps: null, rir: null };
     const lbl = s.kind === "top" ? "Pesada" : s.kind === "back" ? "Back-off " + i : s.kind === "over" ? "Sobrecarga" : "Série " + (i + 1);
-    const prevTxt = (s.kg == null ? "carga a definir" : (d.bw && s.kg === 0 ? "corporal" : fmt(s.kg) + " kg")) + " × " + s.tr + " · RIR " + rirTxt(s.rir);
+    const prevKg = s.kg == null ? "definir" : (d.bw && s.kg === 0 ? "corporal" : fmt(s.kg) + " kg");
     const g = sug[i];
-    const lblInfo = s.kind === "top" ? infoBtn("top") : (s.kind === "back" && i === 1) ? infoBtn("backoff") : s.kind === "over" ? infoBtn("over") : "";
-    const head = "<b>" + lbl + "</b>" + lblInfo + (s.cluster ? " · 2 blocos" + infoBtn("cluster") : "") + '<div class="tgt">Previsto: ' + esc(prevTxt) + (uni ? " cada lado" : "") + " (faixa " + s.lo + "–" + s.hi + ")" + (i === 0 ? infoBtn("faixa") : "") + '</div><div class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '">' + esc(g.note) + '</div><div class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + "</div>";
+    const lblInfo = s.kind === "over" ? infoBtn("over") : s.cluster ? infoBtn("cluster") : "";
+    const head = "<b>" + lbl + "</b>" + lblInfo + '<div class="tgt">' + esc(prevKg) + " × " + s.tr + (uni ? " c/ lado" : "") + (s.cluster ? " · 2 blocos" : "") + '</div><div class="tgt">RIR ' + rirTxt(s.rir) + " · " + s.lo + "–" + s.hi + "</div>";
+    const hint = '<tr class="hrow"><td colspan="4"><div class="sline"><span class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + '</span><span class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '" title="' + esc(g.note) + '">' + esc(g.curto || g.note) + "</span></div></td></tr>";
     const restRow = i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "";
-    if (uni) return uniRows(d, i, v, lbl, head, g) + restRow;
-    return '<tr><td class="lbl">' + head + "</td>" + setCells(d, i, lbl, v, g.kg == null ? "kg" : fmt(g.kg), g.reps) + "</tr>" +
+    if (uni) return uniRows(d, i, v, lbl, head, g).replace('<tr class="tbrow">', hint + '<tr class="tbrow">') + restRow;
+    return '<tr class="srow"><td class="lbl">' + head + "</td>" + setCells(d, i, lbl, v, g.kg == null ? "kg" : fmt(g.kg), g.reps) + "</tr>" + hint +
       '<tr class="tbrow"><td colspan="4">' + clkSetHtml(d, i, v, false) + "</td></tr>" +
-      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v) + (i === 0 ? infoBtn("tempoexec") : "") + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
+      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v) + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
-    return '<tr><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">Fora da prescrição</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '"></td><td></td></tr>';
+    return '<tr class="srow"><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">fora da ficha</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '"></td><td></td></tr>';
   }).join("") : "";
-  return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
-    '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' + infoBtn("opcional") : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave: " + FIXNAME[p.mode] : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
-    '<div class="pres">' + loadChip + setsChip + repChip + rirChip + restChip + modeChip + stallChip + "</div>" +
-    (p.why ? '<div class="why">' + esc(p.why) + (p.elo ? infoBtn("elo") : "") + "</div>" : "") + ordemLine(p) +
-    ((app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "") +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + oldLine + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniToggleHtml(d) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
-    '<table class="sets"><colgroup><col><col style="width:68px"><col style="width:56px"><col style="width:56px"></colgroup><thead><tr><th>Série e previsto' + infoBtn("previsto") + '</th><th>kg feito</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
-    '<div class="row-btns" style="margin-top:8px"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div>' +
+  // "Por que": o motivo da prescrição, a sua marca e a ordem feita, recolhidos numa linha que abre no toque
+  const ordTag = (app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "";
+  const porque = (p.why ? '<div class="why">' + esc(p.why) + (p.elo ? infoBtn("elo") : "") + "</div>" : "") + oldLine + ordemLine(p) + ordTag;
+  const whyBox = porque ? '<details class="mais pq" data-keep="pq-' + d.k + '"' + keepOpen("pq-" + d.k) + "><summary>" + (p.why ? '<span class="pqt">' + esc(p.why) + "</span>" : "Sua marca e ordem") + "</summary>" + porque + "</details>" : "";
+  const tags = entry && Array.isArray(entry.tags) ? entry.tags.length : 0, temNota = !!(entry && entry.nota && String(entry.nota).trim());
+  const ajustes = '<details class="mais aj" data-keep="aj-' + d.k + '"' + keepOpen("aj-" + d.k) + "><summary>Observações e ajustes" + (tags || temNota ? ' <span class="tn">' + (tags + (temNota ? 1 : 0)) + "</span>" : "") + "</summary>" +
     '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
     '<textarea data-note="' + d.k + '" rows="1" aria-label="Outra observação de ' + esc(d.n) + '" placeholder="Outra observação (o app também lê o texto)">' + esc(entry ? entry.nota : "") + "</textarea>" +
     '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div>" +
+    uniToggleHtml(d) + '<div class="row-btns"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div></details>';
+  return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
+    '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave" : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
+    '<div class="pres">' + loadChip + setsChip + rirChip + restChip + modeChip + stallChip + "</div>" + whyBox +
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
+    '<table class="sets"><colgroup><col><col class="c-kg"><col class="c-rp"><col class="c-rir"></colgroup><thead><tr><th>Série · previsto</th><th>kg</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
+    ajustes +
     '<div class="row-btns donebar"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button></div></article>';
 }
+// Bloco recolhível que lembra se estava aberto (chave em data-keep); "padrao" abre na primeira vez
+function keepOpen(key, padrao) { const k = app.keep || (app.keep = {}); return (key in k ? k[key] : !!padrao) ? " open" : ""; }
 
 // ===== 12. TELA: PRÓXIMA SEMANA =====
 // Desenha a aba Próxima semana: o que muda em cada exercício e por quê
@@ -3337,7 +3647,7 @@ function css(v) { return getComputedStyle(document.documentElement).getPropertyV
 function chartBase() {
   return {
     responsive: true, maintainAspectRatio: false, animation: false,
-    plugins: { legend: { labels: { color: css("--ink"), boxWidth: 12, font: { family: "Source Sans 3", size: 13 } } }, tooltip: { backgroundColor: css("--surface"), titleColor: css("--ink"), bodyColor: css("--ink"), borderColor: css("--line"), borderWidth: 1, padding: 8 } },
+    plugins: { legend: { labels: { color: css("--ink"), boxWidth: 12, font: { family: css("--font-body") || "system-ui", size: 13 } } }, tooltip: { backgroundColor: css("--solid"), titleColor: css("--ink"), bodyColor: css("--ink"), borderColor: css("--line"), borderWidth: 1, padding: 8 } },
     scales: { x: { ticks: { color: css("--muted") }, grid: { color: css("--line") } }, y: { ticks: { color: css("--muted") }, grid: { color: css("--line") } } }
   };
 }
@@ -4040,7 +4350,14 @@ function planAt(t) { const pp = userPlanPoints(); if (t <= pp[0].t) return pp[0]
 
 // ===== 16. TELA: PLANO E REGRAS =====
 // Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual
+// Glossário: todos os termos do app, com busca; cada um abre a mesma explicação do botão "i"
+function gloHtml(q) {
+  const tk = semAcento(q || "").trim(), it = Object.keys(GLOSS).filter(k => !/^pfs_/.test(k)).map(k => [k, GLOSS[k][0]]).filter(([, t]) => !tk || semAcento(t).includes(tk));
+  it.sort((a, b) => a[1].localeCompare(b[1], "pt-BR"));
+  return it.length ? it.map(([k, t]) => '<button type="button" class="glob" data-info="' + k + '">' + esc(t) + "</button>").join("") : '<p class="muted">Nenhum termo com esse nome.</p>';
+}
 function renderPlan() {
+  const gl = document.getElementById("gloList"), gq = document.getElementById("gloQ"); if (gl) gl.innerHTML = gloHtml(gq ? gq.value : "");
   document.getElementById("legend").innerHTML = ["up", "reps", "down", "fix", "repeat", "deload", "new"].map(a => actChip(a)).join("");
   const L = LEGEND;
   document.getElementById("legendTable").innerHTML = '<table class="plain"><thead><tr><th>Símbolo</th><th>Quando aparece</th><th>O que fazer</th></tr></thead><tbody>' + L.map(r => "<tr><td>" + actChip(r[0]) + "</td><td>" + esc(r[1]) + "</td><td>" + esc(r[2]) + "</td></tr>").join("") + "</tbody></table>";
@@ -4096,17 +4413,20 @@ function maqBoxHtml(d) {
   const cfg = ((app.settings || {}).maq || {})[d.n] || {}, tipo = cfg.tipo || "auto", x = MAQ[d.n], kn = x ? x.known : [];
   const f1 = v => fmt(Math.round(v * 10) / 10), lista = a => a.map(f1).join(" · ");
   const curto = kn.length > 5 ? f1(kn[0]) + " a " + f1(kn[kn.length - 1]) + " kg (" + kn.length + " cargas)" : lista(kn) + " kg";
-  const res = tipo === "livre" ? "carga livre" : kn.length ? curto + (x.fixa ? " · placas fixas" : "") : "ainda sem cargas anotadas";
+  const res = (tipo === "livre" ? "carga livre" : kn.length ? curto + (x.fixa ? " · placas fixas" : "") : "ainda sem cargas anotadas") + (+cfg.min > 0 ? " · base " + fmt(+cfg.min) + " kg" : "");
   const det = tipo === "livre" || !kn.length ? "" : '<p class="maqd">Cargas guardadas: <b>' + lista(kn) + " kg</b>." + (x.ded.length ? " Deduzidas pelo intervalo entre elas: " + lista(x.ded) + " kg." : "") + (x.fixa && tipo === "auto" ? " Reconhecida como máquina de placas fixas." : "") + "</p>";
   return '<details class="maq" data-maqk="' + d.k + '"' + (app.maqOpen === d.k ? " open" : "") + '><summary><span class="rl">Cargas da máquina</span> <span class="muted">' + res + "</span></summary>" + det +
     '<div class="unitg">' + [["auto", "Automático"], ["fixa", "Placas fixas"], ["livre", "Carga livre"]].map(([v, t]) => '<button type="button" class="rbtn" aria-pressed="' + (tipo === v) + '" data-maq="' + d.k + "|" + v + '">' + t + "</button>").join("") + infoBtn("maquina") + "</div>" +
+    '<label class="maqp">Peso base: a carga da máquina sem nenhuma placa, em kg<input type="text" inputmode="decimal" autocomplete="off" data-maqmin="' + d.k + '" value="' + (+cfg.min > 0 ? fmt(+cfg.min) : "") + '" placeholder="ex.: 38,3 (em branco: sem peso base)"></label>' +
     '<label class="maqp">Placas desta máquina, em kg (separe com espaço)<input type="text" inputmode="decimal" autocomplete="off" data-maqp="' + d.k + '" value="' + esc((cfg.placas || []).map(v => fmt(v)).join(" ")) + '" placeholder="ex.: 58,5 65,3 72 78,8 85,5"></label></details>';
 }
 // Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias)
 function maqSet(k, campo, valor) {
   const d = EXBY[k]; if (!d) return;
   app.settings.maq = Object.assign({}, app.settings.maq || {}); const c = Object.assign({}, app.settings.maq[d.n] || {});
-  if (campo === "tipo") c.tipo = valor; else c.placas = String(valor).replace(/,/g, ".").split(/[^0-9.]+/).map(Number).filter(v => v > 0).sort((a, b) => a - b);
+  if (campo === "tipo") c.tipo = valor;
+  else if (campo === "min") { const v = +String(valor).replace(",", "."); if (v > 0) c.min = v; else delete c.min; }
+  else c.placas = String(valor).replace(/,/g, ".").split(/[^0-9.]+/).map(Number).filter(v => v > 0).sort((a, b) => a - b);
   app.settings.maq[d.n] = c; app.maqOpen = k; saveSettings(); renderWeek();
 }
 // Botões Bilateral / Unilateral do cartão
@@ -4140,10 +4460,10 @@ function uniDifHtml(k, i, dif) {
 function uniRows(d, i, v, lbl, head, g) {
   const L = (v && v.lados) || {};
   const side = n => { const o = uniKg(L, n === "e" ? "d" : "e"); return setCells(d, i, lbl, L[n] || {}, o != null ? fmt(o) : g.kg == null ? "kg" : fmt(g.kg), g.reps, n); };
-  return '<tr class="ue"><td class="lbl">' + head + '<div class="side">Esquerdo</div></td>' + side("e") + "</tr>" +
+  return '<tr class="ue srow"><td class="lbl">' + head + '<div class="side">Esquerdo</div></td>' + side("e") + "</tr>" +
     '<tr class="ud"><td class="lbl"><div class="side">Direito</div></td>' + side("d") + "</tr>" +
     '<tr class="tbrow"><td colspan="4">' + clkSetHtml(d, i, v, true) + "</td></tr>" +
-    '<tr class="prow"><td colspan="4"><div class="execrow"><span class="exec">Execução</span>' + execField(d, i, lbl, L.e || {}, "e") + execField(d, i, lbl, L.d || {}, "d") + (i === 0 ? infoBtn("tempoexec") : "") + "</div>" +
+    '<tr class="prow"><td colspan="4"><div class="execrow"><span class="exec">Execução</span>' + execField(d, i, lbl, L.e || {}, "e") + execField(d, i, lbl, L.d || {}, "d") + "</div>" +
     '<div class="execrow uparc"><div id="parc-' + d.k + "-" + i + '-e" class="parcwrap">' + parcHtml(d.k, i, (L.e || {}).parc, "e") + '</div><div id="parc-' + d.k + "-" + i + '-d" class="parcwrap">' + parcHtml(d.k, i, (L.d || {}).parc, "d") + "</div></div>" +
     '<div id="dif-' + d.k + "-" + i + '">' + uniDifHtml(d.k, i, v && v.dif) + "</div></td></tr>";
 }
@@ -4642,7 +4962,8 @@ function renderHome() {
     ["plano", "Plano e regras", "Como o app decide cada carga: tudo explicado, sem caixa-preta."]
   ];
   box.innerHTML =
-    '<section class="hm-hero">' + homeLogo() + '<h2 class="hm-name">Hex<span>is</span></h2><p class="hm-tag">O corpo que se constrói pela prática.</p><p class="hm-lead">Treino, cardio e dieta num só lugar. Você anota o que fez e o app ajusta a próxima série, o próximo treino e a próxima semana.</p></section>';
+    '<section class="hm-hero">' + homeLogo() + '<h2 class="hm-name">Hex<span>is</span></h2><p class="hm-tag">O corpo que se constrói pela prática.</p><p class="hm-lead">Treino, cardio e dieta num só lugar. Você anota o que fez e o app ajusta a próxima série, o próximo treino e a próxima semana.</p></section>' +
+    '<nav class="hm-acoes" aria-label="Atalhos de hoje"><a href="#semana"><span aria-hidden="true">🏋️</span>Treino de hoje</a><a href="#dieta"><span aria-hidden="true">🍽️</span>Registrar refeição</a><button type="button" data-hojeabre="1"><span aria-hidden="true">⚖️</span>Peso de hoje</button></nav>';
 
   const more = document.getElementById("homeMore");
   more.innerHTML =
@@ -4711,9 +5032,9 @@ function routeFromHash() {
 // Grupos da barra de baixo: nome, subabas e ícone
 const NAVG = [
   { id: "inicio", t: "Início", tabs: [["inicio", "Início"]], ic: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>' },
-  { id: "treino", t: "Treino", tabs: [["semana", "Semana"], ["proxima", "Próxima semana"]], ic: '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12"/>' },
-  { id: "resumo", t: "Resumo", tabs: [["resumo", "Resumo do dia"]], ic: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 11l2 2 4-4M8.5 17h7"/>' },
-  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["dieta", "Dieta"], ["corpo", "Corpo"], ["diario", "Hormônios"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
+  { id: "treino", t: "Treino", tabs: [["semana", "Semana"], ["resumo", "Resumo do dia"], ["proxima", "Próxima"]], ic: '<path d="M3 9.5v5M6 7v10M18 7v10M21 9.5v5M6 12h12"/>' },
+  { id: "dieta", t: "Dieta", tabs: [["dieta", "Dieta"]], ic: '<path d="M12 8.2c-1.2-2-4-2.6-5.8-1.2C4 8.7 4 12.6 5.6 15.9 6.8 18.4 8.6 20.5 10 20.5c.9 0 1.2-.5 2-.5s1.1.5 2 .5c1.4 0 3.2-2.1 4.4-4.6 1.6-3.3 1.6-7.2-.6-8.9-1.8-1.4-4.6-.8-5.8 1.2z"/><path d="M12 8.2c0-2.2 1-3.9 3-4.7"/>' },
+  { id: "evolucao", t: "Evolução", tabs: [["progresso", "Progresso"], ["corpo", "Corpo"], ["diario", "Hormônios"]], ic: '<path d="M4 19h16M5 15l4.5-4.5 3.5 3L19.5 7M15 7h4.5v4.5"/>' },
   { id: "voce", t: "Você", tabs: [["perfil", "Perfil"], ["objetivo", "Objetivo"], ["plano", "Plano e regras"]], ic: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>' }
 ];
 // Todas as abas
@@ -4853,7 +5174,7 @@ async function shareDraw(W, day) {
   const S = dayStats(W, day), dd = DAYS.find(x => x.id === day), dt = dayDate(W, day), iso = isoDate(dt);
   const cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1350;
   const g = cv.getContext("2d"), C = { bg: "#0E1420", card: "#18202F", ink: "#F4F6FA", mut: "#9AA6B8", ac: "#3987E5", up: "#2FBF71", lo: "#E5534B" };
-  const disp = getComputedStyle(document.documentElement).getPropertyValue("--font-display") || "sans-serif", body = '"Source Sans 3", system-ui, sans-serif';
+  const disp = getComputedStyle(document.documentElement).getPropertyValue("--font-display") || "sans-serif", body = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif';
   const T = (txt, x, y, px, col, o) => { o = o || {}; g.font = (o.w || 400) + " " + px + "px " + (o.d ? disp : body); g.fillStyle = col; g.textAlign = o.a || "left"; g.fillText(txt, x, y); return g.measureText(txt).width; };
   const fit = (txt, px, maxW, o) => { g.font = ((o && o.w) || 400) + " " + px + "px " + (o && o.d ? disp : body); while (g.measureText(txt).width > maxW && txt.length > 4) txt = txt.slice(0, -2).trimEnd() + "…"; return txt; };
   g.fillStyle = C.bg; g.fillRect(0, 0, 1080, 1350);
@@ -5388,7 +5709,13 @@ async function flush(id) {
 // Mensagem de erro ao salvar (retry: o app tenta de novo sozinho)
 function saveErr(e, retry) { const c = e && e.code; return c === "quota_exceeded" ? "Armazenamento cheio: não foi possível salvar." : c === "auth" ? "Sua sessão expirou: toque em Sair e entre de novo." : retry ? "Não salvou. Tentando de novo…" : "Não salvou. Tente de novo."; }
 // Mensagem da barra de salvar
-function setSaveMsg(t) { document.getElementById("saveMsg").textContent = t; }
+// Situação do salvamento: aparece na barra de baixo só enquanto importa (salvando, erro); "Salvo" some sozinho
+function setSaveMsg(t) {
+  document.getElementById("saveMsg").textContent = t;
+  const sb = document.querySelector(".savebar"); if (!sb) return;
+  sb.classList.add("msg"); clearTimeout(app.saveT);
+  if (/^Salvo/.test(t)) app.saveT = setTimeout(() => sb.classList.remove("msg"), 1600);
+}
 
 // Seletor do botão tocado, para reencontrá-lo depois de redesenhar
 function tapSel(b) {
@@ -5483,7 +5810,7 @@ document.addEventListener("click", ev => {
     app.tagForm = null; saveSettings(); renderWeek(); return;
   }
   if (b.dataset.tagdel) { app.settings.tags = userTags().filter(c => c.id !== b.dataset.tagdel); saveSettings(); renderWeek(); return; }
-  if (b.id === "hojeBtn") { hojeOpen(); return; }
+  if (b.id === "hojeBtn" || b.dataset.hojeabre) { hojeOpen(); return; }
   if (b.id === "hojeX") { hojeClose(); return; }
   if (b.dataset.clk) { clkAct(b.dataset.clk); return; }
   if (b.dataset.aq) {
@@ -5574,10 +5901,12 @@ document.addEventListener("input", ev => {
   }
 });
 // Bloco "Cargas da máquina": lembra qual está aberto, para continuar aberto depois de salvar (o evento toggle não sobe, por isso a captura)
-document.addEventListener("toggle", ev => { const el = ev.target; if (el && el.dataset && el.dataset.maqk) { if (el.open) app.maqOpen = el.dataset.maqk; else if (app.maqOpen === el.dataset.maqk) app.maqOpen = null; } }, true);
+document.addEventListener("toggle", ev => { const el = ev.target; if (el && el.dataset && el.dataset.keep) { (app.keep || (app.keep = {}))[el.dataset.keep] = el.open; try { localStorage.setItem(KEEP_KEY, JSON.stringify(app.keep)); } catch (e) { } }
+  if (el && el.open && el.querySelector && el.querySelector("canvas") && window.Chart && Chart.instances) requestAnimationFrame(() => Object.values(Chart.instances).forEach(c => { if (el.contains(c.canvas)) c.resize(); })); if (el && el.dataset && el.dataset.maqk) { if (el.open) app.maqOpen = el.dataset.maqk; else if (app.maqOpen === el.dataset.maqk) app.maqOpen = null; } }, true);
 // Campos de escolha (listas e caixas de marcar)
 document.addEventListener("change", ev => { const el = ev.target;
   if (el.dataset && el.dataset.maqp) { maqSet(el.dataset.maqp, "placas", el.value); return; }
+  if (el.dataset && el.dataset.maqmin) { maqSet(el.dataset.maqmin, "min", el.value); return; }
   if (el.dataset && el.dataset.djnt != null) { djNotaSave(el); return; }
   if (el.dataset && el.dataset.fotoin) { fotoAdd(el.files && el.files[0], el.dataset.fotoin, el.dataset.fotoin === "treino" ? "fotoMsg" : "fotoEvoMsg"); el.value = ""; return; }
   if (el.id === "djExMarc") { const m = DJ_MARC.find(x => x[0] === el.value); document.getElementById("djExUn").value = m ? m[1] : ""; document.getElementById("djExOutroF").classList.toggle("hide", el.value !== "outro"); djExGuia(true); return; }
@@ -5791,8 +6120,22 @@ const DT_RES = 12;                 // alimentos mostrados na busca
 const DT_FOLGA = 0.1;              // até 10% acima ou abaixo do proposto conta como "dentro"
 const DT_PER = [7, 14, 30];        // períodos (dias) da comparação por refeição
 const DT_SEM = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const DT_GRAMAS = [50, 100, 150, 200, 250, 300]; // quantidades prontas (g) na escolha do alimento
+const DT_PORCOES = [0.5, 1, 1.5, 2, 3];          // quantidades prontas para alimento por porção
+const DT_FREQ = 8;                               // alimentos frequentes mostrados antes de digitar
+// Horário típico de cada refeição pelo nome (horas do dia), para a refeição já vir escolhida
+const DT_HORA = [[/ceia/, 21, 24], [/jant/, 18, 21.5], [/lanche.*tarde|tarde/, 15, 18], [/lanche.*manha|colacao/, 9.5, 11.5], [/almoc/, 11.5, 15], [/cafe|desjejum/, 5, 9.5]];
 // Estado da aba Dieta: menu aberto, dia mostrado, refeição recebendo alimento, busca e alimento escolhido
-function dtS() { return app.dt || (app.dt = { view: "dia", data: todayStr(), add: null, q: "", pick: null, per: 7, fora: false, cfg: false, msg: "" }); }
+function dtS() { return app.dt || (app.dt = { view: "dia", data: todayStr(), add: null, q: "", pick: null, per: 7, fora: false, cfg: false, msg: "", ult: null }); }
+// Refeição da hora: a do horário típico mais próximo; nomes sem horário conhecido dividem o dia (5h às 23h) em partes iguais
+function dtRefAgora(refs, hora) {
+  const h = hora != null ? hora : new Date().getHours() + new Date().getMinutes() / 60;
+  let best = -1, bd = 1e9;
+  refs.forEach((r, i) => { const t = semAcento(r.n), f = DT_HORA.find(x => x[0].test(t)); if (!f) return; const d = h < f[1] ? f[1] - h : h > f[2] ? h - f[2] : 0; if (d < bd) { bd = d; best = i; } });
+  return best >= 0 ? best : Math.max(0, Math.min(refs.length - 1, Math.floor((h - 5) / (18 / refs.length))));
+}
+// Nome curto da refeição para os botões
+function dtCurto(n, refs) { if (refs && /^Lanche/i.test(n) && refs.filter(r => /^Lanche/i.test(r.n)).length === 1) return "Lanche"; return String(n).replace(/^Café da manhã$/i, "Café").replace(/^Lanche da manhã$/i, "Lanche manhã").replace(/^Lanche da tarde$/i, "Lanche tarde"); }
 // Soma dias a uma data AAAA-MM-DD
 function dtAdd(d, n) { return isoDate(new Date(Date.parse(d + "T12:00:00Z") + n * 864e5)); }
 // Dia da semana de uma data (0 = segunda)
@@ -5836,12 +6179,16 @@ function dtBusca(q) {
   TACO_N.forEach((nn, i) => { if (TACO[i][2] >= 0 && tk.every(t => nn.includes(t))) out.push([nn.startsWith(tk[0]) ? 1 : 2, nn.length, i + 1]); });
   return out.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, DT_RES).map(x => dtFood(x[2])).filter(Boolean);
 }
-// Alimentos que você mais registrou (aparecem antes de digitar)
+// Alimentos que você mais registrou (aparecem antes de digitar), cada um com a última quantidade usada
 function dtUsados(n) {
-  const c = {};
-  Object.keys(app.dieta || {}).forEach(id => { if (/^\d{4}-\d\d-\d\d$/.test(id)) dtItens(id).forEach(x => { if (x.a != null) c[x.a] = (c[x.a] || 0) + 1; }); });
-  return Object.keys(c).sort((a, b) => c[b] - c[a]).slice(0, n).map(k => dtFood(/^\d+$/.test(k) ? +k : k)).filter(Boolean);
+  const c = {}, ult = {};
+  Object.keys(app.dieta || {}).filter(id => /^\d{4}-\d\d-\d\d$/.test(id)).sort().forEach(id => dtItens(id).forEach(x => { if (x.a != null) { c[x.a] = (c[x.a] || 0) + 1; if (+x.q > 0) ult[x.a] = +x.q; } }));
+  return Object.keys(c).sort((a, b) => c[b] - c[a]).slice(0, n).map(k => { const f = dtFood(/^\d+$/.test(k) ? +k : k); return f ? Object.assign(f, { ultQ: ult[k] }) : null; }).filter(Boolean);
 }
+// Última quantidade usada de um alimento (ou 100 g / 1 porção)
+function dtUltQ(f) { let q = null; Object.keys(app.dieta || {}).filter(id => /^\d{4}-\d\d-\d\d$/.test(id)).sort().forEach(id => dtItens(id).forEach(x => { if (String(x.a) === String(f.key) && +x.q > 0) q = +x.q; })); return q || (f.por === "porcao" ? 1 : 100); }
+// Quantidade com unidade: "150 g" ou "1,5 porção"
+function dtQtd(f, q) { return fmt(q) + (f.por === "porcao" ? (q > 1 ? " porções" : " porção") : " g"); }
 // Grava um registro da dieta (um dia ou a lista dos seus alimentos)
 function dtGrava(id, doc) {
   app.dieta = app.dieta || {}; app.dieta[id] = doc;
@@ -5862,51 +6209,72 @@ function renderDieta(force) {
   const ae = document.activeElement;
   if (!force && ae && box.contains(ae) && ae.matches("input, select, textarea")) return; // não desmancha o que está sendo digitado
   const S = dtS(), M = dtMeta(todayStr());
-  document.getElementById("dtFase").innerHTML = M ? '<div class="panel"><h2>Meta de hoje' + infoBtn("kcal") + '</h2><div class="pres"><span class="vchip"><b>' + dtKc(M.kcal) + '</b> kcal</span><span class="vchip">Proteína <b>' + (M.p || "—") + " g</b> · Carbo <b>" + (M.c || "—") + " g</b> · Gordura <b>" + (M.g || "—") + " g</b></span></div>" + '<p class="muted" style="margin:6px 0 0;font-size:13px">Fase: ' + esc(M.fase || "") + '. <a href="#plano">Ver todas as fases</a></p></div>'
-    : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
-  box.innerHTML = '<div class="dtmenu" role="group" aria-label="Visões da dieta">' + [["dia", "Registrar"], ["ref", "Por refeição"], ["sem", "Por dia"]].map(v => '<button type="button" data-dt="view|' + v[0] + '" aria-pressed="' + (S.view === v[0]) + '">' + v[1] + "</button>").join("") + "</div>" +
-    (S.view === "ref" ? dtRefHtml() : S.view === "sem" ? dtSemHtml() : dtDiaHtml()) + dtCfgHtml();
+  document.getElementById("dtFase").innerHTML = M ? "" : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
+  box.innerHTML = '<div class="dtmenu seg" role="group" aria-label="Visões da dieta">' + [["dia", "Registrar"], ["ref", "Por refeição"], ["sem", "Por dia"]].map(v => '<button type="button" data-dt="view|' + v[0] + '" aria-pressed="' + (S.view === v[0]) + '">' + v[1] + "</button>").join("") + "</div>" +
+    (S.view === "ref" ? '<div class="panel">' + dtRefHtml() + "</div>" : S.view === "sem" ? '<div class="panel">' + dtSemHtml() + "</div>" : dtDiaHtml()) + '<div class="panel">' + dtCfgHtml() + "</div>";
 }
 // Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição
 function dtDiaHtml() {
-  const S = dtS(), d = S.data, itens = dtItens(d), refs = dtRefs(), pt = dtPartes(refs), M = dtMeta(d), tot = dtSum(itens);
+  const S = dtS(), d = S.data, itens = dtItens(d), refs = dtRefs(), pt = dtPartes(refs), M = dtMeta(d), tot = dtSum(itens), ontem = dtItens(dtAdd(d, -1));
+  if (S.add == null || S.add >= refs.length) S.add = d === todayStr() ? dtRefAgora(refs) : 0;
   let h = '<div class="dtnav"><button class="rbtn" type="button" data-dt="dia|-1" aria-label="Dia anterior">‹</button><input type="date" id="dtData" value="' + d + '" aria-label="Dia do registro"><span class="dtdw">' + DT_SEM[dtDow(d)].toLowerCase() + '</span><button class="rbtn" type="button" data-dt="dia|1" aria-label="Dia seguinte">›</button>' + (d === todayStr() ? "" : '<button class="btn small" type="button" data-dt="hoje">Hoje</button>') + "</div>";
-  h += '<div class="dttot"><div class="dtk1"><b>' + dtKc(tot.kcal) + "</b>" + (M ? " de " + dtKc(M.kcal) + " kcal" : " kcal") + (M && itens.length ? " " + dtDif(tot.kcal, M.kcal) : "") + infoBtn("dt_diario") + "</div>" + dtBar(tot.kcal, M && M.kcal, "g") +
-    '<div class="dtmac">' + [["Proteína", tot.p, M && M.p], ["Carboidrato", tot.c, M && M.c], ["Gordura", tot.g, M && M.g]].map(x => "<div><span>" + x[0] + "</span><b>" + Math.round(x[1]) + (x[2] ? " / " + x[2] : "") + " g</b>" + dtBar(x[1], x[2]) + "</div>").join("") + "</div></div>";
-  if (S.msg) h += '<p class="dtmsg" role="status">' + esc(S.msg) + "</p>";
+  h += dtHeroHtml(tot, M, itens.length);
+  // caixa de adicionar: sempre aberta, com a refeição da hora já escolhida
+  h += '<section class="panel dtquick" id="dtQuick" aria-label="Adicionar alimento"><div class="dtqh"><b>Adicionar em</b>' + (S.msg ? '<span class="dtok" role="status">' + esc(S.msg) + (S.ult != null ? ' <button type="button" class="lnk" data-dt="desfaz">Desfazer</button>' : "") + "</span>" : "") + "</div>" +
+    '<div class="dtrefs seg" role="group" aria-label="Refeição" style="--n:' + (refs.length <= 4 ? refs.length : 3) + '">' + refs.map((r, i) => '<button type="button" data-dt="ref|' + i + '" aria-pressed="' + (S.add === i) + '">' + esc(dtCurto(r.n, refs)) + "</button>").join("") + "</div>" + dtAddHtml() + "</section>";
+  // refeições do dia
   refs.forEach((r, i) => {
     const li = itens.map((x, j) => [x, j]).filter(z => Math.min(z[0].r | 0, refs.length - 1) === i), sm = dtSum(li.map(z => z[0])), prop = M ? M.kcal * pt[i] : null;
-    h += '<div class="dtref"><div class="dtrh"><b>' + esc(r.n) + "</b><span>" + dtKc(sm.kcal) + (prop ? " de " + dtKc(prop) : "") + " kcal</span></div>" + (prop ? dtBar(sm.kcal, prop) : "") +
+    const temOntem = !li.length && ontem.some(x => Math.min(x.r | 0, refs.length - 1) === i);
+    h += '<div class="panel dtref' + (S.add === i ? " on" : "") + '"><div class="dtrh"><b>' + esc(r.n) + "</b><span>" + dtKc(sm.kcal) + (prop ? " / " + dtKc(prop) : "") + " kcal</span></div>" + (prop ? dtBar(sm.kcal, prop) : "") +
       li.map(z => dtItemHtml(z[0], z[1])).join("") +
-      (S.add === i ? dtAddHtml() : '<div class="row-btns"><button class="btn small" type="button" data-dt="add|' + i + '">+ Alimento</button></div>') + "</div>";
+      '<div class="dtrfoot"><button class="btn small" type="button" data-dt="add|' + i + '">+ Alimento</button>' + (temOntem ? '<button class="btn small" type="button" data-dt="repete|' + i + '">↺ Repetir de ontem</button>' : "") + "</div></div>";
   });
-  if (!itens.length && dtItens(dtAdd(d, -1)).length) h += '<div class="row-btns"><button class="btn small" type="button" data-dt="copia">Copiar o dia anterior</button></div>';
+  if (!itens.length && ontem.length) h += '<div class="row-btns"><button class="btn small" type="button" data-dt="copia">Copiar o dia anterior inteiro</button></div>';
   return h;
+}
+// Cartão do total do dia: anel das calorias contra a meta, o que falta e os macros
+function dtHeroHtml(tot, M, n) {
+  const fr = M ? Math.min(1, tot.kcal / M.kcal) : 0, s = M && n ? dtSit(tot.kcal, M.kcal) : null, cor = s ? s[1] : "--accent", R = 30, C = 2 * Math.PI * R;
+  const resto = M ? M.kcal - tot.kcal : null;
+  return '<div class="panel dthero"><div class="dtring" style="--c:var(' + cor + ')"><svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="' + R + '" class="rb"/><circle cx="36" cy="36" r="' + R + '" class="rf" stroke-dasharray="' + (C * fr).toFixed(1) + " " + C.toFixed(1) + '"/></svg><b>' + (M ? Math.round(fr * 100) + "%" : "–") + "</b></div>" +
+    '<div class="dtk1"><b>' + dtKc(tot.kcal) + "</b> " + (M ? "de " + dtKc(M.kcal) + " kcal" : "kcal") + '<div class="dtfalta">' + (M ? (s && s[0] === "dentro" ? '<span style="color:var(--up)">✓ dentro da meta</span> · ' : "") + (resto >= 0 ? "faltam <b>" + dtKc(resto) + "</b> kcal" : "<b>" + dtKc(-resto) + "</b> kcal acima") : '<a href="#perfil">defina a meta no Perfil</a>') + "</div></div>" +
+    '<div class="dtmac">' + [["Proteína", tot.p, M && M.p], ["Carbo", tot.c, M && M.c], ["Gordura", tot.g, M && M.g]].map(x => "<div><span>" + x[0] + "</span><b>" + Math.round(x[1]) + (x[2] ? " / " + x[2] : "") + " g</b>" + dtBar(x[1], x[2]) + "</div>").join("") + "</div>" +
+    (M ? '<p class="dtfase">Fase: ' + esc(M.fase || "") + ' · <a href="#plano">ver fases</a></p>' : "") + "</div>";
 }
 // Linha de um alimento registrado: nome, quantidade (editável), calorias e remover
 function dtItemHtml(x, j) {
-  return '<div class="dtit"><span class="dtn">' + esc(x.n) + '</span><input class="dtq" type="number" inputmode="decimal" min="0" step="any" value="' + (x.q != null ? x.q : "") + '" data-dtq="' + j + '" aria-label="Quantidade de ' + esc(x.n) + '"><span class="dtu">' + (x.u === "porção" ? "porç." : "g") + '</span><span class="dtk">' + dtKc(+x.kcal || 0) + ' kcal</span><button class="dtx" type="button" data-dt="del|' + j + '" aria-label="Remover ' + esc(x.n) + '">×</button></div>';
+  return '<div class="dtit"><span class="dtn">' + esc(x.n) + '</span><input class="dtq" type="number" inputmode="decimal" min="0" step="any" value="' + (x.q != null ? x.q : "") + '" data-dtq="' + j + '" aria-label="Quantidade de ' + esc(x.n) + '"><span class="dtu">' + (x.u === "porção" ? "porç." : "g") + '</span><span class="dtk">' + dtKc(+x.kcal || 0) + '</span><button class="dtx" type="button" data-dt="del|' + j + '" aria-label="Remover ' + esc(x.n) + '">×</button></div>';
 }
 // Texto da prévia: calorias e macros da quantidade digitada
 function dtPrevTxt(f, q) { const v = dtCalc(f, q || 0); return dtKc(v.kcal) + " kcal · P " + fmt(v.p) + " · C " + fmt(v.c) + " · G " + fmt(v.g); }
 // Lista da busca (ou os mais usados, antes de digitar)
 function dtResHtml() {
-  const S = dtS(), tem = S.q.trim().length > 0, L = tem ? dtBusca(S.q) : dtUsados(6);
-  if (!L.length) return '<p class="muted dtvz">' + (tem ? 'Nada encontrado. Tente outra palavra ou use "Fora da tabela".' : "Digite parte do nome. Os valores são por 100 g.") + "</p>";
-  return (tem ? "" : '<p class="muted dtvz">Mais usados por você</p>') + L.map(f => '<button class="dtr" type="button" data-dt="pick|' + f.key + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " (por porção)" : " (por 100 g)") + "</span></button>").join("");
+  const S = dtS(), tem = S.q.trim().length > 0;
+  if (!tem) {
+    const F = dtUsados(DT_FREQ);
+    return F.length ? '<p class="muted dtvz">Frequentes: um toque adiciona com a última quantidade</p><div class="dtfreq">' + F.map(f => { const q = f.ultQ || (f.por === "porcao" ? 1 : 100); return '<button class="dtfq" type="button" data-dt="rapido|' + f.key + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '"><span>' + esc(f.n) + "</span><b>" + dtQtd(f, q) + "</b></button>"; }).join("") + "</div>"
+      : '<p class="muted dtvz">Digite parte do nome. Os valores da tabela são por 100 g.</p>';
+  }
+  const L = dtBusca(S.q);
+  if (!L.length) return '<p class="muted dtvz">Nada encontrado. Tente outra palavra ou use "Fora da tabela".</p>';
+  return L.map(f => { const q = dtUltQ(f); return '<div class="dtrr"><button class="dtr" type="button" data-dt="pick|' + f.key + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " / porção" : " / 100 g") + '</span></button><button class="dtqk" type="button" data-dt="rapido|' + f.key + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '">+ ' + dtQtd(f, q) + "</button></div>"; }).join("");
 }
 // Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela
 function dtAddHtml() {
-  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, q0 = f && f.por === "porcao" ? 1 : 100;
+  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, q0 = f ? dtUltQ(f) : 100;
   let h = '<div class="dtadd">';
   if (S.fora) {
-    h += "<b>Alimento fora da tabela</b>" + infoBtn("dt_fora") + '<div class="field"><label for="dtFn">Nome</label><input id="dtFn" type="text" autocomplete="off" placeholder="ex.: whey, pão da padaria"></div><div class="dtf4">' +
+    h += "<b>Alimento fora da tabela</b>" + '<div class="field"><label for="dtFn">Nome</label><input id="dtFn" type="text" autocomplete="off" placeholder="ex.: whey, pão da padaria"></div><div class="dtf4">' +
       [["dtFk", "kcal"], ["dtFp", "Proteína (g)"], ["dtFc", "Carbo (g)"], ["dtFg", "Gordura (g)"]].map(c => '<div class="field"><label for="' + c[0] + '">' + c[1] + '</label><input id="' + c[0] + '" type="number" inputmode="decimal" min="0" step="any"></div>').join("") +
       '</div><div class="field"><label for="dtFpor">Esses valores são de</label><select id="dtFpor"><option value="100g">100 g (como no rótulo)</option><option value="porcao">1 porção inteira</option></select></div><p class="dtmsg" id="dtFmsg" role="status"></p><div class="row-btns"><button class="btn primary small" type="button" data-dt="forasalva">Salvar e usar</button><button class="btn small" type="button" data-dt="foracancela">Voltar à busca</button></div>';
   } else {
-    h += '<input type="search" id="dtQ" autocomplete="off" placeholder="Buscar na tabela TACO (ex.: arroz cozido)" value="' + esc(S.q) + '" aria-label="Buscar alimento"><div id="dtRes">' + dtResHtml() + "</div>";
-    if (f) h += '<div class="dtpk"><b>' + esc(f.n) + '</b><div class="dtpk2"><input id="dtG" type="number" inputmode="decimal" min="0" step="any" value="' + q0 + '" aria-label="Quantidade"><span>' + (f.por === "porcao" ? "porção" : "g") + '</span><span id="dtPrev">' + dtPrevTxt(f, q0) + '</span></div><p class="dtmsg" id="dtGmsg" role="status"></p><div class="row-btns"><button class="btn primary small" type="button" data-dt="ok">Adicionar</button></div></div>';
-    h += '<div class="row-btns"><button class="btn small" type="button" data-dt="fora">Fora da tabela</button><button class="btn small" type="button" data-dt="fechar">Fechar</button></div>';
+    h += '<div class="dtbusca"><input type="search" id="dtQ" autocomplete="off" enterkeyhint="search" placeholder="Buscar alimento (tabela TACO)" value="' + esc(S.q) + '" aria-label="Buscar alimento">' + (S.q ? '<button type="button" class="dtx" data-dt="limpa" aria-label="Limpar a busca">×</button>' : "") + "</div>";
+    if (f) h += '<div class="dtpk"><div class="dtpkh"><b>' + esc(f.n) + '</b><button type="button" class="dtx" data-dt="solta" aria-label="Voltar à lista">×</button></div>' +
+      '<div class="dtqs" role="group" aria-label="Quantidade pronta">' + (f.por === "porcao" ? DT_PORCOES : DT_GRAMAS).map(v => '<button type="button" class="rbtn" data-dt="qtd|' + v + '" aria-pressed="' + (v === q0) + '">' + fmt(v) + "</button>").join("") + "</div>" +
+      '<div class="dtpk2"><input id="dtG" type="number" inputmode="decimal" min="0" step="any" value="' + q0 + '" aria-label="Quantidade"><span>' + (f.por === "porcao" ? "porção" : "g") + '</span><span id="dtPrev">' + dtPrevTxt(f, q0) + '</span></div><p class="dtmsg" id="dtGmsg" role="status"></p><div class="row-btns"><button class="btn primary" type="button" data-dt="ok">Adicionar</button></div></div>';
+    h += '<div id="dtRes"' + (f ? ' class="hide"' : "") + ">" + dtResHtml() + "</div>";
+    h += '<div class="row-btns"><button class="btn small" type="button" data-dt="fora">+ Fora da tabela</button></div>';
   }
   return h + "</div>";
 }
@@ -5964,10 +6332,15 @@ function dtRefsSalva(refs) {
 function dtOk() {
   const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, el = document.getElementById("dtG"), q = el ? +String(el.value).replace(",", ".") : 0;
   if (!f || !(q > 0)) { const m = document.getElementById("dtGmsg"); if (m) m.textContent = "Informe a quantidade."; return; }
-  const v = dtCalc(f, q), it = dtItens(S.data).slice();
+  dtPoeItem(f, q, true);
+}
+// Põe um alimento na refeição escolhida e deixa a busca pronta para o próximo
+function dtPoeItem(f, q, foco) {
+  const S = dtS(), v = dtCalc(f, q), it = dtItens(S.data).slice();
   it.push({ r: S.add, a: f.key, n: f.n, q, u: f.por === "porcao" ? "porção" : "g", kcal: v.kcal, p: v.p, c: v.c, g: v.g });
-  dtPoe(S.data, it); S.pick = null; S.q = ""; S.msg = "";
-  renderDieta(true); const qi = document.getElementById("dtQ"); if (qi) qi.focus();
+  dtPoe(S.data, it); S.pick = null; S.q = ""; S.ult = it.length - 1;
+  S.msg = "✓ " + f.n.split(",")[0] + " · " + dtQtd(f, q) + " · " + dtKc(v.kcal) + " kcal";
+  renderDieta(true); const qi = document.getElementById("dtQ"); if (qi && foco) qi.focus({ preventScroll: true });
 }
 // Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade
 function dtForaSalva() {
@@ -5984,6 +6357,8 @@ function dtClick(ev) {
   const b = ev.target.closest("[data-dt]"); if (!b) return;
   const S = dtS(), p = b.dataset.dt.split("|"), a = p[0], v = p[1];
   if (a === "ok") { dtOk(); return; }
+  if (a === "rapido") { const f = dtFood(/^\d+$/.test(v) ? +v : v); if (f && +p[2] > 0) dtPoeItem(f, +p[2], !!S.q); return; }
+  if (a === "qtd") { const g = document.getElementById("dtG"), f = S.pick != null ? dtFood(S.pick) : null; if (g && f) { g.value = v; const o = document.getElementById("dtPrev"); if (o) o.textContent = dtPrevTxt(f, +v); b.parentNode.querySelectorAll("[data-dt^=qtd]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); } return; }
   if (a === "forasalva") { dtForaSalva(); return; }
   if (a === "refadd") { const r = dtRefs(); r.push({ n: "Refeição " + (r.length + 1), pct: 0 }); dtRefsSalva(r); return; }
   if (a === "refdel") { const r = dtRefs(); if (r.length > 1) { r.pop(); dtRefsSalva(r); } return; }
@@ -5994,22 +6369,27 @@ function dtClick(ev) {
   else if (a === "hoje") { S.data = todayStr(); S.add = null; S.msg = ""; }
   else if (a === "vai") { S.data = v; S.view = "dia"; S.add = null; S.msg = ""; }
   else if (a === "per") S.per = +v;
-  else if (a === "add") { S.add = +v; S.q = ""; S.pick = null; S.fora = false; S.msg = ""; }
-  else if (a === "fechar") { S.add = null; S.pick = null; S.q = ""; }
+  else if (a === "add") { S.add = +v; S.q = ""; S.pick = null; S.fora = false; S.msg = ""; S.ult = null; }
+  else if (a === "ref") { S.add = +v; }
+  else if (a === "fechar" || a === "limpa") { S.pick = null; S.q = ""; }
+  else if (a === "solta") S.pick = null;
+  else if (a === "desfaz") { const it = dtItens(S.data).slice(); if (S.ult != null && it[S.ult]) { it.splice(S.ult, 1); dtPoe(S.data, it); } S.ult = null; S.msg = ""; }
+  else if (a === "repete") { const r = +v, n = dtRefs().length, it = dtItens(S.data).concat(JSON.parse(JSON.stringify(dtItens(dtAdd(S.data, -1)).filter(x => Math.min(x.r | 0, n - 1) === r)))); dtPoe(S.data, it); S.msg = "Repetido de ontem. Ajuste as quantidades se precisar."; S.ult = null; }
   else if (a === "pick") S.pick = /^\d+$/.test(v) ? +v : v;
-  else if (a === "del") { const it = dtItens(S.data).slice(); it.splice(+v, 1); dtPoe(S.data, it); }
-  else if (a === "copia") { dtPoe(S.data, JSON.parse(JSON.stringify(dtItens(dtAdd(S.data, -1))))); S.msg = "Copiado do dia anterior. Ajuste as quantidades."; }
+  else if (a === "del") { const it = dtItens(S.data).slice(); it.splice(+v, 1); dtPoe(S.data, it); S.ult = null; S.msg = ""; }
+  else if (a === "copia") { dtPoe(S.data, JSON.parse(JSON.stringify(dtItens(dtAdd(S.data, -1))))); S.msg = "Copiado do dia anterior. Ajuste as quantidades."; S.ult = null; }
   else if (a === "fora") { S.fora = true; S.pick = null; }
   else if (a === "foracancela") S.fora = false;
   renderDieta(true);
-  const foco = a === "add" || a === "foracancela" ? "dtQ" : a === "pick" ? "dtG" : a === "fora" ? "dtFn" : null, el = foco ? document.getElementById(foco) : null;
-  if (el) { el.focus(); if (foco === "dtG") el.select(); }
+  const foco = a === "add" || a === "foracancela" || a === "limpa" || a === "solta" ? "dtQ" : a === "pick" ? "dtG" : a === "fora" ? "dtFn" : null, el = foco ? document.getElementById(foco) : null;
+  if (el) { el.focus({ preventScroll: true }); if (foco === "dtG") el.select(); }
+  if (a === "add") { const qb = document.getElementById("dtQuick"); if (qb && qb.scrollIntoView) qb.scrollIntoView({ block: "start", behavior: RM() ? "auto" : "smooth" }); }
 }
 // Digitação: a busca atualiza só a lista; a quantidade atualiza a prévia
 function dtInput(ev) {
   const t = ev.target, S = dtS();
-  if (t.id === "dtQ") { S.q = t.value; S.pick = null; const r = document.getElementById("dtRes"); if (r) r.innerHTML = dtResHtml(); const pk = document.querySelector("#dtBox .dtpk"); if (pk) pk.remove(); }
-  else if (t.id === "dtG") { const f = S.pick != null ? dtFood(S.pick) : null, o = document.getElementById("dtPrev"); if (f && o) o.textContent = dtPrevTxt(f, +String(t.value).replace(",", ".") || 0); }
+  if (t.id === "dtQ") { S.q = t.value; S.pick = null; const r = document.getElementById("dtRes"); if (r) { r.innerHTML = dtResHtml(); r.classList.remove("hide"); } const pk = document.querySelector("#dtBox .dtpk"); if (pk) pk.remove(); }
+  else if (t.id === "dtG") { const f = S.pick != null ? dtFood(S.pick) : null, o = document.getElementById("dtPrev"); if (f && o) o.textContent = dtPrevTxt(f, +String(t.value).replace(",", ".") || 0); document.querySelectorAll("#dtBox [data-dt^=qtd]").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.dt.split("|")[1] === +String(t.value).replace(",", ".")))); }
 }
 // Campos alterados: dia, quantidade de um item e nomes ou partes das refeições
 function dtChange(ev) {
@@ -6026,6 +6406,8 @@ function dtChange(ev) {
     dtRefsSalva(r);
   }
 }
+// Busca do glossário
+(function () { const q = document.getElementById("gloQ"); if (q) q.addEventListener("input", () => { const gl = document.getElementById("gloList"); if (gl) gl.innerHTML = gloHtml(q.value); }); })();
 // Liga os toques e a digitação da aba Dieta
 (function () {
   const v = document.getElementById("v-dieta"); if (!v) return;
@@ -6034,6 +6416,27 @@ function dtChange(ev) {
 })();
 
 // ===== 27. PARTIDA =====
+// O app fica nos limites da tela: sem zoom de pinça nem de toque duplo, sem zoom ao entrar num campo e sem rolagem para os lados
+function travaTela() {
+  const V = "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+  let m = document.querySelector('meta[name="viewport"]'); if (!m) { m = document.createElement("meta"); m.name = "viewport"; document.head.appendChild(m); }
+  m.setAttribute("content", V);
+  // o Safari do iPhone ignora user-scalable: o gesto de pinça é bloqueado aqui
+  ["gesturestart", "gesturechange", "gestureend"].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+  document.addEventListener("touchmove", e => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  // se o sistema aproximou a tela num campo, volta ao tamanho normal ao sair dele
+  document.addEventListener("focusout", () => { const vv = window.visualViewport; if (vv && vv.scale > 1.01) { m.setAttribute("content", V.replace("maximum-scale=1", "maximum-scale=1.0001")); requestAnimationFrame(() => m.setAttribute("content", V)); } });
+  // nada passa da largura da tela; se algo passar, a página não rola para o lado
+  const lado = () => { if (document.documentElement.scrollWidth > window.innerWidth + 1 || window.scrollX) window.scrollTo(0, window.scrollY); };
+  window.addEventListener("scroll", () => { if (window.scrollX) lado(); }, { passive: true });
+  window.addEventListener("resize", lado);
+}
+// Elementos que passam da largura da tela (conferência)
+function largos() { const W = document.documentElement.clientWidth; return [...document.querySelectorAll("body *")].filter(e => { const r = e.getBoundingClientRect(); return r.width && r.right > W + 1 && getComputedStyle(e).position !== "fixed" && !e.closest(".tablewrap, .biohw, .subnav, [hidden], .hide"); }); }
+travaTela();
+// Blocos recolhíveis fixos no HTML voltam como você deixou
+try { app.keep = Object.assign(JSON.parse(localStorage.getItem(KEEP_KEY) || "{}"), app.keep || {}); } catch (e) { }
+document.querySelectorAll("details[data-keep]").forEach(el => { const k = app.keep || (app.keep = {}); if (el.dataset.keep in k) el.open = k[el.dataset.keep]; });
 initBodyForm();
 initDates();
 clkLoad(); wakeSync();
