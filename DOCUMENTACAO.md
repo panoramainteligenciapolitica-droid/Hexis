@@ -1,6 +1,6 @@
 # Hexis · documentação do código
 
-Atualizada em 12/nov/2026. A tabela de parâmetros e o índice de funções deste documento são tirados dos comentários do próprio código, então cada linha daqui tem um comentário igual no ponto correspondente do `index.html`.
+Atualizada em 18/nov/2026 (revisão de segurança, conferência dos pedidos e melhorias; ver a seção 11). A tabela de parâmetros e o índice de funções deste documento são tirados dos comentários do próprio código, então cada linha daqui tem um comentário igual no ponto correspondente do `index.html`.
 
 ## 1. Onde fica cada coisa
 
@@ -10,12 +10,12 @@ Atualizada em 12/nov/2026. A tabela de parâmetros e o índice de funções dest
 | Repositório | github.com/panoramainteligenciapolitica-droid/Hexis | Arquivos do site: `index.html`, `manifest.webmanifest`, `icons/`, `README.md` e este documento |
 | Banco do site | Supabase, projeto `hexis` (região sa-east-1) | Login por e-mail e senha e a tabela `hexis_docs`, com os dados de cada pessoa |
 | Versão de origem | App privado, fora do repositório | É onde o app é alterado primeiro. Tem armazenamento próprio, separado do banco do site |
-| Gerador do site, testes e cópias de segurança | Área de trabalho de desenvolvimento, fora do repositório | `build_web.py` transforma a versão de origem no `index.html` do site; os testes conferem cada função antes de publicar |
+| Gerador do site, testes e cópias de segurança | Área de trabalho de desenvolvimento, fora do repositório | **Desatualizado desde 18/nov: não use** (ver seção 8). `build_web.py` transformava a versão de origem no `index.html` do site; os testes conferem cada função antes de publicar |
 
 Pontos de atenção:
 
 - A versão de origem e o site **não compartilham dados**. O que é anotado em um não aparece no outro.
-- O gerador do site e os testes ainda não estão no repositório. Quem alterar o `index.html` direto no GitHub muda só o site.
+- O gerador do site e os testes antigos (`run10`…`run38`, `tbudget`, `cmp.sh`, `inv.py`) ficaram na área de desenvolvimento e não vieram no pacote. Desde 18/nov o pacote traz a pasta `testes/` (seção 9), que roda contra o `completo/index.html`. Quem alterar o `index.html` direto no GitHub muda só o site.
 
 ## 2. Como o `index.html` é organizado
 
@@ -25,7 +25,7 @@ Pontos de atenção:
 2. **Telas** (`<main>` e as barras): a estrutura vazia de cada aba.
 3. **Programa** (`<script>`): 27 seções numeradas, que preenchem as telas e guardam os dados.
 
-Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 26 seções.
+Para achar um trecho, procure no arquivo pelo número da seção: `===== 18.` leva ao cronômetro no programa; `---- 12.` leva aos estilos do cronômetro. O começo do programa tem um mapa com as 27 seções e um resumo de segurança.
 
 ### Estilos (21 blocos)
 
@@ -219,11 +219,13 @@ São 53 parâmetros, todos na seção 1 do programa. Mudar um valor ali muda tod
 | `ASSIM_EQUIL` | `3` | diferença entre os lados abaixo de 3%: "força equilibrada" |
 | `ASSIM_ALERTA` | `10` | a partir de 10%: orienta começar pelo lado mais fraco |
 
+**Lados juntos** (pedido de 18/nov): o exercício é unilateral, mas cada série tem uma linha só e um tempo só, que inclui os dois lados e a troca. A série fica marcada com `uj: 1`. Conta como unilateral no tempo previsto (`dayTime`, via `isUni`) e no ritmo (`ritmo`, via `serieUni`); o cronômetro aceita até `2 × CLK_EXEC_MAX + UNI_TROCA` (`clkExecMax`, 5:30) e espera o dobro do tempo (`clkGo`); o Resumo do dia mostra "(2 lados)"; o gráfico de execução por série conta a metade (um lado). Teste: `testes/unijunto.js`.
+
 Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2): séries, faixa de repetições, carga inicial, descanso previsto e quanto a carga sobe em cada exercício (lista `EX`), e as metas de RIR de cada semana (lista `WT`).
 
 ## 6. Índice por seção
 
-São 366 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 383 funções no programa (contadas em 18/nov, depois da 2ª banca). Cada uma tem, no código, um comentário com o mesmo texto da tabela. Para conferir se alguma ficou fora do índice, procure cada `function nome(` do código neste arquivo.
 
 ### 1. Parâmetros ajustáveis
 
@@ -341,6 +343,7 @@ Descanso previsto e feito, recuperação entre séries, duração do treino e or
 | Função | O que faz |
 | --- | --- |
 | `restSec()` | Descanso previsto em segundos (bi-set: o descanso do par) |
+| `dayTime()` | Tempo do treino de um dia: previsto (no seu ritmo, ou no padrão com poucos tempos anotados) e registrado; os opcionais ficam à parte (`optSec`) |
 | `mmss()` | Segundos em minutos, para o selo do campo: 70 → "1:10 min" |
 | `fmtSec()` | Segundos em texto curto: 45 → "45 s", 90 → "1:30" |
 | `recov()` | Recuperação entre duas séries: força estimada da seguinte ÷ da anterior (com o RIR, se anotado) (normalizada pelo previsto: back-off mais leve ou com mais folga já é esperado) |
@@ -415,6 +418,7 @@ Formulários e resultados das abas Perfil e Objetivo.
 | Função | O que faz |
 | --- | --- |
 | `fieldHtml()` | Um campo do formulário (texto, número, data, escolha, lista de marcar ou texto longo) |
+| `pfConfere()` | Confere o rascunho do Perfil antes de salvar: cada campo numérico tem faixa (`PF_FAIXA`; medidas 10–250 cm; sem faixa própria, até `PF_FAIXA_MAX`) e as datas têm de ser plausíveis. Devolve a mensagem do 1º campo errado |
 | `sectionsHtml()` | Seções do formulário, que abrem e fecham |
 | `cargaRows()` | Linhas da tabela de cargas: um exercício por nome, agrupado pelo treino em que aparece primeiro |
 | `rmCells()` | Células de 1RM estimado e carga da semana 1 de um exercício |
@@ -464,6 +468,9 @@ O que o app guarda na memória e como encontra o registro de um dia ou de um exe
 | Função | O que faz |
 | --- | --- |
 | `todayStr()` | Hoje como AAAA-MM-DD (horário do aparelho) |
+| `numBr()` | Número digitado à brasileira, com regra estrita: "72,5", "72.5", "1.000", "1.000,5" e "120" valem; "0x10", "1e2", "80O" e letras dão NaN |
+| `dataReal()` | Data de registro plausível: existe, é de 2000 em diante e não passa de amanhã (Corpo, exames, CSV, laudo) |
+| `msgFalha()` | Escreve a mensagem de falha de gravação e marca o elemento (`data-falha`); quando a fila esvazia, `syncEstado` troca por "Salvo ✓" |
 | `initDates()` | Define a semana e o dia de hoje |
 | `esc()` | Protege um texto antes de colocá-lo no HTML |
 | `actChip()` | Selo de ação (▲ Subir carga…) com o botão "i" |
@@ -488,6 +495,7 @@ A aba Semana: treino do dia, cartão do exercício, aquecimento, parciais, bloco
 | Função | O que faz |
 | --- | --- |
 | `medeQuadros()` | Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia Quadros das séries com largura fixa: mede a carga e as repetições mais longas já anotadas (e as da ficha) e fixa as colunas para todos os cartões |
+| `renderWeek()` | Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia |
 | `dayBtns()` | Botões dos dias da semana, com a situação de cada um (usados em Semana e em Resumo) |
 | `dayStatus()` | Situação do dia: feito, parcial, não feito ou pendente |
 | `renderDay()` | Treino do dia: cartões dos exercícios, intervalos, cardio, tempo e observações do dia |
@@ -558,6 +566,7 @@ A aba Corpo e dieta e a pesagem rápida.
 | Função | O que faz |
 | --- | --- |
 | `medIdeal()` | Meta ou referência de uma medida, para a linha do gráfico |
+| `bioCsvLinha()` | Divide uma linha do CSV respeitando aspas ("72,5" entre aspas, com vírgula como separador) |
 | `renderGoal()` | Desenha a aba Corpo e dieta: fase, calorias e macros, peso, ritmo, gordura e medidas |
 | `initBodyForm()` | Monta os campos de medidas do formulário de corpo |
 | `weightStats()` | Pesagens: média de 7 dias, média anterior e ritmo por semana |
@@ -572,7 +581,8 @@ A aba Corpo e dieta e a pesagem rápida.
 | `bioPos()` | Posição de um valor na barra (0 a 100%): abaixo, dentro e acima da faixa normal ocupam zonas fixas |
 | `bioFig()` | Figura do corpo (desenho simples) com os segmentos pintados na cor do cartão |
 | `bioHtml()` | Painel "Evolução corporal": gordura contra a meta, análise músculo-gordura, análise segmentar e histórico |
-| `bioCsv()` | Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora) |
+| `BIO_PESO`, `BIO_GORD`, `BIO_CSV_MAX` | Faixas aceitas do peso (20–300 kg) e da gordura (2–70 %) dos exames, e o tamanho máximo do arquivo (2 MB) |
+| `bioCsv()` | Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora). Aceita data DD/MM/AAAA ou AAAA-MM-DD e recusa data que não existe; o nome do aparelho fica só com letras, números, espaço, ponto e hífen (40 caracteres); peso fora de `BIO_PESO` recusa a linha, gordura fora de `BIO_GORD` é descartada, outros valores só de 0 a 1000. Arquivo maior que `BIO_CSV_MAX` (2 MB) é recusado e só os 500 últimos exames entram |
 | `bioImporta()` | Importa o arquivo: exame novo entra; exame que já existe é atualizado, guardando o que só o laudo tem (% do padrão e faixas) |
 | `bioEspelha()` | O peso e a gordura de um exame do período do plano entram também nas medidas do dia |
 | `bioFormHtml()` | Formulário do exame: os campos seguem a ordem do laudo |
@@ -609,6 +619,7 @@ A aba Plano e regras.
 | Função | O que faz |
 | --- | --- |
 | `gloHtml()` | Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual Glossário: todos os termos do app, com busca; cada um abre a mesma explicação do botão "i" |
+| `renderPlan()` | Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual |
 
 ### 17. Exercício unilateral
 
@@ -617,11 +628,12 @@ Modo unilateral: dados de cada lado e qual lado conta para a progressão.
 | Função | O que faz |
 | --- | --- |
 | `uniDefault()` | Unilateral por padrão? (pelo nome, ou pela observação "cada perna / cada lado") |
-| `uniModo()` | Modo do exercício: "bi" (bilateral), "lados" (unilateral, cada lado anotado à parte) ou "junto" (unilateral com os lados juntos: uma linha por série e um tempo só, que já inclui os dois lados). A escolha do usuário vale mais que o padrão |
-| `isUni()` | Unilateral de qualquer jeito (cada lado ou lados juntos): conta no tempo como unilateral |
+| `uniModo()` | Modo do exercício: `bi` (bilateral), `lados` (unilateral, cada lado anotado) ou `junto` (unilateral com os lados juntos). A escolha do usuário (`settings.uni[k]`: `false`, `true` ou `"junto"`) vale mais que o padrão |
+| `isUni()` | Unilateral de qualquer jeito (cada lado ou lados juntos): conta no tempo previsto como unilateral |
 | `uniLados()` | Unilateral com cada lado anotado à parte (linhas de esquerdo e direito, cronômetro por lado) |
-| `uniJunto()` | Unilateral com os lados juntos (uma linha por série; o tempo anotado é o dos dois lados) |
-| `serieUni()` | Série feita como unilateral: com os lados anotados, marcada como "lados juntos" ou de um exercício hoje em lados juntos |
+| `uniJunto()` | Unilateral com os lados juntos: uma linha por série; o tempo anotado é o dos dois lados e a troca |
+| `serieUni()` | A série foi feita como unilateral? (lados anotados, marca `uj` da série ou exercício hoje em lados juntos) |
+| `uniLinkHtml()` | Botãozinho 🔗 à vista no cartão dos unilaterais: liga ou separa os lados |
 | `uniSum()` | Soma de um campo dos dois lados (ex.: tempo de execução) |
 | `uniKg()` | Carga de um lado; se estiver vazia, a do outro |
 | `uniScore()` | Força estimada de um lado na série |
@@ -629,7 +641,6 @@ Modo unilateral: dados de cada lado e qual lado conta para a progressão.
 | `maqBoxHtml()` | Bloco "Cargas da máquina" do cartão: as placas conhecidas, o tipo (automático, placas fixas, carga livre) e o campo para declarar as placas |
 | `maqSet()` | Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias) |
 | `uniToggleHtml()` | Botões Bilateral / Unilateral (cada lado) / Unilateral (lados juntos) do cartão |
-| `uniLinkHtml()` | Botãozinho de ligar os lados, à vista no cartão dos unilaterais: com os lados ligados, cada série tem uma linha só e o tempo é o dos dois lados |
 | `uniLine()` | Diferença entre os lados no exercício de hoje |
 | `uniDifHtml()` | Botões "Mais difícil: Esquerdo / Igual / Direito" |
 | `uniRows()` | Linhas da série unilateral: esquerdo e direito com carga, reps e RIR; depois cronômetro, execução, parciais e dificuldade |
@@ -657,7 +668,8 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkBeep()` | Aviso sonoro e vibração |
 | `clkToast()` | Mensagem curta acima da barra do cronômetro |
 | `clkHandoff()` | Fecha a fase em andamento quando você começa a série (m, j) e anota o que couber |
-| `clkExecMax()`, `clkGo()` | Começa a cronometrar a execução da série (m = exercício, j = série) Teto da execução cronometrada: nos lados juntos, cabe o tempo dos dois lados e a troca |
+| `clkExecMax()` | Teto da execução cronometrada: nos lados juntos cabe o tempo dos dois lados e a troca (5:30); nos outros, `CLK_EXEC_MAX` |
+| `clkGo()` | Começa a cronometrar a execução da série (m = exercício, j = série) |
 | `clkAfterExec()` | Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série |
 | `clkToRest()` | Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia) |
 | `clkStop()` | Para a execução, anota o tempo e passa para a fase seguinte |
@@ -691,6 +703,7 @@ A aba Resumo do dia: métricas, direcionamentos e exercício por exercício.
 | `pctTxt()` | Fração como porcentagem com sinal: +2,5% |
 | `kgTxt()` | Quilos sem casas decimais: 1.240 kg |
 | `dayStats()` | Números do dia, usados pelo resumo e pela imagem de compartilhar: exercícios, séries, volume, desempenho, tempo e cardio |
+| `recordes()` | Recordes do dia: exercícios em que a melhor série (1RM estimado por `e1`) passou da melhor de todas as semanas anteriores, contando o mesmo exercício em qualquer dia (mesmo nome). A primeira vez de um exercício não é recorde; carga zero fica de fora. Aparece nos Direcionamentos como "🏆 Recorde" |
 | `daySummaryHtml()` | Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício |
 | `renderResumo()` | Desenha a aba Resumo do dia |
 
@@ -771,12 +784,14 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `DJ_REF` | Lista final da referência: hormônios, fichas (com o conferido em bula por cima) e os citados sem ficha |
 | `DJ_LOCAIS` | locais de aplicação oferecidos na lista |
 | `DJ_PDF` | leitor de PDF, carregado só quando um laudo é escolhido |
+| `DJ_PDF_SHA` | Impressão digital (SHA-384) de cada arquivo do leitor de PDF, tirada do pacote oficial no npm. Ao trocar a versão do leitor, troque também estes valores |
 | `DJ_LER` | Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome] |
 | `DJ_LER_JANELA` | caracteres depois do nome do marcador em que o valor é procurado |
 
 | Função | O que faz |
 | --- | --- |
 | `djSlug()`, `djNota()` | Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código |
+| `djEscala()` | Exame de contagem em "mil/mm³" (plaquetas): valor e faixa de referência sempre nessa escala (número acima de 1.000 é /mm³ e é dividido). Usada ao ler o laudo, ao salvar à mão e ao mostrar, então registros antigos em duas escalas aparecem certos sem regravar |
 | `djNotaSave()` | Salva a anotação digitada no cartão |
 | `djVia()` | Via da referência → opção do cadastro |
 | `djDias()` | Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias" |
@@ -796,7 +811,8 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `djNum()` | Número escrito à brasileira ("1.234,5" ou "45,2") para número |
 | `djRefTxt()` | Faixa de referência escrita no laudo: prefere o trecho do sexo do Perfil e a faixa na mesma unidade do resultado. Devolve [mínimo, máximo]; um deles pode faltar |
 | `djAcha()` | Procura os marcadores no texto de um laudo. Primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO: valor unidade"); o que não veio em bloco é procurado no texto corrido (tabelas, como a do hemograma): o primeiro número depois do nome é o valor |
-| `djPdfTexto()` | Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha) |
+| `djPdfArq()` | Baixa um arquivo do leitor de PDF, confere a impressão digital (`DJ_PDF_SHA`) e devolve um endereço local (blob:). Arquivo diferente do conferido não roda |
+| `djPdfTexto()` | Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha). Carrega o leitor uma vez por sessão (`djPdfLib`), com `isEvalSupported: false` |
 | `djLerHtml()` | Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis |
 | `djLerArquivo()` | Lê o laudo escolhido e mostra a lista de conferência |
 
@@ -831,7 +847,31 @@ Login e ligação com o banco de dados: carrega os dados da pessoa e grava cada 
 
 | Função | O que faz |
 | --- | --- |
-| `connect()` | Dono: dados na raiz (como antes). Outras pessoas: espaço privado data/users/<id>/app/, que nem o dono lê. |
+| Dado | O que guarda |
+| --- | --- |
+| `SB_URL`, `SB_KEY` | Endereço do projeto e a chave **pública** do Supabase (feita para ficar no navegador; quem protege os dados são as regras RLS) |
+| `SENHA_MIN` | Tamanho mínimo da senha ao **criar** conta (8). Contas antigas com 6 continuam entrando. O mínimo que vale de verdade é o do painel do Supabase |
+
+| Função | O que faz |
+| --- | --- |
+| `makeDb()` | Mesma interface de coleções e documentos que o app usa. **Carga**: lê `hexis_docs` de 1.000 em 1.000, só as linhas do próprio `user_id` (`.eq("user_id", uid)`, além do RLS) e só caminhos válidos (recusa `__proto__`). **Gravação**: uma fila por documento (duas mudanças seguidas chegam na ordem e a última vence). A fila também fica **guardada no aparelho** (`FILA_KEY` + id da pessoa) até o servidor confirmar: se o celular fechar o app sem sinal, o que faltava volta na próxima abertura e é enviado logo depois da carga. Falha de rede: nova tentativa em 3 s, dobrando até 30 s, e na hora em que a rede volta (`online`). Sessão expirada ou recusa do servidor: a gravação **continua na fila** (tentativas até 5 min) e segue assim que a sessão renova (`retenta`). A primeira falha é devolvida para a tela avisar. Antes de a carga terminar, recusa gravar (`nao_carregou`). Valores da fila valem mais que os recém-carregados. Métodos extras: `pronto()`, `pendentes()`, `agora()`, `retenta()`, `descarta()` (Sair: tira a fila do aparelho), `vazia(ms)` (espera a fila esvaziar) e `dump()` |
+| `syncEstado()` | Cabeçalho: "Sincronizado", "Salvando…", "Não salvo · tentando de novo" ou "Não salvo · entre de novo" (sessão recusada). Quando a fila esvazia depois de uma falha, troca por "Salvo ✓" as mensagens de erro que ficaram nas telas (`msgFalha`), na barra, na dieta e na bioimpedância |
+| `dataOk()` | Confere se uma data AAAA-MM-DD existe de verdade (recusa 2026-13-45). Usada no CSV, nos exames, no Corpo e na carga |
+| `corpoRuimAviso()` | Na carga, registros de Corpo com data inválida ficam fora das contas (`app.corpoRuim`) e aparecem num aviso com botão para apagar |
+| `gravaJa()` | Ao esconder ou fechar o app (`visibilitychange`, `pagehide`), grava na hora o que esperava os 1,2 s. Com gravação pendente, fechar a aba pede confirmação (`beforeunload`) |
+| `numCampos()` | Troca os campos `type=number` por texto com `inputmode="decimal"`: o teclado numérico continua e a vírgula vira ponto ("72,5" → 72,5). Um observador repete a troca nos campos que as telas criam depois |
+| `lgSay()`, `lgErr()` | Mensagem da tela de login e o erro do Supabase em português |
+| `showLogin()`, `hideLogin()` | Mostram e escondem a tela de login |
+| `lgGo()` | Entrar ou criar conta com e-mail e senha |
+| `exportaDados()` | Seus dados (Plano e regras): baixa a cópia de segurança completa em JSON ou as séries em planilha CSV (separador `;`, abre no Excel com acentos). Tudo é gerado no aparelho |
+| `connect()` | Liga no Supabase e espera a sessão. `detectSessionInUrl: false`: um link com sessão no endereço não troca a conta (o app só entra por e-mail e senha) e o endereço é limpo. As gravações feitas com a tela escondida saem com `keepalive`, para o navegador não cortá-las. Sessão renovada reenvia a fila; sessão de outra conta ou encerrada em outra aba recarrega |
+| `startSession()` | Sessão aberta: deixa a tela em espera (`body.carregando`, nada é editável) até os dados chegarem; se a carga falha, mostra o aviso com o botão "Tentar de novo" (`#connRetry`) e continua sem gravar nada. Liga as fotos (só caminhos da pasta da própria pessoa, links de 10 min) e busca de novo ao voltar para o app só se não houver gravação pendente. Se a sessão acaba em outra aba (`SIGNED_OUT`), recarrega |
+
+**Sair** (2ª banca): primeiro tenta gravar o que falta (até 4 s; sem rede, não espera). Se ainda sobrar algo, pergunta "N registros ainda não foram gravados… Sair mesmo assim?". Depois apaga do aparelho a fila, o cronômetro, os blocos abertos e a tela acesa (`FILA_KEY`, `CLK_KEY`, `KEEP_KEY`, `WAKE_KEY`), encerra a sessão **no aparelho** (`signOut({ scope: "local" })`, que funciona sem internet; o token é apagado à mão se a biblioteca não responder em 2,5 s) e recarrega uma vez só (`app.saindo`).
+
+O cadastro responde a mesma frase quando o e-mail já tem conta ou é novo ("Se este e-mail ainda não tinha conta, enviamos um link de confirmação. Se já tinha, toque em Entrar."), também quando o erro vem do servidor (`lgErr`), para não revelar quem usa o app. Senha recusada pelo servidor diz o mínimo de `SENHA_MIN`. E-mail sem @ recebe "Confira o e-mail".
+
+**Onde cada gravação avisa a falha** (todas passam por `saveErr()`, que escreve a barra e o cabeçalho): treino (`flush`), dieta (`dtGrava`), ajustes (`saveSettings`), documentos avulsos como diário e fotos (`putDoc`, devolve verdadeiro ou falso), exames de bioimpedância (`bioGrava`, "Exame salvo ✓" só depois de gravar) e o espelho em Corpo (`bioEspelha`).
 
 ### 26. Dieta: diário de alimentos com a tabela TACO
 
@@ -866,7 +906,8 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `dtCalc()` | Calorias e macros de uma quantidade (gramas, ou número de porções quando o alimento é por porção) |
 | `dtSum()` | Soma de calorias e macros de uma lista de itens |
 | `dtItens()` | Alimentos registrados em um dia |
-| `dtBusca()` | Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela palavra |
+| `dtBusca()` | Busca: todas as palavras digitadas têm de aparecer no nome. Ordem: seus alimentos; a forma do dia a dia da palavra comum (`DT_PREF`, por exemplo "arroz" → "Arroz, tipo 1, cozido"); o nome-base exato ("Maçã, …"); a 1ª palavra igual; o que começa pela palavra; o resto. Desempate pelo nome mais curto |
+| `DT_PREF` | Palavra comum → começo do nome na TACO que deve vir primeiro (leite, arroz, feijão, ovo, frango, pão, batata, banana, patinho, aveia, iogurte, queijo). A TACO não tem os valores do leite de vaca integral líquido: crie em "Meus alimentos" |
 | `dtUsados()` | Alimentos que você mais registrou (aparecem antes de digitar), cada um com a última quantidade usada |
 | `dtUltQ()` | Última quantidade usada de um alimento (ou 100 g / 1 porção) |
 | `dtQtd()` | Quantidade com unidade: "150 g" ou "1,5 porção" |
@@ -875,6 +916,9 @@ A aba Dieta: a tabela TACO embutida, o registro de alimentos por refeição e as
 | `dtSit()` | Situação contra o proposto: dentro (até 10%), acima ou abaixo, com a cor de cada uma |
 | `dtBar()` | Barra de progresso: ingerido contra o proposto |
 | `dtDif()` | Diferença com sinal e situação: "+120 · acima" |
+| `DT_GASTO_DIAS`, `DT_GASTO_MIN`, `DT_GASTO_PESOS`, `DT_KCAL_KG` | Gasto real estimado: janela de 21 dias terminando ontem; mínimo de 10 dias com alimentos e 4 pesagens; 7.700 kcal por kg de peso |
+| `dtGasto()` | Gasto real estimado pelos registros: média das calorias dos dias anotados menos a variação de peso (reta pelas pesagens da janela) × 7.700. `null` com poucos dados |
+| `dtGastoHtml()` | Bloco "Gasto real estimado" no alto da visão "Por dia", com a comparação com a meta da fase. Só informa: não muda a meta |
 | `renderDieta()` | Desenha a aba Dieta: meta da fase, menu e a visão escolhida |
 | `dtDiaHtml()` | Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição |
 | `dtHeroHtml()` | Cartão do total do dia: anel das calorias contra a meta, o que falta e os macros |
@@ -904,6 +948,8 @@ Ordem em que o app liga.
 
 ## 7. Como fazer as mudanças mais comuns
 
+**Depois de qualquer mudança no programa** (desde 18/nov): `python3 testes/atualiza-csp.py partes`, depois `cat partes/p*.txt > completo/index.html` e `testes/rodar-tudo.sh`. Sem o primeiro passo, a CSP recusa o programa e o app não abre.
+
 **Trocar ou incluir um exercício.** Seção 2, lista `EX`. Cada linha é `ex("código", "dia", "Nome", "Músculo", { opções })`. O que não for informado nas opções usa o padrão:
 
 | Opção | Padrão | Significado |
@@ -916,7 +962,7 @@ Ordem em que o app liga.
 | `mic` | `1.25` | Microcarga, usada no destrave |
 | `step` | `0.5` | Arredondamento da carga |
 | `t` | `"iso"` | `"iso"` isolador ou `"comp"` composto (muda o RIR-alvo) |
-| `rest` | `"2 min"` | Descanso previsto: `"90 s"`, `"2 min"`, `"2–3 min"` |
+| `rest` | `"2 min"` | Descanso previsto: `"90 s"` ou `"2 min"`. **Máximo de 2 min** (regra do usuário, 18/nov). Uma faixa como `"2–3 min"` conta pelo maior número (`restSec`) e o teste `banca.js` acusa qualquer texto acima de 2 min |
 | `obs` | vazio | Observação fixa do exercício |
 | `bw` | não | Exercício com o peso do corpo |
 | `opt` | não | Opcional (não conta para fechar o dia) |
@@ -938,6 +984,8 @@ O código (`A1`, `C2f`) identifica o exercício nos registros. Trocar o código 
 **Mudar um aviso do Resumo do dia.** Seção 19, função `daySummaryHtml()`: cada direcionamento é uma linha `dir.push([...])`. Os limites ("acima", "abaixo", descanso curto) são parâmetros da seção 1.
 
 ## 8. Versão web: como é gerada e publicada
+
+> **Atenção (18/nov):** as correções das revisões de 18/nov (segurança, gravação, bancas) foram feitas direto no `index.html` deste pacote (`partes/`). A versão de origem e o `build_web.py` **não** as têm. **Não gere o site de novo pelo `build_web.py`**: isso desfaria todas as correções. A fonte da verdade agora são as `partes/` deste pacote; o texto abaixo descreve como o site foi gerado antes.
 
 O site é gerado da versão de origem pelo `build_web.py`, que faz o seguinte:
 
@@ -990,8 +1038,37 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 | `cmp.sh` | Compara a saída de todos os testes antes e depois de uma reorganização do código |
 | `inv.py` | Lista funções, textos e estilos sem uso |
 
+Na revisão de 18/nov os testes rodaram em Chromium a 390 px, com o Supabase simulado e as bibliotecas servidas das cópias oficiais do npm:
+
+| Teste | O que confere |
+| --- | --- |
+| Injeção de HTML | Textos maliciosos em todos os campos de texto livre (perfil, observações, palavras-chave, substâncias, aplicações, exames, alimentos, refeições, bioimpedância, laudo lido) e em todas as abas: nada pode virar HTML nem rodar |
+| Política de conteúdo | Nenhum bloqueio da CSP com o app em uso (abas, gráficos, leitor de PDF, exportação) |
+| Leitor de laudo | PDF gerado com hematócrito e testosterona: o leitor baixa, confere a impressão digital e acha os dois |
+| Recorde, gasto real e exportação | Recorde no Resumo, gasto com 21 dias de dieta e 7 pesagens, JSON com todos os documentos e CSV das séries |
+| Tempo do dia | Todas as semanas de 1 a 60: o maior dia prevê 99 min com o cardio (limite 120) |
+| Largura | `largos()` vazio em todas as abas, com um e-mail comprido no cabeçalho |
+
+### Pasta `testes/` (no pacote desde 18/nov)
+
+Os roteiros da revisão de 18/nov e os das duas bancas estão no pacote, na pasta `testes/`, com `README.md`, `preparar.sh` (baixa as bibliotecas do npm uma vez) e `rodar-tudo.sh`. Os roteiros antigos da tabela de cima (`run10`…`run38`, `tbudget`, `cmp.sh`, `inv.py`) **não** vieram no pacote: ficaram na área de desenvolvimento original. Os do pacote rodam com Node e Playwright, contra qualquer `index.html`, sem tocar no banco real, e cada um termina com código 1 quando algo falha (o `rodar-tudo.sh` também).
+
+| Arquivo | O que confere |
+| --- | --- |
+| `banca2.js` | 34 conferências dos achados da 2ª banca: Sair sem rede (sai, apaga sessão e fila, avisa o que se perderia); série guardada no aparelho sem sinal e enviada ao reabrir; sessão recusada mantém a gravação e mostra "Não salvo"; link com sessão no endereço é ignorado; números estritos nas séries; desmarcar Feito; faixas do Perfil e datas absurdas; dieta ("1.000" g, toque duplo, alimento próprio); aplicação sem duplicar com rede falhando; plaquetas na mesma escala; tentativas com espera crescente; foto com ".."; CSP com hash, quadro de outro site e cadastro neutro |
+| `atualiza-csp.py` | Recalcula o hash do programa na CSP (rode depois de qualquer mudança; com `--confere` só verifica) |
+| `banca.js` | Conferências dos achados da banca: CSV malicioso ou com data e números impossíveis; tela travada durante a carga e sem gravar quando a carga falha; aviso e nova tentativa na dieta e nos ajustes; duas inclusões seguidas na dieta com rede lenta; "72,5" lido como 72,5; repetições fora da faixa recusadas; toque duplo em Feito; laudo com plaquetas e sinal "<"; "250.000" gravado como 250000; busca da TACO; descanso máximo de 2 min; bi-set só bíceps+tríceps na polia |
+| `xss.js`, `xss2.js` | Injeção de HTML em todos os campos e no CSV |
+| `func.js` | Exportação, leitor de laudo, dieta, Sair e CSP |
+| `tempo.js` | Duração prevista de todos os dias das 60 semanas |
+| `largos.js` | Largura de todas as abas a 390 px |
+
 ## 10. Limites conhecidos
 
+- **Ainda dependem do painel do Supabase** (o código não consegue confirmar): as regras RLS de `hexis_docs` e do bucket `fotos` (consulta na seção 11), o cadastro aberto, a senha mínima de 8 no servidor e a proteção contra senhas vazadas.
+- **Teste no celular real ainda falta**: vírgula nos números (`numCampos`), gravação ao travar a tela (`keepalive`) e Sair sem sinal foram conferidos só no Chromium de teste.
+- `numCampos` troca o tipo dos campos de número depois de desenhados, com um observador na página inteira. Funciona, mas o certo seria desenhar os campos já como texto (dívida técnica, junto com as funções grandes e os nomes curtos).
+- Os estilos ainda aceitam `'unsafe-inline'` na CSP. Não permite rodar programa, mas um texto que escapasse ainda poderia mudar a aparência.
 - O leitor de laudo entende primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO:", como os do Sabin) e depois procura no texto corrido o que faltou. A referência escolhida é a do sexo do Perfil; quando o laudo só traz faixas por idade sem linha de adulto, fica em branco. Conferido com dois laudos reais.
 - Nos formulários de hormônios, o intervalo é uma escala fixa, o local tem lista, e a dose, o lote, a unidade e a referência do exame são guiados pelo último registro da própria pessoa.
 - A **leitura de laudo em PDF** usa a biblioteca pdf.js, baixada na hora (versão fixa). Ela só acha os marcadores de `DJ_LER` e nada é salvo sem conferência. A **importação do InBody** reconhece as colunas pelo título (`BIO_CSV`).
@@ -1005,6 +1082,8 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 - As fotos só existem no site, porque dependem do armazenamento de arquivos do Supabase.
 - O aviso do cronômetro só toca com o app aberto na tela. Por padrão o app mantém a tela acesa enquanto o cronômetro roda; aviso com a tela bloqueada exigiria notificações enviadas por um servidor.
 - O site não tem recuperação de senha por e-mail.
+- O **gasto real estimado** depende de registrar o dia inteiro: dias com alimentos faltando puxam o número para baixo.
+- O **recorde** compara exercícios pelo nome. O abdominal de quinta (D6) ainda tem a carga da polia na semana 1, então o abdominal na máquina só marca recorde quando passar dela (ver as pendências no contexto).
 - No plano gratuito do Supabase, um projeto sem uso por uma semana é pausado e precisa ser reativado no painel.
 - A versão de origem e o site têm dados separados.
 
@@ -1018,4 +1097,35 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 - **Botão "i"**: só nos termos menos comuns (`INFO_COMUM`, `INFO_ACT_COMUM`, `infoRaro`); todos os termos ficam no Glossário (Plano e regras, `gloHtml`).
 - **Dieta**: aba própria; refeição escolhida pelo horário (`dtRefAgora`, `DT_HORA`); frequentes com a última quantidade (`dtUsados`, `dtUltQ`) adicionados em um toque (`dtPoeItem`); quantidades prontas (`DT_GRAMAS`, `DT_PORCOES`); repetir a refeição de ontem; desfazer o último.
 - **Peso base da máquina**: `settings.maq[nome].min`; `maqMin` impede carga prevista, back-off, ajuste entre séries e aquecimento abaixo dele.
-- **Unilateral com os lados juntos**: `settings.uni[k]` aceita `false` (bilateral), `true` (cada lado) ou `"junto"` (lados juntos). `uniModo`, `isUni` (qualquer unilateral: conta no tempo previsto), `uniLados` (linhas e cronômetro por lado), `uniJunto`, `serieUni`. No modo junto a série tem uma linha e um tempo só (`uj: 1` na série); o ritmo conta como unilateral, o cronômetro aceita até `2 × CLK_EXEC_MAX + UNI_TROCA` (`clkExecMax`), o resumo mostra "(2 lados)" e o gráfico de execução conta metade. Botão à vista no cartão: `uniLinkHtml`. Teste: `run39`.
+
+## 11. Segurança
+
+O que protege os dados de saúde de cada pessoa, e onde fica cada proteção:
+
+| Proteção | Onde | O que faz |
+| --- | --- | --- |
+| Regras de acesso (RLS) | Painel do Supabase: tabela `hexis_docs` e armazenamento `fotos` | Cada pessoa só lê e grava as linhas com o próprio `user_id` e só mexe na própria pasta de fotos. A chave no código é a pública: sem as regras, qualquer pessoa leria tudo. **Conferir no painel** (consulta abaixo) |
+| Escape do texto | Código, `esc()` (seção 10) | Todo texto digitado ou importado passa por `esc()` antes de virar HTML. A revisão de 18/nov achou e corrigiu um ponto sem escape: o nome do aparelho no painel Evolução corporal (`bioHtml`), que também vem do CSV do InBody |
+| Integridade das bibliotecas | `<script ... integrity>` (Chart.js e Supabase) e `DJ_PDF_SHA` (leitor de PDF) | O navegador só roda o arquivo se ele for idêntico ao conferido. O Supabase passou a usar `supabase.js` (o `supabase.min.js` não existe no pacote e era gerado na hora pelo CDN) |
+| Política de conteúdo (CSP) | `<meta http-equiv="Content-Security-Policy">` no `<head>` | Programas: só o próprio programa embutido, conferido pelo **hash** (`sha256`, sem `'unsafe-inline'`), e as bibliotecas das **versões exatas** do CDN (Chart.js 4.4.1 e supabase-js 2.119.0). Conexões: só o Supabase do app e a pasta do leitor de PDF (pdfjs-dist 4.10.38). Um texto malicioso que escape para a tela não roda. **Depois de qualquer mudança no programa, rode `python3 testes/atualiza-csp.py partes` e junte as partes de novo; sem isso o app não abre** (o navegador recusa o programa com hash diferente). Os estilos ainda aceitam `'unsafe-inline'` (o app usa `style=` em muitos pontos) |
+| Sem referência ao endereço de origem | `<meta name="referrer" content="no-referrer">` | Os pedidos às bibliotecas e às fontes não levam o endereço do app |
+| Aparelho compartilhado | Botão Sair (`#logout`) | Apaga o que o app guardou no aparelho antes de sair. A sessão encerrada em outra aba recarrega esta |
+| Dentro de quadro de outro site | Seção 27 (partida) | O app não abre dentro de um `iframe` (a regra `frame-ancestors` não vale em `<meta>`) |
+| Login por link | `connect()` | `detectSessionInUrl: false`: um endereço com a sessão de outra pessoa não troca a conta logada |
+| Fila no aparelho | `makeDb()`, `FILA_KEY` | Só o que ainda não chegou ao servidor fica no aparelho, e sai assim que o servidor confirma ou ao tocar em Sair. É o preço de não perder série anotada sem sinal |
+| Isolamento entre contas no código | `makeDb()` e `startSession()` | Além do RLS, a leitura filtra pelo `user_id` da sessão e as fotos só são pedidas ou apagadas se o caminho for exatamente `<pasta da pessoa>/<arquivo>`, sem subpastas nem `..` |
+| Nada gravado antes da carga | `makeDb().pronto()` e `body.carregando` | Evita sobrescrever o servidor com dados vazios quando a carga é lenta ou falha |
+| Arquivo importado | `bioCsv()`, `BIO_CSV_MAX` | Limite de tamanho, datas e números conferidos, nome do aparelho limpo e escapado |
+| Faixas dos números | `djAct`, eventos de digitação, Corpo, dieta | Carga 0–1000 kg, repetições 0–100, RIR 0–10, peso 20–300 kg, gordura 2–70 %, medidas 10–250 cm, alimento até 5.000 g ou 50 porções, dose abaixo de 1 milhão. Fora da faixa, o campo fica vermelho e nada é gravado |
+| Senha de conta nova | `SENHA_MIN` | Pede 8 caracteres ao criar conta. O mínimo de verdade é o do painel (Authentication → Policies) |
+| Dados pessoais | Regra fixa | Perfil, laudos, cargas e peso base ficam só na conta; o código não tem nome, documento nem laudo. **Exceção ainda aberta**: a tabela `YEAR` (seção 6) traz a trajetória de peso, calorias e eventos mês a mês do plano do dono, e `PLAN_START` tem a data de início. Tirar isso depende de levar esses dados para a conta (ver pendências no contexto) |
+
+Consulta para conferir as regras no painel do Supabase (SQL Editor, só leitura):
+
+```sql
+select schemaname, tablename, policyname, cmd, roles, qual, with_check
+from pg_policies where tablename = 'hexis_docs' or schemaname = 'storage';
+select relname, relrowsecurity from pg_class where relname = 'hexis_docs';
+```
+
+O certo é: `relrowsecurity = true`; em `hexis_docs`, as regras de leitura, inclusão, alteração e exclusão comparam `auth.uid() = user_id` (a de inclusão e a de alteração também em `with_check`); no armazenamento, as regras do `fotos` comparam a primeira pasta do caminho com `auth.uid()`.

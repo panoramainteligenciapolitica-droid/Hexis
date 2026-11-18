@@ -2,6 +2,11 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<!-- Segurança (CSP): o navegador só roda o programa embutido cuja impressão digital (sha256) está na regra, e as bibliotecas só destas
+     versões exatas do CDN; só conversa com o Supabase do app e com a pasta do leitor de PDF. Um texto malicioso que escape para a tela
+     não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode testes/atualiza-csp.py, senão o app não abre. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-OfGHlhNuuOQyhX72Mi0Kp6Wfb+XE24T9Dt/TnO3zvTk=' https://cdn.jsdelivr.net/npm/chart.js@4.4.1/ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/ blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Hexis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
 <meta name="theme-color" content="#2a78d6">
@@ -1046,6 +1051,20 @@ details.grp[open] > summary { margin-bottom: 10px; }
 .brandr { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .acct { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
 .acct span { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Revisão 18/nov: no celular, um e-mail comprido empurrava o botão Hoje para fora da tela. O e-mail fica curto (com reticências) */
+@media (max-width: 480px) { .acct span { max-width: 84px; } .brandr { min-width: 0; } .hd-r { gap: 6px; } }
+/* Revisão 18/nov: tabelas de Plano e regras. A quebra "em qualquer letra" deixava colunas com uma letra por linha.
+   Agora as palavras quebram inteiras, a coluna do símbolo tem largura fixa e a tabela rola para o lado dentro do próprio quadro (a tela não rola) */
+.tablewrap table.plain th, .tablewrap table.plain td { overflow-wrap: normal; hyphens: auto; }
+#legendTable td:first-child, #fixTable td:first-child { width: 34%; }
+#legendTable .act { white-space: normal; text-align: left; }
+#legendTable table, #fixTable table { min-width: 480px; }
+#weekTable table, #yearTable table { min-width: 600px; }
+/* Revisão 18/nov (banca): valor fora da faixa na série; telas só para ver enquanto os dados carregam; cabeçalho com gravação pendente */
+input.bad { border-color: var(--down) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--down) 30%, transparent); }
+body.carregando main { opacity: .72; transition: opacity .2s; }
+.sync.err { color: var(--down); font-weight: 600; }
+#conn .btn { margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -1055,7 +1074,7 @@ details.grp[open] > summary { margin-bottom: 10px; }
     <p class="tagline">O corpo que se constrói pela prática · treino, cardio e dieta</p>
     <form id="loginForm" novalidate>
       <div class="field"><label for="lgEmail">E-mail</label><input id="lgEmail" type="email" autocomplete="email" inputmode="email" required></div>
-      <div class="field"><label for="lgPass">Senha (mínimo de 6 caracteres)</label><input id="lgPass" type="password" autocomplete="current-password" minlength="6" required></div>
+      <div class="field"><label for="lgPass">Senha (conta nova: mínimo de 8 caracteres)</label><input id="lgPass" type="password" autocomplete="current-password" required></div>
       <div class="row-btns"><button class="btn primary" type="submit" id="lgIn">Entrar</button><button class="btn" type="button" id="lgUp">Criar conta</button></div>
       <p class="muted" id="lgMsg" aria-live="polite"></p>
     </form>
@@ -1376,6 +1395,13 @@ details.grp[open] > summary { margin-bottom: 10px; }
       <div class="field"><label for="gloQ">Buscar termo</label><input id="gloQ" type="search" autocomplete="off" placeholder="ex.: RIR, back-off, deload"></div>
       <div id="gloList" class="glo"></div>
     </details>
+    <!-- Seus dados: cópia de segurança completa (JSON) e planilha das séries (CSV). Gerados no próprio aparelho, sem passar por outro serviço -->
+    <details class="panel mais" id="dadosBox" data-keep="dados">
+      <summary><h2>Seus dados</h2><span class="muted">cópia de segurança e planilha</span></summary>
+      <p class="lead">Baixe tudo o que está na sua conta. Guarde a cópia num lugar seguro: ela tem os seus dados de saúde.</p>
+      <div class="row-btns"><button type="button" class="btn" data-exporta="json">Cópia de segurança (JSON)</button><button type="button" class="btn" data-exporta="csv">Séries em planilha (CSV)</button></div>
+      <p class="muted" id="exportaMsg" aria-live="polite"></p>
+    </details>
   </section>
 </main>
 <!-- Barra de navegação de baixo, barra de salvar com o cronômetro e janela de explicação -->
@@ -1406,8 +1432,10 @@ details.grp[open] > summary { margin-bottom: 10px; }
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<!-- Bibliotecas de fora, em versão fixa e com "integrity": o navegador só roda o arquivo se ele for idêntico ao conferido (SHA-384 tirado do pacote oficial no npm).
+     O Supabase usa o supabase.js, que existe no pacote; o supabase.min.js era gerado na hora pelo CDN e não tem impressão digital estável. -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" integrity="sha384-dug+JxfBvklEQdJ4AYuBBAIScUz0bVN73xpy273gcAwHjb3qI0fXmuYNaNfdyYJG" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
 <script>
 "use strict";
 // ╔════════════════════════════════════════════════════════════════════════╗
@@ -1455,11 +1483,22 @@ details.grp[open] > summary { margin-bottom: 10px; }
 //   dieta/2026-11-15 .. alimentos do dia: { data, itens: [{ r: refeição, a: alimento, n: nome, q: quantidade, u: "g" | "porção", kcal, p, c, g }] }
 //   dieta/meus ........ alimentos fora da tabela cadastrados por você
 //   exames/2026-11-13 . exame de bioimpedância: composição, análise segmentar (seg), índices e faixas normais do laudo
-//   O cronômetro em andamento fica só no aparelho (parâmetro CLK_KEY).
+//   semanas/w01-DOM ... domingo livre: só o cardio ou a atividade do dia
+//   diario/sub-… ap-… ex-… nt-… . hormônios e peptídeos: substância, aplicação, exame e anotação (apagar = { apagado: true })
+//   fotos/2026-11-12-… registro de uma foto (o arquivo fica no armazenamento "fotos" do Supabase, na pasta da pessoa)
+//   O cronômetro em andamento, os blocos abertos e a preferência de tela acesa ficam só no aparelho (CLK_KEY, KEEP_KEY, WAKE_KEY); sair da conta apaga os três.
 //
 // COMO UMA MUDANÇA PERCORRE O APP:
-//   toque ou digitação (22) → muda o registro na memória (10) → agenda o salvamento (22)
-//   → o motor refaz todas as semanas a partir dos registros (3) → a tela é redesenhada (11 a 20)
+//   toque ou digitação (24) → muda o registro na memória (10) → agenda o salvamento (24)
+//   → o motor refaz todas as semanas a partir dos registros (3) → a tela é redesenhada (11 a 23 e 26)
+//
+// SEGURANÇA (o que protege os dados de saúde de cada pessoa):
+//   • Banco: a chave do Supabase no código é a pública. Quem protege os dados são as regras da tabela hexis_docs (RLS: cada pessoa só lê
+//     e grava linhas com o próprio user_id) e do armazenamento "fotos" (cada pessoa só na própria pasta). Essas regras ficam no painel do Supabase.
+//   • Tela: todo texto digitado ou importado (CSV do InBody, laudo em PDF) passa por esc() antes de virar HTML. Ao criar uma tela nova, use esc().
+//   • Bibliotecas: Chart.js e Supabase com "integrity" no <script>; o leitor de PDF é conferido por SHA-384 antes de rodar (DJ_PDF_SHA).
+//   • Política de conteúdo (CSP, no <head>): só carrega e conversa com o Supabase do app, o CDN das bibliotecas e as fontes.
+//   • Nenhum dado pessoal no código: perfil, laudos, cargas e peso base das máquinas ficam só na conta da pessoa.
 
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
@@ -1512,8 +1551,8 @@ const FOTO_MAX = 1280;               // lado maior da foto enviada, em pixels (f
 const DJ_ATRAS = 60, DJ_FRENTE = 30; // curva do diário: dias para trás e para a frente
 const DJ_EQUIL = 5;                // meias-vidas até o nível estabilizar com doses repetidas (e até a substância praticamente sair depois da última dose)
 const DJ_HT_ALERTA = 54;           // hematócrito (%) acima do qual a diretriz de reposição de testosterona manda suspender e reavaliar
-const WAKE_KEY = "hexis.wake";
-const KEEP_KEY = "hexis.abertos";     // blocos recolhíveis abertos ou fechados por você, guardados no aparelho       // preferência "tela acesa durante o cronômetro", guardada no aparelho
+const WAKE_KEY = "hexis.wake";        // preferência "tela acesa durante o cronômetro", guardada no aparelho
+const KEEP_KEY = "hexis.abertos";     // blocos recolhíveis abertos ou fechados por você, guardados no aparelho
 const CLK_SEG_REP = 4;             // segundos por repetição, para a barra de execução
 const UNI_TROCA = 30;              // troca de lado na série unilateral: referência da barra e tempo previsto (o que você levar é anotado)
 // Resumo do dia
@@ -1539,23 +1578,24 @@ const DAYS = [
 // Monta um exercício da ficha: k = código, d = dia, n = nome, m = músculo. O resto tem padrão: sc ("st" séries iguais, "top" 1 pesada + back-offs), sets, faixa lo–hi, kg inicial, inc e mic (salto e microcarga), step (arredondamento), t (comp, iso ou core), rest, obs, bw (peso do corpo), opt (opcional)
 function ex(k, d, n, m, o) { return Object.assign({ k, d, n, m, sc: "st", sets: 3, lo: 8, hi: 10, kg: null, inc: 2.5, mic: 1.25, step: 0.5, t: "iso", rest: "2 min", obs: "", bw: false, opt: false, junto: false, semPlus: false, desde: 1 }, o); }
 // A ficha: todos os exercícios, na ordem em que aparecem em cada dia
+// Regras do usuário (18/nov): descanso de no máximo 2 min em todos; bi-set só de bíceps com tríceps, os dois no cabo/polia (E3+E4 e E5+E6). Nenhum outro bi-set
 const EX = [
   ex("A6", "A", "Abdominal (máquina)", "Core", { sets: 4, lo: 8, hi: 12, kg: 87, t: "core", rest: "2 min", obs: "Principal do core: abre o treino" }),
-  ex("A1", "A", "Chest press (sentado)", "Peito", { sc: "top", kg: 52, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
+  ex("A1", "A", "Chest press (sentado)", "Peito", { sc: "top", kg: 52, t: "comp", rest: "2 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("A2", "A", "Peito 45° com halter", "Peito", { sets: 3, lo: 8, hi: 10, kg: 28, inc: 2, mic: 1, step: 1, t: "comp", obs: "Peso de cada halter" }),
   ex("A3", "A", "Crucifixo (máquina)", "Peito", { sets: 2, lo: 10, hi: 12, kg: 73, obs: "Pausa de 1 s no alongamento" }),
   ex("A4", "A", "Tríceps francês na polia", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, rest: "2 min" }),
   ex("A5", "A", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min" }),
   ex("A7", "A", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("B6", "B", "Rotação de tronco", "Core", { sets: 3, lo: 10, hi: 12, kg: 65, t: "core", rest: "2 min", obs: "Cada lado; oblíquos. Abre o treino" }),
-  ex("B1", "B", "Puxada barra Y", "Costas", { sc: "top", kg: 88.5, t: "comp", rest: "2–3 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
+  ex("B1", "B", "Puxada barra Y", "Costas", { sc: "top", kg: 88.5, t: "comp", rest: "2 min", obs: "1 série pesada + 2 back-off com 12% a menos" }),
   ex("B2", "B", "Remada triângulo", "Costas", { sets: 3, lo: 8, hi: 10, kg: 141, t: "comp", obs: "Alongar as escápulas à frente" }),
   ex("B3", "B", "Remada sentada", "Costas", { sets: 2, lo: 8, hi: 10, kg: 92.5, t: "comp" }),
   ex("B4", "B", "Bíceps extendido 45°", "Bíceps", { sets: 3, lo: 8, hi: 10, kg: 16, inc: 1, mic: 0.5, step: 0.5, rest: "2 min", obs: "Bíceps alongado" }),
   ex("B5", "B", "Posterior de ombro na polia", "Ombro posterior", { sets: 3, lo: 12, hi: 15, kg: 20, inc: 1.25, mic: 0.5, rest: "2 min" }),
   ex("B7", "B", "Panturrilha em pé", "Panturrilha", { sets: 3, lo: 10, hi: 15, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
   ex("C1h", "C1", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 2.5, bw: true, t: "core", rest: "2 min", desde: 2, obs: "Abre o treino, já com o halter do sábado entre os pés" }),
-  ex("C1a", "C1", "Leg press 45° ou hack", "Quadríceps", { sc: "top", kg: null, inc: 5, mic: 2.5, t: "comp", rest: "3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
+  ex("C1a", "C1", "Leg press 45° ou hack", "Quadríceps", { sc: "top", kg: null, inc: 5, mic: 2.5, t: "comp", rest: "2 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
   ex("C1g", "C1", "Panturrilha no leg press", "Panturrilha", { sets: 3, lo: 10, hi: 15, kg: null, inc: 5, mic: 2.5, rest: "2 min", junto: true, desde: 2, obs: "Na mesma máquina, logo depois do leg press: só troque a carga. Pausa de 1 s embaixo" }),
   ex("C1b", "C1", "Cadeira extensora unilateral", "Quadríceps", { sets: 3, lo: 8, hi: 10, kg: 26.5, inc: 1.25, mic: 0.5, rest: "2 min", obs: "Cada perna, sem descanso entre elas" }),
   ex("C1c", "C1", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 8, hi: 10, kg: 81 }),
@@ -1574,9 +1614,9 @@ const EX = [
   ex("E3", "E", "Bíceps 45° na polia alta", "Bíceps", { sets: 3, lo: 10, hi: 12, kg: 30, inc: 1.25, mic: 0.5, rest: "Bi-set com o tríceps cruzado (mesma polia)" }),
   ex("E4", "E", "Tríceps polia alta cruzado", "Tríceps", { sets: 3, lo: 10, hi: 12, kg: 21, inc: 1.25, mic: 0.5, junto: 100, rest: "2 min após o par" }),
   ex("E5", "E", "Bíceps corda na polia", "Bíceps", { junto: 100, semPlus: true, sets: 2, lo: 12, hi: 15, kg: 70, rest: "Bi-set com o coice (mesma polia)" }),
-  ex("E6", "E", "Tríceps coice na polia", "Tríceps", { junto: 100, semPlus: true, sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "90 s após o par" }),
+  ex("E6", "E", "Tríceps coice na polia", "Tríceps", { junto: 100, semPlus: true, sets: 2, lo: 12, hi: 15, kg: 24, inc: 1.25, mic: 0.5, rest: "2 min após o par" }),
   ex("E7", "E", "Elevação lateral na máquina", "Ombro lateral", { sets: 3, lo: 15, hi: 20, kg: 39.5, rest: "2 min", obs: "Opcional: só se sobrar tempo", opt: true }),
-  ex("C2a", "C2", "Stiff (barra ou halteres)", "Posteriores de coxa", { sets: 3, lo: 6, hi: 10, kg: null, t: "comp", rest: "2–3 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
+  ex("C2a", "C2", "Stiff (barra ou halteres)", "Posteriores de coxa", { sets: 3, lo: 6, hi: 10, kg: null, t: "comp", rest: "2 min", obs: "Novo: escolha uma carga que deixe 3 reps sobrando" }),
   ex("C2g", "C2", "Elevação de pernas", "Core", { sets: 3, lo: 10, hi: 15, kg: 0, bw: true, t: "core", rest: "2 min", obs: "Logo depois do stiff. Passou de 15: halter entre os pés" }),
   ex("C2b", "C2", "Elevação pélvica", "Glúteos", { sets: 3, lo: 10, hi: 12, kg: 55, t: "comp" }),
   ex("C2c", "C2", "Cadeira flexora", "Posteriores de coxa", { sets: 3, lo: 10, hi: 12, kg: 78 }),
@@ -1588,9 +1628,9 @@ const EX = [
 ];
 // Exercício pelo código (EXBY.A1)
 const EXBY = Object.fromEntries(EX.map(e => [e.k, e]));
-// Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase
 // Conta para o dia e a semana: não é opcional e já estava na ficha naquela semana (exercício novo não vira pendência nas semanas anteriores)
 function contaEx(d, w) { return !d.opt && w >= d.desde; }
+// Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase
 const CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
 // Exercícios de um dia, na ordem da ficha
 function dayEx(day) { return EX.filter(e => e.d === day); }
@@ -2286,7 +2326,8 @@ function noteEffect(f, scope) {
 // ===== 5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS =====
 // Descanso previsto em segundos (bi-set: o descanso do par)
 function restSec(def) {
-  const parse = r => { r = String(r || ""); let m = /(\d+(?:[,.]\d+)?)\s*(?:–|-)?\s*\d*\s*min/.exec(r); if (m) return +m[1].replace(",", ".") * 60; m = /(\d+)\s*s\b/.exec(r); return m ? +m[1] : null; };
+  // faixa "2–3 min" vale pelo MAIOR número (2ª banca: lia só o 2 e escondia 3 min no tempo previsto e no teste)
+  const parse = r => { r = String(r || ""); let m = /(\d+(?:[,.]\d+)?)\s*(?:[–-]\s*(\d+(?:[,.]\d+)?))?\s*min/.exec(r); if (m) return +(m[2] || m[1]).replace(",", ".") * 60; m = /(\d+)\s*s\b/.exec(r); return m ? +m[1] : null; };
   let v = parse(def.rest);
   if (v == null && /bi-set/i.test(def.rest)) { const day = dayEx(def.d); const nx = day[day.indexOf(def) + 1]; v = nx ? parse(nx.rest) : null; }
   return v == null ? 90 : v;
@@ -2327,7 +2368,6 @@ function warmTime(plan, marks) {
 }
 // Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min
 function pausaTxt(sec) { return sec % 60 ? fmtSec(sec) : sec / 60 + " min"; }
-// Tempo do treino de um dia: previsto (descanso e execução padrão) e registrado
 // Ritmo real do treino: médias do que foi cronometrado (execução por série, segundos de descanso além do previsto, troca de exercício).
 // Com poucos tempos anotados, cada item fica null e o tempo previsto usa o padrão
 function ritmo(records) {
@@ -2342,6 +2382,7 @@ function ritmo(records) {
   const med = (a, min) => { if (a.length < min) return null; const v = a.slice(-RITMO_N); return v.reduce((x, y) => x + y, 0) / v.length; };
   return { exec: med(bi, RITMO_MIN), uni: med(un, RITMO_MIN), rest: med(rest, RITMO_MIN), trans: med(tr, RITMO_MIN / 2), n: bi.length + un.length };
 }
+// Tempo do treino de um dia: previsto (no seu ritmo, ou no padrão com poucos tempos anotados) e registrado; os opcionais ficam à parte (optSec)
 function dayTime(W, day, wk) {
   const defs = dayEx(day), doc = getDoc(W, day, false);
   // previsto no seu ritmo (ou no padrão, enquanto houver poucos tempos anotados); os opcionais ficam fora do previsto e entram à parte
@@ -2933,12 +2974,35 @@ function renderObjResult() {
   h += '<div class="row-btns"><a class="btn primary" href="#semana">Ver a semana de treino</a><a class="btn" href="#dieta">Dieta</a><a class="btn" href="#corpo">Corpo</a><a class="btn" href="#plano">Plano</a></div></div>';
   el.innerHTML = h;
 }
+// Faixas aceitas no Perfil e no Objetivo (2ª banca: peso −70 ou 9999, altura 0 e gordura 150% eram gravados com "Salvo ✓").
+// Campo numérico sem faixa própria: de 0 a PF_FAIXA_MAX. Medidas do corpo: 10 a 250 cm. Cargas da tabela de 1RM: 0 a 1000 kg
+const PF_FAIXA = { altura: [100, 250], peso: [20, 300], gordura: [2, 70], massaMuscular: [5, 150], gorduraVisceral: [1, 60], aguaCorporal: [20, 80], tmbBalanca: [500, 6000],
+  tempoMax: [20, 240], cardioMin: [0, 120], cardioVezes: [0, 14], cardioIncl: [0, 30], cardioVel: [1, 25], fcRepouso: [25, 150], horasSentado: [0, 24], passos: [0, 100000], sono: [0, 24],
+  alcool: [0, 100], kcalAtual: [0, 10000], refeicoes: [1, 12], proteinaAtual: [0, 600], agua: [0, 15], foraDeCasa: [0, 50], metaGordura: [2, 70], metaPeso: [20, 300], metaMusculo: [5, 150] };
+const PF_FAIXA_MAX = 100000;
+// Confere o rascunho do Perfil: devolve a mensagem do primeiro campo fora da faixa (ou com data impossível), ou "" se está tudo certo
+function pfConfere(pf) {
+  const hoje = todayStr(), ano = +hoje.slice(0, 4), rot = k => (PFBY[k] ? PFBY[k][1] : k).replace(/\s*\(.*\)$/, "");
+  for (const k of Object.keys(pf)) {
+    const f = PFBY[k], v = pf[k]; if (v == null || v === "") continue;
+    if (f && f[2] === "number" || MEDIDAS.some(m => m[0] === k)) {
+      const [lo, hi] = PF_FAIXA[k] || (MEDIDAS.some(m => m[0] === k) ? [10, 250] : [0, PF_FAIXA_MAX]);
+      if (!(typeof v === "number" && isFinite(v) && v >= lo && v <= hi)) return "Confira " + rot(k) + ": aceito de " + lo + " a " + hi + ".";
+    } else if (f && f[2] === "date") {
+      const ok = k === "nascimento" ? dataOk(v) && v >= "1920-01-01" && v <= (ano - 10) + hoje.slice(4) : k === "dataAlvo" ? dataOk(v) && v >= "2000-01-01" && v <= (ano + 6) + "-12-31" : k === "inicio" ? dataOk(v) && v >= "2020-01-01" && v <= (ano + 1) + "-12-31" : dataReal(v);
+      if (!ok) return "Confira " + rot(k) + ": a data não parece certa.";
+    }
+  }
+  for (const n of Object.keys(pf.cargas || {})) for (const [c, v] of Object.entries(pf.cargas[n] || {})) if (v != null && !(typeof v === "number" && isFinite(v) && v >= 0 && v <= 1000)) return "Confira a carga de " + n + ": aceito de 0 a 1000.";
+  return "";
+}
 // Salva Perfil e Objetivo, registra peso e medidas do dia e recalcula tudo
 async function savePerfil(from) {
   const msgs = [document.getElementById("pfMsg"), document.getElementById("objMsg")];
   const say = t => msgs.forEach(m => { if (m) m.textContent = t; });
   const pf = JSON.parse(JSON.stringify(app.pfDraft || {}));
   if (!num(pf.peso)) { say("Informe pelo menos o peso (aba Perfil) para salvar."); return; }
+  const ruim = pfConfere(pf); if (ruim) { say(ruim); return; }
   if (!pf.inicio) pf.inicio = dstr(mondayOf(todayStr()));
   pf.atualizado = new Date().toISOString();
   app.perfil = pf; app.pfDraft = JSON.parse(JSON.stringify(pf));
@@ -2956,7 +3020,7 @@ async function savePerfil(from) {
     if (mudou) await app.db.doc(app.P + "corpo/" + hoje).set(app.body[hoje]);
     app.pfDirty = false;
     say("Salvo ✓ As outras abas já usam esses dados."); flashBtn(from || "pfSave", "✓ Salvo");
-  } catch (e) { say(saveErr(e)); }
+  } catch (e) { app.pfDirty = false; msgs.forEach(m => msgFalha(m, saveErr(e, true))); } // a fila guarda e reenvia o perfil
   finally { btns.forEach(b => b.disabled = false); }
 }
 // Campo do formulário pela chave
@@ -2975,7 +3039,7 @@ function pfInput(el) {
   const d = app.pfDraft;
   if (el.dataset.pf) {
     const f = PFBY[el.dataset.pf]; let v = el.value;
-    if (f && f[2] === "number") v = v === "" ? null : Number(String(v).replace(",", "."));
+    if (f && f[2] === "number") { v = String(v).trim() === "" ? null : numBr(v); if (v != null && !isFinite(v)) v = String(el.value); el.classList.toggle("bad", typeof v === "string"); } // texto fica como está para o Salvar apontar o campo
     d[el.dataset.pf] = v === "" ? null : v;
   } else if (el.dataset.pfc) {
     const id = el.dataset.pfc; const set = new Set(Array.isArray(d[id]) ? d[id] : []);
@@ -2985,7 +3049,7 @@ function pfInput(el) {
   else if (el.dataset.pfk) {
     const [n, f] = el.dataset.pfk.split("|");
     d.cargas = d.cargas || {}; d.cargas[n] = d.cargas[n] || {};
-    d.cargas[n][f] = el.value === "" ? null : Number(String(el.value).replace(",", "."));
+    d.cargas[n][f] = String(el.value).trim() === "" ? null : numBr(el.value); el.classList.toggle("bad", Number.isNaN(d.cargas[n][f]));
     const tr = el.closest("tr"); if (tr && tr.querySelector(".rm")) { const [rm, s1] = rmCells(n, d.cargas[n], d); tr.querySelector(".rm").textContent = rm; tr.querySelector(".s1").textContent = s1; }
   } else return false;
   app.pfDirty = true;
@@ -3015,7 +3079,8 @@ const LEGEND = [
   ["start", "Semana 1.", "Carga de partida da ficha (5% abaixo do seu máximo na série pesada)."],
   ["pending", "Na tela da próxima semana, quando o exercício desta semana ainda não foi registrado.", "Depois do registro, a prescrição é recalculada."]
 ];
-// Textos dos botões "i": chave → [título, explicação]
+// Textos dos botões "i" e do Glossário: chave → [título, explicação]. Revisão 18/nov: saíram 7 verbetes repetidos (a 2ª definição, mais abaixo, é a que sempre valeu);
+// o ritmo de peso virou "ritmopeso" (antes o "i" do kg/semana abria o texto do ritmo do treino)
 const GLOSS = {
   maquina: ["Cargas da máquina", "<p>Máquinas de placas fixas só têm certos pesos. O app guarda os pesos de cada máquina e passa a prever só o que existe nela.</p><ul><li><b>Automático</b>: toda carga que você anota entra na lista da máquina. Se você usar uma carga diferente da prevista, mas vizinha dela (até 10% de diferença, entre 2,5 e 7,5 kg), o app entende que era a placa disponível: segue dessa carga e não trata como queda. Quando as cargas anotadas ficam a distâncias de placa (de 4 a 15 kg), a máquina é reconhecida sozinha como de placas fixas; com três cargas igualmente espaçadas, o app deduz as placas vizinhas.</li><li><b>Placas fixas</b>: a progressão passa a ser sempre a de máquina de placas. Mantém a placa, busca +1 repetição por série até o topo da faixa e só então sobe para a placa seguinte. Ficar abaixo da faixa logo depois de subir não derruba a carga.</li><li><b>Carga livre</b>: anilhas e halteres que você monta como quiser. O app volta a usar os saltos da ficha e não arredonda para cargas já usadas.</li></ul><p>No campo <b>Placas desta máquina</b> você pode digitar todos os pesos de uma vez. As cargas previstas, o back-off, a subida de carga e o ajuste entre séries passam a cair nessas placas.</p><p>A lista vale para o mesmo exercício em todos os dias em que ele aparece.</p>"],
   elo: ["Conversa entre treinos", "<p>Quando o mesmo exercício aparece em mais de um dia (leg press na quarta e no sábado, panturrilha em quatro dias, crucifixo na segunda e na quinta), os dias trocam informação de carga. Cada um continua com a sua faixa de repetições e a sua progressão.</p><ul><li><b>Exercício ainda sem carga</b>: assim que você registra em um dia, os outros já aparecem com a carga. Mesma faixa de repetições: mesma carga. Faixa diferente: a carga é convertida pela força estimada, com 5% de margem.</li><li><b>Rendeu bem acima do previsto</b> (em média, o equivalente a 1 salto de carga ou mais): o próximo dia do mesmo exercício sobe 1 salto.</li><li><b>Ficou bem abaixo do previsto</b>: o próximo dia desce 1 salto.</li><li>Ficou perto do previsto: nada muda.</li></ul><p>A conversa vale do dia mais recente para o seguinte: da quarta para o sábado, e do sábado para a quarta da semana seguinte. Em máquina de placas fixas ela só traz a carga, sem subir nem descer de placa. Ela não soma com a progressão do próprio exercício no mesmo sentido, não age em semana leve e ignora o dia em que a observação fala em dor, cansaço, pressa, ajuda ou equipamento diferente.</p>"],
@@ -3032,12 +3097,10 @@ const GLOSS = {
   arroba: ["@ (semanas sem progresso)", "<p>Cada @ é uma semana em que o exercício não progrediu nem em carga nem em repetições. O número de @ decide a técnica:</p><ul><li><b>@</b> microcarga</li><li><b>@@</b> cluster</li><li><b>@@@</b> série de sobrecarga</li><li><b>@@@@</b> reset em onda</li></ul>"],
   destrave: ["Destrave de carga", "<p>Técnicas do powerlifting para quando a carga trava. O problema quase sempre é o salto: 1 placa vale 5–10% da carga, e cada repetição vale ~3% de carga. Um salto de 10% custa ~3 repetições, e a série não fecha.</p><p>O app escolhe a técnica pelo número de semanas sem progresso (@): microcarga, cluster, série de sobrecarga ou reset em onda.</p>"],
   deload: ["Deload", "<p>Semana leve para recuperar: metade das séries, mesma carga, 3 repetições sobrando.</p><p>No plano, só acontece na semana 5 se na semana 4 houve 2 ou mais dias abaixo do previsto, ou se você escolher. O que você faz no deload não muda a progressão.</p>"],
-  festas: ["Semana de festas", "<p>Semanas 7 e 8, no fim de dezembro: 1/3 a menos de séries com a mesma carga, para manter a força com menos tempo e recuperação. O core mantém o volume. O resultado dessas semanas não muda a progressão.</p>"],
-  biset: ["Bi-set", "<p>Dois exercícios de músculos diferentes feitos em sequência, sem descanso entre eles. Descanse só depois do par.</p><p>Na ficha, só aparece quando os dois usam a mesma estação, como a polia: assim você não perde a vez nem anda pela academia. Rende o mesmo que séries separadas e economiza tempo.</p>"],
-  descanso: ["Descanso", "<p>Tempo entre as séries do exercício. Acima de ~90 s não há diferença clara de hipertrofia; nos compostos pesados, 2–3 min ajudam a manter a carga.</p>"],
+  biset: ["Bi-set", "<p>Dois exercícios de músculos diferentes feitos em sequência, sem descanso entre eles. Descanse só depois do par.</p><p>Na ficha, só existe bi-set de bíceps com tríceps, os dois no cabo (polia): assim você não perde a vez nem anda pela academia. Nenhum outro par vira bi-set. Rende o mesmo que séries separadas e economiza tempo.</p>"],
+  descanso: ["Descanso", "<p>Tempo entre as séries do exercício. Na ficha, todos os exercícios têm no máximo 2 min, inclusive os compostos pesados: cabe no tempo do dia e, acima de ~90 s, a diferença para a hipertrofia é pequena.</p>"],
   comp: ["Compostos", "<p>Exercícios que movem mais de uma articulação e muita carga: chest press, peito 45°, puxadas, remadas, leg press, stiff, elevação pélvica, desenvolvimento.</p><p>Ficam com um pouco mais de repetições sobrando (RIR) para controlar a fadiga.</p>"],
   iso: ["Isoladores e core", "<p>Exercícios de uma articulação (crucifixo, extensora, flexora, elevações, roscas, tríceps) e os de abdômen.</p><p>Podem ir mais perto da falha (RIR 0–1) com pouco risco.</p>"],
-  core: ["Séries de core", "<p>Total de séries de abdômen e oblíquos na semana. O core é a prioridade até janeiro: há abdômen nos 6 dias de treino, com 19 séries por semana, 20 na semana 2 e 21 a partir da semana 3. São três exercícios, cada um em dois dias com três dias entre eles: abdominal na máquina (segunda e quinta), rotação de tronco (terça e sexta) e elevação de pernas (quarta e sábado).</p><p>Por ser a prioridade, o abdômen abre o treino (no sábado, vem logo depois do stiff): é feito descansado e não fica para o fim, onde o tempo costuma acabar.</p>"],
   alavanca: ["Alavanca da semana", "<p>O que a semana prioriza para progredir: repetições, carga ou volume. Muda de semana para semana (periodização ondulatória), o que dá variação sem perder a direção.</p><p>A tabela mostra também o RIR alvo de cada tipo de série.</p>"],
   carga: ["Carga da semana", "<p>A carga prevista para as séries de trabalho.</p><ul><li><b>▲ verde</b>: subiu, porque você bateu o topo da faixa.</li><li><b>▼ laranja</b>: desceu, porque ficou abaixo do previsto ou passou 2 semanas sem fazer.</li><li><b>●</b>: mesma carga.</li></ul>"],
   series: ["Séries × repetições", "<p>Quantas séries e a faixa de repetições de cada uma. Nos exercícios com série pesada aparece <b>1 × 6–8 + 2 × 8–10</b>: 1 pesada e 2 de back-off.</p><p><b>+1 série</b> ou <b>−1 série</b> mostram mudanças da semana: core extra, deload ou festas.</p>"],
@@ -3049,22 +3112,17 @@ const GLOSS = {
   musculo: ["Séries por músculo", "<p>Séries diretas planejadas (cinza) e feitas (azul) para cada músculo na semana escolhida na aba Semana. Séries indiretas, como o tríceps no supino, não entram.</p>"],
   grafpeso: ["Gráfico de peso", "<ul><li><b>Pontos</b>: cada pesagem.</li><li><b>Linha azul</b>: média dos últimos 7 dias, que mostra a tendência real.</li><li><b>Tracejado</b>: peso previsto no plano anual.</li></ul><p>Pese-se todo dia de manhã, em jejum, depois de ir ao banheiro.</p>"],
   media7: ["Peso (média 7 dias)", "<p>Média das pesagens dos últimos 7 dias. O peso de um dia oscila com água, sal e intestino; a média mostra a tendência.</p>"],
-  ritmo: ["Ritmo semanal", "<p>Diferença entre a média de 7 dias de agora e a da semana anterior. No cutting, o alvo é perder 0,35–0,45 kg por semana.</p><p>Abaixo de 0,25 kg por 2 semanas: tirar 100–150 kcal ou somar 10 min de esteira. Acima de 0,6 kg: comer 100–150 kcal a mais.</p>"],
+  ritmopeso: ["Ritmo semanal", "<p>Diferença entre a média de 7 dias de agora e a da semana anterior. No cutting, o alvo é perder 0,35–0,45 kg por semana.</p><p>Abaixo de 0,25 kg por 2 semanas: tirar 100–150 kcal ou somar 10 min de esteira. Acima de 0,6 kg: comer 100–150 kcal a mais.</p>"],
   gordura: ["Gordura corporal", "<p>A última medida informada. A bioimpedância oscila alguns pontos de um dia para outro: meça sempre nas mesmas condições (manhã, em jejum).</p>"],
-  pesoprev: ["Peso previsto hoje", "<p>O peso que o plano anual espera para hoje, entre as metas de início e fim de cada mês.</p>"],
   kcal: ["kcal/dia", "<p>Calorias diárias alvo da fase. São estimativas: quem manda é a média semanal do peso.</p>"],
   macros: ["Proteína, carbo e gordura", "<p>Gramas por dia.</p><ul><li><b>Proteína</b>: protege a massa magra; mais alta no cutting.</li><li><b>Gordura</b>: ~0,8–1 g por kg.</li><li><b>Carboidrato</b>: o resto das calorias; sustenta o treino.</li></ul>"],
-  cardio: ["Cardio", "<p>Esteira inclinada. No cutting, 40 min 6x por semana; nas outras fases, menos. Só aumente se o peso médio parar de cair, e nunca na mesma semana em que cortar comida.</p>"],
   livre: ["Refeição livre", "<p>Uma refeição (não um dia) fora do plano.</p><ul><li><b>Cutting</b>: 1 por semana, até ~1.200 kcal, com pelo menos 40 g de proteína.</li><li><b>Manutenção</b>: 1–2 por semana.</li><li><b>Ganho</b>: 2 por semana.</li></ul><p>Pule se ficar 2 semanas sem perder peso no cutting.</p>"],
-  fase: ["Fases do plano", "<p>Etapas do plano anual: <b>cutting</b> (perder gordura), <b>manutenção</b>, <b>ganho lento</b> (ganhar massa com pouco ganho de gordura) e <b>pausa de dieta</b>. Cada uma tem calorias, macros, cardio e refeição livre próprios.</p>"],
   pesodiario: ["Pesagem diária", "<p>Pese-se todo dia de manhã, em jejum, depois de ir ao banheiro, e salve aqui. Dá para corrigir um dia anterior trocando a data.</p><p>O peso de um dia oscila com água e sal; o que guia a dieta é a <b>média de 7 dias</b> e o <b>ritmo semanal</b>. No cutting, o alvo é perder 0,35–0,45 kg por semana.</p><p>O gráfico completo, a gordura e a cintura ficam na aba Objetivo.</p>"],
   acoessem: ["Prescrições de cada semana", "<p>Quantos exercícios receberam cada tipo de prescrição na semana: ▲ subir, ● manter, ▼ reduzir, ⟳ destrave, ↺ repetir, ⤓ deload, ★ novo ou aguardando.</p><p>Muito ▲ e ● é progresso saudável. Muito ▼ e ⟳ em semanas seguidas sugere recuperação ruim ou déficit grande.</p>"],
   seriessem: ["Séries por semana", "<p>Total de séries planejadas (cinza) e feitas (azul) na semana, somando todos os exercícios.</p>"],
   tonelagem: ["Tonelagem", "<p>Soma de carga × repetições de todas as séries feitas na semana. Mede o trabalho total; sobe com mais séries, mais repetições ou mais carga.</p><p>Compare semanas parecidas: semanas de deload e de festas têm tonelagem menor por desenho.</p>"],
   musculotempo: ["Um músculo ao longo das semanas", "<p>Séries diretas planejadas (tracejado) e feitas (azul) do músculo escolhido, semana a semana. Mostra se algum grupo está ficando para trás.</p>"],
   ritmosem: ["Ritmo semanal", "<p>Cada barra é a diferença entre a média de peso da semana e a da semana anterior (semanas de segunda a domingo).</p><p>O tracejado é o ritmo previsto no plano: no cutting, perder ~0,35–0,45 kg por semana; no ganho lento, ganhar ~0,2 kg.</p>"],
-  gorduratempo: ["Gordura corporal ao longo do tempo", "<p>Suas medidas de gordura (%) e a meta de 8,5–9% para janeiro. Meça sempre nas mesmas condições: a bioimpedância oscila alguns pontos de um dia para outro.</p>"],
-  pace: ["Pace", "<p>Tempo para percorrer 1 km, em minutos:segundos. Calculado pelo tempo ÷ distância que você anota; sem distância, usa 60 ÷ velocidade.</p><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na caminhada inclinada, o pace pouco muda; o que pesa é a inclinação. Mantendo inclinação e tempo, um pace menor ao longo das semanas indica condicionamento melhor.</p>"],
   cardiodia: ["Cardio do dia", "<p>Escolha caminhada ou corrida e anote o <b>tempo</b> e a <b>distância</b> que a esteira mostra (o tempo aceita 45 ou 45:30), a inclinação e, se quiser, a velocidade. Sem velocidade, o app usa distância ÷ tempo. Depois toque em <b>✓ Feito</b>. Campos em branco são preenchidos com o previsto. Se não fizer, toque em <b>✗ Não fiz</b>.</p><p>Nos dias de perna (quarta e sábado), faça depois da musculação. Só aumente o tempo se o peso médio parar de cair, e nunca na mesma semana em que cortar comida.</p>"],
   diatodo: ["Marcar o dia inteiro", "<ul><li><b>✓ Marcar o dia todo como feito</b>: marca como feitos os exercícios ainda sem marcação, preenchendo as séries em branco com o previsto. Os que você já marcou não mudam.</li><li><b>✗ Não treinei neste dia</b>: marca como não feitos os exercícios ainda sem marcação. Na semana seguinte, eles repetem a prescrição.</li></ul><p>Depois, ajuste qualquer exercício individualmente nos botões do cartão.</p>"],
   novo: ["Exercício novo", "<p>Ainda sem carga definida. Na primeira vez, escolha uma carga que deixe 3 repetições sobrando e registre. O app passa a progredir a partir dela.</p>"]
@@ -3197,13 +3255,13 @@ GLOSS.dt_fora = ["Alimento fora da tabela", "<p>Para produtos de marca, suplemen
 GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um exercício e começar o seguinte: trocar de máquina, ajustar o banco, beber água. O tracejado marca 1:30, o valor usado quando você não registra.</p><p>Entra no tempo registrado do treino.</p>"];
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
-// Botão "i" que abre a explicação de uma chave
 // Termos de uso comum em prescrição de treino, dieta e medidas: ficam sem o botão "i" (a explicação continua no Glossário, em Plano e regras)
 const INFO_COMUM = new Set(["rir", "faixa", "alvo", "previsto", "series", "descanso", "biset", "carga", "comp", "iso", "core", "top", "backoff", "deload", "aquecimento", "unilateral", "tempoexec", "intervalo", "descanso_reg", "tempotreino", "dias", "diatodo", "opcional", "domingo", "cardio", "cardiodia", "cardiotipo", "cardiokcal", "pace", "kcal", "macros", "livre", "media7", "gordura", "grafpeso", "ritmosem", "gorduratempo", "medidastempo", "pesodiario", "feitos", "seriessem", "tonelagem", "musculo", "musculotempo", "acoessem", "epley", "g_descexec", "volume", "fotos", "registrar", "fichaant", "telaacesa", "dt_diario", "dt_fora", "dj_mv", "dj_int", "dj_ref", "diario", "status", "pf_peso", "pf_altura", "pf_cintura", "pf_quadril", "pf_peito", "pf_bracoRelax", "pf_bracoContr", "pf_coxa", "pf_panturrilha", "pf_metodoGordura", "pf_gordura", "pf_objetivo", "pf_metaPeso", "pf_metaGordura", "pf_dataAlvo", "pf_dias", "pf_tempoMax", "pf_tempoTreino", "pf_sono", "pf_estresse", "pf_passos", "pf_trabalho", "pf_imc", "pf_agua", "pf_inicio", "pf_prioridades", "pf_pressao", "pf_fcRepouso", "pf_kcalAtual", "pf_horasSentado", "pf_condicoes", "pf_liberacao", "pf_metaCintura", "pf_ritmo"]);
 // Ações óbvias pelo próprio nome (subir, manter, reduzir…) também ficam sem "i"; destrave, nova faixa, conversa entre treinos e festas mantêm
 const INFO_ACT_COMUM = /^act-(start|up|reps|keep|down|repeat|deload|pending)$/;
 // O termo merece o botão "i"?
 function infoRaro(key) { return !INFO_COMUM.has(key) && !INFO_ACT_COMUM.test(key); }
+// Botão "i" que abre a explicação de uma chave (vazio quando o termo é comum)
 function infoBtn(key, label) { if (!infoRaro(key)) return ""; return '<button class="info" type="button" data-info="' + key + '" aria-label="Explicar: ' + esc(label || (GLOSS[key] ? GLOSS[key][0] : key)) + '">i</button>'; }
 // Explicação de uma chave (inclui as geradas na hora: ações e técnicas)
 function glossEntry(key) {
@@ -3253,6 +3311,13 @@ function initDates() {
   app.day = (DAYS.find(d => d.dow === dow) || DAYS[0]).id;
   document.getElementById("bDate").value = t;
 }
+// Número digitado à brasileira, com regra estrita (2ª banca): "72,5", "72.5", "1.000", "1.000,5" e "120" valem; "0x10", "1e2",
+// "80O" e qualquer letra dão NaN (antes Number() aceitava hexadecimal e notação científica, e o campo ficava com o pedaço digitado)
+function numBr(t) { t = String(t == null ? "" : t).trim(); if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) return parseFloat(t.replace(/\./g, "").replace(",", ".")); return /^\d+([.,]\d+)?$/.test(t) ? parseFloat(t.replace(",", ".")) : NaN; }
+// Data de registro plausível (2ª banca): existe, é de 2000 em diante e não passa de amanhã. Uma pesagem em 2099 virava o "último peso" de tudo
+function dataReal(d) { if (!dataOk(d)) return false; const am = new Date(Date.now() + 864e5), lim = am.getFullYear() + "-" + String(am.getMonth() + 1).padStart(2, "0") + "-" + String(am.getDate()).padStart(2, "0"); return d >= "2000-01-01" && d <= lim; }
+// Escreve uma mensagem de falha de gravação e marca o elemento: quando a fila esvaziar, syncEstado troca o texto por "Salvo ✓"
+function msgFalha(el, t) { if (typeof el === "string") el = document.getElementById(el); if (!el) return; el.textContent = t; el.dataset.falha = "1"; }
 // Protege um texto antes de colocá-lo no HTML
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 // Selo de ação (▲ Subir carga…) com o botão "i"
@@ -3316,14 +3381,17 @@ function fillDone(def, pres, entry) {
   for (let i = 0; i < pres.sets.length; i++) {
     entry.sets[i] = entry.sets[i] || { kg: null, reps: null, rir: null };
     const g = suggestSets(def, pres, entry)[i];
-    if (entry.sets[i].kg == null || entry.sets[i].kg === "") entry.sets[i].kg = g.kg;
+    // sem carga prevista (exercício novo), repete a última carga anotada nas séries anteriores: antes ficava em branco e o motor descartava a série
+    let kg = g.kg; if (kg == null) for (let j = i - 1; j >= 0; j--) { const x = entry.sets[j]; if (x && x.kg != null && x.kg !== "") { kg = x.kg; break; } }
+    const vazia = (entry.sets[i].kg == null || entry.sets[i].kg === "") && (entry.sets[i].reps == null || entry.sets[i].reps === "");
+    if (entry.sets[i].kg == null || entry.sets[i].kg === "") entry.sets[i].kg = kg;
     if (entry.sets[i].reps == null || entry.sets[i].reps === "") entry.sets[i].reps = g.reps;
+    if (vazia) entry.sets[i].auto = true; // preenchida pelo Feito: desmarcar o Feito volta a deixá-la vazia
   }
   snapPrev(entry, pres, true);
 }
 
 // ===== 11. TELA: SEMANA (treino do dia) =====
-// Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia
 // Quadros das séries com largura fixa: mede a carga e as repetições mais longas já anotadas (e as da ficha) e fixa as colunas para todos os cartões
 function medeQuadros() {
   let kg = 3, rp = 2; const tam = v => v == null || v === "" ? 0 : fmt(+v).length;
@@ -3331,6 +3399,7 @@ function medeQuadros() {
   EX.forEach(d => { kg = Math.max(kg, tam(d.kg)); });
   const r = document.documentElement.style; r.setProperty("--kgc", Math.min(7, kg)); r.setProperty("--rpc", Math.min(3, rp));
 }
+// Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia
 function renderWeek() {
   medeQuadros();
   const W = app.week;
@@ -3445,7 +3514,7 @@ function parcHtml(k, i, arr, side) {
   const open = arr.length || app.parcOpen.has(k + "|" + i + sx);
   if (!open) return '<button class="pbtn" type="button" data-parcopen="' + k + "|" + i + "|0" + sx + '">+ parciais' + lt + "</button>";
   return '<div class="parc"><span class="plbl">Parciais' + lt + (side === "d" ? "" : infoBtn("parciais")) + "</span>" +
-    arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + sx + '" aria-label="Remover parcial ' + (j + 1) + " de " + p + '%">' + p + "% ×</button>").join("") +
+    arr.map((p, j) => '<button class="pchip" type="button" data-parcdel="' + k + "|" + i + "|" + j + sx + '" aria-label="Remover parcial ' + (j + 1) + " de " + (+p) + '%">' + (+p) + "% ×</button>").join("") +
     PARC_OPTS.map(v => '<button class="padd" type="button" data-parcadd="' + k + "|" + i + "|" + v + sx + '" aria-label="Adicionar parcial de ' + v + '%' + lt + '">+' + v + "%</button>").join("") +
     '<input class="pin" type="number" inputmode="numeric" min="1" max="99" step="1" placeholder="outro %" data-parcin="' + k + "|" + i + sx + '" aria-label="Adicionar parcial com outra porcentagem' + lt + '"></div>';
 }
@@ -3545,13 +3614,13 @@ const LADO = { e: "esquerdo", d: "direito" };
 // Células de carga, repetições e RIR de uma série (side "e"/"d": um dos lados, no unilateral)
 function setCells(d, i, lbl, x, phKg, phReps, side) {
   const al = esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : ""), ds = f => 'data-set="' + d.k + "|" + i + "|" + f + (side ? "|" + side : "") + '"';
-  return '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + al + ' carga feita em kg" ' + ds("kg") + ' value="' + (x.kg == null ? "" : x.kg) + '" placeholder="' + phKg + '"></td>' +
-    '<td><input type="number" inputmode="numeric" step="1" aria-label="' + al + ' repetições feitas" ' + ds("reps") + ' value="' + (x.reps == null ? "" : x.reps) + '" placeholder="' + phReps + '"></td>' +
+  return '<td><input type="number" inputmode="decimal" step="0.25" aria-label="' + al + ' carga feita em kg" ' + ds("kg") + ' value="' + (x.kg == null ? "" : esc(x.kg)) + '" placeholder="' + phKg + '"></td>' +
+    '<td><input type="number" inputmode="numeric" step="1" aria-label="' + al + ' repetições feitas" ' + ds("reps") + ' value="' + (x.reps == null ? "" : esc(x.reps)) + '" placeholder="' + phReps + '"></td>' +
     '<td><select aria-label="' + al + ' repetições que sobraram" ' + ds("rir") + ">" + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (x.rir != null && x.rir !== "" && +x.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td>";
 }
 // Campo do tempo de execução, com o selo que converte para minutos
 function execField(d, i, lbl, x, side, junto) {
-  return '<label class="exec">' + (side ? (side === "e" ? "Esq." : "Dir.") : junto ? "Exec. 2 lados" : "Execução") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : junto ? " dos dois lados" : "") + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec" + (side ? "|" + side : "") + '" value="' + (x.exec == null ? "" : x.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + (side ? "-" + side : "") + '" aria-live="polite">' + mmss(x.exec) + "</span></label>";
+  return '<label class="exec">' + (side ? (side === "e" ? "Esq." : "Dir.") : junto ? "Exec. 2 lados" : "Execução") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : junto ? " dos dois lados" : "") + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec" + (side ? "|" + side : "") + '" value="' + (x.exec == null ? "" : esc(x.exec)) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + (side ? "-" + side : "") + '" aria-live="polite">' + mmss(x.exec) + "</span></label>";
 }
 // Cartão do exercício: prescrição, motivo, aquecimento, séries, observações e Feito / Não fiz
 function exCard(d, p, entry, W) {
@@ -3592,7 +3661,7 @@ function exCard(d, p, entry, W) {
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
-    return '<tr class="srow"><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">fora da ficha</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : v.kg) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : v.reps) + '"></td><td></td></tr>';
+    return '<tr class="srow"><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">fora da ficha</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : esc(v.kg)) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : esc(v.reps)) + '"></td><td></td></tr>';
   }).join("") : "";
   // "Por que": o motivo da prescrição, a sua marca e a ordem feita, recolhidos numa linha que abre no toque
   const ordTag = (app.dayOrd || {})[d.k] && app.dayOrd[d.k].pos !== app.dayOrd[d.k].prev ? '<div class="ordtag">Feito em ' + app.dayOrd[d.k].pos + "º lugar (previsto " + app.dayOrd[d.k].prev + "º)" + infoBtn("ordem") + "</div>" : "";
@@ -4002,7 +4071,7 @@ function updateQW() {
   const last = st.ws.slice(-7).map(x => dm(x.data) + " " + fmt(x.peso)).join(" · ");
   document.getElementById("qwStats").innerHTML =
     '<span class="vchip">Média 7 dias: <b>' + (st.a7 != null ? fmt(Math.round(st.a7 * 10) / 10) + " kg" : "—") + "</b>" + infoBtn("media7") + "</span>" +
-    '<span class="vchip">Ritmo: <b>' + (pace != null ? (pace > 0 ? "+" : "") + fmt(Math.round(pace * 100) / 100) + " kg/sem" : "—") + "</b>" + infoBtn("ritmo") + "</span>" +
+    '<span class="vchip">Ritmo: <b>' + (pace != null ? (pace > 0 ? "+" : "") + fmt(Math.round(pace * 100) / 100) + " kg/sem" : "—") + "</b>" + infoBtn("ritmopeso") + "</span>" +
     '<span class="vchip">Plano hoje: <b>' + fmt(Math.round(st.plan * 10) / 10) + " kg</b>" + infoBtn("pesoprev") + "</span>" +
     (last ? '<span class="vchip">Últimos: ' + esc(last) + "</span>" : "");
 }
@@ -4041,11 +4110,14 @@ const BIO_ZONA = [25, 55];         // onde começa e termina a faixa "normal" na
 const BIO_COL = 56;                // largura de cada exame no histórico (px)
 // Linhas do histórico e da análise músculo-gordura: [chave, rótulo, unidade, cor, menos é melhor]
 const BIO_LIN = [["peso", "Peso", "kg", "--ink", 1], ["magra", "Massa magra", "kg", "--series-1", 0], ["gorduraKg", "Massa gorda", "kg", "--series-2", 1], ["imc", "IMC", "kg/m²", "--ink", 1], ["gordura", "Gordura", "%", "--series-2", 1]];
+// Linhas do gráfico de histórico de composição: [chave, rótulo, unidade, cor]
 const BIO_HIS = [["peso", "Peso", "kg", "--ink"], ["smm", "Músculo esq.", "kg", "--series-1"], ["gorduraKg", "Massa gorda", "kg", "--series-2"], ["gordura", "Gordura", "%", "--series-2"]];
 // Exames salvos, do mais antigo ao mais novo
-function bioList() { return Object.values(app.exames || {}).filter(x => x && x.data && !x.apagado && +x.peso > 0).sort((a, b) => a.data < b.data ? -1 : 1); }
+// exame com data impossível fica de fora (ela quebrava os gráficos e as telas)
+function bioList() { return Object.values(app.exames || {}).filter(x => x && dataOk(x.data) && !x.apagado && +x.peso > 0).sort((a, b) => a.data < b.data ? -1 : 1); }
 // Mês e ano curtos do exame ("nov/26") e a data por extenso (só mês e ano quando o dia não é conhecido)
 function bioMes(e) { return MES[+e.data.slice(5, 7) - 1] + "/" + e.data.slice(2, 4); }
+// Data do exame por extenso: "13/11/2026", ou só "nov/26" quando o laudo traz só o mês
 function bioDia(e) { return e.soMes ? bioMes(e) : e.data.slice(8) + "/" + e.data.slice(5, 7) + "/" + e.data.slice(0, 4); }
 // Valor de um campo do exame; o que falta e dá para deduzir é calculado (massa magra = peso − gordura; IMC pela altura do Perfil)
 function bioVal(e, k) {
@@ -4137,7 +4209,8 @@ function bioHtml() {
     h += '<div class="biocard"><div class="bioct"><h3>Histórico de composição</h3><span class="muted">' + n + " exames · " + bioMes(list[0]) + " a " + bioMes(ult) + '</span></div><div class="biohg"><div class="biohn" style="padding-top:' + T + 'px">' + BIO_HIS.map(r => '<div style="height:' + RH + 'px"><b>' + r[1] + "</b><span>" + r[2] + "</span></div>").join("") + '</div><div class="biohw" id="bioHistWrap">' + s + "</svg></div></div></div>";
   }
   const ap = Array.from(new Set(list.map(e => e.aparelho).filter(Boolean)));
-  return h + '<p class="muted biofn">Fonte: ' + list.length + " exame" + (list.length > 1 ? "s" : "") + (ap.length ? " (" + ap.join("; ") + ")" : "") + ". Faixas de peso, massa magra e massa gorda: " + (fx.src ? "do laudo de " + bioDia(fx.src) : "estimadas pela altura do Perfil") + ". Gordura (%) e IMC: referências padrão.</p></div>";
+  // o nome do aparelho é texto digitado ou lido do CSV: sempre passa por esc() antes de virar HTML
+  return h + '<p class="muted biofn">Fonte: ' + list.length + " exame" + (list.length > 1 ? "s" : "") + (ap.length ? " (" + ap.map(esc).join("; ") + ")" : "") + ". Faixas de peso, massa magra e massa gorda: " + (fx.src ? "do laudo de " + bioDia(fx.src) : "estimadas pela altura do Perfil") + ". Gordura (%) e IMC: referências padrão.</p></div>";
 }
 // Colunas do arquivo exportado pelo aplicativo do InBody: [campo do exame, expressão que reconhece o título da coluna]
 const BIO_CSV = [["peso", /^peso|^weight/i], ["smm", /^massa muscular\(|skeletal muscle mass\(/i], ["gorduraKg", /^massa gorda\(|^body fat mass\(/i], ["gordura", /gordura corporal\(%|percent body fat/i], ["imc", /^imc|^bmi/i],
@@ -4145,10 +4218,17 @@ const BIO_CSV = [["peso", /^peso|^weight/i], ["smm", /^massa muscular\(|skeletal
   ["tmb", /basal metabolic|metab[óo]lica basal/i], ["visceral", /gordura visceral\(level|visceral fat level/i], ["rcq", /waist hip|cintura-quadril/i], ["smi", /^smi/i], ["aic", /^intracellular/i], ["aec", /^extracellular/i], ["osso", /bone mineral/i], ["celular", /body cell mass/i]];
 // Colunas por segmento do corpo (massa muscular e massa gorda de cada um)
 const BIO_CSV_SEG = [["bd", /bra[çc]o direito|right arm/i], ["be", /bra[çc]o esquerdo|left arm/i], ["tr", /tronc|trunk/i], ["pd", /perna direita|right leg/i], ["pe", /perna esquerda|left leg/i]];
+const BIO_PESO = [20, 300];   // faixa aceita de peso (kg) no exame e no CSV
+const BIO_GORD = [2, 70];     // faixa aceita de gordura (%)
+const BIO_CSV_MAX = 2e6;      // tamanho máximo do CSV (caracteres): um arquivo enorme travava a aba
+const BIO_LIM = { tmb: 6000, score: 100, rcq: 3, ecw: 1 }; // teto de cada campo do exame; os outros vão até 1000 (kg, L, %, °, nível)
+const bioLim = k => BIO_LIM[k] != null ? BIO_LIM[k] : 1000;
+// Divide uma linha do CSV respeitando aspas ("72,5" entre aspas, com vírgula como separador, era cortado em 72)
+function bioCsvLinha(l, sep) { const out = []; let cur = "", q = false; for (let i = 0; i < l.length; i++) { const ch = l[i]; if (ch === '"') { if (q && l[i + 1] === '"') { cur += '"'; i++; } else q = !q; } else if (ch === sep && !q) { out.push(cur); cur = ""; } else cur += ch; } out.push(cur); return out; }
 // Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora)
 function bioCsv(txt) {
   const linhas = String(txt || "").replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim()); if (linhas.length < 2) return [];
-  const limpa = x => x.trim().replace(/^"|"$/g, ""), sep = (linhas[0].match(/;/g) || []).length > (linhas[0].match(/,/g) || []).length ? ";" : ",", head = linhas[0].split(sep).map(limpa);
+  const limpa = x => x.trim().replace(/^"|"$/g, ""), sep = (linhas[0].match(/;/g) || []).length > (linhas[0].match(/,/g) || []).length ? ";" : ",", head = bioCsvLinha(linhas[0], sep).map(limpa);
   const iData = head.findIndex(h => /^data$|^date|test date/i.test(h)), iAp = head.findIndex(h => /equipamento|device|model/i.test(h)); if (iData < 0) return [];
   const cols = head.map(h => {
     if (/r[áa]cio|ratio|n[ií]vel muscular|leg lean/i.test(h) && !/^r[áa]cio aec|waist hip/i.test(h)) return null;
@@ -4156,72 +4236,94 @@ function bioCsv(txt) {
     const c = BIO_CSV.find(x => x[1].test(h)); return c ? [c[0]] : null;
   });
   return linhas.slice(1).map(l => {
-    const v = l.split(sep).map(limpa), m = /(\d{4})\D?(\d{2})\D?(\d{2})(?:\D*(\d{2})\D?(\d{2}))?/.exec(v[iData] || ""); if (!m) return null;
-    const d = { data: m[1] + "-" + m[2] + "-" + m[3] }; if (m[4]) d.hora = m[4] + ":" + m[5]; if (iAp >= 0 && v[iAp]) d.aparelho = /^\d+$/.test(v[iAp]) ? "InBody " + v[iAp] : v[iAp];
-    cols.forEach((c, i) => { const x = parseFloat(String(v[i] == null ? "" : v[i]).replace(",", ".")); if (!c || !isFinite(x)) return; if (c.length === 2) { d.seg = d.seg || {}; (d.seg[c[0]] = d.seg[c[0]] || {})[c[1]] = x; } else d[c[0]] = x; });
-    return d.peso > 0 ? d : null;
+    // data em AAAA-MM-DD (o InBody) ou DD/MM/AAAA; data impossível ("2026-13-45") recusa a linha
+    const v = bioCsvLinha(l, sep).map(limpa), dt = v[iData] || "", mb = /^\s*(\d{2})\/(\d{2})\/(\d{4})(?:\D+(\d{2}):(\d{2}))?/.exec(dt), m = !mb && /(\d{4})\D?(\d{2})\D?(\d{2})(?:\D*(\d{2})\D?(\d{2}))?/.exec(dt); if (!m && !mb) return null;
+    const d = m ? { data: m[1] + "-" + m[2] + "-" + m[3] } : { data: mb[3] + "-" + mb[2] + "-" + mb[1] }, hh = m ? m.slice(4, 6) : mb.slice(4, 6); if (!dataReal(d.data)) return null; if (hh[0]) d.hora = hh[0] + ":" + hh[1];
+    // aparelho: só letras, números, espaço, ponto e hífen, até 40 caracteres (é texto que vem de fora)
+    if (iAp >= 0 && v[iAp]) { const ap = v[iAp].replace(/[^\p{L}\p{N} ._-]/gu, "").trim().slice(0, 40); if (ap) d.aparelho = /^\d+$/.test(ap) ? "InBody " + ap : ap; }
+    cols.forEach((c, i) => { const x = parseFloat(String(v[i] == null ? "" : v[i]).replace(",", ".")); if (!c || !isFinite(x) || x < 0 || x > (c.length === 2 ? 1000 : bioLim(c[0]))) return; if (c.length === 2) { d.seg = d.seg || {}; (d.seg[c[0]] = d.seg[c[0]] || {})[c[1]] = x; } else d[c[0]] = x; });
+    if (d.gordura != null && !(d.gordura >= BIO_GORD[0] && d.gordura <= BIO_GORD[1])) delete d.gordura; // gordura fora de 2–70% não é medida real
+    return d.peso >= BIO_PESO[0] && d.peso <= BIO_PESO[1] ? d : null;
   }).filter(Boolean);
 }
 // Importa o arquivo: exame novo entra; exame que já existe é atualizado, guardando o que só o laudo tem (% do padrão e faixas)
+// 2ª banca: o resultado fica guardado (app.bioArqT) e volta a aparecer quando o painel é redesenhado (antes sumia em 0,1 s);
+// exame igual ao já salvo não é regravado (antes cada importação regravava tudo); as linhas recusadas são contadas
 function bioImporta(txt) {
-  const L = bioCsv(txt); let novos = 0, atual = 0;
-  if (!L.length) { const m = document.getElementById("bioArqMsg"); if (m) m.textContent = "Não reconheci este arquivo. Use o CSV exportado pelo aplicativo do InBody."; return; }
+  const diz = t => { app.bioArqT = t; const m = document.getElementById("bioArqMsg"); if (m) m.textContent = t; };
+  if (String(txt || "").length > BIO_CSV_MAX) { diz("Arquivo grande demais para um histórico do InBody. Confira se é o CSV certo."); return; }
+  const linhas = String(txt || "").split(/\r?\n/).filter(l => l.trim()).length - 1, todos = bioCsv(txt), L = todos.slice(-500); let novos = 0, atual = 0, iguais = 0;
+  if (!L.length) { diz("Não reconheci este arquivo. Use o CSV exportado pelo aplicativo do InBody."); return; }
+  const sem = o => { const c = Object.assign({}, o); delete c.atualizado; return JSON.stringify(c, Object.keys(c).sort()); };
   L.forEach(nv => {
     const old = (app.exames || {})[nv.data], seg = Object.assign({}, old && old.seg); Object.keys(nv.seg || {}).forEach(k => { seg[k] = Object.assign({}, seg[k], nv.seg[k]); });
     const doc = Object.assign({}, old, nv, { atualizado: new Date().toISOString() }); if (Object.keys(seg).length) doc.seg = seg; if (!doc.nota) doc.nota = "Importado do arquivo do InBody"; delete doc.soMes;
+    if (old && sem(old) === sem(doc)) { iguais++; return; }
     if (old) atual++; else novos++; bioGrava(nv.data, doc); bioEspelha(nv.data, doc);
   });
+  const recusadas = Math.max(0, linhas - todos.length), fora = todos.length - L.length;
   renderGoal(); renderBio(true);
-  const m2 = document.getElementById("bioArqMsg"); if (m2) m2.textContent = L.length + " exame" + (L.length > 1 ? "s" : "") + " no arquivo: " + novos + " novo" + (novos === 1 ? "" : "s") + " e " + atual + " atualizado" + (atual === 1 ? "" : "s") + ".";
+  diz(L.length + " exame" + (L.length > 1 ? "s" : "") + " lido" + (L.length > 1 ? "s" : "") + ": " + novos + " novo" + (novos === 1 ? "" : "s") + ", " + atual + " atualizado" + (atual === 1 ? "" : "s") + (iguais ? " e " + iguais + " já igua" + (iguais === 1 ? "l" : "is") : "") + "." +
+    (recusadas ? " " + recusadas + " linha" + (recusadas > 1 ? "s recusadas" : " recusada") + " (data fora de 2000 até hoje, ou peso fora de " + BIO_PESO[0] + "–" + BIO_PESO[1] + " kg)." : "") + (fora ? " Os " + fora + " mais antigos ficaram de fora (limite de 500)." : ""));
 }
 // O peso e a gordura de um exame do período do plano entram também nas medidas do dia
 function bioEspelha(id, doc) {
   const ini = (app.perfil || {}).inicio; if (doc.soMes || !ini || id < ini) return;
   const b = Object.assign({ data: id, peso: null, gordura: null, cintura: null, nota: "" }, app.body[id] || {}); b.peso = doc.peso; if (doc.gordura) b.gordura = doc.gordura; if (!b.nota) b.nota = "Exame de bioimpedância";
-  app.body[id] = b; if (app.db && app.P != null) { try { const p = app.db.doc(app.P + "corpo/" + id).set(JSON.parse(JSON.stringify(b))); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
+  // a falha aparece na barra (antes era engolida); a fila do armazenamento continua tentando
+  app.body[id] = b; if (app.db && app.P != null) app.db.doc(app.P + "corpo/" + id).set(JSON.parse(JSON.stringify(b))).catch(e => setSaveMsg("Peso do exame: " + saveErr(e, true).toLowerCase()));
 }
 // Formulário do exame: os campos seguem a ordem do laudo
 function bioFormHtml() {
   const S = app.bioEd || (app.bioEd = { data: "" }), list = bioList(), e = (S.data && app.exames && app.exames[S.data]) || {};
-  const inp = (id, v, rot) => '<input id="' + id + '" type="number" inputmode="decimal" step="any" min="0" value="' + (v != null && v !== "" ? v : "") + '"' + (rot ? ' aria-label="' + rot + '"' : "") + ">";
+  const inp = (id, v, rot) => '<input id="' + id + '" type="number" inputmode="decimal" step="any" min="0" value="' + (v != null && v !== "" ? esc(v) : "") + '"' + (rot ? ' aria-label="' + rot + '"' : "") + ">";
   const campo = c => '<div class="field"><label for="bio-' + c[0] + '">' + c[1] + (c[2] ? " (" + c[2] + ")" : "") + "</label>" + inp("bio-" + c[0], e[c[0]]) + "</div>";
   return '<div class="panel"><h2>Exame de bioimpedância' + infoBtn("bio") + '</h2><p class="lead">Importe o arquivo do InBody ou copie os números do laudo. À mão, só a data e o peso são obrigatórios.</p>' +
-    '<details class="pfsec sub" open><summary><h3>Importar arquivo do InBody</h3></summary><p class="muted" style="font-size:13px;margin:6px 0">No aplicativo do InBody, exporte o histórico (arquivo CSV) e escolha o arquivo aqui. Os exames novos entram e os que já existem são atualizados.</p><input type="file" id="bioArq" accept=".csv,text/csv,text/plain"><p class="muted" id="bioArqMsg" aria-live="polite" style="margin:6px 0 0"></p></details>' +
-    (list.length ? '<div class="field"><label for="bioSel">Exames salvos</label><select id="bioSel"><option value="">Novo exame</option>' + list.slice().reverse().map(x => '<option value="' + x.data + '"' + (x.data === S.data ? " selected" : "") + ">" + bioDia(x) + " · " + fmt(x.peso) + " kg" + (bioVal(x, "gordura") ? " · " + fmt(bioVal(x, "gordura")) + "%" : "") + "</option>").join("") + "</select></div>" : "") +
-    '<form id="bioForm"><div class="grid2"><div class="field"><label for="bio-data">Data do exame</label><input id="bio-data" type="date" required value="' + (e.data || "") + '"></div><div class="field"><label for="bio-aparelho">Aparelho</label><input id="bio-aparelho" type="text" autocomplete="off" value="' + esc(e.aparelho || "") + '" placeholder="ex.: InBody 380"></div></div>' +
+    '<details class="pfsec sub" open><summary><h3>Importar arquivo do InBody</h3></summary><p class="muted" style="font-size:13px;margin:6px 0">No aplicativo do InBody, exporte o histórico (arquivo CSV) e escolha o arquivo aqui. Os exames novos entram e os que já existem são atualizados.</p><input type="file" id="bioArq" accept=".csv,text/csv,text/plain"><p class="muted" id="bioArqMsg" aria-live="polite" style="margin:6px 0 0">' + esc(app.bioArqT || "") + '</p></details>' +
+    (list.length ? '<div class="field"><label for="bioSel">Exames salvos</label><select id="bioSel"><option value="">Novo exame</option>' + list.slice().reverse().map(x => '<option value="' + esc(x.data) + '"' + (x.data === S.data ? " selected" : "") + ">" + bioDia(x) + " · " + fmt(x.peso) + " kg" + (bioVal(x, "gordura") ? " · " + fmt(bioVal(x, "gordura")) + "%" : "") + "</option>").join("") + "</select></div>" : "") +
+    '<form id="bioForm"><div class="grid2"><div class="field"><label for="bio-data">Data do exame</label><input id="bio-data" type="date" required value="' + esc(e.data || "") + '"></div><div class="field"><label for="bio-aparelho">Aparelho</label><input id="bio-aparelho" type="text" autocomplete="off" value="' + esc(e.aparelho || "") + '" placeholder="ex.: InBody 380"></div></div>' +
     '<label class="biochk"><input type="checkbox" id="bio-soMes"' + (e.soMes ? " checked" : "") + '> Só sei o mês do exame</label>' +
     '<h3 class="biofh">Composição</h3><div class="grid2">' + BIO_CAMPOS.filter(c => c[3] === "c").map(campo).join("") + "</div>" +
     '<details class="pfsec sub"' + (e.seg ? " open" : "") + '><summary><h3>Análise segmentar</h3></summary><div class="bioseg"><span></span><span>Magra (kg)</span><span>% do padrão</span><span>Gordura (kg)</span>' + BIO_SEG.map(s => { const v = (e.seg || {})[s[0]] || {}; return "<b>" + s[1] + "</b>" + inp("bio-s-" + s[0] + "-kg", v.kg, s[1] + ": massa magra em kg") + inp("bio-s-" + s[0] + "-pc", v.pc, s[1] + ": % do padrão") + inp("bio-s-" + s[0] + "-g", v.g, s[1] + ": gordura em kg"); }).join("") + "</div></details>" +
     '<details class="pfsec sub"><summary><h3>Índices do laudo</h3></summary><div class="grid2" style="margin-top:8px">' + BIO_CAMPOS.filter(c => c[3] === "i").map(campo).join("") + "</div></details>" +
     '<details class="pfsec sub"' + (e.faixas ? " open" : "") + '><summary><h3>Faixas normais do laudo</h3></summary><p class="muted" style="font-size:13px;margin:6px 0">São os números entre parênteses no laudo. Em branco, o app estima pela altura.</p><div class="bioseg f"><span></span><span>Mínimo</span><span>Máximo</span>' + BIO_FAIXA.map(k => { const f = (e.faixas || {})[k] || [], c = BIO_CAMPOS.find(x => x[0] === k); return "<b>" + c[1] + "</b>" + inp("bio-f-" + k + "-lo", f[0], c[1] + ": mínimo normal") + inp("bio-f-" + k + "-hi", f[1], c[1] + ": máximo normal"); }).join("") + "</div></details>" +
     '<div class="field"><label for="bio-nota">Observação</label><textarea id="bio-nota" rows="2">' + esc(e.nota || "") + "</textarea></div>" +
-    '<div class="row-btns"><button class="btn primary" type="submit" id="bioSave">Salvar exame</button>' + (e.data ? '<button class="btn" type="button" data-bio="del">Excluir exame</button>' : "") + '<span class="muted" id="bioMsg" aria-live="polite"></span></div></form></div>';
+    '<div class="row-btns"><button class="btn primary" type="submit" id="bioSave">Salvar exame</button>' + (e.data ? '<button class="btn" type="button" data-bio="del">Excluir exame</button>' : "") + '<span class="muted" id="bioMsg" aria-live="polite">' + esc(app.bioMsgT || "") + '</span></div></form></div>';
 }
 // Grava (ou apaga) um exame
 function bioGrava(id, doc) {
   app.exames = app.exames || {};
   if (doc.apagado) delete app.exames[id]; else app.exames[id] = doc;
-  if (!app.db || app.P == null) return;
-  try { const p = app.db.doc(app.P + "exames/" + id).set(JSON.parse(JSON.stringify(doc))); if (p && p.catch) p.catch(() => { const m = document.getElementById("bioMsg"); if (m) m.textContent = "Não consegui salvar. Confira a conexão."; }); } catch (e) { }
+  if (!app.db || app.P == null) return Promise.resolve(false);
+  // devolve se gravou; em falha de rede a fila continua tentando e a mensagem diz isso
+  return app.db.doc(app.P + "exames/" + id).set(JSON.parse(JSON.stringify(doc))).then(() => true, e => { app.bioMsgT = saveErr(e, true); app.bioMsgF = true; msgFalha("bioMsg", app.bioMsgT); return false; });
 }
 // Lê o formulário e salva o exame; o peso e a gordura do exame entram também nas medidas do dia, quando ele é do período do plano
 function bioSalva() {
-  const g = id => { const el = document.getElementById(id); return el ? String(el.value).trim() : ""; }, n = id => { const v = g(id).replace(",", "."); return v !== "" && +v > 0 ? +v : null; };
-  const data = g("bio-data"), msg = document.getElementById("bioMsg"), S = app.bioEd || (app.bioEd = { data: "" });
-  if (!data) { msg.textContent = "Informe a data."; return; }
+  // 2ª banca: campo com letras ou fora do teto (bioLim) não some mais em silêncio: a mensagem diz qual conferir
+  const ruins = [], g = id => { const el = document.getElementById(id); return el ? String(el.value).trim() : ""; }, n = (id, lim, rot) => { const t = g(id); if (t === "") return null; const v = numBr(t); if (!(v >= 0 && v <= (lim || 1000))) { ruins.push(rot || id); return null; } return v > 0 ? v : null; };
+  const data = g("bio-data"), msg = document.getElementById("bioMsg"), S = app.bioEd || (app.bioEd = { data: "" }), diz = t => { app.bioMsgT = t; msg.textContent = t; };
+  if (!data) { diz("Informe a data."); return; }
   const soMes = document.getElementById("bio-soMes").checked, id = soMes ? data.slice(0, 8) + "01" : data, doc = { data: id, atualizado: new Date().toISOString() };
   if (soMes) doc.soMes = true; if (g("bio-aparelho")) doc.aparelho = g("bio-aparelho"); if (g("bio-nota")) doc.nota = g("bio-nota");
-  BIO_CAMPOS.forEach(c => { const v = n("bio-" + c[0]); if (v != null) doc[c[0]] = v; });
-  if (!(doc.peso > 0)) { msg.textContent = "Informe o peso."; return; }
-  const seg = {}; BIO_SEG.forEach(s => { const o = {}; ["kg", "pc", "g"].forEach(k => { const v = n("bio-s-" + s[0] + "-" + k); if (v != null) o[k] = v; }); if (Object.keys(o).length) seg[s[0]] = o; });
+  BIO_CAMPOS.forEach(c => { const v = n("bio-" + c[0], bioLim(c[0]), c[1]); if (v != null) doc[c[0]] = v; });
+  if (!(doc.peso > 0) && !ruins.includes("Peso")) { diz("Informe o peso."); return; }
+  if (!dataReal(id)) { diz("Confira a data: de 2000 até hoje."); return; }
+  if (doc.peso < BIO_PESO[0] || doc.peso > BIO_PESO[1]) { diz("Confira o peso: aceito de " + BIO_PESO[0] + " a " + BIO_PESO[1] + " kg."); return; }
+  if (doc.gordura != null && (doc.gordura < BIO_GORD[0] || doc.gordura > BIO_GORD[1])) { diz("Confira a gordura: aceito de " + BIO_GORD[0] + " a " + BIO_GORD[1] + "%."); return; }
+  const seg = {}; BIO_SEG.forEach(s => { const o = {}; ["kg", "pc", "g"].forEach(k => { const v = n("bio-s-" + s[0] + "-" + k, 1000, s[1]); if (v != null) o[k] = v; }); if (Object.keys(o).length) seg[s[0]] = o; });
   if (Object.keys(seg).length) doc.seg = seg;
-  const fx = {}; BIO_FAIXA.forEach(k => { const lo = n("bio-f-" + k + "-lo"), hi = n("bio-f-" + k + "-hi"); if (lo != null && hi != null && hi > lo) fx[k] = [lo, hi]; });
+  const fx = {}; BIO_FAIXA.forEach(k => { const lo = n("bio-f-" + k + "-lo", 10000, "faixa"), hi = n("bio-f-" + k + "-hi", 10000, "faixa"); if (lo != null && hi != null && hi > lo) fx[k] = [lo, hi]; });
+  if (ruins.length) { diz("Confira " + [...new Set(ruins)].slice(0, 3).join(", ") + ": só números (use vírgula para decimal) e dentro do limite do campo."); return; }
   if (Object.keys(fx).length) doc.faixas = fx;
   if (S.data && S.data !== id && app.exames && app.exames[S.data]) bioGrava(S.data, { data: S.data, apagado: true }); // a data foi corrigida: o registro antigo sai
-  bioGrava(id, doc); S.data = id;
+  const gr = bioGrava(id, doc); S.data = id;
   bioEspelha(id, doc);
   renderGoal(); renderBio(true);
-  const m2 = document.getElementById("bioMsg"); if (m2) m2.textContent = "Exame salvo ✓";
+  // "Exame salvo ✓" só depois de gravar de verdade (antes aparecia antes da resposta do servidor)
+  app.bioMsgT = "Salvando…"; app.bioMsgF = false; const m2 = document.getElementById("bioMsg"); if (m2) m2.textContent = app.bioMsgT;
+  // a mensagem fica em app.bioMsgT: o formulário redesenhado pela resposta do servidor mostra o "Exame salvo ✓" (antes ele nunca aparecia)
+  gr.then(ok => { if (ok) { app.bioMsgT = "Exame salvo ✓"; const m3 = document.getElementById("bioMsg"); if (m3) { m3.textContent = app.bioMsgT; delete m3.dataset.falha; } } });
 }
 // Desenha o painel e, se ninguém está digitando nele, o formulário do exame
 function renderBio(force) {
@@ -4250,7 +4352,9 @@ function renderBio(force) {
 // Cardio previsto na semana: minutos, vezes, inclinação, velocidade e tipo
 function cardioPlan(w) {
   const pc = (app.plan && app.plan.cardio) || CARDIO_DEF;
-  const base = { min: pc.min, vezes: pc.vezes, incl: pc.incl, vel: pc.vel, tipo: pc.tipo === "corrida" ? "corrida" : "caminhada" };
+  // campo vazio no Perfil cai no padrão (CARDIO_DEF): sem isso o tempo previsto do dia virava "NaN min" para quem não preencheu o cardio
+  const num = (v, d) => +v > 0 ? +v : d;
+  const base = { min: num(pc.min, CARDIO_DEF.min), vezes: num(pc.vezes, CARDIO_DEF.vezes), incl: pc.incl != null && pc.incl !== "" && +pc.incl >= 0 ? +pc.incl : CARDIO_DEF.incl, vel: num(pc.vel, CARDIO_DEF.vel), tipo: pc.tipo === "corrida" ? "corrida" : "caminhada" };
   const F = app.fases || [];
   if (!F.length) return base;
   if (ownerPlan() ? w <= BLOCK_W : weekStart(w).getTime() <= F[0].fim) return base;
@@ -4299,9 +4403,9 @@ function cardioCard(W, day) {
     (livre ? '<div class="pres"><span class="vchip">Sem meta: dia livre</span></div>' : "") + '<div class="pres"' + (livre ? ' style="display:none"' : "") + '><span class="vchip">Previsto: <b>' + pl.min + " min</b> · " + pl.tipo + " · " + fmt(pl.incl) + "% · " + fmt(pl.vel) + " km/h · pace " + paceFmt(60 / pl.vel) + (pl.vezes < 6 ? " · " + pl.vezes + "x na semana" : "") + infoBtn("cardio") + "</span></div>" +
     '<table class="sets"><thead><tr><th>Tempo</th><th>Distância (km)</th><th>Inclinação (%)</th><th>Velocidade (km/h)</th></tr></thead><tbody><tr>' +
     '<td><input type="text" autocomplete="off" aria-label="Tempo mostrado pela esteira, em minutos ou minutos:segundos" data-cardio="tempo" value="' + esc(c.tempo != null ? c.tempo : (c.min != null ? c.min : "")) + '" placeholder="' + pl.min + ':00"></td>' +
-    '<td><input type="number" inputmode="decimal" step="0.01" aria-label="Distância mostrada pela esteira em km" data-cardio="km" value="' + (c.km == null ? "" : c.km) + '" placeholder="' + fmt(Math.round(pl.vel * pl.min / 60 * 100) / 100) + '"></td>' +
-    '<td><input type="number" inputmode="decimal" step="0.5" aria-label="Inclinação da esteira em porcentagem" data-cardio="incl" value="' + (c.incl == null ? "" : c.incl) + '" placeholder="' + fmt(pl.incl) + '"></td>' +
-    '<td><input type="number" inputmode="decimal" step="0.1" aria-label="Velocidade da esteira em km/h" data-cardio="vel" value="' + (c.vel == null ? "" : c.vel) + '" placeholder="' + fmt(pl.vel) + '"></td></tr></tbody></table>' +
+    '<td><input type="number" inputmode="decimal" step="0.01" aria-label="Distância mostrada pela esteira em km" data-cardio="km" value="' + (c.km == null ? "" : esc(c.km)) + '" placeholder="' + fmt(Math.round(pl.vel * pl.min / 60 * 100) / 100) + '"></td>' +
+    '<td><input type="number" inputmode="decimal" step="0.5" aria-label="Inclinação da esteira em porcentagem" data-cardio="incl" value="' + (c.incl == null ? "" : esc(c.incl)) + '" placeholder="' + fmt(pl.incl) + '"></td>' +
+    '<td><input type="number" inputmode="decimal" step="0.1" aria-label="Velocidade da esteira em km/h" data-cardio="vel" value="' + (c.vel == null ? "" : esc(c.vel)) + '" placeholder="' + fmt(pl.vel) + '"></td></tr></tbody></table>' +
     '<div class="cout" id="cardioOut" aria-live="polite">' + cardioOutHtml(c, pl) + "</div>" +
     '<div class="row-btns"><button class="btn ok" data-cardiost="feito" aria-pressed="' + (c.st === "feito") + '">✓ Feito</button><button class="btn no" data-cardiost="nao" aria-pressed="' + (c.st === "nao") + '"' + (livre ? ' style="display:none"' : "") + '>✗ Não fiz</button></div>' +
     '<textarea data-cardio="nota" rows="1" placeholder="Observação do cardio (segurou no corrimão? cansaço?)">' + esc(c.nota || "") + "</textarea></article>";
@@ -4353,13 +4457,13 @@ function cardioWeek(W) {
 function planAt(t) { const pp = userPlanPoints(); if (t <= pp[0].t) return pp[0].y; for (let i = 1; i < pp.length; i++) if (t <= pp[i].t) { const a = pp[i - 1], b = pp[i]; return a.y + (b.y - a.y) * (t - a.t) / (b.t - a.t); } return pp[pp.length - 1].y; }
 
 // ===== 16. TELA: PLANO E REGRAS =====
-// Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual
 // Glossário: todos os termos do app, com busca; cada um abre a mesma explicação do botão "i"
 function gloHtml(q) {
   const tk = semAcento(q || "").trim(), it = Object.keys(GLOSS).filter(k => !/^pfs_/.test(k)).map(k => [k, GLOSS[k][0]]).filter(([, t]) => !tk || semAcento(t).includes(tk));
   it.sort((a, b) => a[1].localeCompare(b[1], "pt-BR"));
   return it.length ? it.map(([k, t]) => '<button type="button" class="glob" data-info="' + k + '">' + esc(t) + "</button>").join("") : '<p class="muted">Nenhum termo com esse nome.</p>';
 }
+// Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual
 function renderPlan() {
   const gl = document.getElementById("gloList"), gq = document.getElementById("gloQ"); if (gl) gl.innerHTML = gloHtml(gq ? gq.value : "");
   document.getElementById("legend").innerHTML = ["up", "reps", "down", "fix", "repeat", "deload", "new"].map(a => actChip(a)).join("");
@@ -4530,8 +4634,13 @@ function clkToast(t) {
 function clkHandoff(W, m, j, side) {
   const c = app.clk, msgs = [];
   if (!c) return msgs;
-  if (c.W !== W || EXBY[c.k].d !== EXBY[m].d) return msgs;
   const el = clkEl();
+  // outra semana ou outro dia (2ª banca: o tempo era descartado sem aviso): a execução em curso é anotada no treino de onde veio
+  if (c.W !== W || EXBY[c.k].d !== EXBY[m].d) {
+    if (c.ph === "exec" && !c.waitSide && el <= CLK_EXEC_MAX) { clkRecord(c.W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada no treino anterior (semana " + c.W + ")"); }
+    else if (c.ph) msgs.push("o cronômetro do treino anterior foi encerrado");
+    return msgs;
+  }
   if (c.ph === "exec" && c.waitSide) { if (c.k === m && c.i === j) return msgs; }
   else if (c.ph === "exec") {
     if (c.k === m && c.i === j && (c.side || null) === (side || null)) return msgs;
@@ -4646,7 +4755,7 @@ function clkAct(a) {
   if (a === "fix") { c.fixOpen = true; clkSave(); clkBar(); const i = document.getElementById("clkFixIn"); if (i) { i.focus(); i.select(); } return; }
   if (a === "fixok") {
     const s = parseMmss((document.getElementById("clkFixIn") || {}).value);
-    if (s == null || (c.ph !== "exec" && !(s > 0))) { const i = document.getElementById("clkFixIn"); if (i) i.focus(); return; }
+    if (s == null || (c.ph !== "exec" && !(s > 0))) { const i = document.getElementById("clkFixIn"); if (i) i.focus(); clkToast("Tempo inválido: use 1:30 ou 90."); return; } // antes não dizia nada
     if (c.ph === "exec" && c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", s); app.clk = null; }
     else if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
     else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
@@ -4823,6 +4932,22 @@ function dayStats(W, day) {
   const pr = rows.filter(r => r.perf != null), perf = pr.length ? pr.reduce((a, r) => a + r.perf, 0) / pr.length : null;
   return { doc, rows, t, req, feitos, nao, pend, setsDone, setsPrev, ton, tonPrev, pr, perf, c: doc && doc.cardio || {}, pl: cardioPlan(W) };
 }
+// Recordes do dia (como os apps de registro de treino avisam): exercícios em que a melhor série do dia passou da melhor de todas as semanas anteriores.
+// "Melhor série" = 1RM estimado pela mesma fórmula do app (e1). Conta o mesmo exercício em qualquer dia da semana (mesmo nome), como na conversa entre treinos.
+// Precisa de pelo menos um registro anterior: a primeira vez de um exercício não é recorde. Carga zero (peso do corpo) fica de fora.
+function recordes(W, day) {
+  const best = e => Math.max(0, ...((e && e.sets) || []).filter(x => x && +x.kg > 0 && +x.reps > 0).map(x => e1(+x.kg, +x.reps)));
+  const doc = app.records[docId(W, day)]; if (!doc || !doc.ex) return [];
+  return dayEx(day).map(d => {
+    const agora = best(doc.ex[d.k]); if (!(agora > 0)) return null;
+    let antes = 0;
+    Object.keys(app.records).forEach(id => {
+      const m = /^w(\d+)-/.exec(id), r = app.records[id]; if (!m || +m[1] >= W || !r || !r.ex) return;
+      Object.keys(r.ex).forEach(k => { const o = EXBY[k]; if (o && o.n === d.n) antes = Math.max(antes, best(r.ex[k])); });
+    });
+    return antes > 0 && agora > antes + 0.05 ? { d, agora: Math.round(agora * 10) / 10, antes: Math.round(antes * 10) / 10 } : null;
+  }).filter(Boolean);
+}
 // Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício
 function daySummaryHtml(W, day) {
   const livre = DAYS.find(x => x.id === day && x.livre);
@@ -4868,6 +4993,8 @@ function daySummaryHtml(W, day) {
     if (rows.some(r => r.flags.cansaco)) why.push("você anotou cansaço");
     dir.push(["lo", "Abaixo do previsto: " + list(lo, r => nm(r) + " (" + pctTxt(r.perf) + ")") + "." + (why.length ? " Possível causa: " + why.join("; ") + "." : "") + " A próxima carga de cada um está logo abaixo."]);
   }
+  const rec = recordes(W, day); // recorde de força estimada: aparece mesmo quando o desempenho ficou no previsto
+  if (rec.length) dir.push(["up", "🏆 Recorde: " + list(rec, r => nm(r) + " (força estimada " + fmt(r.agora) + " kg; antes " + fmt(r.antes) + " kg)") + "."]);
   if (hi.length) dir.push(["up", "Acima do previsto: " + list(hi, r => nm(r) + " (" + pctTxt(r.perf) + ")") + "." + (hi.some(r => r.next && r.next.dir === "up") ? " A carga sobe na próxima." : "")]);
   if (t.restAvg != null && t.restAvg < t.restPrev * REST_CURTO) dir.push(["warn", "Descanso médio de " + fmtSec(t.restAvg) + " contra " + fmtSec(t.restPrev) + " previstos. Descanso curto derruba as reps das séries seguintes: nos exercícios compostos, espere o tempo previsto."]);
   else if (t.restAvg != null && t.restAvg > t.restPrev * REST_LONGO) dir.push(["info", "Descanso médio de " + fmtSec(t.restAvg) + ", bem acima dos " + fmtSec(t.restPrev) + " previstos. Não atrapalha o resultado, mas alonga o treino."]);
@@ -5120,8 +5247,9 @@ async function putDoc(coll, id, data, msgEl) {
   app[coll] = app[coll] || {};
   if (data.apagado) delete app[coll][id]; else app[coll][id] = data;
   const say = t => { const m = msgEl && document.getElementById(msgEl); if (m) m.textContent = t; };
-  if (!app.db || app.P == null) { say("Sem armazenamento: fica só nesta tela."); return; }
-  try { await app.db.doc(app.P + coll + "/" + id).set(data); say("Salvo."); } catch (e) { say(saveErr(e)); }
+  if (!app.db || app.P == null) { say("Sem armazenamento: fica só nesta tela."); return false; }
+  // devolve true quando gravou; em falha de rede, a fila do armazenamento continua tentando (a mensagem diz isso)
+  try { await app.db.doc(app.P + coll + "/" + id).set(data); say("Salvo."); return true; } catch (e) { const m = msgEl && document.getElementById(msgEl); if (m && e && e.code !== "nao_carregou") msgFalha(m, saveErr(e, true)); else say(saveErr(e, true)); return false; }
 }
 // Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos
 function subExtras(db, P) {
@@ -5162,10 +5290,15 @@ async function fotoAdd(file, tipo, msgEl) {
 function fotosDe(tipo, f) { return Object.entries(app.fotos || {}).filter(([, v]) => v.tipo === tipo && (!f || f(v))).sort((a, b) => a[0] < b[0] ? 1 : -1); }
 // Miniaturas. O endereço da imagem é um link temporário que chega depois: fotoFill preenche cada <img>
 function fotoThumbs(list, del) {
-  return list.map(([id, v]) => '<figure class="foto"><img alt="Foto de ' + dCurta(v.data) + '" data-foto="' + esc(v.ref) + '"><figcaption>' + dCurta(v.data) + (del ? '<button type="button" class="fdel" data-fotodel="' + id + '" aria-label="Apagar a foto de ' + dCurta(v.data) + '">Apagar</button>' : "") + "</figcaption></figure>").join("");
+  return list.map(([id, v]) => '<figure class="foto"><img alt="Foto de ' + dCurta(v.data) + '" data-foto="' + esc(v.ref) + '"><figcaption>' + dCurta(v.data) + (del ? '<button type="button" class="fdel" data-fotodel="' + esc(id) + '" aria-label="Apagar a foto de ' + dCurta(v.data) + '">Apagar</button>' : "") + "</figcaption></figure>").join("");
 }
-// Link temporário de uma foto (pedido uma vez e reaproveitado)
-function fotoUrl(ref) { app.fotoUrls = app.fotoUrls || {}; return app.fotoUrls[ref] || (app.fotoUrls[ref] = app.fotoStore.url(ref).catch(e => { delete app.fotoUrls[ref]; throw e; })); }
+// Link temporário de uma foto (vale 10 minutos; reaproveitado por 9 e pedido de novo depois)
+function fotoUrl(ref) {
+  app.fotoUrls = app.fotoUrls || {}; const c = app.fotoUrls[ref];
+  if (c && Date.now() - c.t < 54e4) return c.p;
+  const p = app.fotoStore.url(ref).catch(e => { delete app.fotoUrls[ref]; throw e; });
+  app.fotoUrls[ref] = { p, t: Date.now() }; return p;
+}
 // Preenche as miniaturas que ainda estão sem imagem
 function fotoFill(root) { if (app.fotoStore) (root || document).querySelectorAll("img[data-foto]:not([src])").forEach(img => fotoUrl(img.dataset.foto).then(u => { img.src = u; }, () => { })); }
 // Painel "Foto do treino" do dia aberto na aba Semana
@@ -5185,8 +5318,14 @@ function fotoEvoHtml() {
 function fotoDel(b) {
   const id = b.dataset.fotodel, v = (app.fotos || {})[id];
   if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = "Apagar"; } }, 4000); return; }
-  if (v && app.fotoStore) app.fotoStore.del(v.ref).catch(() => { });
-  putDoc("fotos", id, { apagado: true }).then(render);
+  // 2ª banca: o registro só vira "apagado" depois que o arquivo saiu do armazenamento. Se falhar, a foto continua na tela com o aviso
+  // ao lado (fotoErr), e um novo toque em Apagar tenta de novo. Antes ela sumia da tela e o arquivo ficava guardado
+  if (!(v && app.fotoStore)) { putDoc("fotos", id, { apagado: true }).then(render); return; }
+  b.disabled = true; b.textContent = "Apagando…";
+  app.fotoStore.del(v.ref).then(() => putDoc("fotos", id, { apagado: true }).then(render), () => {
+    (app.fotoErr || (app.fotoErr = {}))[id] = 1; b.disabled = false; delete b.dataset.sure; b.textContent = "Apagar";
+    const f = b.closest("figure, .foto, div") || b.parentNode; if (f && !f.querySelector(".fotoerr")) f.insertAdjacentHTML("beforeend", '<p class="muted fotoerr">A foto não foi apagada do armazenamento (sem conexão?). Toque em Apagar de novo.</p>');
+  });
 }
 // ----- Compartilhar o resumo do dia como imagem -----
 // Carrega uma imagem para desenhar no canvas
@@ -5393,8 +5532,10 @@ const DJ_M = [
 const DJ_REF = DJ_T.concat(
   DJ_FICHAS.map(f => { const x = DJ_BULA[f[1]] || {}; return Object.assign({ n: f[1], g: f[2], cls: f[3], via: f[4], freq: f[5], mvT: f[6] || "", mv: f[7] || null, fonte: "material de estudo, ficha " + f[0] + (x.fb ? "; " + x.fb : "") }, x); }),
   DJ_M.map(f => ({ n: f[0], g: "m", cls: f[1], via: f[2], freq: f[3], mvT: "", mv: null, fonte: "material de estudo, tabela geral" })));
-// Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código
+// Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código.
+// Caminho do documento da anotação: "nt-" + nome sem acento
 function djSlug(n) { return "nt-" + String(n).toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+// Anotação gravada para a substância (ou null)
 function djNota(n) { return (app.diario || {})[djSlug(n)] || null; }
 // Salva a anotação digitada no cartão
 function djNotaSave(el) { const r = DJ_REF[+el.dataset.djnt]; if (!r) return; putDoc("diario", djSlug(r.n), { tipo: "nt", ref: r.n, txt: el.value.trim() }, "djRefN"); }
@@ -5467,8 +5608,16 @@ function djExGuia(limpa) {
 }
 // Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t") ou peptídeo
 function djTipo(s) { return s.g === "t" ? ' <span class="optb">hormônio</span>' : /^b/.test(s.g || "") ? ' <span class="optb">peptídeo</span>' : ""; }
+// Exame de contagem em "mil/mm³" (plaquetas): valor e referência sempre nessa escala. Número acima de 1.000 só pode estar em /mm³
+// (250.000 plaquetas = 250 mil/mm³). Usada ao ler o laudo, ao salvar à mão e ao mostrar: os exames já gravados em duas escalas
+// (2ª banca: a faixa ficava em /mm³ e o valor em mil/mm³, e a tabela dizia "abaixo" sem motivo) aparecem certos sem regravar
+function djEscala(x) {
+  const ua = (DJ_MARC.find(m => m[0] === x.marc) || [])[1] || ""; if (!/^mil\/mm/.test(ua)) return x;
+  ["valor", "rmin", "rmax"].forEach(k => { if (x[k] != null && +x[k] > 1000) x[k] = Math.round(+x[k] / 10) / 100; });
+  x.un = ua; return x;
+}
 // Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)
-function djList(tipo) { const key = v => v.quando || v.data || (v.nome || "").toLowerCase(); return Object.entries(app.diario || {}).filter(([, v]) => v.tipo === tipo).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0); }
+function djList(tipo) { const key = v => v.quando || v.data || (v.nome || "").toLowerCase(); return Object.entries(app.diario || {}).filter(([, v]) => v.tipo === tipo).map(([id, v]) => { const o = Object.assign({ id }, v); return tipo === "ex" ? djEscala(o) : o; }).sort((a, b) => key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0); }
 // Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida informada. Modelo didático, não é nível no sangue.
 function djLevel(sub, aps, t) { const mv = +sub.mv * 864e5; if (!(mv > 0)) return null; return aps.reduce((a, x) => { const dt = t - Date.parse(x.quando); return x.sub === sub.id && dt >= 0 ? a + (+x.dose || 0) * Math.pow(0.5, dt / mv) : a; }, 0); }
 // Próxima aplicação prevista: a última mais o intervalo informado (dias)
@@ -5529,7 +5678,8 @@ function renderDiario() {
 }
 // Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar substância, aplicação ou exame
 function djAct(a, b) {
-  const [op, arg] = a.split("|"), v = id => (document.getElementById(id).value || "").trim(), n = id => { const x = parseFloat(v(id).replace(",", ".")); return isFinite(x) ? x : null; };
+  // n: número escrito à brasileira ("1.000,5", "250.000", "0,5") pela mesma djNum do leitor de laudo; texto com letras dá null
+  const [op, arg] = a.split("|"), v = id => (document.getElementById(id).value || "").trim(), n = id => { const t = v(id).replace(/\s/g, ""); if (!/^-?\d[\d.,]*$/.test(t)) return null; const x = djNum(t); return isFinite(x) ? x : null; };
   const say = (el, t) => { document.getElementById(el).textContent = t; }, clear = ids => ids.forEach(i => { document.getElementById(i).value = ""; });
   if (op === "mes") { const [Y, M] = (app.djMes || todayStr().slice(0, 7)).split("-").map(Number); app.djMes = new Date(Date.UTC(Y, M - 1 + +arg, 1)).toISOString().slice(0, 7); renderDiario(); return; }
   if (op === "ref") {
@@ -5553,8 +5703,9 @@ function djAct(a, b) {
   if (op === "lersalva") { // salva os marcadores marcados na lista de conferência do laudo
     const R = app.djLido, q = (at, i) => { const el = document.querySelector("[" + at + '="' + i + '"]'); return el ? el.value.trim() : ""; }, nn = t => { const x = parseFloat(String(t).replace(/\./g, m => /,/.test(t) ? "" : m).replace(",", ".")); return isFinite(x) ? x : null; }; if (!R) return;
     const data = v("djLerData") || todayStr(); let k = 0;
+    if (!dataReal(data)) { document.getElementById("djLerOut").insertAdjacentHTML("afterbegin", '<p class="lead">Confira a data do exame: de 2000 até hoje.</p>'); return; }
     R.itens.forEach((x, i) => { const cb = document.querySelector('[data-djl="' + i + '"]'), val = nn(q("data-djlv", i)); if (!cb || !cb.checked || val == null) return;
-      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, Object.assign({ tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data: x.data || data }, x.op ? { op: x.op } : {}), "djExMsg"); k++; app.djMarc = x.marc; });
+      putDoc("diario", "ex-" + Date.now().toString(36) + "-" + i, djEscala(Object.assign({ tipo: "ex", marc: x.marc, valor: val, un: q("data-djlu", i), rmin: nn(q("data-djlmin", i)), rmax: nn(q("data-djlmax", i)), data: x.data && dataReal(x.data) ? x.data : data }, x.op ? { op: x.op } : {})), "djExMsg"); k++; app.djMarc = x.marc; });
     app.djLido = null; document.getElementById("djLerOut").innerHTML = '<p class="lead">' + (k ? k + " marcador" + (k > 1 ? "es salvos" : " salvo") + " com a data " + dCurta(data) + "." : "Nada marcado para salvar.") + "</p>"; document.getElementById("djLerArq").value = ""; renderDiario(); return;
   }
   if (op === "del") {
@@ -5564,20 +5715,41 @@ function djAct(a, b) {
   const id = op.slice(3) + "-" + Date.now().toString(36);
   if (op === "addsub") {
     if (!v("djSubNome")) { say("djSubMsg", "Informe o nome."); return; }
+    if ((v("djSubMv") && !(n("djSubMv") > 0)) || (v("djSubInt") && !(n("djSubInt") > 0))) { say("djSubMsg", "Meia-vida e intervalo: só números, em dias (12 horas = 0,5)."); return; }
     const sub = { tipo: "sub", nome: v("djSubNome"), un: v("djSubUn"), mv: n("djSubMv"), intervalo: n("djSubInt"), via: v("djSubVia"), pos: v("djSubPos"), obs: v("djSubObs") }; if (app.djRefG) sub.g = app.djRefG;
     putDoc("diario", app.djEdit || id, sub, "djSubMsg"); app.djEdit = null; app.djRefG = null; djIntSet(""); clear(["djSubRef", "djSubNome", "djSubMv", "djSubInt", "djSubPos", "djSubObs"]);
   } else if (op === "addap") {
     if (!v("djApSub") || !(n("djApDose") > 0) || !v("djApQuando")) { say("djMsg", "Cadastre e escolha a substância, e informe a dose e a data."); return; }
-    putDoc("diario", id, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg"); clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal();
+    if (n("djApDose") >= 1e6) { say("djMsg", "Confira a dose: o número está grande demais."); return; }
+    // botão travado e campos limpos só depois de gravar: com rede lenta, o segundo toque duplicava a aplicação.
+    // 2ª banca: enquanto não grava, a aplicação mantém o mesmo id (app.djApId); com a rede falhando, tocar de novo regrava a mesma, não cria outra
+    if (b) { b.disabled = true; say("djMsg", "Salvando…"); }
+    const apId = app.djApId || (app.djApId = id);
+    putDoc("diario", apId, { tipo: "ap", sub: v("djApSub"), dose: n("djApDose"), quando: v("djApQuando"), local: v("djApLocal"), lote: v("djApLote"), obs: v("djApObs") }, "djMsg")
+      .then(okG => { if (okG) { app.djApId = null; clear(["djApDose", "djApLocal", "djApLote", "djApObs"]); document.getElementById("djApQuando").value = nowLocal(); } })
+      .finally(() => { if (b) b.disabled = false; });
   } else if (op === "addex") {
     const m = v("djExMarc") === "outro" ? v("djExOutro") : v("djExMarc");
-    if (!m || n("djExValor") == null || !v("djExData")) { say("djExMsg", "Informe o marcador, o valor e a data."); return; }
-    putDoc("diario", id, { tipo: "ex", marc: m, valor: n("djExValor"), un: v("djExUn"), rmin: n("djExMin"), rmax: n("djExMax"), data: v("djExData") }, "djExMsg"); clear(["djExValor"]); app.djMarc = m;
+    if (!m || n("djExValor") == null || !v("djExData")) { say("djExMsg", "Informe o marcador, o valor e a data (números à brasileira: 250.000 ou 4,5)."); return; }
+    if (n("djExValor") < 0 || n("djExValor") >= 1e7) { say("djExMsg", "Confira o valor do exame."); return; }
+    if (!dataReal(v("djExData"))) { say("djExMsg", "Confira a data: de 2000 até hoje."); return; }
+    putDoc("diario", id, djEscala({ tipo: "ex", marc: m, valor: n("djExValor"), un: v("djExUn"), rmin: n("djExMin"), rmax: n("djExMax"), data: v("djExData") }), "djExMsg"); clear(["djExValor"]); app.djMarc = m;
   }
   renderDiario();
 }
 // ----- Laudo em PDF: leitura automática dos marcadores (a pessoa confere antes de salvar) -----
 const DJ_PDF = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/"; // leitor de PDF, carregado só quando um laudo é escolhido
+// Impressão digital (SHA-384) de cada arquivo do leitor, tirada do pacote oficial no npm. O arquivo baixado só é usado se for idêntico:
+// um CDN adulterado não consegue rodar programa no app (que tem acesso aos seus dados de saúde). Ao trocar a versão, troque também estes valores.
+const DJ_PDF_SHA = { "pdf.min.mjs": "+0ti2moQlmLN7WZHE2RHIf5lV8hHxhxEalN0il3YZceG26fUPyOkR0hp9daxk1i7", "pdf.worker.min.mjs": "ToeVvShCxKc6CEvhHeMt0Q8A06pSPDbAlngO9nokrDmh914gk/pYd0N7D0a4Lz2o" };
+let djPdfLib = null; // leitor já carregado e conferido (baixa uma vez por sessão)
+// Baixa um arquivo do leitor, confere a impressão digital e devolve um endereço local (blob:) para ele
+async function djPdfArq(nome) {
+  const r = await fetch(DJ_PDF + nome, { credentials: "omit" }); if (!r.ok) throw new Error("download");
+  const buf = await r.arrayBuffer(), h = btoa(String.fromCharCode.apply(null, new Uint8Array(await crypto.subtle.digest("SHA-384", buf))));
+  if (h !== DJ_PDF_SHA[nome]) throw new Error("integridade");
+  return URL.createObjectURL(new Blob([buf], { type: "text/javascript" }));
+}
 // Como cada marcador aparece nos laudos: [marcador, expressão que acha o nome]
 const DJ_LER = [
   ["Hematócrito", /hemat[oó]crito/], ["Hemoglobina glicada (HbA1c)", /hemoglobina\s+glicada|hba1c/], ["Hemoglobina", /hemoglobina(?!\s*(?:glic|corpus|a1c|\(hcm))/], ["Leucócitos", /leuc[oó]citos/], ["Plaquetas", /plaquetas/],
@@ -5644,18 +5816,23 @@ function djAcha(texto) {
       if (!v || /\n[^\n]*\n/.test(resto.slice(0, v.index))) continue; // o valor tem de estar na linha do nome ou na seguinte
       // a referência só vale na mesma linha do valor, ou na linha seguinte quando ela fala em referência (senão pegaria a faixa do exame de baixo)
       const dep = resto.slice(v.index + v[0].length), un = /^\s*(%|[a-zµμ]+\s*\/\s*[a-zµμ³0-9]+)/i.exec(dep), ln = dep.split("\n"), jan = ln[0] + (ln[1] && /refer|\bvr\b|normal|desej/i.test(ln[1]) ? " " + ln[1] : ""), fx = djRefTxt(jan, un ? un[1].replace(/\s+/g, "") : "");
-      itens.push({ marc: nome, valor: djNum(v[0]), un: un ? un[1].replace(/\s+/g, "") : unDe(nome), rmin: fx ? fx[0] : null, rmax: fx ? fx[1] : null });
+      const it = { marc: nome, valor: djNum(v[0]), un: un ? un[1].replace(/\s+/g, "") : unDe(nome), rmin: fx ? fx[0] : null, rmax: fx ? fx[1] : null };
+      const sinal = /([<>])=?\s*$/.exec(resto.slice(0, v.index)); if (sinal) it.op = sinal[1]; // "PSA < 0,01": guarda que é "menor que", não 0,01 exato
+      itens.push(it);
       achou = true;
     }
     if (!achou) faltam.push(nome);
   });
+  // contagens por mm³ ("250.000 /mm3") na unidade do app (mil/mm³): valor E faixa de referência na mesma escala (djEscala)
+  itens.forEach(djEscala);
   const data = dm ? iso(dm) : ""; itens.forEach(x => { if (x.data === data) delete x.data; }); // só fica no item a data que difere da data geral do laudo
   return { data, itens, faltam };
 }
 // Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha)
 async function djPdfTexto(file) {
-  const lib = await import(DJ_PDF + "pdf.min.mjs"); lib.GlobalWorkerOptions.workerSrc = DJ_PDF + "pdf.worker.min.mjs";
-  const pdf = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise; let txt = "";
+  if (!djPdfLib) { const [m, w] = await Promise.all([djPdfArq("pdf.min.mjs"), djPdfArq("pdf.worker.min.mjs")]); const lib = await import(m); lib.GlobalWorkerOptions.workerSrc = w; djPdfLib = lib; }
+  // isEvalSupported: false = o leitor não gera programa a partir do conteúdo do PDF (proteção extra contra laudo adulterado)
+  const pdf = await djPdfLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise; let txt = "";
   for (let p = 1; p <= pdf.numPages; p++) {
     const c = await (await pdf.getPage(p)).getTextContent(), L = {};
     c.items.forEach(i => { if (!i.str) return; const y = Math.round(i.transform[5] / 3); (L[y] = L[y] || []).push(i); });
@@ -5679,7 +5856,7 @@ async function djLerArquivo(file) {
   out.innerHTML = '<p class="muted">Lendo o laudo…</p>';
   let txt;
   try { txt = await djPdfTexto(file); }
-  catch (e) { out.innerHTML = '<p class="lead">Não consegui abrir este arquivo. Confira se é um PDF e se há internet (o leitor é baixado na hora).</p>'; return; }
+  catch (e) { out.innerHTML = e && e.message === "integridade" ? '<p class="lead">O leitor de PDF baixado não passou na conferência de segurança e não foi usado. Tente mais tarde ou preencha à mão.</p>' : '<p class="lead">Não consegui abrir este arquivo. Confira se é um PDF e se há internet (o leitor é baixado na hora).</p>'; return; }
   if (txt.replace(/\s/g, "").length < 20) { out.innerHTML = '<p class="lead">Este PDF é uma imagem (foto ou digitalização): não tem texto para o app ler. Peça ao laboratório o PDF original ou preencha à mão.</p>'; return; }
   app.djLido = djAcha(txt); out.innerHTML = djLerHtml(app.djLido);
 }
@@ -5714,6 +5891,8 @@ function touch(day, W) {
 // Salva o registro de um dia; se falhar, tenta de novo
 async function flush(id) {
   if (!app.db || app.P == null) { app.dirty.delete(id); setSaveMsg("Sem armazenamento: o registro fica só nesta tela."); return; }
+  // dados ainda não carregados: não grava (gravaria o dia vazio por cima do servidor) e deixa a versão do servidor entrar quando chegar
+  if (app.db.pronto && !app.db.pronto()) { app.dirty.delete(id); delete app.records[id]; setSaveMsg(saveErr({ code: "nao_carregou" })); return; }
   if (app.saving.has(id)) { clearTimeout(app.timers[id]); app.timers[id] = setTimeout(() => flush(id), 800); return; }
   app.saving.add(id); app.dirty.delete(id);
   setSaveMsg("Salvando…");
@@ -5723,13 +5902,13 @@ async function flush(id) {
     await app.db.doc(app.P + "semanas/" + id).set(body);
     setSaveMsg("Salvo ✓");
   } catch (e) {
-    app.dirty.add(id);
+    // a fila do armazenamento já guardou o dia (também no aparelho) e tenta de novo com espera crescente; aqui só avisa.
+    // Antes o treino tinha uma segunda tentativa a cada 3 s que anulava a espera (38 envios em 2 min sem rede)
     setSaveMsg(saveErr(e, true));
-    if (!e || e.code !== "auth") { clearTimeout(app.timers[id]); app.timers[id] = setTimeout(() => flush(id), 3000); }
   } finally { app.saving.delete(id); }
 }
 // Mensagem de erro ao salvar (retry: o app tenta de novo sozinho)
-function saveErr(e, retry) { const c = e && e.code; return c === "quota_exceeded" ? "Armazenamento cheio: não foi possível salvar." : c === "auth" ? "Sua sessão expirou: toque em Sair e entre de novo." : retry ? "Não salvou. Tentando de novo…" : "Não salvou. Tente de novo."; }
+function saveErr(e, retry) { const c = e && e.code; return c === "nao_carregou" ? "Seus dados ainda não carregaram: nada foi gravado." : c === "quota_exceeded" ? "Armazenamento cheio: não foi possível salvar." : c === "auth" ? "Não salvo: o servidor recusou a sessão. O registro fica guardado neste aparelho e segue quando a sessão renovar." : "Não salvou ainda: o app tenta de novo sozinho (o registro fica guardado neste aparelho)."; }
 // Mensagem da barra de salvar
 // Situação do salvamento: aparece na barra de baixo só enquanto importa (salvando, erro); "Salvo" some sozinho
 function setSaveMsg(t) {
@@ -5880,7 +6059,10 @@ document.addEventListener("click", ev => {
   const k = b.dataset.done || b.dataset.skip || b.dataset.addset;
   if (!k) return;
   const { def, pres, entry } = ctx(k);
-  if (b.dataset.done) { if (entry.st === "feito") { entry.st = null; delete entry.doneAt; } else { entry.st = "feito"; entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); clkOnDone(app.week, k); clkBar(); } }
+  // toque duplo (menos de 1,5 s) não desmarca o que acabou de ser marcado
+  if (b.dataset.done && entry.st === "feito" && Date.now() - Date.parse(entry.doneAt || 0) < 1500) return;
+  // desmarcar: as séries que o próprio Feito preencheu (auto) voltam a ficar vazias; as digitadas ficam
+  if (b.dataset.done) { if (entry.st === "feito") { entry.st = null; delete entry.doneAt; (entry.sets || []).forEach(s => { if (s && s.auto) { s.kg = null; s.reps = null; delete s.auto; } }); } else { entry.st = "feito"; entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); clkOnDone(app.week, k); clkBar(); } }
   else if (b.dataset.skip) { entry.st = entry.st === "nao" ? null : "nao"; }
   else { const last = entry.sets[entry.sets.length - 1] || { kg: pres.load, reps: pres.sets[0].tr }; entry.sets.push({ kg: last.kg, reps: last.reps, rir: null }); }
   touch(def.d);
@@ -5897,9 +6079,19 @@ document.addEventListener("input", ev => {
   if (el.dataset.set) {
     const [k, i, f, sd] = el.dataset.set.split("|");
     const { def, pres, entry, set } = ctx(k, +i);
-    const v = el.value === "" ? null : Number(el.value);
+    const v = el.value.trim() === "" ? null : numBr(el.value);
+    // faixa de cada campo da série: valor fora dela (ou texto) não entra no registro nem no motor, e o campo fica marcado.
+    // 2ª banca: o valor anterior sai do registro (antes "1200" ficava gravado como 120, o pedaço digitado antes da recusa)
+    const lim = { kg: [0, 1000], reps: [0, 100], rir: [0, 10], exec: [0, 1800], desc: [0, 3600] }[f];
+    if (v != null && (!isFinite(v) || (lim && (v < lim[0] || v > lim[1])))) {
+      el.classList.add("bad"); setSaveMsg("Confira o valor: " + (lim ? "aceito de " + lim[0] + " a " + lim[1] + (f === "kg" ? " (use vírgula para decimal: 72,5)." : ".") : "só números."));
+      if (sd) { sideOf(set, sd)[f] = null; uniAgg(set); } else set[f] = null;
+      touch(def.d); return;
+    }
+    el.classList.remove("bad");
     if (sd) { sideOf(set, sd)[f] = v; uniAgg(set); const ul = document.getElementById("ul-" + k); if (ul) ul.innerHTML = uniLine(entry); }
-    else { set[f] = v; if (uniJunto(def)) set.uj = 1; else if (!uniLados(def)) delete set.uj; }
+    else { set[f] = v; if (uniJunto(def)) set.uj = 1; else if (!uniLados(def)) delete set.uj; } // lados juntos: a série fica marcada como unilateral
+    delete set.auto; // digitada pela pessoa: fica, mesmo se o Feito for desmarcado
     if (v != null && (f === "kg" || f === "reps")) clkOnInput(app.week, k);
     if (v != null && !entry.startAt && (f === "kg" || f === "reps")) entry.startAt = new Date().toISOString();
     snapPrev(entry, pres);
@@ -5938,7 +6130,7 @@ document.addEventListener("change", ev => { const el = ev.target;
   if (el.dataset && el.dataset.parcin) { const v = Math.round(+el.value), [pk, pi, ps] = el.dataset.parcin.split("|"); if (v >= 1 && v <= 99) parcEdit("add", pk, +pi, v, ps); else el.value = ""; return; }
   if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; } if (el.id === "medSel") renderGoal(); if (ev.target.id === "exSel") renderExChart(); if (ev.target.id === "musSel") renderProgress(); if (ev.target.id === "qwDate") { app.qwTyping = false; updateQW(); } });
 // Teclado: Enter salva a pesagem; Esc fecha a explicação
-document.addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.target.id === "qwKg") { ev.preventDefault(); saveQW(); } });
+document.addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.target.id === "qwKg") { ev.preventDefault(); if (!document.body.classList.contains("carregando")) saveQW(); } }); // durante a carga, o Enter também não grava
 // Ao sair de um campo, faz o redesenho que ficou esperando
 document.addEventListener("focusout", () => { setTimeout(() => { if (app.deferRender && !(document.activeElement && document.activeElement.matches && document.activeElement.matches("main input, main textarea, main select"))) render(); }, 50); });
 window.addEventListener("hashchange", routeFromHash);
@@ -5950,11 +6142,14 @@ document.getElementById("bodyForm").addEventListener("submit", async ev => {
   ev.preventDefault();
   const d = document.getElementById("bDate").value;
   const msg = document.getElementById("bMsg");
-  if (!d) return;
+  if (!d) { msg.textContent = "Informe a data."; return; }
+  if (!dataReal(d)) { msg.textContent = "Confira a data: de 2000 até hoje."; return; }
   const ids = [["peso", "bWeight"], ["gordura", "bFat"], ["cintura", "bWaist"]].concat(MEDIDAS.filter(m => m[0] !== "cintura").map(m => [m[0], "bm-" + m[0]]));
   const rec = Object.assign({ data: d, peso: null, gordura: null, cintura: null, nota: "" }, app.body[d] || {});
   let n = 0;
-  for (const [k, id] of ids) { const v = document.getElementById(id).value; if (v !== "") { const x = Number(String(v).replace(",", ".")); if (x > 0) { rec[k] = x; n++; } } }
+  // faixas: peso 20–300 kg, gordura 2–70%, medidas 10–250 cm. Fora delas, o app diz qual campo conferir em vez de gravar
+  const faixa = k => k === "peso" ? [20, 300] : k === "gordura" ? [2, 70] : [10, 250];
+  for (const [k, id] of ids) { const v = document.getElementById(id).value; if (v !== "") { const x = numBr(v), [lo, hi] = faixa(k); if (!(x >= lo && x <= hi)) { msg.textContent = "Confira " + (k === "peso" ? "o peso" : k === "gordura" ? "a gordura" : "a medida de " + k) + ": aceito de " + lo + " a " + hi + "."; return; } rec[k] = x; n++; } }
   const nt = document.getElementById("bNote").value;
   if (nt.trim()) { rec.nota = nt; n++; }
   if (!n) { msg.textContent = "Preencha pelo menos uma medida."; return; }
@@ -5962,7 +6157,7 @@ document.getElementById("bodyForm").addEventListener("submit", async ev => {
   if (!app.db || app.P == null) { msg.textContent = "Sem armazenamento: a medida fica só nesta tela."; return; }
   const btn = document.getElementById("bSave"); btn.disabled = true; msg.textContent = "Salvando…";
   try { await app.db.doc(app.P + "corpo/" + d).set(rec); msg.textContent = "Salvo ✓"; flashBtn("bSave"); ids.forEach(([, id]) => document.getElementById(id).value = ""); document.getElementById("bNote").value = ""; }
-  catch (e) { msg.textContent = saveErr(e); }
+  catch (e) { msgFalha(msg, saveErr(e, true)); }
   finally { btn.disabled = false; }
 });
 // Ajustes: um salvamento por vez
@@ -5974,7 +6169,8 @@ async function saveSettings() {
   if (!app.db || app.P == null) return;
   if (settingsSaving) { settingsPending = true; return; }
   settingsSaving = true;
-  try { await app.db.doc(app.P + "meta/ajustes").set(JSON.parse(JSON.stringify(app.settings))); } catch (e) { }
+  // a falha aparece na barra; a fila do armazenamento continua tentando sozinha (antes o erro era engolido sem aviso)
+  try { await app.db.doc(app.P + "meta/ajustes").set(JSON.parse(JSON.stringify(app.settings))); } catch (e) { setSaveMsg("Ajustes: " + saveErr(e, e && e.code !== "auth" && e.code !== "nao_carregou").toLowerCase()); }
   finally { settingsSaving = false; if (settingsPending) { settingsPending = false; saveSettings(); } }
 }
 
@@ -5988,42 +6184,100 @@ const SB_URL = "https://urrgxjudwntgoyslsgwe.supabase.co";
 const SB_KEY = "sb_publishable_8cj6PIB9miDzyeLa3ysN7w_u5Hg8Mj9";
 // Cliente do Supabase (criado em connect)
 let sb = null;
+const SENHA_MIN = 8; // tamanho mínimo da senha ao criar conta
 // Salvar um arquivo gerado no app (imagem do resumo): baixa pelo navegador
 app.salvar = (nome, blob) => { const a = document.createElement("a"), u = URL.createObjectURL(blob); a.href = u; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); return Promise.resolve(); };
-// Mesma interface de coleções e documentos que o app usa: dados carregados de uma vez e gravados um a um
+// Mesma interface de coleções e documentos que o app usa: dados carregados de uma vez e gravados um a um.
+// Revisão de 18/nov (banca):
+//   • nada é gravado antes de a carga terminar com sucesso (erro "nao_carregou"): gravar antes apagava no servidor o que ainda não tinha chegado;
+//   • cada documento tem a sua fila: uma gravação só sai depois da anterior, e a mais nova substitui a que ainda esperava (duas inclusões
+//     seguidas na dieta não se atropelam mais);
+//   • gravação que falha por rede tenta de novo sozinha (3 s, 6 s, 12 s… até 30 s, e na hora em que a rede volta); a promessa rejeita na
+//     primeira falha, para a tela avisar, mas a fila continua tentando;
+//   • o estado geral (salvando, não salvo, sincronizado) aparece no cabeçalho (syncEstado);
+//   • a leitura filtra pelo próprio usuário (segunda proteção, além das regras RLS do Supabase) e ignora caminhos estranhos (__proto__).
+// 2ª banca (18/nov):
+//   • a fila também fica guardada no aparelho (FILA_KEY + id da pessoa): se o celular fechar o app sem sinal, o que faltava gravar
+//     volta na próxima abertura e é enviado depois da carga. Sai do aparelho assim que o servidor confirma, ou ao tocar em Sair;
+//   • sessão expirada ou recusa do servidor não tira mais a gravação da fila: ela espera (até 5 min entre tentativas) e é reenviada
+//     assim que a sessão é renovada (retenta, chamado por connect); o cabeçalho mostra "Não salvo · entre de novo".
+const FILA_KEY = "hexis-fila-";
 function makeDb(uid) {
-  const store = {}, subs = [];
+  const store = Object.create(null), subs = [], fila = Object.create(null); // fila[p] = { v, voando, tent, timer, auth, esperam: [[ok, falha]] }
   let loaded = false;
+  const FK = FILA_KEY + uid;
+  // grava no aparelho o que ainda não chegou ao servidor (só os valores; o resto é refeito ao abrir)
+  const guarda = () => { try { const o = {}; Object.keys(fila).forEach(p => { o[p] = fila[p].v; }); if (Object.keys(o).length) localStorage.setItem(FK, JSON.stringify(o)); else localStorage.removeItem(FK); } catch (e) { } };
+  try { const o = JSON.parse(localStorage.getItem(FK) || "null"); if (o && typeof o === "object") Object.keys(o).forEach(p => { if (/^[\w-]+(\/[\w.:-]+)+$/.test(p) && !/__proto__|constructor|prototype/.test(p)) fila[p] = { v: o[p], voando: false, tent: 0, timer: null, auth: false, esperam: [] }; }); } catch (e) { }
   const clone = v => JSON.parse(JSON.stringify(v));
   const parent = p => p.split("/").slice(0, -1).join("/");
   const collSnap = p => ({ docs: Object.keys(store).filter(k => parent(k) === p).map(k => ({ id: k.split("/").pop(), data: () => clone(store[k]) })), docChanges: () => [], metadata: { fromCache: false } });
   const docSnap = p => ({ exists: Object.prototype.hasOwnProperty.call(store, p), data: () => clone(store[p]) });
   const emit = x => { try { x.cb(x.c ? collSnap(x.p) : docSnap(x.p)); } catch (e) { console.error(e); } };
   const fire = p => subs.forEach(x => { if ((x.c && parent(p) === x.p) || (!x.c && x.p === p)) emit(x); });
+  const pendentes = () => Object.keys(fila).length;
+  const avisa = () => { const fs = Object.values(fila); syncEstado(pendentes(), fs.some(f => f.tent > 0), fs.some(f => f.auth)); };
+  // Lê todas as linhas da pessoa (de 1.000 em 1.000), troca o que estava na memória e avisa as telas inscritas.
+  // O que ainda está na fila de gravação vale mais que o lido do servidor (é mais novo)
   async function load() {
-    const fresh = {};
+    const fresh = Object.create(null);
     for (let from = 0; ; from += 1000) {
-      const { data, error } = await sb.from("hexis_docs").select("path,data").order("path").range(from, from + 999);
+      const { data, error } = await sb.from("hexis_docs").select("path,data").eq("user_id", uid).order("path").range(from, from + 999);
       if (error) throw error;
-      data.forEach(r => fresh[r.path] = r.data);
+      data.forEach(r => { if (typeof r.path === "string" && /^[\w-]+(\/[\w.:-]+)+$/.test(r.path) && !/__proto__|constructor|prototype/.test(r.path)) fresh[r.path] = r.data; });
       if (data.length < 1000) break;
     }
+    Object.keys(fila).forEach(p => { fresh[p] = clone(fila[p].v); });
     Object.keys(store).forEach(k => { if (!(k in fresh)) delete store[k]; });
     Object.assign(store, fresh);
+    const primeira = !loaded;
     loaded = true;
     subs.slice().forEach(emit);
+    if (primeira) Object.keys(fila).forEach(p => envia(p)); // o que ficou no aparelho da última vez segue agora
   }
+  // Envia a gravação que espera na fila do documento p; em falha de rede, agenda nova tentativa
+  async function envia(p) {
+    const f = fila[p]; if (!f || f.voando) return;
+    f.voando = true; clearTimeout(f.timer);
+    const v = f.v, esperam = f.esperam; f.esperam = [];
+    try {
+      const { error } = await sb.from("hexis_docs").upsert({ user_id: uid, path: p, data: v, updated_at: new Date().toISOString() });
+      if (error) { const e = new Error(error.message); e.code = /jwt|auth|permission|row-level/i.test(error.message || "") ? "auth" : "save_failed"; throw e; }
+      store[p] = clone(v);
+      f.voando = false; f.auth = false;
+      if (f.v === v) { delete fila[p]; guarda(); fire(p); } else envia(p); // chegou uma versão mais nova enquanto esta voava: manda a nova, sem redesenhar a velha
+      esperam.forEach(w => w[0]());
+    } catch (e) {
+      f.voando = false; f.tent++; f.auth = e.code === "auth";
+      esperam.forEach(w => w[1](e));
+      // sem rede: 3 s, 6 s, 12 s… até 30 s. Sessão ou permissão: continua na fila, mais devagar (até 5 min), e volta na hora em que a sessão renovar
+      clearTimeout(f.timer);
+      f.timer = setTimeout(() => envia(p), Math.min(f.auth ? 300000 : 30000, (f.auth ? 15000 : 3000) * Math.pow(2, f.tent - 1)));
+    }
+    avisa();
+  }
+  const retenta = () => Object.keys(fila).forEach(p => { clearTimeout(fila[p].timer); envia(p); });
+  window.addEventListener("online", () => { if (loaded) retenta(); });
   const sub = (c, p, cb, err) => { const x = { c, p, cb, err }; subs.push(x); if (loaded) setTimeout(() => emit(x), 0); return () => { const i = subs.indexOf(x); if (i >= 0) subs.splice(i, 1); }; };
   return {
     load,
-    fail: e => subs.forEach(x => { if (x.err) try { x.err(e); } catch (er) { } }),
+    pronto: () => loaded,       // a carga terminou com sucesso pelo menos uma vez
+    pendentes,                  // quantos documentos esperam gravação
+    dump: () => clone(store),   // cópia de todos os documentos carregados (usada na cópia de segurança)
+    agora: () => { if (loaded) retenta(); }, // manda já o que espera (ao fechar o app)
+    retenta: () => { if (loaded) retenta(); }, // sessão renovada: reenvia o que esperava
+    descarta: () => { Object.keys(fila).forEach(p => { clearTimeout(fila[p].timer); delete fila[p]; }); try { localStorage.removeItem(FK); } catch (e) { } }, // Sair: tira do aparelho
+    vazia: ms => new Promise(ok => { const t0 = Date.now(), olha = () => (!pendentes() || Date.now() - t0 > ms) ? ok(!pendentes()) : setTimeout(olha, 150); olha(); }), // espera a fila esvaziar (até ms)
     collection: p => ({ onSnapshot: (cb, err) => sub(true, p, cb, err) }),
     doc: p => ({
       onSnapshot: (cb, err) => sub(false, p, cb, err),
-      set: async v => {
-        const { error } = await sb.from("hexis_docs").upsert({ user_id: uid, path: p, data: v, updated_at: new Date().toISOString() });
-        if (error) { const e = new Error(error.message); e.code = /jwt|auth|permission|row-level/i.test(error.message || "") ? "auth" : "save_failed"; throw e; }
-        store[p] = clone(v); fire(p);
+      set: v => {
+        if (!loaded) { const e = new Error("dados ainda não carregados"); e.code = "nao_carregou"; return Promise.reject(e); }
+        const f = fila[p] || (fila[p] = { v: null, voando: false, tent: 0, timer: null, auth: false, esperam: [] });
+        f.v = clone(v); guarda();
+        const pr = new Promise((ok, falha) => f.esperam.push([ok, falha]));
+        avisa(); envia(p);
+        return pr;
       }
     })
   };
@@ -6034,22 +6288,27 @@ function lgSay(t, err) { const m = document.getElementById("lgMsg"); m.textConte
 function lgErr(e) {
   const m = (e && e.message || "").toLowerCase();
   if (m.includes("invalid login")) return "E-mail ou senha incorretos.";
-  if (m.includes("already registered") || m.includes("already exists")) return "Esse e-mail já tem conta: toque em Entrar.";
-  if (m.includes("password") && (m.includes("6") || m.includes("short") || m.includes("weak"))) return "A senha precisa ter pelo menos 6 caracteres.";
+  // mesma frase do cadastro com sucesso: a tela não revela se um e-mail já tem conta
+  if (m.includes("already registered") || m.includes("already exists")) return "Se este e-mail ainda não tinha conta, enviamos um link de confirmação. Se já tinha, toque em Entrar.";
+  if (m.includes("password") && (m.includes("6") || m.includes("8") || m.includes("short") || m.includes("weak") || m.includes("pwned") || m.includes("leaked"))) return "Senha recusada: use pelo menos " + SENHA_MIN + " caracteres, sem ser uma senha comum.";
   if (m.includes("email") && m.includes("invalid")) return "Confira o e-mail digitado.";
   if (m.includes("not confirmed")) return "Conta ainda não confirmada. Fale com quem enviou o link do app.";
   if (m.includes("rate") || m.includes("too many")) return "Muitas tentativas seguidas. Espere um minuto e tente de novo.";
   if (m.includes("fetch") || m.includes("network")) return "Sem conexão. Verifique a internet.";
   return "Não deu certo: " + (e && e.message || "erro desconhecido") + ".";
 }
-// Mostra e esconde a tela de login
+// Mostra a tela de login
 function showLogin() { document.getElementById("login").classList.remove("hide"); document.getElementById("sync").textContent = "Desconectado"; setTimeout(() => { const el = document.getElementById("lgEmail"); if (el && !el.value) el.focus(); }, 50); }
+// Esconde a tela de login
 function hideLogin() { document.getElementById("login").classList.add("hide"); }
 // Entrar (criar = false) ou criar conta (criar = true) com e-mail e senha
 async function lgGo(criar) {
   const email = document.getElementById("lgEmail").value.trim(), pass = document.getElementById("lgPass").value;
-  if (!email || !email.includes("@")) { lgSay("Digite seu e-mail.", true); return; }
+  if (!email) { lgSay("Digite seu e-mail.", true); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { lgSay("Confira o e-mail: ele precisa ter @ e o domínio (ex.: nome@gmail.com).", true); return; }
   if (pass.length < 6) { lgSay("A senha precisa ter pelo menos 6 caracteres.", true); return; }
+  // conta nova: pelo menos 8 caracteres (contas antigas com 6 continuam entrando). O mínimo de verdade é o do painel do Supabase
+  if (criar && pass.length < SENHA_MIN) { lgSay("Para criar a conta, use uma senha com pelo menos " + SENHA_MIN + " caracteres.", true); return; }
   if (!sb) { lgSay("O serviço de login não carregou. Recarregue a página.", true); return; }
   const btns = ["lgIn", "lgUp"].map(id => document.getElementById(id)); btns.forEach(b => b.disabled = true);
   lgSay(criar ? "Criando a conta…" : "Entrando…");
@@ -6057,15 +6316,92 @@ async function lgGo(criar) {
     const r = criar ? await sb.auth.signUp({ email, password: pass }) : await sb.auth.signInWithPassword({ email, password: pass });
     if (r.error) throw r.error;
     if (r.data && r.data.session) { lgSay(""); startSession(r.data.session); }
-    else if (criar && r.data && r.data.user && Array.isArray(r.data.user.identities) && !r.data.user.identities.length) lgSay("Esse e-mail já tem conta: toque em Entrar.", true);
-    else lgSay("Conta criada. Confirme pelo link enviado ao seu e-mail e depois toque em Entrar.");
-  } catch (e) { lgSay(lgErr(e), true); }
+    // mesma resposta para e-mail novo e e-mail que já tem conta: a tela não revela quem usa o app
+    else lgSay("Se este e-mail ainda não tinha conta, enviamos um link de confirmação. Se já tinha, toque em Entrar.");
+  } catch (e) { const t = lgErr(e); lgSay(t, !/^Se este e-mail/.test(t)); }
   finally { btns.forEach(b => b.disabled = false); }
 }
 document.getElementById("loginForm").addEventListener("submit", ev => { ev.preventDefault(); lgGo(false); });
 document.getElementById("lgUp").addEventListener("click", () => lgGo(true));
-// Sair da conta
-document.addEventListener("click", ev => { if (ev.target.closest && ev.target.closest("#logout") && sb) sb.auth.signOut().finally(() => location.reload()); });
+// Sair da conta: encerra a sessão e apaga do aparelho o que o app guardou nele (cronômetro, blocos abertos, tela acesa, fila),
+// para a próxima pessoa que usar o mesmo navegador não ver nada da anterior.
+// 2ª banca: sai mesmo sem internet (a sessão é apagada no aparelho, scope "local", sem esperar o servidor); antes tenta gravar o
+// que falta e, se ainda sobrar algo, pergunta com o número de registros que se perderiam. Recarrega uma vez só (app.saindo).
+document.addEventListener("click", async ev => {
+  if (!(ev.target.closest && ev.target.closest("#logout") && sb) || app.saindo) return;
+  const b = ev.target.closest("#logout"); b.disabled = true; b.textContent = "Saindo…";
+  if (app.db && app.db.pronto()) { gravaJa(); await app.db.vazia(navigator.onLine === false ? 300 : 4000); }
+  const n = app.db ? app.db.pendentes() + app.dirty.size : 0;
+  if (n && !confirm((n > 1 ? n + " registros ainda não foram gravados" : "1 registro ainda não foi gravado") + " (sem conexão). Se sair agora, " + (n > 1 ? "eles se perdem" : "ele se perde") + ". Sair mesmo assim?")) { b.disabled = false; b.textContent = "Sair"; return; }
+  app.saindo = true;
+  if (app.db) app.db.descarta();
+  try { [CLK_KEY, WAKE_KEY, KEEP_KEY].forEach(k => localStorage.removeItem(k)); } catch (e) { }
+  try { await Promise.race([sb.auth.signOut({ scope: "local" }), new Promise(r => setTimeout(r, 2500))]); } catch (e) { }
+  try { Object.keys(localStorage).filter(k => /^sb-.*-auth-token/.test(k)).forEach(k => localStorage.removeItem(k)); } catch (e) { } // garantia, se a biblioteca não respondeu
+  location.reload();
+});
+// Enquanto os dados carregam (body.carregando), nenhum toque nem digitação muda registro: os eventos são parados antes de chegar ao app
+["click", "input", "change", "beforeinput", "submit"].forEach(t => document.addEventListener(t, ev => {
+  if (!document.body.classList.contains("carregando")) return;
+  const el = ev.target; if (!el || !el.closest) return;
+  if (el.closest("#login, #conn, .bnav, #subnav, .home-link, #logout, #hojeBtn, #hojeX, #popX, .info, [data-info], details > summary, a[href^='#']")) return; // navegar e ler continuam livres
+  if (t === "click" && !el.closest("button, input, select, textarea, label, [data-dt], [data-dj]")) return;
+  ev.preventDefault(); ev.stopImmediatePropagation();
+  const c = document.getElementById("sync"); if (c) c.textContent = "Carregando seus dados…";
+}, true));
+// Ao esconder ou fechar o app (travar a tela, trocar de app): grava na hora o que esperava os 1,2 s e o que está na fila
+function gravaJa() {
+  if (!app.db || !app.db.pronto()) return;
+  Object.keys(app.timers || {}).forEach(id => { if (app.dirty.has(id)) { clearTimeout(app.timers[id]); flush(id); } });
+  app.db.agora();
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") gravaJa(); });
+window.addEventListener("pagehide", gravaJa);
+// Fechar a página com algo ainda não gravado: o navegador pergunta antes
+window.addEventListener("beforeunload", ev => { if (app.saindo) return; if ((app.db && app.db.pronto() && (app.dirty.size || app.saving.size || app.db.pendentes())) || app.pfDirty) { gravaJa(); ev.preventDefault(); ev.returnValue = ""; } });
+// Aviso no alto quando há registros de corpo com data impossível, com o botão para apagá-los
+function corpoRuimAviso() {
+  const c = document.getElementById("conn"); if (!c) return;
+  const n = (app.corpoRuim || []).length; if (!n) { if (c.dataset.ruim) { c.classList.add("hide"); delete c.dataset.ruim; } return; }
+  c.dataset.ruim = "1"; c.classList.remove("hide");
+  c.innerHTML = n + (n > 1 ? " registros" : " registro") + " de corpo com data inválida, fora de 2000 até hoje (" + app.corpoRuim.slice(0, 3).map(esc).join(", ") + ') ficaram de fora das telas. <button type="button" class="btn small" id="corpoRuimDel">Apagar</button>';
+}
+// Apagar: o 1º toque pede confirmação; o aviso só some quando o servidor confirmou (se falhar, diz e a fila tenta de novo)
+document.addEventListener("click", ev => {
+  const b = ev.target.closest && ev.target.closest("#corpoRuimDel"); if (!b || !app.db) return;
+  if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Confirmar apagar"; return; }
+  b.disabled = true; b.textContent = "Apagando…";
+  const ids = (app.corpoRuim || []).slice();
+  Promise.all(ids.map(id => app.db.doc(app.P + "corpo/" + id).set({ apagado: true })))
+    .then(() => { app.corpoRuim = (app.corpoRuim || []).filter(id => !ids.includes(id)); corpoRuimAviso(); })
+    .catch(e => { b.disabled = false; b.textContent = "Apagar"; delete b.dataset.sure; const c = document.getElementById("conn"); if (c) c.insertAdjacentText("beforeend", " " + saveErr(e, true)); });
+});
+// Seus dados (Plano e regras): baixa a cópia de segurança (todos os documentos, em JSON) ou as séries em planilha (CSV)
+function exportaDados(tipo) {
+  const msg = document.getElementById("exportaMsg"), say = t => { if (msg) msg.textContent = t; };
+  if (!app.db || !app.db.dump) { say("Entre na sua conta para baixar os dados."); return; }
+  const docs = app.db.dump(), hoje = todayStr();
+  let nome, blob;
+  if (tipo === "csv") {
+    // uma linha por série: data, semana, dia, exercício, série, carga, repetições, RIR, parciais (%), execução e descanso (s)
+    const q = v => { const s = v == null ? "" : String(v); return /[";\n,]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const L = [["data", "semana", "dia", "exercicio", "serie", "kg", "reps", "rir", "parciais_pct", "execucao_s", "descanso_s"].join(";")];
+    Object.keys(docs).filter(p => /^semanas\/w\d+-/.test(p)).sort().forEach(p => {
+      const d = docs[p], m = /^semanas\/w(\d+)-(.+)$/.exec(p); if (!d || !d.ex) return;
+      const W = +m[1], dia = m[2], data = DAYS.some(x => x.id === dia) ? isoDate(dayDate(W, dia)) : "";
+      Object.keys(d.ex).forEach(k => (d.ex[k].sets || []).forEach((s, i) => { if (!s || !(+s.reps > 0)) return;
+        L.push([data, W, dia, (EXBY[k] || { n: k }).n, i + 1, s.kg != null ? String(s.kg).replace(".", ",") : "", s.reps, s.rir != null ? s.rir : "", Array.isArray(s.parc) ? s.parc.join(" ") : "", s.exec || "", s.desc || ""].map(q).join(";")); }));
+    });
+    nome = "hexis-series-" + hoje + ".csv"; blob = new Blob(["\ufeff" + L.join("\r\n")], { type: "text/csv;charset=utf-8" }); // \ufeff: o Excel abre os acentos certos
+    say((L.length - 1) + " séries na planilha.");
+  } else {
+    nome = "hexis-dados-" + hoje + ".json";
+    blob = new Blob([JSON.stringify({ app: "Hexis", exportado: new Date().toISOString(), documentos: docs }, null, 1)], { type: "application/json" });
+    say(Object.keys(docs).length + " documentos na cópia. As fotos ficam no armazenamento e não entram no arquivo.");
+  }
+  app.salvar(nome, blob);
+}
+document.addEventListener("click", ev => { const b = ev.target.closest && ev.target.closest("[data-exporta]"); if (b) exportaDados(b.dataset.exporta); });
 // Liga no Supabase e espera a sessão: com login, abre os dados; sem login, mostra a tela de entrada
 async function connect() {
   const sync = document.getElementById("sync"), conn = document.getElementById("conn");
@@ -6074,35 +6410,68 @@ async function connect() {
     conn.textContent = "Não consegui carregar o serviço de login. Verifique a internet e recarregue a página.";
     conn.classList.remove("hide"); showLogin(); return;
   }
-  sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-  sb.auth.onAuthStateChange((ev, session) => { if (session && !app.db) setTimeout(() => startSession(session), 0); });
+  // detectSessionInUrl: false (2ª banca): um link com a sessão de outra pessoa no endereço não troca mais a conta logada.
+  // O app só entra por e-mail e senha. Um endereço com token é limpo sem ser usado.
+  if (/access_token|refresh_token|[?&#]code=/.test(location.hash + location.search)) history.replaceState(null, "", location.pathname);
+  // keepalive com a tela escondida: a gravação feita ao travar o celular não é cortada quando o navegador suspende a página
+  const vaiFetch = (u, o) => fetch(u, document.visibilityState === "hidden" ? Object.assign({}, o, { keepalive: true }) : o);
+  sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }, global: { fetch: vaiFetch } });
+  // sessão nova abre os dados; sessão renovada reenvia o que esperava; sessão encerrada ou de outra conta (em outra aba) recarrega a página
+  sb.auth.onAuthStateChange((ev, session) => {
+    if (app.saindo) return;
+    if (session && !app.db) setTimeout(() => startSession(session), 0);
+    else if (session && app.db && app.uid && session.user.id !== app.uid) location.reload();
+    else if (session && app.db && (ev === "TOKEN_REFRESHED" || ev === "SIGNED_IN")) app.db.retenta();
+    else if (ev === "SIGNED_OUT" && app.db) location.reload();
+  });
   try { const { data } = await sb.auth.getSession(); if (data && data.session) startSession(data.session); else showLogin(); }
   catch (e) { showLogin(); }
 }
+// Estado das gravações no cabeçalho: n = documentos esperando gravação; falhou = alguma já falhou e o app está tentando de novo;
+// auth = o servidor recusou a sessão (a gravação continua guardada e segue quando a sessão renovar).
+// Quando a fila esvazia depois de uma falha, as mensagens de erro que ficaram nas telas viram "Salvo ✓" (msgFalha marca quais são)
+function syncEstado(n, falhou, auth) {
+  const el = document.getElementById("sync"); if (!el || !app.db || !app.db.pronto()) return;
+  el.textContent = !n ? "Sincronizado" : auth ? "Não salvo · entre de novo" : falhou ? "Não salvo · tentando de novo" : "Salvando…";
+  el.classList.toggle("err", !!(n && (falhou || auth)));
+  if (n && (falhou || auth)) app.syncRuim = true;
+  else if (!n && app.syncRuim) {
+    app.syncRuim = false;
+    document.querySelectorAll("[data-falha]").forEach(m => { m.textContent = "Salvo ✓ (gravado quando a conexão voltou)"; delete m.dataset.falha; });
+    const sm = document.getElementById("saveMsg"); if (sm && /Não salv|sessão|ajustes|exame/i.test(sm.textContent)) setSaveMsg("Salvo ✓");
+    if (app.bioMsgF) { app.bioMsgF = false; app.bioMsgT = "Exame salvo ✓"; }
+    const d = app.dt; if (d && d.msg && /Não salv|sessão/.test(d.msg)) { d.msg = ""; if (app.tab === "dieta") renderDieta(true); }
+  }
+}
+// Corpo e exames com data impossível (ex.: "2026-13-45", vinda de um CSV malformado) quebravam Corpo, Objetivo e Hoje: ficam de fora
+function dataOk(d) { return typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d + "T00:00:00Z")) && new Date(d + "T00:00:00Z").toISOString().slice(0, 10) === d; }
 // Sessão aberta: carrega os dados da pessoa e liga as telas
 async function startSession(session) {
   if (app.db) return;
   hideLogin();
+  // até os dados chegarem, as telas ficam só para ver (body.carregando): mexer antes gravava por cima do que estava no servidor
+  document.body.classList.add("carregando");
   const sync = document.getElementById("sync"), conn = document.getElementById("conn");
   document.getElementById("acct").innerHTML = "<span>" + esc(session.user.email || "") + '</span><button class="btn small" type="button" id="logout">Sair</button>';
   const db = makeDb(session.user.id);
-  app.db = db; app.P = ""; app.isOwner = false;
+  app.db = db; app.uid = session.user.id; app.P = ""; app.isOwner = false;
   sync.textContent = "Sincronizando…";
   const timer = setTimeout(() => { sync.textContent = "Sem resposta do servidor"; conn.textContent = "Os dados salvos ainda não chegaram. O que aparece pode estar desatualizado."; conn.classList.remove("hide"); }, 10000);
-  const ok = () => { clearTimeout(timer); conn.classList.add("hide"); sync.textContent = "Sincronizado"; };
+  const ok = () => { clearTimeout(timer); conn.classList.add("hide"); document.body.classList.remove("carregando"); syncEstado(db.pendentes(), false); corpoRuimAviso(); };
   db.collection("semanas").onSnapshot(snap => {
     for (const d of snap.docs) { if (!app.dirty.has(d.id) && !app.saving.has(d.id)) app.records[d.id] = JSON.parse(JSON.stringify(d.data())); }
     render();
   });
-  db.collection("corpo").onSnapshot(snap => { app.body = {}; for (const d of snap.docs) app.body[d.id] = d.data(); updateQW(); if (app.tab === "corpo" || app.tab === "perfil" || app.tab === "objetivo") render(); });
+  db.collection("corpo").onSnapshot(snap => { app.body = {}; app.corpoRuim = []; for (const d of snap.docs) { const v = d.data(); if (!v || v.apagado) continue; if (!dataReal(d.id) || (v.data != null && !dataReal(v.data))) { app.corpoRuim.push(d.id); continue; } app.body[d.id] = v; } corpoRuimAviso(); updateQW(); if (app.tab === "corpo" || app.tab === "perfil" || app.tab === "objetivo") render(); });
   db.doc("meta/ajustes").onSnapshot(s => { if (s.exists && !settingsSaving) app.settings = JSON.parse(JSON.stringify(s.data())); render(); });
   subExtras(db, "");
-  // Fotos: arquivos no armazenamento "fotos", cada pessoa na própria pasta; a imagem é aberta por um link temporário de 1 hora
-  const pasta = session.user.id + "/";
+  // Fotos: arquivos no armazenamento "fotos", cada pessoa na própria pasta; a imagem é aberta por um link temporário de 10 minutos
+  const pasta = session.user.id + "/", fotoOk = ref => typeof ref === "string" && ref.startsWith(pasta) && /^[\w-]+\/[\w.-]+$/.test(ref) && !ref.includes("..");
   app.fotoStore = {
+    // só aceita caminho dentro da pasta da própria pessoa: "pasta/arquivo", sem subpastas nem "..". 2ª banca: "<sua pasta>/../<outra>/x.jpg" passava
     put: async (blob, id) => { const { error } = await sb.storage.from("fotos").upload(pasta + id + ".jpg", blob, { contentType: "image/jpeg", upsert: true }); if (error) throw error; return pasta + id + ".jpg"; },
-    url: async ref => { const { data, error } = await sb.storage.from("fotos").createSignedUrl(ref, 3600); if (error) throw error; return data.signedUrl; },
-    del: async ref => { await sb.storage.from("fotos").remove([ref]); }
+    url: async ref => { if (!fotoOk(ref)) throw new Error("caminho de foto fora da sua pasta"); const { data, error } = await sb.storage.from("fotos").createSignedUrl(ref, 600); if (error) throw error; return data.signedUrl; },
+    del: async ref => { if (!fotoOk(ref)) throw new Error("caminho de foto fora da sua pasta"); const { error } = await sb.storage.from("fotos").remove([ref]); if (error) throw error; }
   };
   db.doc("meta/perfil").onSnapshot(s => {
     const first = !app.perfilLoaded;
@@ -6112,15 +6481,22 @@ async function startSession(session) {
     applyProfile();
     if (first && !app.perfil && app.tab !== "perfil") location.hash = "#perfil";
   });
-  try { await db.load(); ok(); }
-  catch (e) {
-    clearTimeout(timer); sync.textContent = "Erro de sincronização";
-    conn.textContent = "Não consegui carregar seus dados. Recarregue a página; se continuar, toque em Sair e entre de novo.";
-    conn.classList.remove("hide");
-    app.perfilLoaded = true; applyProfile();
-  }
-  // Ao voltar para o app, busca o que foi salvo em outro aparelho
-  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !app.dirty.size && !app.saving.size) db.load().then(ok).catch(() => { }); });
+  // carga com nova tentativa: se falhar, as telas continuam travadas para edição (nada é gravado) e há um botão para tentar de novo
+  const carrega = async () => {
+    try { await db.load(); ok(); }
+    catch (e) {
+      clearTimeout(timer); sync.textContent = "Erro de sincronização";
+      conn.innerHTML = 'Não consegui carregar seus dados. Nada foi alterado: até carregar, o app fica só para ver. <button type="button" class="btn small" id="connRetry">Tentar de novo</button>';
+      conn.classList.remove("hide");
+      app.perfilLoaded = true; applyProfile();
+    }
+  };
+  // um toque só: dois toques seguidos em "Tentar de novo" disparavam duas cargas
+  let tentando = false;
+  document.addEventListener("click", ev => { if (ev.target.closest && ev.target.closest("#connRetry") && !tentando) { tentando = true; conn.textContent = "Carregando…"; carrega().finally(() => { tentando = false; }); } });
+  await carrega();
+  // Ao voltar para o app, busca o que foi salvo em outro aparelho (se não houver nada esperando gravação neste)
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && db.pronto() && !app.dirty.size && !app.saving.size && !db.pendentes()) db.load().then(ok).catch(() => { }); });
 }
 
 // ===== 26. DIETA: diário de alimentos com a tabela TACO =====
@@ -6130,6 +6506,7 @@ const TACO_CAT = ["Cereais e derivados","Verduras, hortaliças e derivados","Fru
 const TACO = [["Arroz, integral, cozido",0,124,2.6,25.8,1.0,2.7],["Arroz, integral, cru",0,360,7.3,77.5,1.9,4.8],["Arroz, tipo 1, cozido",0,128,2.5,28.1,0.2,1.6],["Arroz, tipo 1, cru",0,358,7.2,78.8,0.3,1.6],["Arroz, tipo 2, cozido",0,130,2.6,28.2,0.4,1.1],["Arroz, tipo 2, cru",0,358,7.2,78.9,0.3,1.7],["Aveia, flocos, crua",0,394,13.9,66.6,8.5,9.1],["Biscoito, doce, maisena",0,443,8.1,75.2,12.0,2.1],["Biscoito, doce, recheado com chocolate",0,472,6.4,70.5,19.6,3.0],["Biscoito, doce, recheado com morango",0,471,5.7,71.0,19.6,1.5],["Biscoito, doce, wafer, recheado de chocolate",0,502,5.6,67.5,24.7,1.8],["Biscoito, doce, wafer, recheado de morango",0,513,4.5,67.4,26.4,0.8],["Biscoito, salgado, cream cracker",0,432,10.1,68.7,14.4,2.5],["Bolo, mistura para",0,419,6.2,84.7,6.1,1.7],["Bolo, pronto, aipim",0,324,4.4,47.9,12.7,0.7],["Bolo, pronto, chocolate",0,410,6.2,54.7,18.5,1.4],["Bolo, pronto, coco",0,333,5.7,52.3,11.3,1.1],["Bolo, pronto, milho",0,311,4.8,45.1,12.4,0.7],["Canjica, branca, crua",0,358,7.2,78.1,1.0,5.5],["Canjica, com leite integral",0,112,2.4,23.6,1.2,1.2],["Cereais, milho, flocos, com sal",0,370,7.3,80.8,1.6,5.3],["Cereais, milho, flocos, sem sal",0,363,6.9,80.4,1.2,1.8],["Cereais, mingau, milho, infantil",0,394,6.4,87.3,1.1,3.2],["Cereais, mistura para vitamina, trigo, cevada e aveia",0,381,8.9,81.6,2.1,5.0],["Cereal matinal, milho",0,365,7.2,83.8,1.0,4.1],["Cereal matinal, milho, açúcar",0,377,4.7,88.8,0.7,2.1],["Creme de arroz, pó",0,386,7.0,83.9,1.2,1.1],["Creme de milho, pó",0,333,4.8,86.1,1.6,3.7],["Curau, milho verde",0,78,2.4,13.9,1.6,0.5],["Curau, milho verde, mistura para",0,402,2.2,79.8,13.4,2.5],["Farinha, de arroz, enriquecida",0,363,1.3,85.5,0.3,0.6],["Farinha, de centeio, integral",0,336,12.5,73.3,1.8,15.5],["Farinha, de milho, amarela",0,351,7.2,79.1,1.5,5.5],["Farinha, de rosca",0,371,11.4,75.8,1.5,4.8],["Farinha, de trigo",0,360,9.8,75.1,1.4,2.3],["Farinha, láctea, de cereais",0,415,11.9,77.8,5.8,1.9],["Lasanha, massa fresca, cozida",0,164,5.8,32.5,1.2,1.6],["Lasanha, massa fresca, crua",0,220,7.0,45.1,1.3,1.6],["Macarrão, instantâneo",0,436,8.8,62.4,17.2,5.6],["Macarrão, trigo, cru",0,371,10.0,77.9,1.3,2.9],["Macarrão, trigo, cru, com ovos",0,371,10.3,76.6,2.0,2.3],["Milho, amido, cru",0,361,0.6,87.1,0.0,0.7],["Milho, fubá, cru",0,353,7.2,78.9,1.9,4.7],["Milho, verde, cru",0,138,6.6,28.6,0.6,3.9],["Milho, verde, enlatado, drenado",0,98,3.2,17.1,2.4,4.6],["Mingau tradicional, pó",0,373,0.6,89.3,0.4,0.9],["Pamonha, barra para cozimento, pré-cozida",0,171,2.6,30.7,4.8,2.4],["Pão, aveia, forma",0,343,12.4,59.6,5.7,6.0],["Pão, de soja",0,309,11.3,56.5,3.6,5.7],["Pão, glúten, forma",0,253,12.0,44.1,2.7,2.5],["Pão, milho, forma",0,292,8.3,56.4,3.1,4.3],["Pão, trigo, forma, integral",0,253,9.4,49.9,3.7,6.9],["Pão, trigo, francês",0,300,8.0,58.6,3.1,2.3],["Pão, trigo, sovado",0,311,8.4,61.5,2.8,2.4],["Pastel, de carne, cru",0,289,10.7,42.0,8.8,1.0],["Pastel, de carne, frito",0,388,10.1,43.8,20.1,1.0],["Pastel, de queijo, cru",0,308,9.9,45.9,9.6,1.1],["Pastel, de queijo, frito",0,422,8.7,48.1,22.7,0.9],["Pastel, massa, crua",0,310,6.9,57.4,5.5,1.4],["Pastel, massa, frita",0,570,6.0,49.3,40.9,1.3],["Pipoca, com óleo de soja, sem sal",0,448,9.9,70.3,15.9,14.3],["Polenta, pré-cozida",0,103,2.3,23.3,0.3,2.4],["Torrada, pão francês",0,377,10.5,74.6,3.3,3.4],["Abóbora, cabotian, cozida",1,48,1.4,10.8,0.7,2.5],["Abóbora, cabotian, crua",1,39,1.7,8.4,0.5,2.2],["Abóbora, menina brasileira, crua",1,14,0.6,3.3,0.0,1.2],["Abóbora, moranga, crua",1,12,1.0,2.7,0.1,1.7],["Abóbora, moranga, refogada",1,29,0.4,6.0,0.8,1.5],["Abóbora, pescoço, crua",1,24,0.7,6.1,0.1,2.3],["Abobrinha, italiana, cozida",1,15,1.1,3.0,0.2,1.6],["Abobrinha, italiana, crua",1,19,1.1,4.3,0.1,1.4],["Abobrinha, italiana, refogada",1,24,1.1,4.2,0.8,1.4],["Abobrinha, paulista, crua",1,31,0.6,7.9,0.1,2.6],["Acelga, crua",1,21,1.4,4.6,0.1,1.1],["Agrião, cru",1,17,2.7,2.3,0.2,2.1],["Aipo, cru",1,19,0.8,4.3,0.1,1.0],["Alface, americana, crua",1,9,0.6,1.7,0.1,1.0],["Alface, crespa, crua",1,11,1.3,1.7,0.2,1.8],["Alface, lisa, crua",1,14,1.7,2.4,0.1,2.3],["Alface, roxa, crua",1,13,0.9,2.5,0.2,2.0],["Alfavaca, crua",1,29,2.7,5.2,0.5,4.1],["Alho, cru",1,113,7.0,23.9,0.2,4.3],["Alho-poró, cru",1,32,1.4,6.9,0.1,2.5],["Almeirão, cru",1,18,1.8,3.3,0.2,2.6],["Almeirão, refogado",1,65,1.7,5.7,4.8,3.4],["Batata, baroa, cozida",1,80,0.9,18.9,0.2,1.8],["Batata, baroa, crua",1,101,1.0,24.0,0.2,2.1],["Batata, doce, cozida",1,77,0.6,18.4,0.1,2.2],["Batata, doce, crua",1,118,1.3,28.2,0.1,2.6],["Batata, frita, tipo chips, industrializada",1,543,5.6,51.2,36.6,2.5],["Batata, inglesa, cozida",1,52,1.2,11.9,0.0,1.3],["Batata, inglesa, crua",1,64,1.8,14.7,0.0,1.2],["Batata, inglesa, frita",1,267,5.0,35.6,13.1,8.1],["Batata, inglesa, sauté",1,68,1.3,14.1,0.9,1.4],["Berinjela, cozida",1,19,0.7,4.5,0.1,2.5],["Berinjela, crua",1,20,1.2,4.4,0.1,2.9],["Beterraba, cozida",1,32,1.3,7.2,0.1,1.9],["Beterraba, crua",1,49,1.9,11.1,0.1,3.4],["Biscoito, polvilho doce",1,438,1.3,80.5,12.2,1.2],["Brócolis, cozido",1,25,2.1,4.4,0.5,3.4],["Brócolis, cru",1,25,3.6,4.0,0.3,2.9],["Cará, cozido",1,78,1.5,18.9,0.1,2.6],["Cará, cru",1,96,2.3,23.0,0.1,7.3],["Caruru, cru",1,34,3.2,6.0,0.6,4.5],["Catalonha, crua",1,24,1.9,4.8,0.3,2.0],["Catalonha, refogada",1,63,2.0,4.8,4.8,3.7],["Cebola, crua",1,39,1.7,8.9,0.1,2.2],["Cebolinha, crua",1,20,1.9,3.4,0.4,3.6],["Cenoura, cozida",1,30,0.8,6.7,0.2,2.6],["Cenoura, crua",1,34,1.3,7.7,0.2,3.2],["Chicória, crua",1,14,1.1,2.9,0.1,2.2],["Chuchu, cozido",1,19,0.4,4.8,0.0,1.0],["Chuchu, cru",1,17,0.7,4.1,0.1,1.3],["Coentro, folhas desidratadas",1,309,20.9,48.0,10.4,37.3],["Couve, manteiga, crua",1,27,2.9,4.3,0.5,3.1],["Couve, manteiga, refogada",1,90,1.7,8.7,6.6,5.7],["Couve-flor, crua",1,23,1.9,4.5,0.2,2.4],["Couve-flor, cozida",1,19,1.2,3.9,0.3,2.1],["Espinafre, Nova Zelândia, cru",1,16,2.0,2.6,0.2,2.1],["Espinafre, Nova Zelândia, refogado",1,67,2.7,4.2,5.4,2.5],["Farinha, de mandioca, crua",1,361,1.6,87.9,0.3,6.4],["Farinha, de mandioca, torrada",1,365,1.2,89.2,0.3,6.5],["Farinha, de puba",1,360,1.6,87.3,0.5,4.2],["Fécula, de mandioca",1,331,0.5,81.1,0.3,0.6],["Feijão, broto, cru",1,39,4.2,7.8,0.1,2.0],["Inhame, cru",1,97,2.1,23.2,0.2,1.7],["Jiló, cru",1,27,1.4,6.2,0.2,4.8],["Jurubeba, crua",1,126,4.4,23.1,3.9,23.9],["Mandioca, cozida",1,125,0.6,30.1,0.3,1.6],["Mandioca, crua",1,151,1.1,36.2,0.3,1.9],["Mandioca, farofa, temperada",1,406,2.1,80.3,9.1,7.8],["Mandioca, frita",1,300,1.4,50.3,11.2,1.9],["Manjericão, cru",1,21,2.0,3.6,0.4,3.3],["Maxixe, cru",1,14,1.4,2.7,0.1,2.2],["Mostarda, folha, crua",1,18,2.1,3.2,0.2,1.9],["Nhoque, batata, cozido",1,181,5.9,36.8,1.9,1.8],["Nabo, cru",1,18,1.2,4.1,0.1,2.6],["Palmito, juçara, em conserva",1,23,1.8,4.3,0.4,3.2],["Palmito, pupunha, em conserva",1,29,2.5,5.5,0.5,2.6],["Pão, de queijo, assado",1,363,5.1,34.2,24.6,0.6],["Pão, de queijo, cru",1,295,3.6,38.5,14.0,1.0],["Pepino, cru",1,10,0.9,2.0,0.0,1.1],["Pimentão, amarelo, cru",1,28,1.2,6.0,0.4,1.9],["Pimentão, verde, cru",1,21,1.1,4.9,0.2,2.6],["Pimentão, vermelho, cru",1,23,1.0,5.5,0.1,1.6],["Polvilho, doce",1,351,0.4,86.8,0.0,0.2],["Quiabo, cru",1,30,1.9,6.4,0.3,4.6],["Rabanete, cru",1,14,1.4,2.7,0.1,2.2],["Repolho, branco, cru",1,17,0.9,3.9,0.1,1.9],["Repolho, roxo, cru",1,31,1.9,7.2,0.1,2.0],["Repolho, roxo, refogado",1,42,1.8,7.6,1.2,1.8],["Rúcula, crua",1,13,1.8,2.2,0.1,1.7],["Salsa, crua",1,33,3.3,5.7,0.6,1.9],["Seleta de legumes, enlatada",1,57,3.4,12.7,0.4,3.1],["Serralha, crua",1,30,2.7,4.9,0.7,3.5],["Taioba, crua",1,34,2.9,5.4,0.9,4.5],["Tomate, com semente, cru",1,15,1.1,3.1,0.2,1.2],["Tomate, extrato",1,61,2.4,15.0,0.2,2.8],["Tomate, molho industrializado",1,38,1.4,7.7,0.9,3.1],["Tomate, purê",1,28,1.4,6.9,0.0,1.0],["Tomate, salada",1,21,0.8,5.1,0.0,2.3],["Vagem, crua",1,25,1.8,5.3,0.2,2.4],["Abacate, cru",2,96,1.2,6.0,8.4,6.3],["Abacaxi, cru",2,48,0.9,12.3,0.1,1.0],["Abacaxi, polpa, congelada",2,31,0.5,7.8,0.1,0.3],["Abiu, cru",2,62,0.8,14.9,0.7,1.7],["Açaí, polpa, com xarope de guaraná e glucose",2,110,0.7,21.5,3.7,1.7],["Açaí, polpa, congelada",2,58,0.8,6.2,3.9,2.6],["Acerola, crua",2,33,0.9,8.0,0.2,1.5],["Acerola, polpa, congelada",2,22,0.6,5.5,0.0,0.7],["Ameixa, calda, enlatada",2,183,0.4,46.9,0.0,0.5],["Ameixa, crua",2,53,0.8,13.9,0.0,2.4],["Ameixa, em calda, enlatada, drenada",2,177,1.0,47.7,0.3,4.5],["Atemóia, crua",2,97,1.0,25.3,0.3,2.1],["Banana, da terra, crua",2,128,1.4,33.7,0.2,1.5],["Banana, doce em barra",2,280,2.2,75.7,0.1,3.8],["Banana, figo, crua",2,105,1.1,27.8,0.1,2.8],["Banana, maçã, crua",2,87,1.8,22.3,0.1,2.6],["Banana, nanica, crua",2,92,1.4,23.8,0.1,1.9],["Banana, ouro, crua",2,112,1.5,29.3,0.2,2.0],["Banana, pacova, crua",2,78,1.2,20.3,0.1,2.0],["Banana, prata, crua",2,98,1.3,26.0,0.1,2.0],["Cacau, cru",2,74,1.0,19.4,0.1,2.2],["Cajá-Manga, cru",2,46,1.3,11.4,0.0,2.6],["Cajá, polpa, congelada",2,26,0.6,6.4,0.2,1.4],["Caju, cru",2,43,1.0,10.3,0.3,1.7],["Caju, polpa, congelada",2,37,0.5,9.4,0.2,0.8],["Caju, suco concentrado, envasado",2,45,0.4,10.7,0.2,0.6],["Caqui, chocolate, cru",2,71,0.4,19.3,0.1,6.5],["Carambola, crua",2,46,0.9,11.5,0.2,2.0],["Ciriguela, crua",2,76,1.4,18.9,0.4,3.9],["Cupuaçu, cru",2,49,1.2,10.4,1.0,3.1],["Cupuaçu, polpa, congelada",2,49,0.8,11.4,0.6,1.6],["Figo, cru",2,41,1.0,10.2,0.2,1.8],["Figo, enlatado, em calda",2,184,0.6,50.3,0.2,2.0],["Fruta-pão, crua",2,67,1.1,17.2,0.2,5.5],["Goiaba, branca, com casca, crua",2,52,0.9,12.4,0.5,6.3],["Goiaba, doce em pasta",2,269,0.6,74.1,0.0,3.7],["Goiaba, doce, cascão",2,286,0.4,78.7,0.1,4.4],["Goiaba, vermelha, com casca, crua",2,54,1.1,13.0,0.4,6.2],["Graviola, crua",2,62,0.8,15.8,0.2,1.9],["Graviola, polpa, congelada",2,38,0.6,9.8,0.1,1.2],["Jabuticaba, crua",2,58,0.6,15.3,0.1,2.3],["Jaca, crua",2,88,1.4,22.5,0.3,2.4],["Jambo, cru",2,27,0.9,6.5,0.1,5.1],["Jamelão, cru",2,41,0.5,10.6,0.1,1.8],["Kiwi, cru",2,51,1.3,11.5,0.6,2.7],["Laranja, baía, crua",2,45,1.0,11.5,0.1,1.1],["Laranja, baía, suco",2,37,0.7,8.7,0.0,0.0],["Laranja, da terra, crua",2,51,1.1,12.9,0.2,4.0],["Laranja, da terra, suco",2,41,0.7,9.6,0.1,1.0],["Laranja, lima, crua",2,46,1.1,11.5,0.1,1.8],["Laranja, lima, suco",2,39,0.7,9.2,0.1,0.4],["Laranja, pêra, crua",2,37,1.0,8.9,0.1,0.8],["Laranja, pêra, suco",2,33,0.7,7.6,0.1,0.0],["Laranja, valência, crua",2,46,0.8,11.7,0.2,1.7],["Laranja, valência, suco",2,36,0.5,8.6,0.1,0.4],["Limão, cravo, suco",2,14,0.3,5.2,0.0,0.0],["Limão, galego, suco",2,22,0.6,7.3,0.1,0.0],["Limão, tahiti, cru",2,32,0.9,11.1,0.1,1.2],["Maçã, Argentina, com casca, crua",2,63,0.2,16.6,0.2,2.0],["Maçã, Fuji, com casca, crua",2,56,0.3,15.2,0.0,1.3],["Macaúba, crua",2,404,2.1,13.9,40.7,13.4],["Mamão, doce em calda, drenado",2,196,0.2,54.0,0.1,1.3],["Mamão, Formosa, cru",2,45,0.8,11.6,0.1,1.8],["Mamão, Papaia, cru",2,40,0.5,10.4,0.1,1.0],["Mamão verde, doce em calda, drenado",2,209,0.3,57.6,0.1,1.2],["Manga, Haden, crua",2,64,0.4,16.7,0.3,1.6],["Manga, Palmer, crua",2,72,0.4,19.4,0.2,1.6],["Manga, polpa, congelada",2,48,0.4,12.5,0.2,1.1],["Manga, Tommy Atkins, crua",2,51,0.9,12.8,0.2,2.1],["Maracujá, cru",2,68,2.0,12.3,2.1,1.1],["Maracujá, polpa, congelada",2,39,0.8,9.6,0.2,0.5],["Maracujá, suco concentrado, envasado",2,42,0.8,9.6,0.2,0.4],["Melancia, crua",2,33,0.9,8.1,0.0,0.1],["Melão, cru",2,29,0.7,7.5,0.0,0.3],["Mexerica, Murcote, crua",2,58,0.9,14.9,0.1,3.1],["Mexerica, Rio, crua",2,37,0.7,9.3,0.1,2.7],["Morango, cru",2,30,0.9,6.8,0.3,1.7],["Nêspera, crua",2,43,0.3,11.5,0.0,3.0],["Pequi, cru",2,205,2.3,13.0,18.0,19.0],["Pêra, Park, crua",2,61,0.2,16.1,0.2,3.0],["Pêra, Williams, crua",2,53,0.6,14.0,0.1,3.0],["Pêssego, Aurora, cru",2,36,0.8,9.3,0.0,1.4],["Pêssego, enlatado, em calda",2,63,0.7,16.9,0.0,1.0],["Pinha, crua",2,88,1.5,22.4,0.3,3.4],["Pitanga, crua",2,41,0.9,10.2,0.2,3.2],["Pitanga, polpa, congelada",2,19,0.3,4.8,0.1,0.7],["Romã, crua",2,56,0.4,15.1,0.0,0.4],["Tamarindo, cru",2,276,3.2,72.5,0.5,6.4],["Tangerina, Poncã, crua",2,38,0.8,9.6,0.1,0.9],["Tangerina, Poncã, suco",2,36,0.5,8.8,0.0,0.0],["Tucumã, cru",2,262,2.1,26.5,19.1,12.7],["Umbu, cru",2,37,0.8,9.4,0.0,2.0],["Umbu, polpa, congelada",2,34,0.5,8.8,0.1,1.3],["Uva, Itália, crua",2,53,0.7,13.6,0.2,0.9],["Uva, Rubi, crua",2,49,0.6,12.7,0.2,0.9],["Uva, suco concentrado, envasado",2,58,0.0,14.7,0.0,0.2],["Azeite, de dendê",3,884,0,0,100.0,0],["Azeite, de oliva, extra virgem",3,884,0,0,100.0,0],["Manteiga, com sal",3,726,0.4,0.1,82.4,0],["Manteiga, sem sal",3,758,0.4,0.0,86.0,0],["Margarina, com óleo hidrogenado, com sal (65% de lipídeos)",3,596,0.0,0.0,67.4,0],["Margarina, com óleo hidrogenado, sem sal (80% de lipídeos)",3,723,0.0,0.0,81.7,0],["Margarina, com óleo interesterificado, com sal (65%de lipídeos)",3,594,0.0,0.0,67.2,0],["Margarina, com óleo interesterificado, sem sal (65% de lipídeos)",3,593,0.0,0.0,67.1,0],["Óleo, de babaçu",3,884,0,0,100.0,0],["Óleo, de canola",3,884,0,0,100.0,0],["Óleo, de girassol",3,884,0,0,100.0,0],["Óleo, de milho",3,884,0,0,100.0,0],["Óleo, de pequi",3,884,0,0,100.0,0],["Óleo, de soja",3,884,0,0,100.0,0],["Abadejo, filé, congelado, assado",4,112,23.5,0.0,1.2,0],["Abadejo, filé, congelado,cozido",4,91,19.3,0.0,0.9,0],["Abadejo, filé, congelado, cru",4,59,13.1,0.0,0.4,0],["Abadejo, filé, congelado, grelhado",4,130,27.6,0.0,1.3,0],["Atum, conserva em óleo",4,166,26.2,0.0,6.0,0],["Atum, fresco, cru",4,118,25.7,0.0,0.9,0],["Bacalhau, salgado, cru",4,136,29.0,0.0,1.3,0],["Bacalhau, salgado, refogado",4,140,24.0,1.2,3.6,0],["Cação, posta, com farinha de trigo, frita",4,208,25.0,3.1,10.0,0.5],["Cação, posta, cozida",4,116,25.6,0.0,0.7,0],["Cação, posta, crua",4,83,17.9,0.0,0.8,0],["Camarão, Rio Grande, grande, cozido",4,90,19.0,0.0,1.0,0],["Camarão, Rio Grande, grande, cru",4,47,10.0,0.0,0.5,0],["Camarão, Sete Barbas, sem cabeça, com casca, frito",4,231,18.4,2.9,15.6,0],["Caranguejo, cozido",4,83,18.5,0.0,0.4,0],["Corimba, cru",4,128,17.4,0.0,6.0,0],["Corimbatá, assado",4,261,19.9,0.0,19.6,0],["Corimbatá, cozido",4,239,20.1,0.0,16.9,0],["Corvina de água doce, crua",4,101,18.9,0.0,2.2,0],["Corvina do mar, crua",4,94,18.6,0.0,1.6,0],["Corvina grande, assada",4,147,26.8,0.0,3.6,0],["Corvina grande, cozida",4,100,23.4,0.0,2.6,0],["Dourada de água doce, fresca",4,131,18.8,0.0,5.6,0],["Lambari, congelado, cru",4,131,16.8,0.0,6.5,0],["Lambari, congelado, frito",4,327,28.4,0.0,22.8,0],["Lambari, fresco, cru",4,152,15.7,0.0,9.4,0],["Manjuba, com farinha de trigo, frita",4,344,23.5,10.2,22.6,0.4],["Manjuba, frita",4,349,30.1,0.0,24.5,0],["Merluza, filé, assado",4,122,26.6,0.0,0.9,0],["Merluza, filé, cru",4,89,16.6,0.0,2.0,0],["Merluza, filé, frito",4,192,26.9,0.0,8.5,0],["Pescada, branca, crua",4,111,16.3,0.0,4.6,0],["Pescada, branca, frita",4,223,27.4,0.0,11.8,0],["Pescada, filé, com farinha de trigo, frito",4,283,21.4,5.0,19.1,0.0],["Pescada, filé, cru",4,107,16.7,0.0,4.0,0],["Pescada, filé, frito",4,154,28.6,0.0,3.6,0],["Pescada, filé, molho escabeche",4,142,11.8,5.0,8.0,0.8],["Pescadinha, crua",4,76,15.5,0.0,1.1,0],["Pintado, assado",4,192,36.5,0.0,4.0,0],["Pintado, cru",4,91,18.6,0.0,1.3,0],["Pintado, grelhado",4,152,30.8,0.0,2.3,0],["Porquinho, cru",4,93,20.5,0.0,0.6,0],["Salmão, filé, com pele, fresco, grelhado",4,229,23.9,0.0,14.0,0],["Salmão, sem pele, fresco, cru",4,170,19.3,0.0,9.7,0],["Salmão, sem pele, fresco, grelhado",4,243,26.1,0.0,14.5,0],["Sardinha, assada",4,164,32.2,0.0,3.0,0],["Sardinha, conserva em óleo",4,285,15.9,0.0,24.0,0],["Sardinha, frita",4,257,33.4,0.0,12.7,0],["Sardinha, inteira, crua",4,114,21.1,0.0,2.7,0],["Tucunaré, filé, congelado, cru",4,88,18.0,0.0,1.2,0],["Apresuntado",5,129,13.5,2.9,6.7,0],["Caldo de carne, tablete",5,241,7.8,15.1,16.6,0.6],["Caldo de galinha, tablete",5,251,6.3,10.6,20.4,11.8],["Carne, bovina, acém, moído, cozido",5,212,26.7,0.0,10.9,0],["Carne, bovina, acém, moído, cru",5,137,19.4,0.0,5.9,0],["Carne, bovina, acém, sem gordura, cozido",5,215,27.3,0.0,10.9,0],["Carne, bovina, acém, sem gordura, cru",5,144,20.8,0.0,6.1,0],["Carne, bovina, almôndegas, cruas",5,189,12.3,9.8,11.2,0],["Carne, bovina, almôndegas, fritas",5,272,18.2,14.3,15.8,0],["Carne, bovina, bucho, cozido",5,133,21.6,0.0,4.5,0],["Carne, bovina, bucho, cru",5,137,20.5,0.0,5.5,0],["Carne, bovina, capa de contra-filé, com gordura, crua",5,217,19.2,0.0,15.0,0],["Carne, bovina, capa de contra-filé, com gordura, grelhada",5,312,30.7,0.0,20.0,0],["Carne, bovina, capa de contra-filé, sem gordura, crua",5,131,21.5,0.0,4.3,0],["Carne, bovina, capa de contra-filé, sem gordura, grelhada",5,239,35.1,0.0,10.0,0],["Carne, bovina, charque, cozido",5,263,36.4,0.0,11.9,0],["Carne, bovina, charque, cru",5,249,22.7,0.0,16.8,0],["Carne, bovina, contra-filé, à milanesa",5,352,20.6,12.2,24.0,0.4],["Carne, bovina, contra-filé de costela, cru",5,202,19.8,0.0,13.1,0],["Carne, bovina, contra-filé de costela, grelhado",5,275,29.9,0.0,16.3,0],["Carne, bovina, contra-filé, com gordura, cru",5,206,21.2,0.0,12.8,0],["Carne, bovina, contra-filé, com gordura, grelhado",5,278,32.4,0.0,15.5,0],["Carne, bovina, contra-filé, sem gordura, cru",5,157,24.0,0.0,6.0,0],["Carne, bovina, contra-filé, sem gordura, grelhado",5,194,35.9,0.0,4.5,0],["Carne, bovina, costela, assada",5,373,28.8,0.0,27.7,0],["Carne, bovina, costela, crua",5,358,16.7,0.0,31.8,0],["Carne, bovina, coxão duro, sem gordura, cozido",5,217,31.9,0.0,8.9,0],["Carne, bovina, coxão duro, sem gordura, cru",5,148,21.5,0.0,6.2,0],["Carne, bovina, coxão mole, sem gordura, cozido",5,219,32.4,0.0,8.9,0],["Carne, bovina, coxão mole, sem gordura, cru",5,169,21.2,0.0,8.7,0],["Carne, bovina, cupim, assado",5,330,28.6,0.0,23.0,0],["Carne, bovina, cupim, cru",5,221,19.5,0.0,15.3,0],["Carne, bovina, fígado, cru",5,141,20.7,1.1,5.4,0],["Carne, bovina, fígado, grelhado",5,225,29.9,4.2,9.0,0],["Carne, bovina, filé mingnon, sem gordura, cru",5,143,21.6,0.0,5.6,0],["Carne, bovina, filé mingnon, sem gordura, grelhado",5,220,32.8,0.0,8.8,0],["Carne, bovina, flanco, sem gordura, cozido",5,196,29.4,0.0,7.8,0],["Carne, bovina, flanco, sem gordura, cru",5,141,20.0,0.0,6.2,0],["Carne, bovina, fraldinha, com gordura, cozida",5,338,24.2,0.0,26.0,0],["Carne, bovina, fraldinha, com gordura, crua",5,221,17.6,0.0,16.1,0],["Carne, bovina, lagarto, cozido",5,222,32.9,0.0,9.1,0],["Carne, bovina, lagarto, cru",5,135,20.5,0.0,5.2,0],["Carne, bovina, língua, cozida",5,315,21.4,0.0,24.8,0],["Carne, bovina, língua, crua",5,215,17.1,0.0,15.8,0],["Carne, bovina, maminha, crua",5,153,20.9,0.0,7.0,0],["Carne, bovina, maminha, grelhada",5,153,30.7,0.0,2.4,0],["Carne, bovina, miolo de alcatra, sem gordura, cru",5,163,21.6,0.0,7.8,0],["Carne, bovina, miolo de alcatra, sem gordura, grelhado",5,241,31.9,0.0,11.6,0],["Carne, bovina, músculo, sem gordura, cozido",5,194,31.2,0.0,6.7,0],["Carne, bovina, músculo, sem gordura, cru",5,142,21.6,0.0,5.5,0],["Carne, bovina, paleta, com gordura, crua",5,159,21.4,0.0,7.5,0],["Carne, bovina, paleta, sem gordura, cozida",5,194,29.7,0.0,7.4,0],["Carne, bovina, paleta, sem gordura, crua",5,141,21.0,0.0,5.7,0],["Carne, bovina, patinho, sem gordura, cru",5,133,21.7,0.0,4.5,0],["Carne, bovina, patinho, sem gordura, grelhado",5,219,35.9,0.0,7.3,0],["Carne, bovina, peito, sem gordura, cozido",5,338,22.2,0.0,27.0,0],["Carne, bovina, peito, sem gordura, cru",5,259,17.6,0.0,20.4,0],["Carne, bovina, picanha, com gordura, crua",5,213,18.8,0.0,14.7,0],["Carne, bovina, picanha, com gordura, grelhada",5,289,26.4,0.0,19.5,0],["Carne, bovina, picanha, sem gordura, crua",5,134,21.3,0.0,4.7,0],["Carne, bovina, picanha, sem gordura, grelhada",5,238,31.9,0.0,11.3,0],["Carne, bovina, seca, cozida",5,313,26.9,0.0,21.9,0],["Carne, bovina, seca, crua",5,313,19.7,0.0,25.4,0],["Coxinha de frango, frita",5,283,9.6,34.5,11.8,5.0],["Croquete, de carne, cru",5,246,12.0,13.9,15.6,0],["Croquete, de carne, frito",5,347,16.9,18.1,22.7,0],["Empada de frango, pré-cozida, assada",5,358,6.9,47.5,15.6,2.2],["Empada, de frango, pré-cozida",5,377,7.3,35.5,22.9,2.2],["Frango, asa, com pele, crua",5,213,18.1,0.0,15.1,0],["Frango, caipira, inteiro, com pele, cozido",5,243,23.9,0.0,15.6,0],["Frango, caipira, inteiro, sem pele, cozido",5,196,29.6,0.0,7.7,0],["Frango, coração, cru",5,222,12.6,0.0,18.6,0],["Frango, coração, grelhado",5,207,22.4,0.6,12.1,0],["Frango, coxa, com pele, assada",5,215,28.5,0.1,10.4,0],["Frango, coxa, com pele, crua",5,161,17.1,0.0,9.8,0],["Frango, coxa, sem pele, cozida",5,167,26.9,0.0,5.8,0],["Frango, coxa, sem pele, crua",5,120,17.8,0.0,4.9,0],["Frango, fígado, cru",5,106,17.6,0.0,3.5,0],["Frango, filé, à milanesa",5,221,28.5,7.5,7.8,1.1],["Frango, inteiro, com pele, cru",5,226,16.4,0.0,17.3,0],["Frango, inteiro, sem pele, assado",5,187,28.0,0.0,7.5,0],["Frango, inteiro, sem pele, cozido",5,170,25.0,0.0,7.1,0],["Frango, inteiro, sem pele, cru",5,129,20.6,0.0,4.6,0],["Frango, peito, com pele, assado",5,212,33.4,0.0,7.6,0],["Frango, peito, com pele, cru",5,149,20.8,0.0,6.7,0],["Frango, peito, sem pele, cozido",5,163,31.5,0.0,3.2,0],["Frango, peito, sem pele, cru",5,119,21.5,0.0,3.0,0],["Frango, peito, sem pele, grelhado",5,159,32.0,0.0,2.5,0],["Frango, sobrecoxa, com pele, assada",5,260,28.7,0.0,15.2,0],["Frango, sobrecoxa, com pele, crua",5,255,15.5,0.0,20.9,0],["Frango, sobrecoxa, sem pele, assada",5,233,29.2,0.0,12.0,0],["Frango, sobrecoxa, sem pele, crua",5,162,17.6,0.0,9.6,0],["Hambúrguer, bovino, cru",5,215,13.2,4.2,16.2,0],["Hambúrguer, bovino, frito",5,258,20.0,6.3,17.0,0],["Hambúrguer, bovino, grelhado",5,210,13.2,11.3,12.4,0],["Lingüiça, frango, crua",5,218,14.2,0.0,17.4,0],["Lingüiça, frango, frita",5,245,18.3,0.0,18.5,0],["Lingüiça, frango, grelhada",5,244,18.2,0.0,18.4,0],["Lingüiça, porco, crua",5,227,16.1,0.0,17.6,0],["Lingüiça, porco, frita",5,280,20.5,0.0,21.3,0],["Lingüiça, porco, grelhada",5,296,23.2,0.0,21.9,0],["Mortadela",5,269,12.0,5.8,21.6,0],["Peru, congelado, assado",5,163,26.2,0.0,5.7,0],["Peru, congelado, cru",5,94,18.1,0.0,1.8,0],["Porco, bisteca, crua",5,164,21.5,0.0,8.0,0],["Porco, bisteca, frita",5,311,33.7,0.0,18.5,0],["Porco, bisteca, grelhada",5,280,28.9,0.0,17.4,0],["Porco, costela, assada",5,402,30.2,0.0,30.3,0],["Porco, costela, crua",5,256,18.0,0.0,19.8,0],["Porco, lombo, assado",5,210,35.7,0.0,6.4,0],["Porco, lombo, cru",5,176,22.6,0.0,8.8,0],["Porco, orelha, salgada, crua",5,258,18.5,0.0,19.9,0],["Porco, pernil, assado",5,262,32.1,0.0,13.9,0],["Porco, pernil, cru",5,186,20.1,0.0,11.1,0],["Porco, rabo, salgado, cru",5,377,15.6,0.0,34.5,0],["Presunto, com capa de gordura",5,128,14.4,1.4,6.8,0],["Presunto, sem capa de gordura",5,94,14.3,2.1,2.7,0],["Quibe, assado",5,136,14.6,12.9,2.7,1.9],["Quibe, cru",5,109,12.4,10.8,1.7,1.6],["Quibe, frito",5,254,14.9,12.3,15.8,0],["Salame",5,398,25.8,2.9,30.6,0],["Toucinho, cru",5,593,11.5,0.0,60.3,0],["Toucinho, frito",5,697,27.3,0.0,64.3,0],["Bebida láctea, pêssego",6,55,2.1,7.6,1.9,0.3],["Creme de Leite",6,221,1.5,4.5,22.5,0],["Iogurte, natural",6,51,4.1,1.9,3.0,0],["Iogurte, natural, desnatado",6,41,3.8,5.8,0.3,0],["Iogurte, sabor abacaxi",6,-1,0,0,0,0],["Iogurte, sabor morango",6,70,2.7,9.7,2.3,0.2],["Iogurte, sabor pêssego",6,68,2.5,9.4,2.3,0.7],["Leite, condensado",6,313,7.7,57.0,6.7,0],["Leite, de cabra",6,66,3.1,5.2,3.8,0],["Leite, de vaca, achocolatado",6,83,2.1,14.2,2.2,0.6],["Leite, de vaca, desnatado, pó",6,362,34.7,53.0,0.9,0],["Leite, de vaca, desnatado, UHT",6,-1,0,0,0,0],["Leite, de vaca, integral",6,-1,0,0,0,0],["Leite, de vaca, integral, pó",6,497,25.4,39.2,26.9,0],["Leite, fermentado",6,70,1.9,15.7,0.1,0],["Queijo, minas, frescal",6,264,17.4,3.2,20.2,0],["Queijo, minas, meia cura",6,321,21.2,3.6,24.6,0],["Queijo, mozarela",6,330,22.6,3.0,25.2,0],["Queijo, parmesão",6,453,35.6,1.7,33.5,0],["Queijo, pasteurizado",6,303,9.4,5.7,27.4,0],["Queijo, petit suisse, morango",6,121,5.8,18.5,2.8,0],["Queijo, prato",6,360,22.7,1.9,29.1,0],["Queijo, requeijão, cremoso",6,257,9.6,2.4,23.4,0],["Queijo, ricota",6,140,12.6,3.8,8.1,0],["Bebida isotônica, sabores variados",7,26,0.0,6.4,0.0,0],["Café, infusão 10%",7,9,0.7,1.5,0.1,0],["Cana, aguardente 1",7,216,0,0,0,0],["Cana, caldo de",7,65,0.0,18.2,0.0,0.1],["Cerveja, pilsen 2",7,41,0.6,3.3,0.0,0],["Chá, erva-doce, infusão 5%",7,1,0.0,0.4,0.0,0],["Chá, mate, infusão 5%",7,3,0.0,0.6,0.1,0],["Chá, preto, infusão 5%",7,2,0.0,0.6,0.0,0],["Coco, água de",7,22,0.0,5.3,0.0,0.1],["Refrigerante, tipo água tônica",7,31,0.0,8.0,0.0,0],["Refrigerante, tipo cola",7,34,0.0,8.7,0.0,0],["Refrigerante, tipo guaraná",7,39,0.0,10.0,0.0,0],["Refrigerante, tipo laranja",7,46,0.0,11.8,0.0,0],["Refrigerante, tipo limão",7,40,0.0,10.3,0.0,0],["Omelete, de queijo",8,268,15.6,0.4,22.0,0],["Ovo, de codorna, inteiro, cru",8,177,13.7,0.8,12.7,0],["Ovo, de galinha, clara, cozida/10minutos",8,59,13.4,0.0,0.1,0],["Ovo, de galinha, gema, cozida/10minutos",8,353,15.9,1.6,30.8,0],["Ovo, de galinha, inteiro, cozido/10minutos",8,146,13.3,0.6,9.5,0],["Ovo, de galinha, inteiro, cru",8,143,13.0,1.6,8.9,0],["Ovo, de galinha, inteiro, frito",8,240,15.6,1.2,18.6,0],["Achocolatado, pó",9,401,4.2,91.2,2.2,3.9],["Açúcar, cristal",9,387,0.3,99.6,0.0,0],["Açúcar, mascavo",9,369,0.8,94.5,0.1,0],["Açúcar, refinado",9,387,0.3,99.5,0.0,0],["Chocolate, ao leite",9,540,7.2,59.6,30.3,2.2],["Chocolate, ao leite, com castanha do Pará",9,559,7.4,55.4,34.2,2.5],["Chocolate, ao leite, dietético",9,557,6.9,56.3,33.8,2.8],["Chocolate, meio amargo",9,475,4.9,62.4,29.9,4.9],["Cocada branca",9,449,1.1,81.4,13.6,3.6],["Doce, de abóbora, cremoso",9,199,0.9,54.6,0.2,2.3],["Doce, de leite, cremoso",9,306,5.5,59.5,6.0,0],["Geléia, mocotó, natural",9,106,2.1,24.2,0.1,0],["Glicose de milho",9,292,0.0,79.4,0.0,0],["Maria mole",9,301,3.8,73.6,0.2,0.7],["Maria mole, coco queimado",9,307,3.9,75.1,0.1,0.6],["Marmelada",9,257,0.4,70.8,0.1,4.1],["Mel, de abelha",9,309,0.0,84.0,0.0,0],["Melado",9,297,0.0,76.6,0.0,0],["Quindim",9,411,4.7,46.3,24.4,3.2],["Rapadura",9,352,1.0,90.8,0.1,0],["Café, pó, torrado",10,419,14.7,65.8,11.9,51.2],["Capuccino, pó",10,417,11.3,73.6,8.6,2.4],["Fermento em pó, químico",10,90,0.5,43.9,0.1,0],["Fermento, biológico, levedura, tablete",10,90,17.0,7.7,1.5,4.2],["Gelatina, sabores variados, pó",10,380,8.9,89.2,0.0,0],["Sal, dietético",10,-1,0,0,0,0],["Sal, grosso",10,-1,0,0,0,0],["Shoyu",10,61,3.3,11.6,0.3,0],["Tempero a base de sal",10,21,2.7,2.1,0.3,0.6],["Azeitona, preta, conserva",11,194,1.2,5.5,20.3,4.6],["Azeitona, verde, conserva",11,137,0.9,4.1,14.2,3.8],["Chantilly, spray, com gordura vegetal",11,315,0.5,16.9,27.3,0],["Leite, de coco",11,166,1.0,2.2,18.4,0.7],["Maionese, tradicional com ovos",11,302,0.6,7.9,30.5,0],["Acarajé",12,289,8.3,19.1,19.9,9.4],["Arroz carreteiro",12,154,10.8,11.6,7.1,1.5],["Baião de dois, arroz e feijão-de-corda",12,136,6.2,20.4,3.2,5.1],["Barreado",12,165,18.3,0.2,9.5,0.1],["Bife à cavalo, com contra filé",12,291,23.7,0.0,21.1,0],["Bolinho de arroz",12,274,8.0,41.7,8.3,2.7],["Camarão à baiana",12,101,7.9,3.2,6.0,0.4],["Charuto, de repolho",12,78,6.8,10.1,1.1,1.5],["Cuscuz, de milho, cozido com sal",12,113,2.2,25.3,0.7,2.1],["Cuscuz, paulista",12,142,2.6,22.5,4.6,2.4],["Cuxá, molho",12,80,5.6,5.7,3.6,3.0],["Dobradinha",12,125,19.8,0.0,4.4,0],["Estrogonofe de carne",12,173,15.0,3.0,10.8,0],["Estrogonofe de frango",12,157,17.6,2.6,8.0,0],["Feijão tropeiro mineiro",12,152,10.2,19.6,6.8,3.6],["Feijoada",12,117,8.7,11.6,6.5,5.1],["Frango, com açafrão",12,113,9.7,4.1,6.2,0.2],["Macarrão, molho bolognesa",12,120,4.9,22.5,0.9,0.8],["Maniçoba",12,134,10.0,3.4,8.7,2.2],["Quibebe",12,86,8.6,6.6,2.7,1.7],["Salada, de legumes, com maionese",12,96,1.1,8.9,7.0,2.2],["Salada, de legumes, cozida no vapor",12,35,2.0,7.1,0.3,2.5],["Salpicão, de frango",12,148,13.9,4.6,7.8,0.4],["Sarapatel",12,123,18.5,1.1,4.4,0],["Tabule",12,57,2.0,10.6,1.2,2.1],["Tacacá",12,47,7.0,3.4,0.4,0.2],["Tapioca, com manteiga",12,348,0.1,63.6,10.9,0.0],["Tucupi, com pimenta-de-cheiro",12,27,2.1,4.7,0.3,0.2],["Vaca atolada",12,145,5.1,10.1,9.3,2.3],["Vatapá",12,255,6.0,9.7,23.2,1.7],["Virado à paulista",12,307,10.2,14.1,25.6,2.2],["Yakisoba",12,113,7.5,18.3,2.6,1.1],["Amendoim, grão, cru",13,544,27.2,20.3,43.9,8.0],["Amendoim, torrado, salgado",13,606,22.5,18.7,54.0,7.8],["Ervilha, em vagem",13,88,7.5,14.2,0.5,9.7],["Ervilha, enlatada, drenada",13,74,4.6,13.4,0.4,5.1],["Feijão, carioca, cozido",13,76,4.8,13.6,0.5,8.5],["Feijão, carioca, cru",13,329,20.0,61.2,1.3,18.4],["Feijão, fradinho, cozido",13,78,5.1,13.5,0.6,7.5],["Feijão, fradinho, cru",13,339,20.2,61.2,2.4,23.6],["Feijão, jalo, cozido",13,93,6.1,16.5,0.5,13.9],["Feijão, jalo, cru",13,328,20.1,61.5,0.9,30.3],["Feijão, preto, cozido",13,77,4.5,14.0,0.5,8.4],["Feijão, preto, cru",13,324,21.3,58.8,1.2,21.8],["Feijão, rajado, cozido",13,85,5.5,15.3,0.4,9.3],["Feijão, rajado, cru",13,326,17.3,62.9,1.2,24.0],["Feijão, rosinha, cozido",13,68,4.5,11.8,0.5,4.8],["Feijão, rosinha, cru",13,337,20.9,62.2,1.3,20.6],["Feijão, roxo, cozido",13,77,5.7,12.9,0.5,11.5],["Feijão, roxo, cru",13,331,22.2,60.0,1.2,33.8],["Grão-de-bico, cru",13,355,21.2,57.9,5.4,12.4],["Guandu, cru",13,344,19.0,64.0,2.1,21.3],["Lentilha, cozida",13,93,6.3,16.3,0.5,7.9],["Lentilha, crua",13,339,23.2,62.0,0.8,16.9],["Paçoca, amendoim",13,487,16.0,52.4,26.1,7.3],["Pé-de-moleque, amendoim",13,503,13.2,54.7,28.0,3.4],["Soja, farinha",13,404,36.0,38.4,14.6,20.2],["Soja, extrato solúvel, natural, fluido",13,39,2.4,4.3,1.6,0.4],["Soja, extrato solúvel, pó",13,459,35.7,28.5,26.2,7.3],["Soja, queijo (tofu)",13,64,6.6,2.1,4.0,0.8],["Tremoço, cru",13,381,33.6,43.8,10.3,32.3],["Tremoço, em conserva",13,121,11.1,12.4,3.8,14.4],["Amêndoa, torrada, salgada",14,581,18.6,29.5,47.3,11.6],["Castanha-de-caju, torrada, salgada",14,570,18.5,29.1,46.3,3.7],["Castanha-do-Brasil, crua",14,643,14.5,15.1,63.5,7.9],["Coco, cru",14,406,3.7,10.4,42.0,5.4],["Coco, verde, cru",14,-1,0,0,0,0],["Farinha, de mesocarpo de babaçu, crua",14,329,1.4,79.2,0.2,17.9],["Gergelim, semente",14,584,21.2,21.6,50.4,11.9],["Linhaça, semente",14,495,14.1,43.3,32.3,33.5],["Pinhão, cozido",14,174,3.0,43.9,0.7,15.6],["Pupunha, cozida",14,219,2.5,29.6,12.8,4.3],["Noz, crua",14,620,14.0,18.4,59.4,7.2]];
 // Texto sem acento e em minúsculas, para a busca
 function semAcento(s) { return String(s == null ? "" : s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+// Nomes da TACO já sem acento, preparados uma vez para a busca ser rápida
 const TACO_N = TACO.map(t => semAcento(t[0]));
 // Refeições padrão conforme o número de refeições do Perfil: nome e parte das calorias do dia (%)
 const DT_REF = {
@@ -6141,7 +6518,7 @@ const DT_REF = {
 const DT_RES = 12;                 // alimentos mostrados na busca
 const DT_FOLGA = 0.1;              // até 10% acima ou abaixo do proposto conta como "dentro"
 const DT_PER = [7, 14, 30];        // períodos (dias) da comparação por refeição
-const DT_SEM = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const DT_SEM = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]; // nomes curtos dos dias (0 = segunda)
 const DT_GRAMAS = [50, 100, 150, 200, 250, 300]; // quantidades prontas (g) na escolha do alimento
 const DT_PORCOES = [0.5, 1, 1.5, 2, 3];          // quantidades prontas para alimento por porção
 const DT_FREQ = 8;                               // alimentos frequentes mostrados antes de digitar
@@ -6193,12 +6570,25 @@ function dtCalc(f, q) { const k = f.por === "porcao" ? q : q / 100, r1 = v => Ma
 function dtSum(itens) { const t = { kcal: 0, p: 0, c: 0, g: 0 }; (itens || []).forEach(x => { t.kcal += +x.kcal || 0; t.p += +x.p || 0; t.c += +x.c || 0; t.g += +x.g || 0; }); return t; }
 // Alimentos registrados em um dia
 function dtItens(dateStr) { const d = app.dieta && app.dieta[dateStr]; return d && Array.isArray(d.itens) ? d.itens : []; }
+// Forma mais usada de cada alimento comum, quando só a palavra é digitada (sem acento, minúsculas → nome exato da TACO)
+// 2ª banca: "leite" trazia o achocolatado e "carne" trazia o bucho. A TACO não tem os valores do leite de vaca líquido (integral e UHT
+// estão sem composição), então "leite" traz primeiro o integral em pó e mostra um aviso (DT_AVISO) para cadastrar o líquido pelo rótulo.
+// O valor pode ser uma lista: a ordem da lista é a ordem no topo
+const DT_PREF = { leite: ["Leite, de vaca, integral, pó", "Leite, de vaca, desnatado, pó"], carne: ["Carne, bovina, patinho, sem gordura, grelhado", "Carne, bovina, acém, sem gordura, cozido", "Carne, bovina, contra-filé, sem gordura, grelhado"], arroz: "Arroz, tipo 1, cozido", feijao: "Feijão, carioca, cozido", ovo: "Ovo, de galinha, inteiro, cozido/10minutos", frango: "Frango, peito, sem pele, cozido", pao: "Pão, trigo, francês", batata: "Batata, inglesa, cozida", banana: "Banana, prata, crua", patinho: "Carne, bovina, patinho, sem gordura, grelhado", aveia: "Aveia, flocos, crua", iogurte: "Iogurte, natural", queijo: "Queijo, minas, frescal" };
+// Aviso no alto da busca para alimento comum que a TACO não traz
+const DT_AVISO = { leite: "A tabela TACO não tem o leite de vaca líquido. Cadastre o seu em \"Fora da tabela\" com os números do rótulo (integral: cerca de 60 kcal por 100 ml)." };
 // Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela palavra
 function dtBusca(q) {
   const tk = semAcento(q).split(/[^a-z0-9]+/).filter(Boolean); if (!tk.length) return [];
   const out = [];
   dtMeus().forEach(m => { const nn = semAcento(m.n); if (tk.every(t => nn.includes(t))) out.push([0, nn.length, m.id]); });
-  TACO_N.forEach((nn, i) => { if (TACO[i][2] >= 0 && tk.every(t => nn.includes(t))) out.push([nn.startsWith(tk[0]) ? 1 : 2, nn.length, i + 1]); });
+  // ordem: o nome-base exato com vírgula ("Leite, de vaca…", "Maçã, …") vem antes; depois a 1ª palavra igual; depois começa com; depois o resto.
+  // Antes "maçã" trazia primeiro "Macaúba" e "leite" trazia "Leite de coco"
+  const t0 = tk[0], nivel = nn => { const w = nn.split(/[^a-z0-9]+/)[0]; return w === t0 && nn.charAt(t0.length) === "," ? 1 : w === t0 ? 2 : nn.startsWith(t0) ? 3 : new RegExp("\\b" + t0 + "\\b").test(nn) ? 4 : 5; };
+  // a palavra comum digitada sozinha (DT_PREF) traz primeiro a forma mais usada no dia a dia (leite → de vaca; arroz → cozido). O valor é o começo do nome na TACO.
+  // A TACO não tem os valores do leite de vaca integral líquido (fica fora da busca); quem usa deve criar em "Meus alimentos".
+  const pref = tk.length === 1 && DT_PREF[t0] ? [].concat(DT_PREF[t0]) : [], pi = nome => pref.findIndex(p => nome.startsWith(p));
+  TACO_N.forEach((nn, i) => { if (TACO[i][2] >= 0 && tk.every(t => nn.includes(t))) { const j = pi(TACO[i][0]); out.push([j >= 0 ? 0.5 + j / 100 : nivel(nn), j >= 0 ? 0 : nn.length, i + 1]); } }); // 0,5: depois dos seus alimentos, antes do resto
   return out.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, DT_RES).map(x => dtFood(x[2])).filter(Boolean);
 }
 // Alimentos que você mais registrou (aparecem antes de digitar), cada um com a última quantidade usada
@@ -6215,7 +6605,7 @@ function dtQtd(f, q) { return fmt(q) + (f.por === "porcao" ? (q > 1 ? " porçõe
 function dtGrava(id, doc) {
   app.dieta = app.dieta || {}; app.dieta[id] = doc;
   if (!app.db || app.P == null) return;
-  try { const p = app.db.doc(app.P + "dieta/" + id).set(JSON.parse(JSON.stringify(doc))); if (p && p.catch) p.catch(() => { dtS().msg = "Não consegui salvar. Confira a conexão."; renderDieta(true); }); } catch (e) { }
+  try { const p = app.db.doc(app.P + "dieta/" + id).set(JSON.parse(JSON.stringify(doc))); if (p && p.catch) p.catch(e => { dtS().msg = saveErr(e, e && e.code !== "auth" && e.code !== "nao_carregou"); renderDieta(true); }); } catch (e) { } // a fila do armazenamento continua tentando
 }
 // Grava a lista de alimentos de um dia
 function dtPoe(dateStr, itens) { dtGrava(dateStr, { data: dateStr, itens, atualizado: new Date().toISOString() }); }
@@ -6225,6 +6615,33 @@ function dtSit(v, meta) { if (!meta) return null; const d = v / meta - 1; return
 function dtBar(v, meta, cls) { const s = dtSit(v, meta); return '<div class="dtbar' + (cls ? " " + cls : "") + '"><i style="width:' + (meta ? Math.min(100, v / meta * 100) : 0).toFixed(1) + "%;background:var(" + (s && v > 0 ? s[1] : "--neutral-bar") + ')"></i></div>'; }
 // Diferença com sinal e situação: "+120 · acima"
 function dtDif(v, meta) { const s = dtSit(v, meta); return s ? '<span class="dts" style="color:var(' + s[1] + ')">' + (v >= meta ? "+" : "−") + dtKc(Math.abs(v - meta)) + " · " + s[0] + "</span>" : ""; }
+// ----- Gasto real estimado (como fazem os apps de dieta que ajustam a meta pelo resultado) -----
+const DT_GASTO_DIAS = 21;   // janela de dias (terminando ontem) usada na estimativa
+const DT_GASTO_MIN = 10;    // dias com alimentos registrados, no mínimo, para mostrar a estimativa
+const DT_GASTO_PESOS = 4;   // pesagens na janela, no mínimo
+const DT_KCAL_KG = 7700;    // kcal por kg de variação de peso corporal (aproximação usual)
+// Gasto real estimado pelos seus próprios registros: média do que você comeu nos dias anotados menos a energia que virou (ou saiu do) peso.
+// A variação de peso vem da reta que passa pelas pesagens da janela, para não depender de uma pesagem só. Devolve null com poucos dados.
+function dtGasto() {
+  const fim = dtAdd(todayStr(), -1), ini = dtAdd(fim, -(DT_GASTO_DIAS - 1)), kc = [];
+  for (let d = ini; d <= fim; d = dtAdd(d, 1)) { const it = dtItens(d); if (it.length) kc.push(dtSum(it).kcal); }
+  const ps = Object.values(app.body || {}).filter(x => x && +x.peso > 0 && x.data >= ini && x.data <= fim).map(x => [Date.parse(x.data) / 864e5, +x.peso]);
+  if (kc.length < DT_GASTO_MIN || ps.length < DT_GASTO_PESOS) return null;
+  const n = ps.length, mx = ps.reduce((a, p) => a + p[0], 0) / n, my = ps.reduce((a, p) => a + p[1], 0) / n;
+  const sxx = ps.reduce((a, p) => a + (p[0] - mx) ** 2, 0); if (sxx < 49) return null; // pesagens em menos de ~10 dias: a reta não serve
+  const kgDia = ps.reduce((a, p) => a + (p[0] - mx) * (p[1] - my), 0) / sxx, come = kc.reduce((a, b) => a + b, 0) / kc.length;
+  return { gasto: Math.round(come - kgDia * DT_KCAL_KG), come: Math.round(come), kgSem: kgDia * 7, dias: kc.length, pesos: n };
+}
+// Bloco do gasto estimado na visão "Por dia": o número, de onde ele vem e a comparação com a meta da fase
+function dtGastoHtml() {
+  const g = dtGasto(), M = dtMeta(todayStr());
+  if (!g) return '<div class="panel"><h2>Gasto real estimado</h2><p class="muted">Aparece quando houver, nos últimos ' + DT_GASTO_DIAS + " dias, pelo menos " + DT_GASTO_MIN + " dias com alimentos registrados e " + DT_GASTO_PESOS + " pesagens. Ele mostra quanto você gasta de verdade, calculado pelo que comeu e pelo que o peso fez.</p></div>";
+  const kgS = (g.kgSem >= 0 ? "+" : "−") + fmt(Math.abs(Math.round(g.kgSem * 100) / 100)) + " kg/semana";
+  return '<div class="panel"><h2>Gasto real estimado</h2><p class="lead"><b>~' + dtKc(g.gasto) + " kcal/dia</b></p>" +
+    '<p class="muted">Você comeu em média ' + dtKc(g.come) + " kcal nos " + g.dias + " dias registrados, e o peso andou " + kgS + " (" + g.pesos + " pesagens)." +
+    (M ? " Comendo a meta da fase (" + dtKc(M.kcal) + " kcal), " + (g.gasto >= M.kcal ? "o déficit real fica perto de " + dtKc(g.gasto - M.kcal) : "você ficaria cerca de " + dtKc(M.kcal - g.gasto) + " kcal acima do gasto, sem déficit") + (g.gasto >= M.kcal ? " kcal/dia." : ".") : "") +
+    " Dias com registro incompleto puxam o número para baixo; é uma estimativa, não muda a meta sozinha.</p></div>";
+}
 // Desenha a aba Dieta: meta da fase, menu e a visão escolhida
 function renderDieta(force) {
   const box = document.getElementById("dtBox"); if (!box) return;
@@ -6233,7 +6650,7 @@ function renderDieta(force) {
   const S = dtS(), M = dtMeta(todayStr());
   document.getElementById("dtFase").innerHTML = M ? "" : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
   box.innerHTML = '<div class="dtmenu seg" role="group" aria-label="Visões da dieta">' + [["dia", "Registrar"], ["ref", "Por refeição"], ["sem", "Por dia"]].map(v => '<button type="button" data-dt="view|' + v[0] + '" aria-pressed="' + (S.view === v[0]) + '">' + v[1] + "</button>").join("") + "</div>" +
-    (S.view === "ref" ? '<div class="panel">' + dtRefHtml() + "</div>" : S.view === "sem" ? '<div class="panel">' + dtSemHtml() + "</div>" : dtDiaHtml()) + '<div class="panel">' + dtCfgHtml() + "</div>";
+    (S.view === "ref" ? '<div class="panel">' + dtRefHtml() + "</div>" : S.view === "sem" ? dtGastoHtml() + '<div class="panel">' + dtSemHtml() + "</div>" : dtDiaHtml()) + '<div class="panel">' + dtCfgHtml() + "</div>";
 }
 // Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição
 function dtDiaHtml() {
@@ -6266,7 +6683,7 @@ function dtHeroHtml(tot, M, n) {
 }
 // Linha de um alimento registrado: nome, quantidade (editável), calorias e remover
 function dtItemHtml(x, j) {
-  return '<div class="dtit"><span class="dtn">' + esc(x.n) + '</span><input class="dtq" type="number" inputmode="decimal" min="0" step="any" value="' + (x.q != null ? x.q : "") + '" data-dtq="' + j + '" aria-label="Quantidade de ' + esc(x.n) + '"><span class="dtu">' + (x.u === "porção" ? "porç." : "g") + '</span><span class="dtk">' + dtKc(+x.kcal || 0) + '</span><button class="dtx" type="button" data-dt="del|' + j + '" aria-label="Remover ' + esc(x.n) + '">×</button></div>';
+  return '<div class="dtit"><span class="dtn">' + esc(x.n) + '</span><input class="dtq" type="number" inputmode="decimal" min="0" step="any" value="' + (x.q != null ? esc(x.q) : "") + '" data-dtq="' + j + '" aria-label="Quantidade de ' + esc(x.n) + '"><span class="dtu">' + (x.u === "porção" ? "porç." : "g") + '</span><span class="dtk">' + dtKc(+x.kcal || 0) + '</span><button class="dtx" type="button" data-dt="del|' + j + '" aria-label="Remover ' + esc(x.n) + '">×</button></div>';
 }
 // Texto da prévia: calorias e macros da quantidade digitada
 function dtPrevTxt(f, q) { const v = dtCalc(f, q || 0); return dtKc(v.kcal) + " kcal · P " + fmt(v.p) + " · C " + fmt(v.c) + " · G " + fmt(v.g); }
@@ -6275,12 +6692,12 @@ function dtResHtml() {
   const S = dtS(), tem = S.q.trim().length > 0;
   if (!tem) {
     const F = dtUsados(DT_FREQ);
-    return F.length ? '<p class="muted dtvz">Frequentes: um toque adiciona com a última quantidade</p><div class="dtfreq">' + F.map(f => { const q = f.ultQ || (f.por === "porcao" ? 1 : 100); return '<button class="dtfq" type="button" data-dt="rapido|' + f.key + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '"><span>' + esc(f.n) + "</span><b>" + dtQtd(f, q) + "</b></button>"; }).join("") + "</div>"
+    return F.length ? '<p class="muted dtvz">Frequentes: um toque adiciona com a última quantidade</p><div class="dtfreq">' + F.map(f => { const q = f.ultQ || (f.por === "porcao" ? 1 : 100); return '<button class="dtfq" type="button" data-dt="rapido|' + esc(f.key) + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '"><span>' + esc(f.n) + "</span><b>" + dtQtd(f, q) + "</b></button>"; }).join("") + "</div>"
       : '<p class="muted dtvz">Digite parte do nome. Os valores da tabela são por 100 g.</p>';
   }
-  const L = dtBusca(S.q);
+  const L = dtBusca(S.q), av = DT_AVISO[semAcento(S.q).trim()];
   if (!L.length) return '<p class="muted dtvz">Nada encontrado. Tente outra palavra ou use "Fora da tabela".</p>';
-  return L.map(f => { const q = dtUltQ(f); return '<div class="dtrr"><button class="dtr" type="button" data-dt="pick|' + f.key + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " / porção" : " / 100 g") + '</span></button><button class="dtqk" type="button" data-dt="rapido|' + f.key + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '">+ ' + dtQtd(f, q) + "</button></div>"; }).join("");
+  return (av ? '<p class="muted dtvz">' + esc(av) + "</p>" : "") + L.map(f => { const q = dtUltQ(f); return '<div class="dtrr"><button class="dtr" type="button" data-dt="pick|' + esc(f.key) + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " / porção" : " / 100 g") + '</span></button><button class="dtqk" type="button" data-dt="rapido|' + esc(f.key) + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '">+ ' + dtQtd(f, q) + "</button></div>"; }).join("");
 }
 // Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela
 function dtAddHtml() {
@@ -6352,8 +6769,9 @@ function dtRefsSalva(refs) {
 }
 // Adiciona o alimento escolhido à refeição aberta
 function dtOk() {
-  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, el = document.getElementById("dtG"), q = el ? +String(el.value).replace(",", ".") : 0;
+  const S = dtS(), f = S.pick != null ? dtFood(S.pick) : null, el = document.getElementById("dtG"), q = el ? numBr(el.value) : 0; // numBr: "1.000" g é mil gramas
   if (!f || !(q > 0)) { const m = document.getElementById("dtGmsg"); if (m) m.textContent = "Informe a quantidade."; return; }
+  if (q > (f.por === "porcao" ? 50 : 5000)) { const m = document.getElementById("dtGmsg"); if (m) m.textContent = "Confira a quantidade: " + (f.por === "porcao" ? "até 50 porções." : "até 5.000 g."); return; }
   dtPoeItem(f, q, true);
 }
 // Põe um alimento na refeição escolhida e deixa a busca pronta para o próximo
@@ -6367,9 +6785,16 @@ function dtPoeItem(f, q, foco) {
 // Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade
 function dtForaSalva() {
   const S = dtS(), val = id => { const e = document.getElementById(id); return e ? String(e.value).trim().replace(",", ".") : ""; }, nome = val("dtFn"), k = val("dtFk");
-  if (!nome || k === "" || !(+k >= 0)) { const m = document.getElementById("dtFmsg"); if (m) m.textContent = "Preencha o nome e as calorias."; return; }
+  const fm = t => { const m = document.getElementById("dtFmsg"); if (m) m.textContent = t; };
+  if (!nome || k === "" || !(numBr(k) >= 0)) { fm("Preencha o nome e as calorias."); return; }
+  // tetos (2ª banca): por 100 g, até 900 kcal e 100 g de cada macro; por porção, até 5.000 kcal e 500 g. Nome até 80 letras
+  const porcao = val("dtFpor") === "porcao", tk = porcao ? 5000 : 900, tm = porcao ? 500 : 100, mac = id => { const t = val(id); return t === "" ? 0 : numBr(t); };
+  const kc = numBr(k), mp = mac("dtFp"), mc = mac("dtFc"), mg = mac("dtFg");
+  if (nome.length > 80) { fm("Use um nome mais curto (até 80 letras)."); return; }
+  if (kc > tk) { fm("Confira as calorias: até " + tk + " kcal " + (porcao ? "por porção." : "por 100 g.")); return; }
+  if (![mp, mc, mg].every(x => x >= 0 && x <= tm)) { fm("Confira proteína, carboidrato e gordura: só números, até " + tm + " g " + (porcao ? "por porção." : "por 100 g.")); return; }
   const id = "m" + Date.now().toString(36), meus = dtMeus().slice();
-  meus.push({ id, n: nome, kcal: +k, p: +val("dtFp") || 0, c: +val("dtFc") || 0, g: +val("dtFg") || 0, por: val("dtFpor") === "porcao" ? "porcao" : "100g" });
+  meus.push({ id, n: nome, kcal: kc, p: mp, c: mc, g: mg, por: porcao ? "porcao" : "100g" });
   dtGrava("meus", { itens: meus, atualizado: new Date().toISOString() });
   S.fora = false; S.pick = id; S.q = nome;
   renderDieta(true); const g = document.getElementById("dtG"); if (g) { g.focus(); g.select(); }
@@ -6379,7 +6804,8 @@ function dtClick(ev) {
   const b = ev.target.closest("[data-dt]"); if (!b) return;
   const S = dtS(), p = b.dataset.dt.split("|"), a = p[0], v = p[1];
   if (a === "ok") { dtOk(); return; }
-  if (a === "rapido") { const f = dtFood(/^\d+$/.test(v) ? +v : v); if (f && +p[2] > 0) dtPoeItem(f, +p[2], !!S.q); return; }
+  // dois toques seguidos (menos de 1 s) no mesmo atalho incluíam o alimento duas vezes
+  if (a === "rapido") { if (S.rapK === b.dataset.dt && Date.now() - (S.rapT || 0) < 1000) return; S.rapK = b.dataset.dt; S.rapT = Date.now(); const f = dtFood(/^\d+$/.test(v) ? +v : v); if (f && +p[2] > 0) dtPoeItem(f, +p[2], !!S.q); return; }
   if (a === "qtd") { const g = document.getElementById("dtG"), f = S.pick != null ? dtFood(S.pick) : null; if (g && f) { g.value = v; const o = document.getElementById("dtPrev"); if (o) o.textContent = dtPrevTxt(f, +v); b.parentNode.querySelectorAll("[data-dt^=qtd]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); } return; }
   if (a === "forasalva") { dtForaSalva(); return; }
   if (a === "refadd") { const r = dtRefs(); r.push({ n: "Refeição " + (r.length + 1), pct: 0 }); dtRefsSalva(r); return; }
@@ -6418,7 +6844,8 @@ function dtChange(ev) {
   const t = ev.target, S = dtS();
   if (t.id === "dtData") { if (t.value) { S.data = t.value; S.add = null; } renderDieta(true); return; }
   if (t.dataset.dtq != null) {
-    const it = dtItens(S.data).slice(), j = +t.dataset.dtq, x = it[j], q = +String(t.value).replace(",", ".");
+    const it = dtItens(S.data).slice(), j = +t.dataset.dtq, x = it[j], q = numBr(t.value), max = x && x.u === "porção" ? 50 : 5000;
+    if (x && q > max) { S.msg = "Confira a quantidade: até " + (max === 50 ? "50 porções." : "5.000 g."); renderDieta(true); return; }
     if (x && q > 0) { const f = x.a != null ? dtFood(x.a) : null, k = q / (x.q || q), r1 = v => Math.round((+v || 0) * k * 10) / 10; it[j] = Object.assign({}, x, { q }, f ? dtCalc(f, q) : { kcal: Math.round((+x.kcal || 0) * k), p: r1(x.p), c: r1(x.c), g: r1(x.g) }); dtPoe(S.data, it); }
     renderDieta(true); return;
   }
@@ -6438,6 +6865,16 @@ function dtChange(ev) {
 })();
 
 // ===== 27. PARTIDA =====
+// Dentro de um quadro (iframe) de outro site, o app não abre (2ª banca: proteção contra um site que embute o app e induz toques).
+// A regra frame-ancestors da CSP não vale em <meta>; esta conferência faz o mesmo papel no navegador
+if (window.top !== window.self) { document.body.innerHTML = '<p style="padding:24px;font:16px system-ui">O Hexis só abre no próprio endereço. <a href="' + location.href.replace(/"/g, "") + '" target="_top" rel="noopener">Abrir o Hexis</a></p>'; throw new Error("Hexis dentro de um quadro"); }
+// Campos de número aceitam vírgula. Com type="number", o navegador descartava a vírgula ("72,5" virava 725) sem aviso.
+// Todo campo de número vira texto com teclado decimal (data-num) e a vírgula é trocada por ponto enquanto se digita, antes de o app ler o valor.
+// Vale para os campos que já existem e para os que as telas desenham depois (MutationObserver)
+function numCampos(root) { (root || document).querySelectorAll('input[type="number"]').forEach(el => { const im = el.getAttribute("inputmode"); el.type = "text"; if (!im) el.setAttribute("inputmode", "decimal"); el.dataset.num = "1"; el.setAttribute("autocomplete", "off"); }); }
+document.addEventListener("input", ev => { const el = ev.target; if (!el || !el.dataset || !el.dataset.num || !el.value.includes(",")) return; const p = el.selectionStart; el.value = el.value.replace(/,/g, "."); try { el.setSelectionRange(p, p); } catch (e) { } }, true);
+try { new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1 && (n.matches('input[type="number"]') || n.querySelector('input[type="number"]'))) numCampos(n.parentNode || n); }).observe(document.body, { childList: true, subtree: true }); } catch (e) { }
+numCampos();
 // O app fica nos limites da tela: sem zoom de pinça nem de toque duplo, sem zoom ao entrar num campo e sem rolagem para os lados
 function travaTela() {
   const V = "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
