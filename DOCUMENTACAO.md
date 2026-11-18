@@ -223,7 +223,7 @@ Os números do treino em si não estão nesta tabela, e sim na ficha (seção 2)
 
 ## 6. Índice por seção
 
-São 360 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
+São 366 funções. Cada uma tem, no código, um comentário com o mesmo texto da tabela.
 
 ### 1. Parâmetros ajustáveis
 
@@ -617,14 +617,19 @@ Modo unilateral: dados de cada lado e qual lado conta para a progressão.
 | Função | O que faz |
 | --- | --- |
 | `uniDefault()` | Unilateral por padrão? (pelo nome, ou pela observação "cada perna / cada lado") |
-| `isUni()` | Unilateral: a escolha do usuário vale mais que o padrão |
+| `uniModo()` | Modo do exercício: "bi" (bilateral), "lados" (unilateral, cada lado anotado à parte) ou "junto" (unilateral com os lados juntos: uma linha por série e um tempo só, que já inclui os dois lados). A escolha do usuário vale mais que o padrão |
+| `isUni()` | Unilateral de qualquer jeito (cada lado ou lados juntos): conta no tempo como unilateral |
+| `uniLados()` | Unilateral com cada lado anotado à parte (linhas de esquerdo e direito, cronômetro por lado) |
+| `uniJunto()` | Unilateral com os lados juntos (uma linha por série; o tempo anotado é o dos dois lados) |
+| `serieUni()` | Série feita como unilateral: com os lados anotados, marcada como "lados juntos" ou de um exercício hoje em lados juntos |
 | `uniSum()` | Soma de um campo dos dois lados (ex.: tempo de execução) |
 | `uniKg()` | Carga de um lado; se estiver vazia, a do outro |
 | `uniScore()` | Força estimada de um lado na série |
 | `uniAgg()` | A série vale pelo lado mais fraco (empate: o que você marcou como mais difícil) |
 | `maqBoxHtml()` | Bloco "Cargas da máquina" do cartão: as placas conhecidas, o tipo (automático, placas fixas, carga livre) e o campo para declarar as placas |
 | `maqSet()` | Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias) |
-| `uniToggleHtml()` | Botões Bilateral / Unilateral do cartão |
+| `uniToggleHtml()` | Botões Bilateral / Unilateral (cada lado) / Unilateral (lados juntos) do cartão |
+| `uniLinkHtml()` | Botãozinho de ligar os lados, à vista no cartão dos unilaterais: com os lados ligados, cada série tem uma linha só e o tempo é o dos dois lados |
 | `uniLine()` | Diferença entre os lados no exercício de hoje |
 | `uniDifHtml()` | Botões "Mais difícil: Esquerdo / Igual / Direito" |
 | `uniRows()` | Linhas da série unilateral: esquerdo e direito com carga, reps e RIR; depois cronômetro, execução, parciais e dificuldade |
@@ -652,7 +657,7 @@ Cronômetro de execução, descanso e intervalo, com aviso de esquecimento e ani
 | `clkBeep()` | Aviso sonoro e vibração |
 | `clkToast()` | Mensagem curta acima da barra do cronômetro |
 | `clkHandoff()` | Fecha a fase em andamento quando você começa a série (m, j) e anota o que couber |
-| `clkGo()` | Começa a cronometrar a execução da série (m = exercício, j = série) |
+| `clkExecMax()`, `clkGo()` | Começa a cronometrar a execução da série (m = exercício, j = série) Teto da execução cronometrada: nos lados juntos, cabe o tempo dos dois lados e a troca |
 | `clkAfterExec()` | Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série |
 | `clkToRest()` | Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia) |
 | `clkStop()` | Para a execução, anota o tempo e passa para a fase seguinte |
@@ -1013,3 +1018,4 @@ Rodam antes de cada publicação, na área de desenvolvimento. Cada um abre o ap
 - **Botão "i"**: só nos termos menos comuns (`INFO_COMUM`, `INFO_ACT_COMUM`, `infoRaro`); todos os termos ficam no Glossário (Plano e regras, `gloHtml`).
 - **Dieta**: aba própria; refeição escolhida pelo horário (`dtRefAgora`, `DT_HORA`); frequentes com a última quantidade (`dtUsados`, `dtUltQ`) adicionados em um toque (`dtPoeItem`); quantidades prontas (`DT_GRAMAS`, `DT_PORCOES`); repetir a refeição de ontem; desfazer o último.
 - **Peso base da máquina**: `settings.maq[nome].min`; `maqMin` impede carga prevista, back-off, ajuste entre séries e aquecimento abaixo dele.
+- **Unilateral com os lados juntos**: `settings.uni[k]` aceita `false` (bilateral), `true` (cada lado) ou `"junto"` (lados juntos). `uniModo`, `isUni` (qualquer unilateral: conta no tempo previsto), `uniLados` (linhas e cronômetro por lado), `uniJunto`, `serieUni`. No modo junto a série tem uma linha e um tempo só (`uj: 1` na série); o ritmo conta como unilateral, o cronômetro aceita até `2 × CLK_EXEC_MAX + UNI_TROCA` (`clkExecMax`), o resumo mostra "(2 lados)" e o gráfico de execução conta metade. Botão à vista no cartão: `uniLinkHtml`. Teste: `run39`.

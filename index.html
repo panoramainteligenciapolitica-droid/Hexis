@@ -1026,6 +1026,10 @@ main a:not(.btn):not(.hm-f):not([class]) { color: var(--accent); text-decoration
 details.grp { margin: 0 0 12px; }
 details.grp > summary { padding: 12px 16px; border-radius: var(--r-card); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow), inset 0 1px 0 var(--edge); }
 details.grp[open] > summary { margin-bottom: 10px; }
+.unilk { display: flex; align-items: center; gap: 8px; min-height: 32px; margin: 0 0 6px; font-size: 12.5px; white-space: nowrap; overflow: hidden; }
+.unilk .muted { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.uniln { flex: none; min-height: 30px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--glass-strong); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; box-shadow: inset 0 1px 0 var(--edge); }
+.uniln.on { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent) 14%, var(--glass-strong)); color: var(--accent); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   header.top, .bnav, .savebar, .pop-card { background: var(--solid); }
 }
@@ -1172,7 +1176,7 @@ details.grp[open] > summary { margin-bottom: 10px; }
       </div>
       <div class="panel">
         <h2>Tempo de execução por série</h2>
-        <p class="lead">Média da semana, em segundos, de todas as séries cronometradas.</p>
+        <p class="lead">Média da semana, em segundos, de todas as séries cronometradas. Nos unilaterais, conta o tempo de um lado.</p>
         <div class="chartbox"><canvas id="chExec" aria-label="Gráfico: tempo médio de execução por série, por semana"></canvas></div>
       </div>
       <div class="panel">
@@ -2332,7 +2336,7 @@ function ritmo(records) {
     Object.keys(doc.ex).forEach(k => { const d = EXBY[k], e = doc.ex[k]; if (!d || !e || e.st === "nao") return;
       if (+e.trans >= 20 && +e.trans <= 900 && d.junto !== true) tr.push(+e.trans);
       (e.sets || []).forEach(x => { if (!x || !(+x.reps > 0)) return;
-        if (+x.exec >= 10 && +x.exec <= 300) { if (x.lados) un.push(+x.exec + (+x.troca > 0 ? +x.troca : 0)); else bi.push(+x.exec); }
+        if (+x.exec >= 10 && +x.exec <= 2 * CLK_EXEC_MAX + UNI_TROCA) { if (x.lados) un.push(+x.exec + (+x.troca > 0 ? +x.troca : 0)); else if (serieUni(x, d)) un.push(+x.exec); else if (+x.exec <= 300) bi.push(+x.exec); }
         if (+x.desc >= 30 && +x.desc <= 600) rest.push(+x.desc - restSec(d)); }); }); });
   // média (e não mediana): o tempo do treino é uma soma, então as séries e trocas mais demoradas também contam
   const med = (a, min) => { if (a.length < min) return null; const v = a.slice(-RITMO_N); return v.reduce((x, y) => x + y, 0) / v.length; };
@@ -3177,7 +3181,7 @@ GLOSS.blocos = ["Blocos do ano", "<p>O treino é dividido em blocos. O primeiro 
 GLOSS.g_descexec = ["Descanso e execução do exercício", "<p>Mostra, semana a semana, o <b>descanso médio</b> entre as séries deste exercício (contra o previsto, na linha tracejada) e o <b>tempo médio de execução</b> de cada série.</p><p>Serve para ver se a queda ou a melhora de desempenho veio junto com descanso mais curto ou séries mais rápidas. Os dados vêm do cronômetro ou dos tempos que você anotar.</p>"];
 GLOSS.telaacesa = ["Tela acesa", "<p>Com <b>Sim</b>, o celular não apaga nem bloqueia a tela enquanto o cronômetro está rodando. Assim o aviso de 5 minutos toca e você vê o tempo sem desbloquear.</p><p>Gasta um pouco mais de bateria. Quando o cronômetro para, a tela volta a apagar normalmente. A escolha fica guardada neste aparelho.</p>"];
 GLOSS.cronometro = ["Cronômetro da série", "<p>Toque <b>▶ Iniciar série</b> ao começar e <b>⏸ Parar e registrar</b> ao terminar: o tempo vai para o campo Execução e o descanso começa a contar sozinho. A barra enche até o descanso previsto e avisa quando ele foi cumprido.</p><p><b>▶ Próxima série</b> anota o descanso e já cronometra a série seguinte. Depois da última série (ou ao tocar ✓ Feito), começa o intervalo até o próximo exercício.</p><p>Se esquecer de parar, ao começar outro exercício (no cronômetro ou anotando a carga) o app fecha o tempo e anota no lugar certo, mesmo fora da ordem da ficha.</p><p>Em exercício unilateral, ele mede um lado, espera você trocar e mede o outro.</p><p>A barra enche até o tempo previsto (execução estimada pelas repetições, descanso e intervalo da ficha) e o ponteiro dá uma volta por minuto.</p><p>A cada 5 minutos rodando, ele toca e vibra (com o app aberto na tela) e pergunta se você quer continuar, descartar ou corrigir o tempo. A barra de baixo mostra o cronômetro em qualquer parte do app.</p>"];
-GLOSS.unilateral = ["Unilateral", "<p>Marque <b>Unilateral</b> quando o exercício é feito um lado de cada vez. Cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p><b>Cronômetro:</b> cada lado tem o seu tempo. Ao parar o primeiro lado, a barra passa a contar a <b>troca de lado</b> (referência de 30 s; em geral vai-se direto para o outro lado, porque o lado que trabalhou descansa enquanto o outro trabalha). Toque <b>▶ Lado</b> ao começar o segundo; ao parar, começa o descanso da série. <b>⏭</b> pula o outro lado e já conta o descanso. O tempo da troca é anotado e entra no tempo do treino.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
+GLOSS.unilateral = ["Unilateral", "<p>Há dois jeitos de anotar um exercício feito um lado de cada vez:</p><ul><li><b>Cada lado</b>: uma linha para o esquerdo e outra para o direito, com o cronômetro de cada lado.</li><li><b>🔗 Lados juntos</b>: uma linha por série, como num bilateral, e um tempo só, que já inclui os dois lados e a troca. O app sabe que é unilateral: o tempo maior não conta como execução lenta, entra no seu ritmo de unilaterais e no tempo previsto do treino, e no gráfico de execução vale a metade (um lado).</li></ul><p>No modo <b>Cada lado</b>: cada série ganha uma linha para o lado esquerdo e outra para o direito: carga, repetições, RIR, parciais e tempo de execução de cada lado. Se a carga for a mesma, basta anotar em um lado.</p><p>Em <b>Mais difícil</b>, diga qual lado pesou mais naquela série, ou se foi igual.</p><p>A progressão segue o <b>lado mais fraco</b>: a carga só sobe quando ele bate a meta. Em empate, vale o lado que você marcou como mais difícil.</p><p>O cartão mostra a diferença de força entre os lados. Acima de 10%, comece pelo lado mais fraco e faça no mais forte o mesmo número de repetições.</p><p><b>Cronômetro:</b> cada lado tem o seu tempo. Ao parar o primeiro lado, a barra passa a contar a <b>troca de lado</b> (referência de 30 s; em geral vai-se direto para o outro lado, porque o lado que trabalhou descansa enquanto o outro trabalha). Toque <b>▶ Lado</b> ao começar o segundo; ao parar, começa o descanso da série. <b>⏭</b> pula o outro lado e já conta o descanso. O tempo da troca é anotado e entra no tempo do treino.</p><p>A escolha vale para todas as semanas deste exercício.</p>"];
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
@@ -3546,8 +3550,8 @@ function setCells(d, i, lbl, x, phKg, phReps, side) {
     '<td><select aria-label="' + al + ' repetições que sobraram" ' + ds("rir") + ">" + ['<option value="">—</option>'].concat([0, 1, 2, 3, 4, 5].map(r => '<option value="' + r + '"' + (x.rir != null && x.rir !== "" && +x.rir === r ? " selected" : "") + ">" + r + "</option>")).join("") + "</select></td>";
 }
 // Campo do tempo de execução, com o selo que converte para minutos
-function execField(d, i, lbl, x, side) {
-  return '<label class="exec">' + (side ? (side === "e" ? "Esq." : "Dir.") : "Execução") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : "") + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec" + (side ? "|" + side : "") + '" value="' + (x.exec == null ? "" : x.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + (side ? "-" + side : "") + '" aria-live="polite">' + mmss(x.exec) + "</span></label>";
+function execField(d, i, lbl, x, side, junto) {
+  return '<label class="exec">' + (side ? (side === "e" ? "Esq." : "Dir.") : junto ? "Exec. 2 lados" : "Execução") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : junto ? " dos dois lados" : "") + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec" + (side ? "|" + side : "") + '" value="' + (x.exec == null ? "" : x.exec) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + (side ? "-" + side : "") + '" aria-live="polite">' + mmss(x.exec) + "</span></label>";
 }
 // Cartão do exercício: prescrição, motivo, aquecimento, séries, observações e Feito / Não fiz
 function exCard(d, p, entry, W) {
@@ -3571,7 +3575,7 @@ function exCard(d, p, entry, W) {
   const base = markOf(app.perfil || {}, d);
   const oldLine = base ? '<div class="old">Sua marca: ' + fmt(base.kg) + " kg × " + base.reps + " · 1RM ~" + fmt(Math.round(e1(base.kg, base.reps) * 10) / 10) + " kg</div>" : "";
   const sug = suggestSets(d, p, entry);
-  const uni = isUni(d);
+  const uni = isUni(d), lados = uniLados(d), junto = uniJunto(d);
   const rows = p.sets.map((s, i) => {
     const v = entry && entry.sets && entry.sets[i] ? entry.sets[i] : { kg: null, reps: null, rir: null };
     const lbl = s.kind === "top" ? "Pesada" : s.kind === "back" ? "Back-off " + i : s.kind === "over" ? "Sobrecarga" : "Série " + (i + 1);
@@ -3581,10 +3585,10 @@ function exCard(d, p, entry, W) {
     const head = "<b>" + lbl + "</b>" + lblInfo + '<div class="tgt">' + esc(prevKg) + " × " + s.tr + (uni ? " c/ lado" : "") + (s.cluster ? " · 2 blocos" : "") + '</div><div class="tgt">RIR ' + rirTxt(s.rir) + " · " + s.lo + "–" + s.hi + "</div>";
     const hint = '<tr class="hrow"><td colspan="4"><div class="sline"><span class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + '</span><span class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '" title="' + esc(g.note) + '">' + esc(g.curto || g.note) + "</span></div></td></tr>";
     const restRow = i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "";
-    if (uni) return uniRows(d, i, v, lbl, head, g).replace('<tr class="tbrow">', hint + '<tr class="tbrow">') + restRow;
+    if (lados) return uniRows(d, i, v, lbl, head, g).replace('<tr class="tbrow">', hint + '<tr class="tbrow">') + restRow;
     return '<tr class="srow"><td class="lbl">' + head + "</td>" + setCells(d, i, lbl, v, g.kg == null ? "kg" : fmt(g.kg), g.reps) + "</tr>" + hint +
       '<tr class="tbrow"><td colspan="4">' + clkSetHtml(d, i, v, false) + "</td></tr>" +
-      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v) + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
+      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v, null, junto) + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
   }).join("");
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
@@ -3603,7 +3607,7 @@ function exCard(d, p, entry, W) {
   return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
     '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave" : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + rirChip + restChip + modeChip + stallChip + "</div>" + whyBox +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + '<div id="ul-' + d.k + '">' + (uni ? uniLine(entry) : "") + "</div>" +
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniLinkHtml(d) + '<div id="ul-' + d.k + '">' + (lados ? uniLine(entry) : "") + "</div>" +
     '<table class="sets"><colgroup><col><col class="c-kg"><col class="c-rp"><col class="c-rir"></colgroup><thead><tr><th>Série · previsto</th><th>kg</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
     ajustes +
     '<div class="row-btns donebar"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button></div></article>';
@@ -3696,7 +3700,7 @@ function weekExtras(lastW) {
       const rs = [];
       for (const x of r.sets) {
         if (!x || !(+x.reps > 0)) continue;
-        if (+x.exec > 0) { exS += +x.exec; exN++; }
+        if (+x.exec > 0) { exS += serieUni(x, d) ? +x.exec / 2 : +x.exec; exN++; }
         const L = x.lados || {};
         if ((x.parc && x.parc.length) || ["e", "d"].some(n => L[n] && L[n].parc && L[n].parc.length)) parc++;
         const se = uniScore(L, "e", x.kg), sd = uniScore(L, "d", x.kg);
@@ -4384,8 +4388,17 @@ function renderPlan() {
 // ===== 17. EXERCÍCIO UNILATERAL: dados de cada lado =====
 // Unilateral por padrão? (pelo nome, ou pela observação "cada perna / cada lado")
 function uniDefault(def) { return /unilateral/i.test(def.n) || /cada (perna|braço|lado)/i.test(def.obs || ""); }
-// Unilateral: a escolha do usuário vale mais que o padrão
-function isUni(def) { const s = ((app.settings || {}).uni || {})[def.k]; return s != null ? !!s : uniDefault(def); }
+// Modo do exercício: "bi" (bilateral), "lados" (unilateral, cada lado anotado à parte) ou "junto" (unilateral com os lados juntos:
+// uma linha por série e um tempo só, que já inclui os dois lados). A escolha do usuário vale mais que o padrão
+function uniModo(def) { const s = ((app.settings || {}).uni || {})[def.k]; return s === "junto" ? "junto" : s != null ? (s ? "lados" : "bi") : uniDefault(def) ? "lados" : "bi"; }
+// Unilateral de qualquer jeito (cada lado ou lados juntos): conta no tempo como unilateral
+function isUni(def) { return uniModo(def) !== "bi"; }
+// Unilateral com cada lado anotado à parte (linhas de esquerdo e direito, cronômetro por lado)
+function uniLados(def) { return uniModo(def) === "lados"; }
+// Unilateral com os lados juntos (uma linha por série; o tempo anotado é o dos dois lados)
+function uniJunto(def) { return uniModo(def) === "junto"; }
+// Série feita como unilateral: com os lados anotados, marcada como "lados juntos" ou de um exercício hoje em lados juntos
+function serieUni(x, def) { return !!(x && (x.lados || x.uj || (def && uniJunto(def)))); }
 // Soma de um campo dos dois lados (ex.: tempo de execução)
 function uniSum(s, f) { const L = (s && s.lados) || {}; const v = ["e", "d"].map(n => L[n] && +L[n][f] > 0 ? +L[n][f] : 0); return v[0] + v[1] > 0 ? v[0] + v[1] : null; }
 // Carga de um lado; se estiver vazia, a do outro
@@ -4429,10 +4442,17 @@ function maqSet(k, campo, valor) {
   else c.placas = String(valor).replace(/,/g, ".").split(/[^0-9.]+/).map(Number).filter(v => v > 0).sort((a, b) => a - b);
   app.settings.maq[d.n] = c; app.maqOpen = k; saveSettings(); renderWeek();
 }
-// Botões Bilateral / Unilateral do cartão
+// Botões Bilateral / Unilateral (cada lado) / Unilateral (lados juntos) do cartão
 function uniToggleHtml(d) {
-  const u = isUni(d);
-  return maqBoxHtml(d) + '<div class="unitg"><span class="rl">Execução' + infoBtn("unilateral") + '</span><button type="button" class="rbtn" aria-pressed="' + !u + '" data-uni="' + d.k + '|0">Bilateral</button><button type="button" class="rbtn" aria-pressed="' + u + '" data-uni="' + d.k + '|1">Unilateral (cada lado)</button></div>';
+  const m = uniModo(d);
+  return maqBoxHtml(d) + '<div class="unitg"><span class="rl">Execução' + infoBtn("unilateral") + "</span>" + [["bi", "0", "Bilateral"], ["lados", "1", "Unilateral (cada lado)"], ["junto", "j", "🔗 Unilateral (lados juntos)"]].map(([v, c, t]) => '<button type="button" class="rbtn" aria-pressed="' + (m === v) + '" data-uni="' + d.k + "|" + c + '">' + t + "</button>").join("") + "</div>";
+}
+// Botãozinho de ligar os lados, à vista no cartão dos unilaterais: com os lados ligados, cada série tem uma linha só e o tempo é o dos dois lados
+function uniLinkHtml(d) {
+  const m = uniModo(d);
+  if (m === "junto") return '<div class="unilk"><button type="button" class="uniln on" aria-pressed="true" data-uni="' + d.k + '|1" title="Separar: anotar cada lado">🔗 Lados juntos</button><span class="muted">unilateral · tempo dos 2 lados</span></div>';
+  if (m === "lados" || uniDefault(d)) return '<div class="unilk"><button type="button" class="uniln" aria-pressed="false" data-uni="' + d.k + '|j" title="Ligar os lados: uma linha por série">🔗 Juntar os lados</button><span class="muted">' + (m === "lados" ? "hoje: cada lado à parte" : "hoje: anotado como bilateral") + "</span></div>";
+  return "";
 }
 // Diferença entre os lados no exercício de hoje
 function uniLine(entry) {
@@ -4485,7 +4505,7 @@ function clkRecord(W, k, i, field, sec, side) {
   if (field === "trans") entry.trans = sec;
   else {
     if (side) { sideOf(set, side)[field] = sec; if (field === "exec") set.exec = uniSum(set, "exec"); }
-    else set[field] = sec; // exec, desc ou troca (tempo entre um lado e o outro)
+    else { set[field] = sec; if (field === "exec" && uniJunto(def)) set.uj = 1; } // exec, desc ou troca (tempo entre um lado e o outro)
     snapPrev(entry, pres);
   }
   touch(def.d, W);
@@ -4515,7 +4535,7 @@ function clkHandoff(W, m, j, side) {
   if (c.ph === "exec" && c.waitSide) { if (c.k === m && c.i === j) return msgs; }
   else if (c.ph === "exec") {
     if (c.k === m && c.i === j && (c.side || null) === (side || null)) return msgs;
-    if (el <= CLK_EXEC_MAX) { clkRecord(W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada"); }
+    if (el <= clkExecMax(c.k)) { clkRecord(W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada"); }
     else msgs.push("execução de " + clkFmt(el) + " não anotada (parecia esquecida)");
   } else if (c.ph === "rest") {
     if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
@@ -4536,6 +4556,8 @@ function clkHandoff(W, m, j, side) {
   return msgs;
 }
 // Começa a cronometrar a execução da série (m = exercício, j = série)
+// Teto da execução cronometrada: nos lados juntos, cabe o tempo dos dois lados e a troca
+function clkExecMax(k) { const d = EXBY[k]; return d && uniJunto(d) ? 2 * CLK_EXEC_MAX + UNI_TROCA : CLK_EXEC_MAX; }
 function clkGo(W, m, j, side) {
   clkUnlock();
   const msgs = clkHandoff(W, m, j, side);
@@ -4543,14 +4565,14 @@ function clkGo(W, m, j, side) {
   if (!entry.startAt) { entry.startAt = new Date().toISOString(); touch(def.d, W); }
   const sp = pres.sets, tr = (sp[Math.min(j, sp.length - 1)] || {}).tr || 10;
   const L0 = ((entry.sets || [])[j] || {}).lados || {}, ot = side === "e" ? "d" : "e", tem = x => L0[x] && +L0[x].exec > 0;
-  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: side && tem(ot) && !tem(side) ? [ot] : [], ph: "exec", exp: Math.max(20, Math.min(75, tr * CLK_SEG_REP)), t0: Date.now(), ack: 0 };
+  app.clk = { W, day: def.d, k: m, i: j, side: side || null, done: side && tem(ot) && !tem(side) ? [ot] : [], ph: "exec", exp: uniJunto(def) ? 2 * Math.max(20, Math.min(75, tr * CLK_SEG_REP)) + UNI_TROCA : Math.max(20, Math.min(75, tr * CLK_SEG_REP)), t0: Date.now(), ack: 0 };
   clkSave(); clkRefresh();
   if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
 }
 // Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série
 function clkAfterExec(c, t0) {
   const { def } = ctx(c.k, null, c.W);
-  if (isUni(def) && c.side) { const done = (c.done || []).concat(c.side), other = c.side === "e" ? "d" : "e"; if (!done.includes(other)) { app.clk = Object.assign({}, c, { side: other, done, t0, ack: 0, ask: false, fixOpen: false, waitSide: true }); return; } }
+  if (uniLados(def) && c.side) { const done = (c.done || []).concat(c.side), other = c.side === "e" ? "d" : "e"; if (!done.includes(other)) { app.clk = Object.assign({}, c, { side: other, done, t0, ack: 0, ask: false, fixOpen: false, waitSide: true }); return; } }
   clkToRest(c, t0);
 }
 // Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia)
@@ -4584,7 +4606,7 @@ function clkOnDone(W, k) {
     if (c.ph === "trans") return;
     // execução rodando: anota e o intervalo começa agora; descanso rodando (séries seguintes feitas sem cronômetro): começa agora; troca de lado: desde o fim do 1º lado
     let t0 = Date.now();
-    if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= CLK_EXEC_MAX) clkRecord(W, k, c.i, "exec", el, c.side); } }
+    if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= clkExecMax(k)) clkRecord(W, k, c.i, "exec", el, c.side); } }
     if (c.ph === "warm" && clkEl() <= CLK_WARM_MAX) clkWarmRec(W, k, clkEl());
     app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", prev: TRANS_DEF, t0: Date.now(), ack: 0 };
@@ -4616,8 +4638,8 @@ function clkAct(a) {
   if (a === "side") { if (c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", clkEl()); c.waitSide = false; c.t0 = Date.now(); c.ack = 0; c.ask = false; clkSave(); clkRefresh(); } return; }
   // pular o outro lado: o descanso da série conta desde o fim do lado feito
   if (a === "skip") { if (c.waitSide) { clkToRest(c, c.t0); clkSave(); clkRefresh(); } return; }
-  if (a === "next") { clkGo(c.W, c.k, c.i + 1, isUni(EXBY[c.k]) ? "e" : null); return; }
-  if (a === "first") { clkGo(c.W, c.k, 0, isUni(EXBY[c.k]) ? "e" : null); return; }
+  if (a === "next") { clkGo(c.W, c.k, c.i + 1, uniLados(EXBY[c.k]) ? "e" : null); return; }
+  if (a === "first") { clkGo(c.W, c.k, 0, uniLados(EXBY[c.k]) ? "e" : null); return; }
   if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
   if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
   if (a === "drop") { app.clk = null; clkSave(); clkRefresh(); clkToast("Tempo descartado."); return; }
@@ -4679,14 +4701,14 @@ function clkSetHtml(d, i, v, uni) {
   const c = app.clk;
   const on = c && c.W === app.week && c.k === d.k && c.i === i;
   const id = "tb-" + d.k + "-" + i;
-  const lado = s => s === "e" ? " · esquerdo" : s === "d" ? " · direito" : "";
+  const lado = s => s === "e" ? " · esquerdo" : s === "d" ? " · direito" : uniJunto(d) ? " · 2 lados" : "";
   if (on && c.ph === "exec" && c.waitSide) { const el = clkEl(); return '<div class="clk run rs clkanim' + (el >= UNI_TROCA ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / UNI_TROCA).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Troca</b></span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(UNI_TROCA) + '</small></span><button type="button" class="btn small primary" data-clk="side" aria-label="Anotar a troca e iniciar o lado ' + (c.side === "e" ? "esquerdo" : "direito") + '">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + '</button><button type="button" class="btn small" data-clk="skip" aria-label="Pular o outro lado e contar o descanso da série">⏭</button></div>'; }
   if (on && c.ph === "exec") return '<div class="clk run ex clkanim" id="' + id + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Execução</b>' + lado(c.side) + '</span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span><small> / ~' + clkFmt(c.exp || EXEC_DEF) + '</small></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar e registrar a execução">⏸ Parar</button></div>';
   if (on && c.ph === "rest") { const el = clkEl(); return '<div class="clk run rs clkanim' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="next" aria-label="Anotar o descanso e começar a próxima série">▶ Próxima</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>'; }
   const L = (v && v.lados) || {};
-  const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") + (v && +v.troca > 0 ? " · troca " + clkFmt(v.troca) : "") : v && +v.exec > 0 ? clkFmt(v.exec) + " execução" : "";
+  const ex = uni ? [["e", "esq."], ["d", "dir."]].filter(([n]) => L[n] && +L[n].exec > 0).map(([n, t]) => t + " " + clkFmt(L[n].exec)).join(" · ") + (v && +v.troca > 0 ? " · troca " + clkFmt(v.troca) : "") : v && +v.exec > 0 ? clkFmt(v.exec) + (uniJunto(d) ? " execução (2 lados)" : " execução") : "";
   const ds = v && +v.desc > 0 ? clkFmt(v.desc) + " descanso" : "", both = uni && L.e && +L.e.exec > 0 && L.d && +L.d.exec > 0;
-  const sum = ex || ds ? '<span class="clks">⏱ ' + [ex, ds].filter(Boolean).join(" · ") + "</span>" : '<span class="clks muted">' + (uni ? "cronometra cada lado e o descanso" : "cronometra execução e descanso") + "</span>";
+  const sum = ex || ds ? '<span class="clks">⏱ ' + [ex, ds].filter(Boolean).join(" · ") + "</span>" : '<span class="clks muted">' + (uni ? "cronometra cada lado e o descanso" : uniJunto(d) ? "2 lados juntos e descanso" : "cronometra execução e descanso") + "</span>";
   const first = uni ? (L.e && +L.e.exec > 0 && !(L.d && +L.d.exec > 0) ? "d" : "e") : "";
   return '<div class="clk" id="' + id + '">' + sum + '<button type="button" class="btn small clkgo" data-clk="go|' + d.k + "|" + i + (first ? "|" + first : "") + '" aria-label="Iniciar o cronômetro da ' + (i + 1) + "ª série" + lado(first) + '">▶ ' + (uni ? (both ? "De novo" : "Iniciar " + (first === "d" ? "lado dir." : "lado esq.")) : ex ? "De novo" : "Iniciar série") + "</button>" + (i === 0 ? infoBtn("cronometro") : "") + "</div>";
 }
@@ -4875,7 +4897,7 @@ function daySummaryHtml(W, day) {
     const bar = r.perf == null ? "" : '<div class="pbar" role="img" aria-label="Desempenho ' + pctTxt(r.perf) + ' contra o previsto"><span class="' + (r.perf >= 0 ? "pos" : "neg") + '" style="--v:' + Math.min(1, Math.abs(r.perf) / 0.1).toFixed(3) + '"></span></div><span class="pv ' + (r.perf >= PERF_ACIMA ? "up" : r.perf <= PERF_ABAIXO ? "lo" : "") + '">' + pctTxt(r.perf) + "</span>";
     const feito = r.sets.map((x, j) => '<span class="sm ' + r.marks[j] + '">' + (x.kg == null ? "" : fmt(x.kg) + "×") + x.reps + (x.parc.length ? "+" + x.parc.length + "p" : "") + "</span>").join("");
     const prev = r.p.sets.map(s => (s.kg == null ? "" : fmt(s.kg) + "×") + s.tr).join(" · ");
-    const det = [r.rir != null ? "RIR médio " + fmt(Math.round(r.rir * 10) / 10) + " (prev " + fmt(Math.round(r.rirPrev * 10) / 10) + ")" : "", r.rest ? "descanso " + fmtSec(r.rest) + " (prev " + fmtSec(r.restPrev) + ")" : "", r.exec ? "execução " + clkFmt(r.exec) : "", r.tonPrev ? "volume " + kgTxt(r.ton) + " (" + Math.round(r.ton / r.tonPrev * 100) + "%)" : "", r.uni ? "lados: " + esc(r.uni) : "", r.ord && r.ord.pos !== r.ord.prev ? "feito em " + r.ord.pos + "º (ficha: " + r.ord.prev + "º)" : ""].filter(Boolean).join(" · ");
+    const det = [r.rir != null ? "RIR médio " + fmt(Math.round(r.rir * 10) / 10) + " (prev " + fmt(Math.round(r.rirPrev * 10) / 10) + ")" : "", r.rest ? "descanso " + fmtSec(r.rest) + " (prev " + fmtSec(r.restPrev) + ")" : "", r.exec ? "execução " + clkFmt(r.exec) + (isUni(r.d) ? " (2 lados)" : "") : "", r.tonPrev ? "volume " + kgTxt(r.ton) + " (" + Math.round(r.ton / r.tonPrev * 100) + "%)" : "", r.uni ? "lados: " + esc(r.uni) : "", r.ord && r.ord.pos !== r.ord.prev ? "feito em " + r.ord.pos + "º (ficha: " + r.ord.prev + "º)" : ""].filter(Boolean).join(" · ");
     return '<div class="sxe"><div class="sxh"><b>' + nm(r) + '</b><span class="sst ' + stc + '">' + stt + (r.sets.length ? " · " + r.sets.length + "/" + r.n : "") + "</span></div>" +
       (bar ? '<div class="prow2">' + bar + "</div>" : "") +
       (r.sets.length ? '<div class="sxs"><span class="muted">Feito:</span> ' + feito + "</div>" : "") +
@@ -5823,7 +5845,7 @@ document.addEventListener("click", ev => {
   if (b.dataset.fotodel) { fotoDel(b); return; }
   if (b.dataset.wake) { try { localStorage.setItem(WAKE_KEY, b.dataset.wake); } catch (e) { } wakeSync(); updateDayTime(); return; }
   if (b.dataset.maq) { const [mk, mv] = b.dataset.maq.split("|"); maqSet(mk, "tipo", mv); return; }
-  if (b.dataset.uni) { const [uk, uv] = b.dataset.uni.split("|"); app.settings.uni = Object.assign({}, app.settings.uni || {}); app.settings.uni[uk] = uv === "1"; saveSettings(); renderWeek(); return; }
+  if (b.dataset.uni) { const [uk, uv] = b.dataset.uni.split("|"); app.settings.uni = Object.assign({}, app.settings.uni || {}); app.settings.uni[uk] = uv === "j" ? "junto" : uv === "1"; saveSettings(); renderWeek(); return; }
   if (b.dataset.unidif) {
     const [dk, di, dv] = b.dataset.unidif.split("|");
     const { def, pres, entry, set } = ctx(dk, +di);
@@ -5877,7 +5899,7 @@ document.addEventListener("input", ev => {
     const { def, pres, entry, set } = ctx(k, +i);
     const v = el.value === "" ? null : Number(el.value);
     if (sd) { sideOf(set, sd)[f] = v; uniAgg(set); const ul = document.getElementById("ul-" + k); if (ul) ul.innerHTML = uniLine(entry); }
-    else set[f] = v;
+    else { set[f] = v; if (uniJunto(def)) set.uj = 1; else if (!uniLados(def)) delete set.uj; }
     if (v != null && (f === "kg" || f === "reps")) clkOnInput(app.week, k);
     if (v != null && !entry.startAt && (f === "kg" || f === "reps")) entry.startAt = new Date().toISOString();
     snapPrev(entry, pres);
