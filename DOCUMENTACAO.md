@@ -1129,3 +1129,9 @@ select relname, relrowsecurity from pg_class where relname = 'hexis_docs';
 ```
 
 O certo é: `relrowsecurity = true`; em `hexis_docs`, as regras de leitura, inclusão, alteração e exclusão comparam `auth.uid() = user_id` (a de inclusão e a de alteração também em `with_check`); no armazenamento, as regras do `fotos` comparam a primeira pasta do caminho com `auth.uid()`.
+
+
+## Ajustes do celular e versão do artefato (18/nov)
+
+- **Bloco de estilos 22** (fim do `<style>`): palavras só quebram inteiras (`overflow-wrap: break-word`, sem hífen automático); botões nunca quebram letra a letra e, nas tabelas, ficam em uma linha com fonte de 12,5 px; campos `date` e `datetime-local` sem a largura própria do iPhone (`min-width: 0`, `appearance: none`), em colunas `minmax(0, 1fr)`; no celular (até 640 px) a conta sai do cabeçalho (`.acct`) e aparece no topo do Perfil (`#acctBox`, preenchido em `startSession`; o botão `.sair` usa o mesmo fluxo do `#logout`); `#djSubs` e `#djApList` viram cartões.
+- **Versão do artefato**: `ferramentas/build_artefato.py <site> <saída>` gera o arquivo do artefato a partir do site. Troca a seção 25 pela conexão com o armazenamento do artefato (mesma interface `doc`, `collection`, `pronto`, `vazia`, `pendentes`, `dump`), tira a CSP, o manifesto, a biblioteca e a tela de login do Supabase e o bloqueio de quadro (o artefato roda dentro de um quadro). Mantém `dataOk`, `corpoRuimAviso` e "Seus dados".
