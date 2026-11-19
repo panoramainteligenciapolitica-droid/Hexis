@@ -5,7 +5,7 @@
 <!-- Segurança (CSP): o navegador só roda o programa embutido cuja impressão digital (sha256) está na regra, e as bibliotecas só destas
      versões exatas do CDN; só conversa com o Supabase do app e com a pasta do leitor de PDF. Um texto malicioso que escape para a tela
      não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode testes/atualiza-csp.py, senão o app não abre. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-SjkFM9gDUPJ9PQr+dFlvDxo8fWMl6brz416uKqgQ0l0=' https://cdn.jsdelivr.net/npm/chart.js@4.4.1/ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/ blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-biH4GIPiuTSrGagATIFauG1dIw1BiG6OOLwwCBFui/o=' https://cdn.jsdelivr.net/npm/chart.js@4.4.1/ https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/ blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Hexis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1106,6 +1106,22 @@ input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-
   #djApList td:nth-child(1)::after { content: " ·"; }
   #djApList td:nth-child(3) { flex: 1 1 0; min-width: 0; }
 }
+/* ---- 23. Ficha de cada conta (19/nov): conta sem ficha vê o aviso no lugar das telas de treino ---- */
+.semficha { display: none; }
+body.sem-ficha .semficha { display: block; }
+body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.semficha), body.sem-ficha #v-proxima > :not(.semficha), body.sem-ficha #v-progresso > :not(.semficha) { display: none !important; }
+.semficha-h { padding: 12px 14px; border: 1px dashed var(--line); border-radius: 16px; }
+.semficha-h p { margin: 4px 0 0; }
+/* ---- 24. Cadastro inicial (19/nov): campos obrigatórios marcados e telas que aguardam o preenchimento ---- */
+.obg { display: inline-block; margin-left: 4px; padding: 0 7px; border-radius: 999px; background: color-mix(in srgb, var(--fix) 14%, transparent); color: var(--fix); font-size: 11px; font-weight: 700; line-height: 18px; vertical-align: 1px; white-space: nowrap; }
+.aguarda { border-color: color-mix(in srgb, var(--fix) 40%, var(--line)); background: color-mix(in srgb, var(--fix) 6%, var(--surface)); }
+.aguarda ul { margin: 4px 0 8px; padding-left: 20px; }
+.aguarda li { margin: 2px 0; }
+.semficha:has(> .aguarda) { padding: 0; border: 0; background: none; box-shadow: none; }
+.bn-ic { position: relative; }
+.bdot { position: absolute; top: -3px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5484d; color: #fff; font: 700 11px/18px var(--font-body); text-align: center; box-shadow: 0 0 0 2px var(--glass-strong); pointer-events: none; }
+.sdot { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: #e5484d; vertical-align: 2px; }
+@media (prefers-reduced-motion: no-preference) { .bdot { animation: bdotPulsa 2.4s ease-in-out infinite; } @keyframes bdotPulsa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } } }
 </style>
 </head>
 <body>
@@ -1143,7 +1159,7 @@ input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-
     <div id="acctBox"></div>
     <div id="perfilBanner"></div>
     <div id="perfilForm"></div>
-    <div class="panel pfsave"><button class="btn primary" type="button" id="pfSave">Salvar perfil</button><span class="muted" id="pfMsg" aria-live="polite">Nenhum campo é obrigatório além do peso.</span></div>
+    <div class="panel pfsave"><button class="btn primary" type="button" id="pfSave">Salvar perfil</button><span class="muted" id="pfMsg" aria-live="polite">Os campos marcados como obrigatórios fazem o treino, a dieta e as metas funcionarem; o resto melhora os cálculos.</span></div>
     <div id="perfilRes"></div>
   </section>
 
@@ -1156,6 +1172,7 @@ input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-
 
   <!-- Tela: Semana (treino do dia) -->
   <section class="view" id="v-semana">
+    <div class="panel semficha"></div>
     <div class="weekbar">
       <button class="iconbtn" id="wkPrev" aria-label="Semana anterior">‹</button>
       <div class="weektitle"><div class="wk" id="wkTitle">Semana 1</div><div class="sub" id="wkSub"></div></div>
@@ -1169,16 +1186,19 @@ input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-
 
   <!-- Tela: Resumo do dia -->
   <section class="view" id="v-resumo">
+    <div class="panel semficha"></div>
     <div id="resumoView"></div>
   </section>
 
   <!-- Tela: Próxima semana -->
   <section class="view" id="v-proxima">
+    <div class="panel semficha"></div>
     <div id="nextView"></div>
   </section>
 
   <!-- Tela: Progresso (gráficos) -->
   <section class="view" id="v-progresso">
+    <div class="panel semficha"></div>
     <div class="tiles" id="progTiles"></div>
     <details class="grp mais" data-keep="pg-forca" open><summary><h2>Força</h2><span class="muted">índice e cada exercício</span></summary>
       <div class="panel">
@@ -1272,6 +1292,7 @@ input[type="date"]::-webkit-date-and-time-value, input[type="datetime-local"]::-
 
   <!-- Tela: Corpo e dieta -->
   <section class="view" id="v-corpo">
+    <div id="aguardaCorpo"></div>
     <div id="bioBox"></div>
     <div id="phaseCard"></div>
     <div class="tiles" id="bodyTiles"></div>
@@ -1673,11 +1694,84 @@ const EXBY = Object.fromEntries(EX.map(e => [e.k, e]));
 // Conta para o dia e a semana: não é opcional e já estava na ficha naquela semana (exercício novo não vira pendência nas semanas anteriores)
 function contaEx(d, w) { return !d.opt && w >= d.desde; }
 // Séries de core por semana na ficha (sem os opcionais), antes do acréscimo da fase
-const CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
+let CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
 // Exercícios de um dia, na ordem da ficha
 function dayEx(day) { return EX.filter(e => e.d === day); }
 // Nome curto do exercício (sem o que vem entre parênteses)
 function exShort(d) { return d.n.split(" (")[0]; }
+
+// ----- Ficha de cada conta (19/nov) -----
+// A ficha acima é a do dono do app, a que existe desde o começo. Cada conta pode ter a própria em meta/ficha ({ dias, ex }, no mesmo formato).
+// Sem ficha própria, a de cima só vale para a conta do dono (Perfil com "fichaPadrao" ou treino já anotado). Conta nova fica com
+// "ficha em preparação" nas telas de treino: a ficha de uma pessoa nunca aparece para outra
+const FICHA_CODIGO = { dias: JSON.parse(JSON.stringify(DAYS)), ex: JSON.parse(JSON.stringify(EX)) };
+// Texto da ficha vindo do banco (nome, músculo, observação): sem sinais de marcação e com tamanho limitado
+function fichaTxt(v, n) { return String(v == null ? "" : v).replace(/[<>"'`&\\]/g, "").slice(0, n || 120); }
+// Confere e limpa a ficha vinda do banco; devolve null se ela não servir (aí a conta fica com "ficha em preparação")
+function fichaLimpa(f) {
+  if (!f || !Array.isArray(f.dias) || !Array.isArray(f.ex) || !f.dias.length || !f.ex.length || f.dias.length > 7 || f.ex.length > 80) return null;
+  const idOk = v => typeof v === "string" && /^[A-Za-z0-9]{1,6}$/.test(v), num = (v, a, b) => typeof v === "number" && isFinite(v) && v >= a && v <= b;
+  const dias = [], ids = new Set(), dows = new Set();
+  for (const d of f.dias) {
+    if (!d || !idOk(d.id) || ids.has(d.id) || !num(d.dow, 0, 6) || dows.has(d.dow)) return null;
+    ids.add(d.id); dows.add(d.dow);
+    dias.push(Object.assign({ id: d.id, dow: d.dow, nome: fichaTxt(d.nome, 12) || d.id, titulo: fichaTxt(d.titulo) || d.id }, d.livre ? { livre: true } : {}));
+  }
+  const ks = new Set(), lista = [];
+  for (const e of f.ex) {
+    if (!e || !idOk(e.k) || ks.has(e.k) || !ids.has(e.d) || !fichaTxt(e.n)) return null;
+    ks.add(e.k);
+    const o = {};
+    [["sets", 1, 10], ["lo", 1, 100], ["hi", 1, 100], ["kg", 0, 1000], ["inc", 0.1, 50], ["mic", 0.1, 50], ["step", 0.05, 50], ["desde", 1, 60]].forEach(([c, a, b]) => { if (num(e[c], a, b)) o[c] = e[c]; });
+    if (e.kg === null) o.kg = null;
+    if (e.sc === "st" || e.sc === "top") o.sc = e.sc;
+    if (["comp", "iso", "core", "card"].includes(e.t)) o.t = e.t;
+    if (typeof e.rest === "string") o.rest = fichaTxt(e.rest, 20);
+    if (e.obs != null) o.obs = fichaTxt(e.obs);
+    ["bw", "opt", "semPlus"].forEach(c => { if (typeof e[c] === "boolean") o[c] = e[c]; });
+    if (e.junto === true || num(e.junto, 1, 600)) o.junto = e.junto;
+    const x = ex(e.k, e.d, fichaTxt(e.n), fichaTxt(e.m, 40), o);
+    if (x.lo > x.hi) return null;
+    lista.push(x);
+  }
+  return { dias, ex: lista };
+}
+// Põe uma ficha no lugar da atual (os quadros derivados dela são refeitos: por código, core da semana, exercícios iguais, ordem)
+function aplicaFicha(f) {
+  const F = f || { dias: JSON.parse(JSON.stringify(FICHA_CODIGO.dias)), ex: JSON.parse(JSON.stringify(FICHA_CODIGO.ex)) };
+  DAYS.length = 0; F.dias.forEach(d => DAYS.push(d));
+  EX.length = 0; F.ex.forEach(e => EX.push(e));
+  Object.keys(EXBY).forEach(k => delete EXBY[k]); EX.forEach(e => { EXBY[e.k] = e; });
+  CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
+  const g = {}; EX.forEach(d => (g[d.n] = g[d.n] || []).push(d));
+  Object.keys(ELOS).forEach(k => delete ELOS[k]); EX.forEach(d => { ELOS[d.k] = g[d.n].filter(x => x.k !== d.k); });
+  Object.keys(DOW).forEach(k => delete DOW[k]); DAYS.forEach(d => { DOW[d.id] = d.dow; });
+  EX_ORD.length = 0; EX.slice().sort((a, b) => DOW[a.d] - DOW[b.d]).forEach(e => EX_ORD.push(e));
+  if (!DAYS.some(d => d.id === app.day)) app.day = DAYS[0].id;
+}
+// Impressão curta de um texto (para saber se a ficha da conta mudou)
+function fichaHash(t) { let h = 5381; for (let i = 0; i < t.length; i++) h = (h * 33 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+// Decide a ficha da conta a cada desenho: própria (meta/ficha), a do código (só a do dono) ou nenhuma ("ficha em preparação")
+function fichaConta() {
+  let estado;
+  if (!app.db || (app.db.pronto && !app.db.pronto())) estado = "carregando";
+  else {
+    const f = app.fichaDoc ? fichaLimpa(app.fichaDoc) : null;
+    const treinou = Object.values(app.records || {}).some(r => r && r.ex && Object.values(r.ex).some(e => e && (e.st || (e.sets || []).some(x => x && (x.kg != null || x.reps != null)))));
+    const dono = !!(app.perfil && app.perfil.fichaPadrao !== undefined) || treinou;
+    estado = f ? "conta:" + fichaHash(JSON.stringify(f)) : dono ? "codigo" : app.fichaDoc ? "invalida" : "nenhuma";
+    if (estado !== app.fichaEstado && (estado.startsWith("conta:") || (estado === "codigo" && app.fichaEstado && app.fichaEstado.startsWith("conta:")))) aplicaFicha(f);
+  }
+  app.semFicha = !(estado === "codigo" || estado.startsWith("conta:"));
+  const chave = estado + "|" + faltaDados("treino").map(x => x[0]).join(",");
+  if (chave === app.fichaChave) return;
+  app.fichaEstado = estado; app.fichaChave = chave;
+  document.body.classList.toggle("sem-ficha", app.semFicha);
+  const msg = estado === "carregando" ? "<p class=\"muted\">Carregando a sua ficha…</p>" : faltaDados("treino").length ? aguardaHtml("treino")
+    : '<h2>Sua ficha de treino está sendo preparada</h2><p class="lead">' + (estado === "invalida" ? "A ficha guardada na sua conta tem um erro e não foi aberta. Ela vai ser refeita." : "Esta conta ainda não tem ficha. A ficha é montada para você, com os seus dados, e aparece aqui quando estiver pronta.") +
+      '</p><p class="lead">Enquanto isso, preencha o Perfil e o Objetivo: são eles que guiam a ficha. A Dieta e o Corpo já funcionam.</p><div class="row-btns"><a class="btn primary small" href="#perfil">Abrir o Perfil</a><a class="btn small" href="#objetivo">Objetivo</a></div>';
+  document.querySelectorAll(".semficha").forEach(el => { el.innerHTML = msg; });
+}
 // Semanas do bloco: RIR-alvo [mín, máx] da série pesada (top), dos compostos (comp) e dos isoladores (iso), séries extras de core e a alavanca da semana
 const WT = {
   1: { top: [2, 2], comp: [2, 3], iso: [2, 2], core: 0, label: "Base: registrar tudo" },
@@ -2607,6 +2701,49 @@ const PF_OBJ = [
 ];
 // Nome da fase conforme o objetivo
 const OBJ_NOME = { perder: "Cutting (perder gordura)", recomp: "Recomposição", ganhar: "Ganho lento de massa", forca: "Bloco de força", saude: "Saúde e condicionamento" };
+// Dados obrigatórios do cadastro inicial (19/nov): campo, nome e aba. Sem eles, a parte do app que depende deles mostra "aguardando o preenchimento"
+const OBRIG = {
+  base: [["sexo", "Sexo", "perfil"], ["nascimento", "Data de nascimento", "perfil"], ["altura", "Altura", "perfil"], ["peso", "Peso", "perfil"], ["objetivo", "Objetivo", "objetivo"]],
+  treino: [["tempoTreino", "Há quanto tempo treina", "perfil"], ["dias", "Dias disponíveis para treinar", "perfil"], ["tempoMax", "Tempo máximo por dia", "perfil"], ["local", "Onde treina", "perfil"], ["inicio", "Início do plano", "objetivo"]],
+  metas: [["dataAlvo", "Data-alvo", "objetivo"], ["metaPeso|metaGordura", "Meta de peso ou de gordura", "objetivo"]]
+};
+// Para que serve cada grupo, no aviso
+const OBRIG_PARA = { treino: "a ficha de treino", dieta: "a meta da dieta (calorias e macros)", metas: "as metas, as fases e o prazo" };
+// Campos de cada parte do app: treino = base + treino; dieta = base; metas = base + metas (metas só para perder ou ganhar)
+function obrigDe(area) {
+  const pf = app.perfil || {};
+  return area === "treino" ? OBRIG.base.concat(OBRIG.treino) : area === "metas" ? OBRIG.base.concat(pf.objetivo === "perder" || pf.objetivo === "ganhar" ? OBRIG.metas : []) : OBRIG.base;
+}
+// Campo preenchido? (lista com ao menos um item; número maior que zero; texto ou data não vazios)
+function obrigTem(pf, campo) {
+  return campo.split("|").some(c => { const v = pf[c]; return Array.isArray(v) ? v.length > 0 : typeof v === "number" ? v > 0 : v != null && String(v).trim() !== "" && !(/^(altura|peso|tempoMax)$/.test(c) && !(+v > 0)); });
+}
+// O que falta para uma parte do app funcionar (lista de [campo, nome, aba]); o plano anual do dono já traz as metas e a dieta
+function faltaDados(area) {
+  if (!app.perfilLoaded) return [];
+  if ((area === "dieta" || area === "metas") && typeof ownerPlan === "function" && ownerPlan()) return [];
+  const pf = app.perfil || {};
+  return obrigDe(area).filter(([c]) => !obrigTem(pf, c));
+}
+// Bolinha de aviso (fica enquanto faltar dado obrigatório): número na aba Você da barra de baixo e ponto nas subabas Perfil e Objetivo
+function avisoCadastro() {
+  const F = app.perfilLoaded ? ["treino", "metas", "dieta"].flatMap(a => faltaDados(a)) : [], uniq = {}; F.forEach(x => { uniq[x[0]] = x; });
+  const L = Object.values(uniq), n = L.length, porAba = { perfil: L.filter(x => x[2] === "perfil").length, objetivo: L.filter(x => x[2] === "objetivo").length };
+  const g = NAVG.find(x => x.tabs.some(t => t[0] === "perfil"));
+  const a = g && document.querySelector('.bnav a[data-grp="' + g.id + '"] .bn-ic');
+  if (a) { let b = a.querySelector(".bdot"); if (n && !b) { b = document.createElement("span"); b.className = "bdot"; a.appendChild(b); } if (b) { if (n) { b.textContent = n; b.setAttribute("aria-label", n + (n > 1 ? " dados obrigatórios faltando" : " dado obrigatório faltando")); } else b.remove(); } }
+  ["perfil", "objetivo"].forEach(t => { const el = document.querySelector('#subnav a[data-tab="' + t + '"]'); if (!el) return; let d = el.querySelector(".sdot"); if (porAba[t] && !d) { d = document.createElement("span"); d.className = "sdot"; d.setAttribute("aria-label", "faltam dados obrigatórios"); el.appendChild(d); } else if (!porAba[t] && d) d.remove(); });
+}
+// Campo é obrigatório em alguma parte? (para a marca no formulário)
+function obrigCampo(id) { return Object.values(OBRIG).some(L => L.some(([c]) => c.split("|").includes(id))); }
+// Aviso "aguardando o preenchimento": o que falta, com link para a aba certa
+function aguardaHtml(area) {
+  const F = faltaDados(area); if (!F.length) return "";
+  const aba = F.some(x => x[2] === "perfil") ? "perfil" : "objetivo";
+  return '<div class="panel aguarda"><h2>⏳ Aguardando o preenchimento</h2><p class="lead">Para ' + OBRIG_PARA[area] + " funcionar, falta" + (F.length > 1 ? "m" : "") + ":</p><ul>" +
+    F.map(x => '<li><a href="#' + x[2] + '">' + esc(x[1]) + "</a> <span class=\"muted\">(" + (x[2] === "perfil" ? "Perfil" : "Objetivo") + ")</span></li>").join("") +
+    '</ul><div class="row-btns"><a class="btn primary small" href="#' + aba + '">Preencher agora</a></div></div>';
+}
 // Converte para número; vazio ou inválido vira null
 const num = v => (v === "" || v == null || isNaN(+v)) ? null : +v;
 // Arredonda para múltiplos de 50
@@ -2885,7 +3022,7 @@ function applyProfile() {
 function fieldHtml(f, v) {
   const [id, label, type, opts] = f;
   const lid = "pf-" + id;
-  const inf = GLOSS["pf_" + id] ? infoBtn("pf_" + id, label) : "";
+  const inf = (GLOSS["pf_" + id] ? infoBtn("pf_" + id, label) : "") + (obrigCampo(id) ? ' <span class="obg">obrigatório</span>' : "");
   if (type === "select") return '<div class="field"><label for="' + lid + '">' + esc(label) + inf + '</label><select id="' + lid + '" data-pf="' + id + '">' + opts.map(o => '<option value="' + esc(o[0]) + '"' + (String(v ?? "") === o[0] ? " selected" : "") + ">" + esc(o[1]) + "</option>").join("") + "</select></div>";
   if (type === "checks") { const arr = Array.isArray(v) ? v : []; return '<fieldset class="field checks"><legend>' + esc(label) + inf + "</legend>" + opts.map(o => '<label class="ck"><input type="checkbox" data-pfc="' + id + '" value="' + esc(o) + '"' + (arr.includes(o) ? " checked" : "") + "> " + esc(o) + "</label>").join("") + "</fieldset>"; }
   if (type === "textarea") return '<div class="field wide"><label for="' + lid + '">' + esc(label) + inf + '</label><textarea id="' + lid + '" data-pf="' + id + '" rows="2">' + esc(v ?? "") + "</textarea></div>";
@@ -2918,6 +3055,7 @@ function rmCells(name, c, pf) {
 }
 // Tabela de cargas máximas e repetições válidas (1RM)
 function cargasHtml(pf) {
+  if (app.semFicha) return '<details class="panel pfsec"><summary><h2>Cargas máximas e 1RM</h2></summary><p class="lead">Aparecem quando a sua ficha estiver pronta, com os exercícios dela.</p></details>';
   let h = '<details class="panel pfsec" open><summary><h2>Cargas máximas e 1RM' + infoBtn("pf_cargas") + "</h2></summary>" +
     '<p class="lead">Para cada exercício que você já faz: a maior carga que usa e quantas repetições válidas (completas e com boa técnica) consegue com ela. O app estima o 1RM e calcula as cargas de cada treino.</p>';
   if (pf.fichaPadrao !== undefined) h += '<label class="ck" style="margin-bottom:6px"><input type="checkbox" data-pfb="fichaPadrao"' + (pf.fichaPadrao ? " checked" : "") + "> Manter na semana 1 as cargas já definidas na ficha" + infoBtn("pf_fichaPadrao") + "</label>";
@@ -2940,7 +3078,7 @@ function renderPerfil() {
   if (!app.pfDraft) app.pfDraft = JSON.parse(JSON.stringify(app.perfil || {}));
   const pf = app.pfDraft;
   document.getElementById("perfilBanner").innerHTML = app.perfil || !app.perfilLoaded ? "" :
-    '<div class="banner"><b>Bem-vindo.</b> Preencha o que souber sobre você e, depois, a aba Objetivo. Só o peso é obrigatório: o app calcula com o que houver e mostra o que foi estimado.</div>';
+    '<div class="banner"><b>Bem-vindo.</b> Comece pelos campos marcados como <span class="obg">obrigatório</span>, aqui e na aba Objetivo: são eles que fazem o treino, a dieta e as metas funcionarem. O resto melhora os cálculos.</div>';
   document.getElementById("perfilForm").innerHTML = sectionsHtml(PF_PERFIL, pf, !app.perfil) + cargasHtml(pf);
   renderPerfilResult();
 }
@@ -2950,7 +3088,7 @@ function renderObjetivo() {
   const pf = app.pfDraft;
   let h = "";
   if (pf.usaPlanoAnual !== undefined) h += '<div class="panel"><label class="ck"><input type="checkbox" data-pfb="usaPlanoAnual"' + (pf.usaPlanoAnual ? " checked" : "") + "> Seguir o plano anual de fases (nov/2026 a dez/2027)" + infoBtn("pf_planoAnual") + "</label></div>";
-  document.getElementById("objForm").innerHTML = h + sectionsHtml(PF_OBJ, pf, !app.perfil);
+  document.getElementById("objForm").innerHTML = aguardaHtml("metas") + h + sectionsHtml(PF_OBJ, pf, !app.perfil);
   renderObjResult();
 }
 // Lista de avisos (atenção ou informação)
@@ -3984,6 +4122,7 @@ function medIdeal(k) {
 }
 // Desenha a aba Corpo e dieta: fase, calorias e macros, peso, ritmo, gordura e medidas
 function renderGoal() {
+  const ag = document.getElementById("aguardaCorpo"); if (ag) ag.innerHTML = aguardaHtml("metas");
   renderBio();
   const t = todayStr();
   const pf = app.perfil || {}, R = app.plan || {};
@@ -5095,6 +5234,7 @@ function todayPlan() {
 }
 // Card de hoje e números principais
 function homeToday() {
+  if (app.semFicha) return faltaDados("treino").length ? aguardaHtml("treino") : '<div class="semficha-h"><b>Ficha em preparação</b><p class="muted">O treino aparece aqui quando a sua ficha estiver pronta.</p></div>';
   const tp = todayPlan(), W = tp.W;
   const doneDays = DAYS.filter(d => { const doc = app.records[docId(W, d.id)]; return !d.livre && doc && doc.ex && EX.filter(e => e.d === d.id && contaEx(e, W)).every(e => doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")); }).length;
   let h;
@@ -5123,7 +5263,8 @@ function homeLogo() {
 // Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia.
 function hojeFill() {
   const tp = todayPlan(), btn = document.getElementById("hojeBtn");
-  if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => contaEx(e, tp.W)) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
+  if (btn && app.semFicha) { btn.textContent = "Hoje"; btn.classList.remove("done"); }
+  else if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => contaEx(e, tp.W)) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
   const pop = document.getElementById("hoje"); if (!pop || pop.classList.contains("hide")) return;
   if (!(document.activeElement && pop.contains(document.activeElement) && document.activeElement.matches("input"))) document.getElementById("hojeBody").innerHTML = homeToday();
 }
@@ -5192,11 +5333,13 @@ function setTab(tab) {
 // Aviso de boas-vindas para quem ainda não preencheu o Perfil
 function renderOnb() {
   const el = document.getElementById("onb");
-  el.innerHTML = app.perfilLoaded && !app.perfil && app.tab !== "perfil" ? '<div class="banner"><b>Comece pelo Perfil.</b> Preencha seus dados para o app calcular calorias, macros, cardio e as cargas da semana 1. <a href="#perfil">Abrir o Perfil</a></div>' : "";
+  const falta = app.perfilLoaded ? [...new Set(["treino", "metas"].flatMap(a => faltaDados(a).map(x => x[1])))] : [];
+  el.innerHTML = app.perfilLoaded && !app.perfil && app.tab !== "perfil" ? '<div class="banner"><b>Comece pelo Perfil.</b> Preencha os dados obrigatórios para o app montar o treino e calcular calorias, macros e cardio. <a href="#perfil">Abrir o Perfil</a></div>'
+    : falta.length && app.perfil ? '<div class="banner warn"><b>Cadastro incompleto:</b> falta' + (falta.length > 1 ? "m " + falta.length + " dados obrigatórios" : " 1 dado obrigatório") + " (" + esc(falta.slice(0, 3).join(", ")) + (falta.length > 3 ? "…" : "") + '). <a href="#' + (faltaDados("treino").concat(faltaDados("metas")).some(x => x[2] === "perfil") ? "perfil" : "objetivo") + '">Preencher</a></div>' : "";
 }
 // Redesenha a aba atual (espera a pessoa terminar de digitar, se for o caso)
 function render() {
-  renderOnb(); hojeFill();
+  fichaConta(); avisoCadastro(); renderOnb(); hojeFill();
   if (document.activeElement && document.activeElement.matches && document.activeElement.matches("main input, main textarea, main select") && (app.tab === "semana" || (app.tab === "perfil" && !app.pfRendered) || (app.tab === "objetivo" && !app.objRendered))) { app.deferRender = true; return; }
   app.deferRender = false;
   if (app.tab === "semana") renderWeek();
@@ -5247,6 +5390,7 @@ function renderNav(tab) {
   sn.innerHTML = '<span class="sn-ind" aria-hidden="true"></span>' + g.tabs.map(([id, t]) => '<a href="#' + id + '" data-tab="' + id + '" aria-current="' + (id === tab ? "page" : "false") + '">' + t + "</a>").join("");
   subnavInd(prevG === g.id ? app.snPrev : null);
   app.snPrev = tab;
+  avisoCadastro();
 }
 // Indicador que desliza até a subaba escolhida
 function subnavInd(fromTab) {
@@ -6508,6 +6652,7 @@ async function startSession(session) {
   });
   db.collection("corpo").onSnapshot(snap => { app.body = {}; app.corpoRuim = []; for (const d of snap.docs) { const v = d.data(); if (!v || v.apagado) continue; if (!dataReal(d.id) || (v.data != null && !dataReal(v.data))) { app.corpoRuim.push(d.id); continue; } app.body[d.id] = v; } corpoRuimAviso(); updateQW(); if (app.tab === "corpo" || app.tab === "perfil" || app.tab === "objetivo") render(); });
   db.doc("meta/ajustes").onSnapshot(s => { if (s.exists && !settingsSaving) app.settings = JSON.parse(JSON.stringify(s.data())); render(); });
+  db.doc("meta/ficha").onSnapshot(s => { app.fichaDoc = s.exists ? s.data() : null; render(); }); // ficha própria da conta (se houver)
   subExtras(db, "");
   // Fotos: arquivos no armazenamento "fotos", cada pessoa na própria pasta; a imagem é aberta por um link temporário de 10 minutos
   const pasta = session.user.id + "/", fotoOk = ref => typeof ref === "string" && ref.startsWith(pasta) && /^[\w-]+\/[\w.-]+$/.test(ref) && !ref.includes("..");
@@ -6587,6 +6732,7 @@ function dtDow(d) { return (new Date(d + "T12:00:00Z").getUTCDay() + 6) % 7; }
 function dtKc(v) { return Math.round(v).toLocaleString("pt-BR"); }
 // Meta do dia pela fase do plano: calorias (primeiro número do texto da fase) e macros
 function dtMeta(dateStr) {
+  if (faltaDados("dieta").length) return null; // cadastro incompleto: a meta aguarda o preenchimento
   const ph = phaseAt(dateStr); if (!ph || ph.kcal == null) return null;
   const m = /\d[\d.]*/.exec(String(ph.kcal)), kcal = typeof ph.kcal === "number" ? Math.round(ph.kcal) : m ? +m[0].replace(/\./g, "") : null;
   return kcal ? { kcal, p: +ph.p || null, c: +ph.c || null, g: +ph.g || null, fase: ph.fase } : null;
@@ -6692,7 +6838,7 @@ function renderDieta(force) {
   const ae = document.activeElement;
   if (!force && ae && box.contains(ae) && ae.matches("input, select, textarea")) return; // não desmancha o que está sendo digitado
   const S = dtS(), M = dtMeta(todayStr());
-  document.getElementById("dtFase").innerHTML = M ? "" : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
+  document.getElementById("dtFase").innerHTML = faltaDados("dieta").length ? aguardaHtml("dieta") : M ? "" : '<div class="panel"><h2>Meta do dia</h2><p class="lead">Preencha o Perfil e o Objetivo para o app calcular a meta de calorias. Dá para registrar os alimentos mesmo sem a meta.</p><div class="row-btns"><a class="btn small" href="#perfil">Abrir o Perfil</a></div></div>';
   box.innerHTML = '<div class="dtmenu seg" role="group" aria-label="Visões da dieta">' + [["dia", "Registrar"], ["ref", "Por refeição"], ["sem", "Por dia"]].map(v => '<button type="button" data-dt="view|' + v[0] + '" aria-pressed="' + (S.view === v[0]) + '">' + v[1] + "</button>").join("") + "</div>" +
     (S.view === "ref" ? '<div class="panel">' + dtRefHtml() + "</div>" : S.view === "sem" ? dtGastoHtml() + '<div class="panel">' + dtSemHtml() + "</div>" : dtDiaHtml()) + '<div class="panel">' + dtCfgHtml() + "</div>";
 }
