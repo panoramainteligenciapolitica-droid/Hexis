@@ -6,7 +6,7 @@
      (pasta vendor/: Chart.js, Supabase, leitor de PDF e a fonte). Nenhum CDN nem Google Fonts (3ª banca). Só conversa com o Supabase do app.
      Um texto malicioso que escape para a tela não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode
      testes/atualiza-csp.py, senão o app não abre. Os estilos continuam com 'unsafe-inline' porque as telas usam style="" em muitos pontos. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iZHLTGelH4UhCgCeeab4y8sr4Vzwds1DIHid9v860fk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-e1/KAmWNM4zF4Lyyml1XBisc5OvVq0NDP/mHT+3G934='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Héxis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -319,7 +319,7 @@ details.sub > summary h3 { font-size: 16px; font-weight: 600; }
 body.clk-on .wrap { padding-bottom: 200px; }
 #clkbar { border-bottom: 1px solid var(--line); }
 .clkb { position: relative; max-width: 760px; margin: 0 auto; padding: 10px 16px 8px; display: flex; align-items: center; gap: 8px; }
-.clkb.exec { color: var(--accent); } .clkb.rest, .clkb.pre, .clkb.trans { color: var(--deload); }
+.clkb.f-exec { color: var(--accent); } .clkb.f-rest, .clkb.f-pre, .clkb.f-trans { color: var(--deload); } /* 2.4.1: fases com o prefixo f- */
 .clkb .btn { flex: none; white-space: nowrap; }
 .clkline { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: color-mix(in srgb, currentColor 15%, transparent); overflow: hidden; }
 .clkline .clkfill { position: absolute; top: 0; bottom: 0; left: 0; background: currentColor; }
@@ -327,7 +327,7 @@ body.clk-on .wrap { padding-bottom: 200px; }
 .clksee { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; background: none; border: 0; padding: 0; text-align: left; color: var(--ink); cursor: pointer; font: inherit; }
 .clkph { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .clknm { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.clkbig { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
+.clkbig { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; margin-right: 4px; }
 .clkbig { color: currentColor; }
 .clkb.ask, .clkask { background: color-mix(in srgb, var(--new) 10%, var(--surface)); }
 .clkask { padding: 0 16px 10px; font-size: 14px; }
@@ -1836,7 +1836,7 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Versão do programa: sobe a cada rodada de correções (o registro de cada versão está em VERSOES.md). Aparece em Plano e regras e na cópia de segurança
-const APP_VERSAO = "2.4";
+const APP_VERSAO = "2.4.1";
 const APP_VERSAO_DATA = "20/nov/2026";
 // Plano
 const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
@@ -5293,7 +5293,8 @@ function clkBar() {
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
-  let h = '<div class="clkb ' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  // 2.4.1: a fase vai com o prefixo "f-", para a barra não herdar o estilo da caixa .rest do cartão do exercício
+  let h = '<div class="clkb f-' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
   if (c.ask) {
     const plan = c.ph === "exec" ? EXEC_DEF : c.prev || TRANS_DEF;
     h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +
