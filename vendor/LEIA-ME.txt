@@ -1,0 +1,11 @@
+Bibliotecas e fonte servidas pelo próprio site (3ª banca: nada de CDN nem Google Fonts).
+Publique esta pasta "vendor" junto do index.html, no mesmo lugar (o app procura "vendor/..." ao lado dele).
+
+chart.umd.js          chart.js 4.4.1 (npm), licença MIT            sha384-dug+JxfBvklEQdJ4AYuBBAIScUz0bVN73xpy273gcAwHjb3qI0fXmuYNaNfdyYJG
+supabase.js           @supabase/supabase-js 2.119.0 (npm), MIT     sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O
+pdf.min.mjs           pdfjs-dist 4.10.38 (npm), Apache-2.0         sha384-+0ti2moQlmLN7WZHE2RHIf5lV8hHxhxEalN0il3YZceG26fUPyOkR0hp9daxk1i7
+pdf.worker.min.mjs    pdfjs-dist 4.10.38 (npm), Apache-2.0         sha384-ToeVvShCxKc6CEvhHeMt0Q8A06pSPDbAlngO9nokrDmh914gk/pYd0N7D0a4Lz2o
+fontes/*.woff2        @fontsource/barlow-condensed 5.1.0, SIL OFL 1.1 (só o subconjunto latino, pesos 500, 600 e 700)
+
+As licenças estão em licencas/. Ao trocar uma versão: troque o arquivo, o integrity no index.html (ou DJ_PDF_SHA, para o leitor de PDF)
+e este arquivo. Se o arquivo não bater com a impressão digital, o navegador não o roda e o app não abre (ou o leitor de laudo recusa).
