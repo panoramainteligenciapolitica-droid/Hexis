@@ -6,7 +6,7 @@
      (pasta vendor/: Chart.js, Supabase, leitor de PDF e a fonte). Nenhum CDN nem Google Fonts (3ª banca). Só conversa com o Supabase do app.
      Um texto malicioso que escape para a tela não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode
      testes/atualiza-csp.py, senão o app não abre. Os estilos continuam com 'unsafe-inline' porque as telas usam style="" em muitos pontos. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XPdSKhstg4GbtiU4STS0hOLZ4RQpWVKyMNr7eNI9VPo='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iZHLTGelH4UhCgCeeab4y8sr4Vzwds1DIHid9v860fk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Héxis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1836,7 +1836,7 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Versão do programa: sobe a cada rodada de correções (o registro de cada versão está em VERSOES.md). Aparece em Plano e regras e na cópia de segurança
-const APP_VERSAO = "2.3";
+const APP_VERSAO = "2.4";
 const APP_VERSAO_DATA = "20/nov/2026";
 // Plano
 const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
@@ -5539,6 +5539,7 @@ function homeLogo() {
 }
 // Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia.
 function hojeFill() {
+  if ((app.fichaVer || "atual") !== fichaVersao(app.curW).chave) return fichaNa(app.curW, hojeFill); // 2.4: Hoje é sempre a semana atual, com a ficha que vale nela
   const tp = todayPlan(), btn = document.getElementById("hojeBtn");
   if (btn && app.semFicha) { btn.textContent = "Hoje"; btn.classList.remove("done"); } // 2.3
   else if (btn) { const defs = tp.day ? dayEx(tp.day).filter(e => contaEx(e, tp.W)) : [], doc = tp.day ? app.records[docId(tp.W, tp.day)] : null, n = defs.filter(e => doc && doc.ex && doc.ex[e.k] && (doc.ex[e.k].st === "feito" || doc.ex[e.k].st === "nao")).length; btn.textContent = tp.day ? "Hoje · " + n + "/" + defs.length : "Hoje"; btn.classList.toggle("done", !!tp.day && n === defs.length); }
@@ -5617,6 +5618,7 @@ function renderOnb() {
 }
 // Redesenha a aba atual (espera a pessoa terminar de digitar, se for o caso)
 function render() {
+  fichaUsaSemana(app.tab === "semana" || app.tab === "resumo" ? app.week : app.tab === "proxima" ? Math.min(MAXW, (app.week || 1) + 1) : app.tab === "inicio" ? app.curW : null); // 2.4: a ficha que valia na semana aberta (seção 31)
   nivelAplica(); // 2.1: classe do nível de uso no <body> (seção 29)
   fichaConta(); avisoCadastro(); // 2.3: ficha só da conta e bolinha do cadastro (seções 31 e 8)
   renderOnb(); hojeFill();
@@ -7460,6 +7462,8 @@ document.addEventListener("input", ev => { if (ev.target && ev.target.id === "fa
 // Vale para todos os níveis de uso.
 const FICHA_PADRAO = { dias: DAYS.map(d => Object.assign({}, d)), ex: EX.map(e => Object.assign({}, e)) }; // a ficha do código, guardada para voltar a ela
 const FICHA_MUSC = ["Peito", "Costas", "Ombro anterior", "Ombro lateral", "Ombro posterior", "Bíceps", "Tríceps", "Quadríceps", "Posteriores de coxa", "Glúteos", "Panturrilha", "Core"];
+const FICHA_MUSC_CODIGO = ["Adutores", "Lombar"]; // 2.4 (9ª banca, alto 4): músculos que só a ficha do código tem (a conferência aceita; o banco não usa)
+const FICHA_MAX_VERSOES = 15; // 2.4: fichas anteriores guardadas em meta/ficha (cada uma vale nas semanas em que estava em uso)
 const FICHA_DOW = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const FICHA_MAX_DIA = 12, FICHA_MAX_SERIES = 30; // exercícios e séries por dia que uma ficha pode ter
 const FICHA_TETO_MIN = 120; // regra do dono: no máximo 2 h por dia, com o cardio
@@ -7514,7 +7518,7 @@ const FICHA_DIV = { 1: ["FA"], 2: ["FA", "FB"], 3: ["FA", "FB", "FC"], "3x": ["E
 // Onde os treinos caem quando a pessoa não marcou os dias: 3 por semana, segunda, quarta e sexta
 const FICHA_DIAS_DEF = [0, 2, 4];
 // Texto simples: só letras, números, espaço e pontuação comum. Tudo o que poderia virar HTML ou atributo sai
-function fichaTxt(s, n) { return String(s == null ? "" : s).replace(/[^\p{L}\p{N} ().,°/+:·%-]/gu, "").replace(/\s+/g, " ").trim().slice(0, n); }
+function fichaTxt(s, n) { return String(s == null ? "" : s).replace(/[^\p{L}\p{N} ().,°/+:·%;~-]/gu, "").replace(/\s+/g, " ").trim().slice(0, n); }
 // Número dentro da faixa, ou o padrão
 function fichaNum(v, lo, hi, d) { const x = typeof v === "number" ? v : typeof v === "string" && v.trim() !== "" ? +v : NaN; return isFinite(x) && x >= lo && x <= hi ? x : d; }
 // Descanso em segundos de um texto de ficha ("2 min", "90 s", "1:30"); sem número, 90
@@ -7535,7 +7539,7 @@ function fichaLimpa(f) {
   const treino = new Set(dias.filter(d => !d.livre).map(d => d.id)), keys = new Set(), porDia = {}, out = [];
   if (!treino.size) return null;
   for (const e of f.ex) {
-    if (!e || typeof e !== "object" || typeof e.k !== "string" || !/^[A-Za-z0-9]{1,24}$/.test(e.k) || keys.has(e.k) || !treino.has(e.d) || !FICHA_MUSC.includes(e.m)) return null;
+    if (!e || typeof e !== "object" || typeof e.k !== "string" || !/^[A-Za-z0-9]{1,24}$/.test(e.k) || keys.has(e.k) || !treino.has(e.d) || !(FICHA_MUSC.includes(e.m) || FICHA_MUSC_CODIGO.includes(e.m))) return null;
     const n = fichaTxt(e.n, 60); if (n.length < 2) return null;
     keys.add(e.k);
     const sets = fichaNum(e.sets, 1, 6, 3) | 0, lo = fichaNum(e.lo, 1, 30, 8) | 0, hi = Math.max(lo, fichaNum(e.hi, 1, 40, lo + 2) | 0);
@@ -7560,13 +7564,24 @@ function fichaLimpa(f) {
   const ordem = dias.map(d => d.id);
   out.sort((a, b) => ordem.indexOf(a.d) - ordem.indexOf(b.d)); // estável: mantém a ordem dentro do dia
   const origem = f.origem === "profissional" || f.origem === "ajuste" ? f.origem : "gerador";
-  return { dias, ex: out, meta: { origem, criado: typeof f.criado === "string" && dataOk(f.criado.slice(0, 10)) ? f.criado.slice(0, 10) : "", autor: PRO_UUID.test(String(f.autor)) ? f.autor : "", autorNome: fichaTxt(f.autorNome, 80),
+  // 2.4 (pedido do dono, 20/nov): a ficha vale do dia "inicio" (AAAA-MM-DD, escolhido pela pessoa) para frente; sem início, vale em todos os
+  // dias. As anteriores (até 15) valem cada uma do seu início até o início da seguinte. { inicio, codigo: true } é a ficha do código (a do
+  // dono). Anterior que não passa na conferência é ignorada
+  const inicio = typeof f.inicio === "string" && dataOk(f.inicio) ? f.inicio : "", vistas = new Set();
+  const anteriores = !inicio ? [] : (Array.isArray(f.anteriores) ? f.anteriores : []).slice(-FICHA_MAX_VERSOES).map(a => {
+    if (!a || typeof a !== "object" || Array.isArray(a)) return null;
+    const ini = typeof a.inicio === "string" && dataOk(a.inicio) ? a.inicio : ""; if (ini >= inicio) return null;
+    if (a.codigo === true) return { inicio: ini, codigo: true };
+    const sub = Object.assign({}, a); delete sub.anteriores; delete sub.inicio;
+    return fichaLimpa(sub) ? { inicio: ini, doc: sub } : null;
+  }).filter(Boolean).reverse().filter(a => !vistas.has(a.inicio) && vistas.add(a.inicio)).sort((a, b) => a.inicio < b.inicio ? -1 : 1);
+  return { dias, ex: out, meta: { origem, inicio, anteriores, criado: typeof f.criado === "string" && dataOk(f.criado.slice(0, 10)) ? f.criado.slice(0, 10) : "", autor: PRO_UUID.test(String(f.autor)) ? f.autor : "", autorNome: fichaTxt(f.autorNome, 80),
     notas: (Array.isArray(f.notas) ? f.notas : []).slice(0, 8).map(x => fichaTxt(x, 200)).filter(Boolean) } };
 }
 // Troca a ficha em uso pelo que veio de meta/ficha (ou volta à do código, se não veio nada que sirva). Devolve true quando a ficha da conta entrou
 function fichaAplica(f) {
   const c = f ? fichaLimpa(f) : null, src = c || FICHA_PADRAO;
-  app.ficha = c ? c.meta : null;
+  app.ficha = c ? c.meta : null; app.fichaAplicado = f || null; // 2.4: o documento em uso (para medir uma ficha e voltar)
   DAYS.length = 0; src.dias.forEach(d => DAYS.push(Object.assign({}, d)));
   EX.length = 0; src.ex.forEach(e => EX.push(c ? ex(e.k, e.d, e.n, e.m, e) : Object.assign({}, e)));
   Object.keys(EXBY).forEach(k => { delete EXBY[k]; }); EX.forEach(e => { EXBY[e.k] = e; });
@@ -7583,23 +7598,83 @@ function fichaChega(f) {
   app.fichaVista = true;
   if (txt === app.fichaTxt) return;
   app.fichaTxt = txt; app.fichaDoc = f || null;
-  fichaAplica(f);
+  fichaAplica(f); app.fichaVer = "atual"; // 2.4: a ficha atual; render() troca pela da semana vista (fichaUsaSemana)
   if (!DAYS.some(d => d.id === app.day)) { const dow = (new Date(todayStr() + "T12:00:00").getDay() + 6) % 7; app.day = (DAYS.find(d => d.dow === dow) || DAYS[0]).id; }
   const sel = document.getElementById("exSel"); if (sel) sel.innerHTML = "";
   app.pfRendered = false; app.fe = null;
   if (app.perfilLoaded) applyProfile(); else render();
 }
-// A ficha em uso, no formato de meta/ficha (para ajustar e gravar de novo)
-function fichaAtual() {
+// 2.4 (pedido do dono, 20/nov): qual ficha valia em cada dia da semana W. Sem W, a atual (a mais nova). Devolve { chave, doc } (doc null =
+// a ficha do código). Na semana em que a ficha trocou, o documento é montado dia a dia: os dias antes do início ficam com a ficha antiga
+// (e com o que foi anotado neles), os dias a partir do início, com a nova
+function fichaVersao(W) {
+  const d = app.fichaDoc, c = app.fichaLC && app.fichaLC[0] === app.fichaTxt ? app.fichaLC[1] : (app.fichaLC = [app.fichaTxt, d ? fichaLimpa(d) : null, {}])[1];
+  if (!c || !W || !c.meta.anteriores.length) return { chave: "atual", doc: d };
+  const cache = app.fichaLC[2]; if (cache[W]) return cache[W];
+  const V = c.meta.anteriores.map(a => ({ inicio: a.inicio, doc: a.codigo ? null : a.doc })).concat([{ inicio: c.meta.inicio, doc: d, atual: true }]);
+  const ws = weekStart(W).getTime(), porDow = [0, 1, 2, 3, 4, 5, 6].map(i => { const dt = isoDate(new Date(ws + i * 864e5)); let v = V[0]; V.forEach(x => { if (x.inicio <= dt) v = x; }); return v; });
+  const chave = v => v.atual ? "atual" : "v" + v.inicio;
+  if (porDow.every(v => v === porDow[0])) return (cache[W] = { chave: chave(porDow[0]), doc: porDow[0].doc });
+  const dias = [], ex = [], ids = new Set();
+  for (let i = 0; i < 7; i++) {
+    const v = porDow[i], src = v.doc ? fichaLimpa(v.doc) : FICHA_PADRAO, day = src && src.dias.find(x => x.dow === i);
+    if (!day || ids.has(day.id)) return (cache[W] = { chave: chave(porDow[6]), doc: porDow[6].doc }); // dias com o mesmo código: fica a ficha do fim da semana
+    ids.add(day.id); dias.push(Object.assign({}, day));
+    const L = src.ex.filter(e => e.d === day.id); L.forEach((e, j) => ex.push(Object.assign({}, e, { biset: /bi-set/i.test(e.rest || "") && fichaParOk(e, L[j + 1]) })));
+  }
+  const base = porDow[6].doc || {};
+  return (cache[W] = { chave: "s" + W + ":" + porDow.map(v => v.inicio).join(","), doc: { v: 1, origem: base.origem, criado: base.criado, autor: base.autor, autorNome: base.autorNome, dias, ex } });
+}
+// Põe em uso a ficha da semana W (render chama a cada desenho: Semana e Resumo mostram a ficha que valia na semana aberta)
+function fichaUsaSemana(W) {
+  const v = fichaVersao(W); if (v.chave === (app.fichaVer || "atual")) return;
+  const dow = (DAYS.find(d => d.id === app.day) || {}).dow;
+  app.fichaVer = v.chave; fichaAplica(v.doc);
+  if (!DAYS.some(d => d.id === app.day)) app.day = (DAYS.find(d => d.dow === dow) || DAYS.find(d => !d.livre) || DAYS[0]).id;
+  const sel = document.getElementById("exSel"); if (sel) sel.innerHTML = "";
+}
+// Roda fn com a ficha da semana W em uso e volta à que estava
+function fichaNa(W, fn) { const antes = app.fichaAplicado, ver = app.fichaVer, dia = app.day; fichaUsaSemana(W); try { return fn(); } finally { if (app.fichaVer !== ver) { fichaAplica(antes); app.fichaVer = ver; } app.day = dia; } }
+// Roda fn com um documento de ficha qualquer em uso (para medir) e volta ao que estava
+function fichaComDoc(doc, fn) { const antes = app.fichaAplicado, ver = app.fichaVer; fichaAplica(doc); try { return fn(); } finally { fichaAplica(antes); app.fichaVer = ver; } }
+// Data local de amanhã (AAAA-MM-DD): o início padrão de uma ficha nova (o dono: "mantém os treinos até o dia da troca")
+function fichaAmanha() { return isoDate(new Date(Date.parse(todayStr() + "T00:00:00Z") + 864e5)); }
+// Campo "A ficha nova vale a partir de" (aba Treinador e editor do treinador). Só aparece quando já existe uma ficha em uso
+function fichaInicioHtml(id) {
+  if (!app.fichaDoc && !fichaDono()) return "";
+  const v = app.fichaInicio && dataOk(app.fichaInicio) ? app.fichaInicio : fichaAmanha();
+  return '<div class="field tr-ini"><label for="' + id + '">A ficha nova vale a partir de</label><input type="date" id="' + id + '" data-tr-ini value="' + v + '" min="' + isoDate(weekStart(1)) + '"><p class="muted">Os dias antes dessa data continuam com a ficha que valia neles, com o que foi anotado. Escolhendo um dia que já passou, os treinos anotados desde então deixam de aparecer na tela (continuam guardados).</p></div>';
+}
+// A ficha em uso, no formato de meta/ficha (para ajustar e gravar de novo). 2.4: sempre a ficha atual, mesmo com uma semana antiga aberta
+function fichaAtual() { return fichaNa(null, fichaAtualJa); }
+function fichaAtualJa() {
   return { v: 1, dias: DAYS.map(d => Object.assign({ id: d.id, dow: d.dow, titulo: d.titulo }, d.livre ? { livre: true } : {})),
     ex: EX.map((e, i) => { const L = dayEx(e.d), j = L.indexOf(e), prox = L[j + 1]; return { k: e.k, d: e.d, n: e.n, m: e.m, b: e.b || "", sc: e.sc, sets: e.sets, lo: e.lo, hi: e.hi, kg: e.kg, inc: e.inc, mic: e.mic, step: e.step, t: e.t, rest: e.rest, obs: e.obs, bw: e.bw, opt: e.opt, junto: e.junto, semPlus: e.semPlus, desde: e.desde, biset: /bi-set/i.test(e.rest) && fichaParOk(e, prox) }; }) };
 }
-// Grava a ficha da conta (a tela muda quando o registro volta por fichaChega)
-async function fichaGrava(f, origem, extra) {
-  const doc = Object.assign({}, f, { v: 1, origem, criado: new Date().toISOString() }, extra || {});
-  if (!fichaLimpa(doc) || !app.db) throw new Error("ficha inválida");
-  await app.db.doc((app.P || "") + "meta/ficha").set(JSON.parse(JSON.stringify(doc))); // 2.3: com o prefixo da conta, como os outros dados
+// Grava a ficha da conta (a tela muda quando o registro volta por fichaChega).
+// 2.4 (pedido do dono, 20/nov): a ficha nova vale do dia "inicio" para frente (o padrão é amanhã; a pessoa escolhe no campo "A ficha nova
+// vale a partir de"); a que estava em uso fica guardada em "anteriores" e continua aparecendo nos dias em que valeu. Na conta do dono,
+// antes da primeira, vale a ficha do código. A primeira ficha de uma conta nova vale em todos os dias.
+// 2.4 (9ª banca, alto 2): se outra ficha chegou antes ao servidor (do treinador ou de outro aparelho), fica a do servidor, inteira, e esta
+// gravação termina com o erro "ficha_conflito" (a mensagem de sucesso só sai com a gravação confirmada)
+async function fichaGrava(f, origem, extra, inicio) {
+  if (!app.db) throw new Error("ficha inválida");
+  const atual = app.fichaDoc ? fichaLimpa(app.fichaDoc) : null, dono = !atual && fichaDono();
+  const ini = atual || dono ? (dataOk(inicio) ? inicio : fichaAmanha()) : "";
+  let ant = !ini ? [] : atual ? (Array.isArray(app.fichaDoc.anteriores) ? app.fichaDoc.anteriores.slice() : []) : [{ inicio: "", codigo: true }];
+  if (atual && ini && atual.meta.inicio < ini) { const velha = Object.assign({}, app.fichaDoc); delete velha.anteriores; velha.inicio = atual.meta.inicio; ant.push(velha); }
+  ant = ant.filter(a => a && (typeof a.inicio === "string" ? a.inicio : "") < ini).slice(-FICHA_MAX_VERSOES);
+  // os exercícios valem a partir da semana do início (escolhendo um dia que já passou, eles entram desde lá)
+  const Wi = ini ? Math.max(1, Math.min(MAXW, weekOfDateStr(ini))) : 1;
+  const fx = Object.assign({}, f, { ex: (f.ex || []).map(e => Object.assign({}, e, { desde: Math.max(1, Math.min(+e.desde || 1, Wi)) })) });
+  const doc = JSON.parse(JSON.stringify(Object.assign({}, fx, { v: 1, origem, criado: new Date().toISOString() }, extra || {}, { inicio: ini, anteriores: ant })));
+  if (!fichaLimpa(doc)) throw new Error("ficha inválida");
+  const cam = (app.P || "") + "meta/ficha"; // 2.3: com o prefixo da conta, como os outros dados
+  await app.db.doc(cam).set(doc);
+  const ficou = app.db.atual ? await app.db.atual(cam) : doc;
+  if (ficou && canonJ(ficou) !== canonJ(doc)) { fichaChega(ficou); throw Object.assign(new Error("outra ficha chegou antes"), { code: "ficha_conflito" }); }
   fichaChega(doc);
+  return ini;
 }
 // Minutos previstos de um dia de ficha (sem o cardio): aquecimento geral, séries, descansos e trocas. Conta simples, usada pelo gerador e pelo editor
 function fichaMin(L) {
@@ -7626,7 +7701,7 @@ function fichaPerfil(pf) {
   if (dias.length > 6) dias = dias.slice(0, 6); // um dia da semana fica livre
   const obj = ["perder", "recomp", "ganhar", "forca", "saude"].includes(pf.objetivo) ? pf.objetivo : "saude";
   return { dias, semDias, exp, nv: Math.min(exp >= 3 ? 2 : exp >= 1 ? 1 : 0, exp >= 1 ? Math.max(1, tec) : tec), onde: pf.local === "casa" ? "d" : pf.local === "condominio" ? "c" : "a", obj,
-    tempo: Math.min(FICHA_TETO_MIN, Math.max(30, fichaNum(pf.tempoMax, 20, 240, 90))),
+    tempo: Math.max(30, fichaNum(pf.tempoMax, 20, 240, 90)), // 2.4: o limite é o da pessoa (fichaTeto); o corte final é por fichaNoTempo
     nao: fichaPalavras(pf.naoGosta), gosta: fichaPalavras(pf.gosta), prio: Array.isArray(pf.prioridades) ? pf.prioridades.filter(x => typeof x === "string") : [],
     cuid: (/ombro/.test(les) ? "O" : "") + (/joelho/.test(les) ? "J" : "") + (/lombar|coluna|hernia|costas/.test(les) || cond.includes("Problema articular ou de coluna") ? "L" : ""),
     saude: cond.some(x => ["Doença cardíaca", "Dor no peito ao esforço", "Tontura ou desmaio"].includes(x)) || pf.liberacao === "nao" };
@@ -7634,9 +7709,9 @@ function fichaPerfil(pf) {
 // Músculo prioritário? (o Perfil fala em "Ombros" e "Braços"; a ficha separa em partes)
 function fichaPrio(P, m) { return P.prio.some(x => x === m || (x === "Ombros" && /^Ombro/.test(m)) || (x === "Braços" && (m === "Bíceps" || m === "Tríceps"))); }
 // Monta a ficha a partir do Perfil. cardioMin = minutos de cardio previstos por dia (entram no teto de 2 h). desde = semana em que ela passa a valer
-function geraFicha(pf, cardioMin, desde) {
+function geraFicha(pf, cardioMin, desde, teto) {
   const P = fichaPerfil(pf), n = P.dias.length, div = FICHA_DIV[n === 3 && P.exp >= 2 ? "3x" : n] || FICHA_DIV[3];
-  const orc = Math.max(20, Math.min(P.tempo, FICHA_TETO_MIN) - Math.max(0, Math.min(90, +cardioMin || 0))); // minutos que sobram para a musculação
+  const orc = Math.max(20, Math.min(P.tempo, +teto > 0 ? +teto : FICHA_TETO_MIN) - Math.max(0, Math.min(90, +cardioMin || 0))); // minutos que sobram para a musculação
   const usados = {}, ex = [], dias = [], notas = [], LET = "ABCDEF";
   const eqPref = P.nv === 0 ? "mphbw" : "bhmpw"; // quem está começando vai primeiro na máquina e na polia
   const escolhe = (mus, tipo, noDia) => {
@@ -7694,6 +7769,43 @@ function geraFicha(pf, cardioMin, desde) {
   if (P.saude) notas.push("Pelo que você marcou em Saúde, procure liberação médica antes de começar.");
   return { v: 1, dias, ex, notas };
 }
+// 2.4 (9ª banca, alto 5; decisão do dono, 20/nov): o limite de tempo por dia, com o cardio e o aquecimento, é o que a pessoa pôs no Perfil
+// ("Tempo máximo por dia"); na conta do dono, no máximo 2 h (regra fixa dele). Sem o campo, 2 h
+function fichaTeto(pf) { const t = fichaNum((pf || {}).tempoMax, 20, 240, FICHA_TETO_MIN); return fichaDono() ? Math.min(FICHA_TETO_MIN, t) : t; }
+// Tempo previsto pelo motor do app (dayTime: aquecimento, séries, descansos e trocas no ritmo da pessoa) mais o cardio do plano, em cada
+// semana das 60. Devolve { pior, dia, por } (por = o maior de cada dia), ou null se a ficha não passa na conferência
+function fichaMede(f) {
+  if (!fichaLimpa(f)) return null;
+  return fichaComDoc(f, () => {
+    const wk = computeWeeks(MAXW), por = {}; let pior = 0, dia = null;
+    for (let W = 1; W <= MAXW; W++) { const cm = +cardioPlan(W).min || 0;
+      DAYS.filter(d => !d.livre).forEach(d => { const t = dayTime(W, d.id, wk[W]).prev + cm; if (t > (por[d.id] || 0)) por[d.id] = t; if (t > pior) { pior = t; dia = d.id; } }); }
+    return { pior, dia, por };
+  });
+}
+// Corta a ficha até o pior dia caber no limite: primeiro uma série de um isolador (ficam 2), depois o último exercício do dia (ficam 3),
+// depois uma série de qualquer um. Se nem o mínimo cabe, avisa nas notas da ficha
+function fichaNoTempo(f, teto) {
+  for (let volta = 0; volta < 80; volta++) {
+    const m = fichaMede(f); if (!m || m.pior <= teto) return f;
+    const L = f.ex.filter(e => e.d === m.dia && !e.opt), fim = L.slice().reverse();
+    const iso = fim.find(e => e.t !== "comp" && e.sets > 2 && !e.biset && !(typeof e.junto === "number"));
+    if (iso) { iso.sets--; continue; }
+    if (L.length > 3) { const x = L[L.length - 1], a = L[L.length - 2]; if (a && a.biset) a.biset = false; f.ex.splice(f.ex.indexOf(x), 1); continue; }
+    const qq = fim.find(e => e.sets > 2); if (qq) { qq.sets--; if (qq.biset) { const p = L[L.indexOf(qq) + 1]; if (p && p.sets > 2) p.sets--; } continue; }
+    f.notas = (f.notas || []).concat(["Com " + teto + " min por dia, nem o treino mínimo cabe junto com o aquecimento e o cardio: o dia mais longo fica em cerca de " + Math.round(m.pior) + " min."]);
+    return f;
+  }
+  return f;
+}
+// Teto de séries por dia (o da conferência): com muitas prioridades, a série a mais passava de 30 e a ficha era recusada (9ª banca, pendência 77)
+function fichaTetoSeries(f) {
+  f.dias.filter(d => !d.livre).forEach(d => { const L = f.ex.filter(e => e.d === d.id);
+    for (let i = 0; i < 200 && L.reduce((s, e) => s + e.sets, 0) > FICHA_MAX_SERIES; i++) { const e = L.slice().reverse().find(x => x.sets > 2 && x.t !== "comp" && !x.biset) || L.slice().reverse().find(x => x.sets > 2); if (!e) break; e.sets--; } });
+  return f;
+}
+// Gera a ficha da pessoa já dentro do limite de tempo dela
+function fichaGera(pf, desde) { const teto = fichaTeto(pf); return fichaNoTempo(fichaTetoSeries(geraFicha(pf, fichaCardioMin(), desde, teto)), teto); }
 // Minutos de cardio previstos por dia de treino (entra no teto de 2 h)
 function fichaCardioMin() { try { return Math.max(0, Math.min(90, +cardioPlan(app.curW || 1).min || 0)); } catch (e) { return 20; } }
 // O cadastro tem o que a ficha precisa? 2.3: os dados obrigatórios do treino (OBRIG, seção 8): sexo, nascimento, altura, peso, objetivo,
@@ -7706,7 +7818,7 @@ function fichaAuto() {
   if (app.alvo || app.fichaAutoFeito || !app.fichaVista || app.fichaDoc || !app.db || !app.db.pronto() || !fichaCadastroOk(pf) || fichaDono() || (app.settings || {}).treinador === "prof") return false;
   if (Object.keys(app.records || {}).some(id => { const d = app.records[id]; return d && d.ex && Object.keys(d.ex).length; })) return false;
   app.fichaAutoFeito = true;
-  fichaGrava(geraFicha(pf, fichaCardioMin(), 1), "gerador").then(() => { app.trMsg = "Montei a sua ficha inicial com os dados do Perfil. Ela já está na aba Semana."; if (app.tab === "treinador") render(); }, () => { app.fichaAutoFeito = false; });
+  fichaGrava(fichaGera(pf, 1), "gerador").then(() => { app.trMsg = "Montei a sua ficha inicial com os dados do Perfil. Ela já está na aba Semana."; if (app.tab === "treinador") render(); }, () => { app.fichaAutoFeito = false; });
   return true;
 }
 // 2.3 (20/nov): a ficha do código é a do dono do app e só vale para a conta dele: Perfil com "fichaPadrao" ou com o plano anual, ou treino
@@ -7772,8 +7884,11 @@ function fichaTroca(k, por) {
   const f = fichaAtual(), i = f.ex.findIndex(e => e.k === k), W = app.curW || 1, feito = (recOf(app.records, W, d) || {}).st === "feito", S = FICHA_SALTO[b.eq];
   let nk = "g" + (d.d.replace(/\W/g, "") + b.id).slice(0, 22); while (f.ex.some(e => e.k === nk) || FICHA_PADRAO.ex.some(e => e.k === nk)) nk = (nk + "x").slice(0, 24);
   f.ex[i] = Object.assign({}, f.ex[i], { k: nk, n: b.n, b: b.id, t: b.t, kg: b.eq === "w" ? 0 : null, bw: b.eq === "w", inc: S[0], mic: S[1], step: S[2], obs: b.eq === "h" ? "Peso de cada halter" : "", junto: false, biset: false, sc: b.t === "comp" ? f.ex[i].sc : "st", rest: /bi-set|par/i.test(f.ex[i].rest) ? "90 s" : f.ex[i].rest, desde: Math.min(MAXW, feito ? W + 1 : W) });
-  // se o trocado fazia parte de um bi-set, o par se desfaz (a regra só aceita bíceps e tríceps na polia)
-  f.ex.forEach(e => { if (e.d === d.d) { e.biset = false; if (typeof e.junto === "number") e.junto = false; if (/bi-set|após o par/i.test(e.rest)) e.rest = "90 s"; } });
+  // se o trocado fazia parte de um bi-set, o par se desfaz (a regra só aceita bíceps e tríceps na polia). 2.4: só esse par; antes, todos os
+  // bi-sets do dia se desfaziam (com o alto 4 corrigido, a troca passou a valer na ficha do dono, que tem dois pares no mesmo dia)
+  const L = f.ex.filter(e => e.d === d.d), j = L.indexOf(f.ex[i]), ant = L[j - 1], prox = L[j + 1], era = fichaAtualJa().ex.find(e => e.k === k) || {};
+  if (era.biset && prox) { if (typeof prox.junto === "number") prox.junto = false; if (/após o par/i.test(prox.rest)) prox.rest = "90 s"; }
+  if (ant && ant.biset) { ant.biset = false; if (/bi-set/i.test(ant.rest)) ant.rest = "90 s"; }
   return f;
 }
 // ===== 32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base =====
@@ -7911,10 +8026,10 @@ function trPessoalHtml() {
   let h = '<div class="panel"><h2>Treinador</h2><p class="lead">Escolha quem monta e ajusta o seu treino. O Héxis monta a ficha na hora, com o seu Perfil, e sugere trocas pelo que você anota. Um treinador da base monta sob medida, a partir do que você descrever.</p>' + quemHtml("treino", "Héxis automático", "Treinador da base");
   if (app.trMsg) h += '<p class="msg ok" id="trMsg" role="status">' + esc(app.trMsg) + "</p>";
   if (q === "prof") h += baseHtml("treino") + '<p class="muted">' + (app.semFicha ? 'Enquanto o treinador não monta a sua ficha, as telas de treino mostram "ficha em preparação".' : "Enquanto o treinador não monta a sua ficha, você continua com a ficha abaixo.") + "</p>";
-  h += "</div><div class=\"panel\">" + fichaResumoHtml();
+  h += "</div><div class=\"panel\">" + fichaResumoHtml() + fichaInicioHtml("trInicio"); // 2.4: a data em que a ficha nova (montada ou com troca) passa a valer
   if (q === "auto") {
     if (!fichaCadastroOk(pf)) { const F = faltaDados("treino"); h += '<p class="msg" id="trFalta">Para o Héxis montar a sua ficha, ' + (F.length ? "faltam dados obrigatórios: " + F.map(x => '<a href="#' + x[2] + '">' + esc(x[1]) + "</a>").join(", ") + "." : 'preencha o <a href="#perfil">Perfil</a> e o <a href="#objetivo">Objetivo</a>.') + "</p>"; } // 2.3
-    else h += '<div class="row-btns"><button type="button" class="btn' + (app.fichaDoc ? "" : " primary") + '" data-tr="gera">' + (app.fichaDoc ? "Refazer a ficha com o meu Perfil" : "Montar a minha ficha") + "</button></div>" + (app.fichaDoc || Object.keys(app.records || {}).length ? '<p class="muted">Ao trocar de ficha, as semanas anteriores passam a mostrar a ficha nova. O que você já anotou continua guardado na conta.' + (pro ? " A ficha do seu treinador será substituída." : "") + "</p>" : "");
+    else h += '<div class="row-btns"><button type="button" class="btn' + (app.fichaDoc ? "" : " primary") + '" data-tr="gera">' + (app.fichaDoc ? "Refazer a ficha com o meu Perfil" : "Montar a minha ficha") + "</button></div>" + (app.fichaDoc || Object.keys(app.records || {}).length ? (pro ? '<p class="muted">A ficha do seu treinador deixa de valer a partir dessa data.</p>' : "") : "");
   }
   h += "</div><div class=\"panel\">" + sugestoesHtml(!pro) + trCargasHtml() + "</div>";
   return h;
@@ -7940,19 +8055,19 @@ function fichaLinha(f, d, b, base) {
 function bancoOpts(sel) { return FICHA_MUSC.map(m => '<optgroup label="' + m + '">' + FICHA_BANCO.filter(b => b.m === m).map(b => '<option value="' + b.id + '"' + (b.id === sel ? " selected" : "") + ">" + esc(b.n) + "</option>").join("") + "</optgroup>").join(""); }
 // Editor da ficha do cliente (só para o treinador, no Héxis do cliente). O rascunho fica em app.fe até salvar
 // 2.3: ponto de partida do editor. Cliente sem ficha própria começa por uma ficha gerada pelo Perfil dele, nunca pela ficha de outra conta
-function feInicio() { return app.fichaEstado === "nenhuma" || app.fichaEstado === "invalida" ? geraFicha(app.perfil, fichaCardioMin(), app.curW || 1) : fichaAtual(); }
+function feInicio() { return app.fichaEstado === "nenhuma" || app.fichaEstado === "invalida" ? fichaGera(app.perfil, app.curW || 1) : fichaAtual(); }
 function fichaEditorHtml() {
   if (!app.fichaEstado || app.fichaEstado === "carregando") return '<p class="muted">Carregando a ficha…</p>'; // 2.3
-  const fe = app.fe || (app.fe = feInicio()), cm = fichaCardioMin();
+  const fe = app.fe || (app.fe = feInicio()), cm = fichaCardioMin(), teto = fichaTeto(app.perfil), med = fichaMede(fe); // 2.4: medido pelo motor do app
   let h = '<h3>Ficha de ' + esc(app.alvo.nome) + '</h3><p class="lead">Troque exercícios, séries e repetições. As regras do Héxis valem aqui também: no máximo 2 h por dia com o cardio, descanso de até 2 min e bi-set só de bíceps com tríceps na polia.</p><div class="row-btns"><button type="button" class="btn small" data-tr="fegera">Gerar um ponto de partida pelo Perfil do cliente</button><button type="button" class="btn small" data-tr="fereset">Desfazer o que não foi salvo</button></div>';
   fe.dias.filter(d => !d.livre).forEach(d => {
-    const L = fe.ex.filter(e => e.d === d.id), min = fichaMin(L), passou = min + cm > FICHA_TETO_MIN;
-    h += '<fieldset class="fe-dia"><legend>' + esc(FICHA_DOW[d.dow]) + " · " + esc(d.titulo) + '</legend><p class="' + (passou ? "msg err" : "muted") + '">Cerca de ' + min + " min de musculação" + (cm ? " + " + cm + " de cardio" : "") + (passou ? ": passa de 2 h. Tire um exercício ou séries." : ".") + "</p>";
+    const L = fe.ex.filter(e => e.d === d.id), tot = med ? Math.round(med.por[d.id] || 0) : fichaMin(L) + cm, passou = tot > teto;
+    h += '<fieldset class="fe-dia"><legend>' + esc(FICHA_DOW[d.dow]) + " · " + esc(d.titulo) + '</legend><p class="' + (passou ? "msg err" : "muted") + '">Cerca de ' + tot + " min no dia mais longo do plano, com o aquecimento" + (cm ? " e o cardio" : "") + (passou ? ": passa do limite de " + teto + " min por dia do Perfil. Tire um exercício ou séries." : ".") + "</p>";
     L.forEach(e => { const i = fe.ex.indexOf(e), nm = esc(e.n);
       h += '<div class="fe-row"><select id="fe-ex-' + i + '" data-fe="ex" data-i="' + i + '" aria-label="Exercício">' + (e.b && FICHA_BY[e.b] ? "" : '<option value="" selected>' + nm + " (atual)</option>") + bancoOpts(e.b) + '</select><span class="fe-n"><input id="fe-sets-' + i + '" data-fe="sets" data-i="' + i + '" type="number" inputmode="numeric" min="1" max="6" value="' + e.sets + '" aria-label="Séries de ' + nm + '"> × <input id="fe-lo-' + i + '" data-fe="lo" data-i="' + i + '" type="number" inputmode="numeric" min="1" max="30" value="' + e.lo + '" aria-label="Repetições mínimas de ' + nm + '"> – <input id="fe-hi-' + i + '" data-fe="hi" data-i="' + i + '" type="number" inputmode="numeric" min="1" max="40" value="' + e.hi + '" aria-label="Repetições máximas de ' + nm + '"></span><button type="button" class="btn small" data-tr="fedel" data-i="' + i + '" aria-label="Tirar ' + nm + '" title="Tirar ' + nm + '">×</button></div>'; });
     h += (L.length < FICHA_MAX_DIA ? '<select id="fe-add-' + esc(d.id) + '" data-fe="add" data-d="' + esc(d.id) + '" aria-label="Adicionar exercício em ' + esc(FICHA_DOW[d.dow]) + '"><option value="">+ Adicionar exercício…</option>' + bancoOpts("") + "</select>" : "") + "</fieldset>";
   });
-  return h + '<div class="row-btns"><button type="button" class="btn primary" data-tr="fesalva">Salvar a ficha de ' + esc(app.alvo.nome) + "</button></div>";
+  return h + fichaInicioHtml("feInicioData") + '<div class="row-btns"><button type="button" class="btn primary" data-tr="fesalva">Salvar a ficha de ' + esc(app.alvo.nome) + "</button></div>";
 }
 // Aba Treinador no Héxis de um cliente (quem vê é o profissional)
 function trClienteHtml() {
@@ -8011,12 +8126,14 @@ document.addEventListener("click", async ev => {
 document.addEventListener("click", async ev => {
   const b = ev.target.closest && ev.target.closest("#treinadorView [data-tr]"); if (!b || b.disabled) return;
   const op = b.dataset.tr, edita = app.alvo && app.pro && (app.pro.tipo === "treinador" || app.pro.tipo === "outro"), assina = app.alvo ? { autor: app.uid, autorNome: (app.pro || {}).nome || "" } : null;
-  const falhou = () => { app.trMsg = "Não consegui gravar a ficha agora. Tente de novo."; render(); };
+  const falhou = e => { app.trMsg = e && e.code === "ficha_conflito" ? "Outra ficha chegou antes (do seu treinador ou de outro aparelho) e ficou valendo. A sua não foi gravada." : "Não consegui gravar a ficha agora. Tente de novo."; render(); };
+  const apartir = ini => ini ? " Ela vale a partir de " + proDataBr(ini) + "; os dias anteriores continuam com a ficha que valia neles." : "";
+  const iniEl = document.querySelector("[data-tr-ini]"), ini = iniEl && dataOk(iniEl.value) ? iniEl.value : app.fichaInicio && dataOk(app.fichaInicio) ? app.fichaInicio : fichaAmanha(); // 2.4: a data escolhida
   if (op === "gera" && !app.alvo) {
     if (!fichaCadastroOk(app.perfil)) return;
     if ((app.fichaDoc || Object.keys(app.records || {}).length) && !confirmaToque(b)) return;
     b.disabled = true;
-    try { await fichaGrava(geraFicha(app.perfil, fichaCardioMin(), app.fichaDoc || Object.keys(app.records || {}).length ? app.curW || 1 : 1), "gerador"); app.trMsg = "Ficha montada com o seu Perfil. Ela já está na aba Semana."; render(); } catch (e) { falhou(); }
+    try { const W = await fichaGrava(fichaGera(app.perfil, app.fichaDoc || Object.keys(app.records || {}).length ? app.curW || 1 : 1), "gerador", null, ini); app.trMsg = "Ficha montada com o seu Perfil." + apartir(W); render(); } catch (e) { falhou(e); }
     return;
   }
   if (op === "troca" || op === "mantem") {
@@ -8024,22 +8141,26 @@ document.addEventListener("click", async ev => {
     if (op === "mantem") { app.settings.fichaNao = Object.assign({}, app.settings.fichaNao); app.settings.fichaNao[k + ">" + por] = app.curW || 1; saveSettings(); render(); return; }
     const f = fichaTroca(k, por); if (!f) return;
     b.disabled = true;
-    try { const de = EXBY[k].n; await fichaGrava(f, app.alvo ? "profissional" : "ajuste", assina); app.trMsg = "Troca feita: " + de + " saiu e " + FICHA_BY[por].n + " entrou."; render(); } catch (e) { falhou(); }
+    try { const de = EXBY[k].n, W = await fichaGrava(f, app.alvo ? "profissional" : "ajuste", assina, ini); app.trMsg = "Troca feita: " + de + " saiu e " + FICHA_BY[por].n + " entrou." + (W ? " Vale a partir de " + proDataBr(W) + "." : ""); render(); } catch (e) { falhou(e); }
     return;
   }
   if (!edita) return;
   const fe = app.fe || (app.fe = feInicio());
-  if (op === "fegera") { app.fe = geraFicha(app.perfil, fichaCardioMin(), app.curW || 1); app.trMsg = ""; render(); return; }
+  if (op === "fegera") { app.fe = fichaGera(app.perfil, app.curW || 1); app.trMsg = ""; render(); return; }
   if (op === "fereset") { app.fe = null; app.trMsg = ""; render(); return; }
   if (op === "fedel") { const i = +b.dataset.i; if (fe.ex[i]) { fe.ex.splice(i, 1); fe.ex.forEach(e => { e.biset = false; if (typeof e.junto === "number") e.junto = false; if (/bi-set|após o par/i.test(e.rest)) e.rest = "90 s"; }); render(); } return; }
   if (op === "fesalva") {
     const cm = fichaCardioMin(), dias = fe.dias.filter(d => !d.livre);
     if (dias.some(d => !fe.ex.some(e => e.d === d.id))) { app.trMsg = "Cada dia de treino precisa de pelo menos um exercício."; render(); return; }
-    if (dias.some(d => fichaMin(fe.ex.filter(e => e.d === d.id)) + cm > FICHA_TETO_MIN)) { app.trMsg = "Algum dia passa de 2 h com o cardio. Tire um exercício ou séries antes de salvar."; render(); return; }
+    // 2.4 (9ª banca, alto 5): medido pelo motor do app, com o aquecimento e o maior cardio do plano, contra o limite do Perfil do cliente
+    const teto = fichaTeto(app.perfil), med = fichaMede(fe);
+    if (med ? med.pior > teto : dias.some(d => fichaMin(fe.ex.filter(e => e.d === d.id)) + cm > teto)) { app.trMsg = "Algum dia passa do limite de " + teto + " min por dia do Perfil do cliente (com o aquecimento e o cardio). Tire um exercício ou séries antes de salvar."; render(); return; }
     b.disabled = true;
-    try { await fichaGrava(fe, "profissional", assina); app.fe = null; app.trMsg = "Ficha salva na conta de " + app.alvo.nome + ". Ele já vê na aba Semana."; render(); } catch (e) { app.trMsg = "A ficha não passou na conferência (confira séries e repetições) ou a gravação falhou."; render(); }
+    try { const W = await fichaGrava(fe, "profissional", assina, ini); app.fe = null; app.trMsg = "Ficha salva na conta de " + app.alvo.nome + "." + apartir(W); render(); } catch (e) { app.trMsg = e && e.code === "ficha_conflito" ? "Outra ficha chegou antes à conta de " + app.alvo.nome + " e ficou valendo. Confira e salve de novo." : "A ficha não passou na conferência (confira séries e repetições) ou a gravação falhou."; render(); }
   }
 });
+// 2.4: a data escolhida fica guardada enquanto a tela é redesenhada
+document.addEventListener("change", ev => { const el = ev.target.closest && ev.target.closest("[data-tr-ini]"); if (el && dataOk(el.value)) app.fichaInicio = el.value; });
 // Campos do editor: trocar o exercício, mudar séries e repetições, adicionar exercício
 document.addEventListener("change", ev => {
   const x = ev.target; if (!x || !x.dataset || !x.dataset.fe || !x.closest("#treinadorView") || !app.alvo || !app.fe) return;
@@ -8206,6 +8327,17 @@ function makeDb(uid, logado, aoPerder) {
   //     envio de um contra a hora da edição do outro), e com um aparelho sem rede vencia a mais velha. A regra fixa não depende de relógio;
   //     como quem perde é sempre este aparelho, o aviso aparece na hora para quem perdeu
   //   • horários: "atualizado" e "doneAt" ficam com o maior; "startAt" (início), com o menor
+  // 2.4 (9ª banca, alto 2): a ficha (meta/ficha) só vale inteira. Se o servidor mudou, fica a do servidor inteira (a que chegou primeiro,
+  // como em todo conflito) e a deste aparelho vira um item só no registro de conflitos; nunca campo a campo (a mistura não passava na
+  // conferência e o app voltava à ficha do código)
+  const inteiro = q => /(^|\/)meta\/ficha$/.test(q), rotuloFicha = x => x && typeof x === "object" ? "ficha" + (x.origem ? " (" + String(x.origem).slice(0, 20) + ")" : "") + (x.criado ? " de " + String(x.criado).slice(0, 10) : "") : x;
+  function juntaDoc(b, m, s, cam, perdas) {
+    if (!inteiro(cam)) return junta(b, m, s, cam, perdas);
+    if (igual(m, s) || (b !== undefined && igual(s, b))) return m;
+    if (b !== undefined && igual(m, b)) return s;
+    perdas.push({ campo: cam, servidor: rotuloFicha(s), aparelho: rotuloFicha(m), ficou: "servidor" });
+    return s;
+  }
   function junta(b, m, s, cam, perdas) {
     if (igual(m, s)) return m;
     if (b !== undefined) { if (igual(s, b)) return m; if (igual(m, b)) return s; }
@@ -8315,7 +8447,7 @@ function makeDb(uid, logado, aoPerder) {
       // 5ª banca: a junção parte SEMPRE do que este aparelho tem (v) e da base dele, em cada volta (antes a 2ª volta juntava o "alvo" já
       // juntado como se fosse deste aparelho e desfazia a correção mais nova do outro). No mesmo campo, fica o do servidor (6ª banca: sem relógio)
       const b0 = p in base ? base[p] : undefined;
-      let alvo = p in srv && (b0 === undefined || !igual(b0, srv[p])) ? junta(b0, v, srv[p], p, perdas) : v, feito = false;
+      let alvo = p in srv && (b0 === undefined || !igual(b0, srv[p])) ? juntaDoc(b0, v, srv[p], p, perdas) : v, feito = false;
       for (let volta = 0; volta < 4 && !feito; volta++) {
         const agora = new Date().toISOString(), lida = ver[p];
         const r = !lida ? await sb.from("hexis_docs").insert({ user_id: uid, path: p, data: alvo, updated_at: agora }).select("path,updated_at")
@@ -8336,7 +8468,7 @@ function makeDb(uid, logado, aoPerder) {
         // recusando o update (falta a regra de UPDATE no painel). Antes ficava num laço de "tentando de novo"
         if (lida && !dup && row.updated_at === lida.u) throw Object.assign(new Error("o servidor não deixou atualizar (regra de UPDATE)"), { code: "perm" });
         perdas.length = 0; // a junção é refeita do zero com a versão nova
-        alvo = junta(b0, v, row.data, p, perdas);
+        alvo = juntaDoc(b0, v, row.data, p, perdas);
         srv[p] = clone(row.data); ver[p] = { u: row.updated_at };
       }
       if (!feito) throw erro({ message: "o documento mudou no servidor várias vezes seguidas" }, 0);

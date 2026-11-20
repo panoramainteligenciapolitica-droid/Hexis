@@ -1073,6 +1073,28 @@ Pedidos do dono de 19/nov. **Ficha só da conta:** sem `meta/ficha`, a ficha do 
 | `obrigCampo()` | Campo é obrigatório em alguma parte? (para a marca no formulário) |
 | `aguardaHtml()` | Aviso "aguardando o preenchimento": o que falta, com link para a aba certa |
 
+### Ficha por dia e correções da 9ª banca (2.4, partes `p09e`, `p09f` e `p10`)
+
+**Ficha por dia (pedido do dono, 20/nov).** `meta/ficha` = a ficha atual + `inicio` (AAAA-MM-DD; vazio na primeira ficha de uma conta nova, que vale em todos os dias) + `anteriores` (até 15, cada uma `{ inicio, dias, ex, origem, ... }`; a ficha do código é `{ inicio: "", codigo: true }`). `fichaVersao(W)` decide, para cada dia da semana W, qual ficha valia na data; se todos os dias dão a mesma, devolve ela; se não (a semana da troca), monta um documento dia a dia com os dias e exercícios de cada uma. `render` chama `fichaUsaSemana` com a semana da aba (Semana e Resumo: a aberta; Próxima: a seguinte; Início: a atual; as outras abas: a mais nova). `fichaNa(W, fn)` roda uma conta com a ficha de outra semana e volta; `fichaComDoc(doc, fn)`, com um documento qualquer (usada para medir). `fichaGrava(f, origem, extra, inicio)` guarda a ficha que estava em uso em `anteriores` e devolve a data.
+
+**Fila (alto 2).** `juntaDoc` (em `makeDb`, chamado por `envia`) trata `meta/ficha` como documento inteiro: se o servidor mudou, fica a do servidor e entra um conflito só. `fichaGrava` relê o servidor (`db.atual`) e lança `ficha_conflito` quando ficou outra ficha.
+
+**Tempo (alto 5).** `fichaTeto(perfil)`: o "Tempo máximo por dia" do Perfil (no máximo 2 h na conta do dono). `fichaMede(f)`: o pior dia das 60 semanas pelo `dayTime` (aquecimento, séries, descansos e trocas) mais o cardio de cada semana. `fichaNoTempo(f, teto)` corta até caber; `fichaTetoSeries` limita a 30 séries por dia; `fichaGera(perfil, desde)` junta tudo e é o que o app usa para montar fichas.
+
+| Função | O que faz |
+| --- | --- |
+| `fichaVersao()` | Qual ficha valia em cada dia da semana W (sem W, a mais nova); na semana da troca, monta o documento dia a dia |
+| `fichaUsaSemana()` | Põe em uso a ficha da semana W (chamada por `render`) |
+| `fichaNa()` | Roda uma função com a ficha da semana W e volta à que estava |
+| `fichaComDoc()` | Roda uma função com um documento de ficha qualquer e volta |
+| `fichaAmanha()` | Data de amanhã: o início padrão de uma ficha nova |
+| `fichaInicioHtml()` | Campo "A ficha nova vale a partir de" (aba Treinador e editor do treinador) |
+| `fichaTeto()` | Limite de tempo por dia da pessoa |
+| `fichaMede()` | Tempo previsto pelo motor do app no pior dia das 60 semanas |
+| `fichaNoTempo()` | Corta a ficha até o pior dia caber no limite |
+| `fichaTetoSeries()` | No máximo 30 séries por dia na ficha gerada |
+| `fichaGera()` | Gera a ficha da pessoa dentro do limite de tempo dela |
+
 ## 7. Como fazer as mudanças mais comuns
 
 **Depois de qualquer mudança no programa** (desde 18/nov): `python3 testes/atualiza-csp.py partes`, depois `cat partes/p*.txt > completo/index.html` e `testes/rodar-tudo.sh`. Sem o primeiro passo, a CSP recusa o programa e o app não abre.
