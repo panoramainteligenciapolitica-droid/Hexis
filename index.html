@@ -6,7 +6,7 @@
      (pasta vendor/: Chart.js, Supabase, leitor de PDF e a fonte). Nenhum CDN nem Google Fonts (3ª banca). Só conversa com o Supabase do app.
      Um texto malicioso que escape para a tela não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode
      testes/atualiza-csp.py, senão o app não abre. Os estilos continuam com 'unsafe-inline' porque as telas usam style="" em muitos pontos. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-e1/KAmWNM4zF4Lyyml1XBisc5OvVq0NDP/mHT+3G934='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LjXuXRsQxRdBH/bdt8cuTDKzGOW5w1YLeOlsX6er8vE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self'; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Héxis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1358,6 +1358,17 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 .aguarda ul { margin: 4px 0 8px; padding-left: 20px; }
 .aguarda li { margin: 2px 0; }
 .semficha:has(> .aguarda) { padding: 0; border: 0; background: none; box-shadow: none; }
+/* 27. Bi-set num cartão só (2.5): cabeçalho do par, os dois exercícios numerados, o nome curto em cada série */
+.par-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.par-tag { font-size: 12.5px; font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); border-radius: 999px; padding: 4px 10px; }
+.par-ex { position: relative; padding-left: 30px; }
+.par-ex + .par-ex { border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 10px; }
+.par-n { position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font: 700 12px/22px var(--font-body); text-align: center; }
+.par-ex + .par-ex .par-n { top: 12px; }
+.par-nm { display: inline-block; margin-left: 4px; padding: 0 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); font-size: 11.5px; font-weight: 700; line-height: 18px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: 1px; }
+.card.par table.sets tr.srow:has(.par-nm) td { border-top-color: var(--line); }
+.par-st { margin: 6px 0 0; }
+.par-volta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; padding: 6px 10px; border: 1px dashed var(--line); border-radius: 12px; font-size: 13.5px; }
 .bn-ic { position: relative; }
 .bdot { position: absolute; top: -3px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5484d; color: #fff; font: 700 11px/18px var(--font-body); text-align: center; box-shadow: 0 0 0 2px var(--glass-strong); pointer-events: none; }
 .sdot { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: #e5484d; vertical-align: 2px; }
@@ -1836,7 +1847,7 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Versão do programa: sobe a cada rodada de correções (o registro de cada versão está em VERSOES.md). Aparece em Plano e regras e na cópia de segurança
-const APP_VERSAO = "2.4.1";
+const APP_VERSAO = "2.5";
 const APP_VERSAO_DATA = "20/nov/2026";
 // Plano
 const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
@@ -3899,7 +3910,13 @@ function renderDay(wk) {
   if (!D.livre) h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
   h += D.livre ? '<div class="warm day"><b>Dia livre</b>: registre o cardio ou outra atividade abaixo e toque em Feito. Não conta como treino faltando.</div>' : '<div class="warm day"><b>Antes</b>: 5 min leves de esteira ou bike; depois, o aquecimento de cada exercício.</div>';
   app.dayOrd = dayOrder(doc, day);
-  defs.forEach((d, idx) => { if (idx) h += transHtml(d, doc && doc.ex[d.k]); h += exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W); });
+  defs.forEach((d, idx) => {
+    // 2.5: o par do bi-set num cartão só (o 2º exercício entra no cartão do 1º, sem intervalo entre os dois)
+    const pr = parLigado(d, W), junto = pr && defs.includes(pr.a) && defs.includes(pr.b);
+    if (junto && d === pr.b) return;
+    if (idx) h += transHtml(d, doc && doc.ex[d.k]);
+    h += junto ? exCardPar(pr, wk.pres[pr.a.k], wk.pres[pr.b.k], doc && doc.ex[pr.a.k], doc && doc.ex[pr.b.k], W) : exCard(d, wk.pres[d.k], doc && doc.ex[d.k], W);
+  });
   h += cardioCard(W, day);
   if (!D.livre) h += '<details class="panel mais" id="dayTime" data-keep="tempo"' + keepOpen("tempo") + ">" + dayTimeHtml(W, day, wk) + "</details>";
   h += fotoDiaHtml(W, day);
@@ -4054,8 +4071,41 @@ function setCells(d, i, lbl, x, phKg, phReps, side) {
 function execField(d, i, lbl, x, side, junto) {
   return '<label class="exec">' + (side ? (side === "e" ? "Esq." : "Dir.") : junto ? "Exec. 2 lados" : "Execução") + ' <input type="number" inputmode="numeric" min="0" step="5" aria-label="' + esc(d.n) + " " + lbl + (side ? " lado " + LADO[side] : junto ? " dos dois lados" : "") + ' tempo de execução em segundos" data-set="' + d.k + "|" + i + "|exec" + (side ? "|" + side : "") + '" value="' + (x.exec == null ? "" : esc(x.exec)) + '" placeholder="seg"> s<span class="exmm" id="exmm-' + d.k + "-" + i + (side ? "-" + side : "") + '" aria-live="polite">' + mmss(x.exec) + "</span></label>";
 }
+// 2.5 (pedido do dono, 20/nov): bi-set. O par é o exercício com "Bi-set" no descanso e o seguinte do dia. Devolve { a, b } ou null
+function parDe(d) {
+  if (!d || !EXBY[d.k]) return null;
+  const L = dayEx(d.d), i = L.indexOf(d), ant = L[i - 1];
+  if (/bi-set/i.test(d.rest || "") && L[i + 1]) return { a: d, b: L[i + 1] };
+  return ant && /bi-set/i.test(ant.rest || "") ? { a: ant, b: d } : null;
+}
+// O par feito junto na semana W (os dois valendo na semana, e não marcado "Fazer separado hoje" no dia). Devolve { a, b } ou null
+function parLigado(d, W) {
+  const pr = parDe(d); if (!pr || !contaEx(pr.a, W) || !contaEx(pr.b, W)) return null;
+  const doc = app.records[docId(W, pr.a.d)];
+  return doc && Array.isArray(doc.soltos) && doc.soltos.includes(pr.a.k) ? null : pr;
+}
+// Cartão do par: cabeçalho dos dois, uma tabela com as séries intercaladas (1º, 2º, descanso do par), observações de cada um e Feito dos dois
+function exCardPar(pr, pa, pb, ea, eb, W) {
+  const A = exCardPartes(pr.a, pa, ea, W, exShort(pr.a)), B = exCardPartes(pr.b, pb, eb, W, exShort(pr.b));
+  let linhas = "";
+  for (let i = 0; i < Math.max(A.linhas.length, B.linhas.length); i++) { if (A.linhas[i]) linhas += A.linhas[i] + (B.linhas[i] ? "" : A.desc[i]); if (B.linhas[i]) linhas += B.linhas[i] + B.desc[i]; }
+  const sa = ea ? ea.st : null, sb = eb ? eb.st : null, os2 = sa === "feito" && sb === "feito", nao2 = sa === "nao" && sb === "nao";
+  const estado = os2 || nao2 || (!sa && !sb) ? "" : '<p class="muted par-st">' + esc(exShort(pr.a)) + ": " + (sa === "feito" ? "feito" : sa === "nao" ? "não fiz" : "falta") + " · " + esc(exShort(pr.b)) + ": " + (sb === "feito" ? "feito" : sb === "nao" ? "não fiz" : "falta") + "</p>";
+  return '<article class="card par' + (os2 ? " done" : nao2 ? " skip" : "") + '" style="--act:var(' + A.cor + ')" id="card-' + pr.a.k + '">' +
+    '<div class="par-h"><span class="par-tag">Bi-set · séries intercaladas, descanso depois do par</span><button type="button" class="btn small" data-par-solta="' + pr.a.k + '">Fazer separado hoje</button></div>' +
+    '<div class="par-ex"><span class="par-n">1</span>' + A.topo + '</div><div class="par-ex" id="card-' + pr.b.k + '"><span class="par-n">2</span>' + B.topo + "</div>" +
+    A.tabAbre + linhas + A.extra + B.extra + A.tabFecha + A.ajustes + B.ajustes + estado +
+    '<div class="row-btns donebar"><button class="btn ok" data-done-par="' + pr.a.k + "|" + pr.b.k + '" aria-pressed="' + os2 + '">✓ Feito (os dois)</button><button class="btn no" data-skip-par="' + pr.a.k + "|" + pr.b.k + '" aria-pressed="' + nao2 + '">✗ Não fiz</button></div></article>';
+}
 // Cartão do exercício: prescrição, motivo, aquecimento, séries, observações e Feito / Não fiz
 function exCard(d, p, entry, W) {
+  const P = exCardPartes(d, p, entry, W), pr = parDe(d);
+  // 2.5: bi-set desvinculado no dia: o 1º cartão oferece juntar de novo
+  const volta = pr && pr.a === d && !parLigado(d, W) && contaEx(pr.b, W) ? '<div class="par-volta"><span class="muted">Bi-set feito separado hoje.</span><button type="button" class="btn small" data-par-junta="' + d.k + '">Juntar de novo</button></div>' : "";
+  return P.abre + volta + P.topo + P.tabAbre + P.linhas.map((x, i) => x + P.desc[i]).join("") + P.extra + P.tabFecha + P.ajustes + P.feito + "</article>";
+}
+// As partes do cartão (nome: o nome curto do exercício nas séries e nas observações, no cartão do par)
+function exCardPartes(d, p, entry, W, nome) {
   const A = ACT[p.action] || ACT.keep;
   const st = entry ? entry.st : null;
   const prev = p.prevLoad;
@@ -4083,14 +4133,14 @@ function exCard(d, p, entry, W) {
     const prevKg = s.kg == null ? "definir" : (d.bw && s.kg === 0 ? "corporal" : fmt(s.kg) + " kg");
     const g = sug[i];
     const lblInfo = s.kind === "over" ? infoBtn("over") : s.cluster ? infoBtn("cluster") : "";
-    const head = "<b>" + lbl + "</b>" + lblInfo + '<div class="tgt">' + esc(prevKg) + " × " + s.tr + (uni ? " c/ lado" : "") + (s.cluster ? " · 2 blocos" : "") + '</div><div class="tgt">RIR ' + rirTxt(s.rir) + " · " + s.lo + "–" + s.hi + "</div>";
+    const head = "<b>" + lbl + "</b>" + (nome ? ' <span class="par-nm">' + esc(nome) + "</span>" : "") + lblInfo + '<div class="tgt">' + esc(prevKg) + " × " + s.tr + (uni ? " c/ lado" : "") + (s.cluster ? " · 2 blocos" : "") + '</div><div class="tgt">RIR ' + rirTxt(s.rir) + " · " + s.lo + "–" + s.hi + "</div>";
     const hint = '<tr class="hrow"><td colspan="4"><div class="sline"><span class="sstat" id="st-' + d.k + "-" + i + '">' + setStatus(v, s) + '</span><span class="adj' + (g.dir < 0 ? " dn" : g.dir > 0 ? " upx" : "") + '" id="adj-' + d.k + "-" + i + '" title="' + esc(g.note) + '">' + esc(g.curto || g.note) + "</span></div></td></tr>";
     const restRow = i < p.sets.length - 1 ? '<tr class="rrow"><td colspan="4"><div id="rest-' + d.k + "-" + i + '">' + restHtml(d, i, v, entry, p) + "</div></td></tr>" : "";
-    if (lados) return uniRows(d, i, v, lbl, head, g).replace('<tr class="tbrow">', hint + '<tr class="tbrow">') + restRow;
-    return '<tr class="srow"><td class="lbl">' + head + "</td>" + setCells(d, i, lbl, v, g.kg == null ? "kg" : fmt(g.kg), g.reps) + "</tr>" + hint +
+    if (lados) return { linha: uniRows(d, i, v, lbl, head, g).replace('<tr class="tbrow">', hint + '<tr class="tbrow">'), desc: restRow };
+    return { linha: '<tr class="srow"><td class="lbl">' + head + "</td>" + setCells(d, i, lbl, v, g.kg == null ? "kg" : fmt(g.kg), g.reps) + "</tr>" + hint +
       '<tr class="tbrow"><td colspan="4">' + clkSetHtml(d, i, v, false) + "</td></tr>" +
-      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v, null, junto) + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>" + restRow;
-  }).join("");
+      '<tr class="prow"><td colspan="4"><div class="execrow">' + execField(d, i, lbl, v, null, junto) + '<div id="parc-' + d.k + "-" + i + '" class="parcwrap">' + parcHtml(d.k, i, v.parc) + "</div></div></td></tr>", desc: restRow };
+  });
   const extraRows = entry && entry.sets && entry.sets.length > p.sets.length ? entry.sets.slice(p.sets.length).map((v, j) => {
     const i = p.sets.length + j;
     return '<tr class="srow"><td class="lbl"><b>Extra ' + (j + 1) + '</b><div class="tgt">fora da ficha</div></td><td><input type="number" inputmode="decimal" step="0.25" aria-label="Série extra carga" data-set="' + d.k + "|" + i + '|kg" value="' + (v.kg == null ? "" : esc(v.kg)) + '"></td><td><input type="number" inputmode="numeric" aria-label="Série extra repetições" data-set="' + d.k + "|" + i + '|reps" value="' + (v.reps == null ? "" : esc(v.reps)) + '"></td><td></td></tr>';
@@ -4100,18 +4150,17 @@ function exCard(d, p, entry, W) {
   const porque = (p.why ? '<div class="why">' + esc(p.why) + (p.elo ? infoBtn("elo") : "") + "</div>" : "") + oldLine + ordemLine(p) + ordTag;
   const whyBox = porque ? '<details class="mais pq" data-keep="pq-' + d.k + '"' + keepOpen("pq-" + d.k) + "><summary>" + (p.why ? '<span class="pqt">' + esc(p.why) + "</span>" : "Sua marca e ordem") + "</summary>" + porque + "</details>" : "";
   const tags = entry && Array.isArray(entry.tags) ? entry.tags.length : 0, temNota = !!(entry && entry.nota && String(entry.nota).trim());
-  const ajustes = '<details class="mais aj" data-keep="aj-' + d.k + '"' + keepOpen("aj-" + d.k) + "><summary>Observações e ajustes" + (tags || temNota ? ' <span class="tn">' + (tags + (temNota ? 1 : 0)) + "</span>" : "") + "</summary>" +
+  const ajustes = '<details class="mais aj" data-keep="aj-' + d.k + '"' + keepOpen("aj-" + d.k) + "><summary>Observações e ajustes" + (nome ? " · " + esc(nome) : "") + (tags || temNota ? ' <span class="tn">' + (tags + (temNota ? 1 : 0)) + "</span>" : "") + "</summary>" +
     '<div class="obsh">Observações' + infoBtn("observacoes") + '</div><div id="tg-' + d.k + '">' + tagsHtml("ex", d.k, entry ? entry.tags : []) + "</div>" +
     '<textarea data-note="' + d.k + '" rows="1" aria-label="Outra observação de ' + esc(d.n) + '" placeholder="Outra observação (o app também lê o texto)">' + esc(entry ? entry.nota : "") + "</textarea>" +
     '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div>" +
     uniToggleHtml(d) + '<div class="row-btns"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div></details>';
-  return '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">' +
+  return { cor: A.c, abre: '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">', topo:
     '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave" : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + rirChip + restChip + modeChip + stallChip + "</div>" + whyBox +
-    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniLinkHtml(d) + '<div id="ul-' + d.k + '">' + (lados ? uniLine(entry) : "") + "</div>" +
-    '<table class="sets"><colgroup><col><col class="c-kg"><col class="c-rp"><col class="c-rir"></colgroup><thead><tr><th>Série · previsto</th><th>kg</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>' + rows + extraRows + "</tbody></table>" +
-    ajustes +
-    '<div class="row-btns donebar"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button></div></article>';
+    (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniLinkHtml(d) + '<div id="ul-' + d.k + '">' + (lados ? uniLine(entry) : "") + "</div>",
+    tabAbre: '<table class="sets"><colgroup><col><col class="c-kg"><col class="c-rp"><col class="c-rir"></colgroup><thead><tr><th>Série · previsto</th><th>kg</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>', linhas: rows.map(r => r.linha), desc: rows.map(r => r.desc), extra: extraRows, tabFecha: "</tbody></table>", ajustes,
+    feito: '<div class="row-btns donebar"><button class="btn ok" data-done="' + d.k + '" aria-pressed="' + (st === "feito") + '">✓ Feito</button><button class="btn no" data-skip="' + d.k + '" aria-pressed="' + (st === "nao") + '">✗ Não fiz</button></div>' };
 }
 // Bloco recolhível que lembra se estava aberto (chave em data-keep); "padrao" abre na primeira vez
 function keepOpen(key, padrao) { const k = app.keep || (app.keep = {}); return (key in k ? k[key] : !!padrao) ? " open" : ""; }
@@ -5105,7 +5154,8 @@ function clkHandoff(W, m, j, side) {
     if (el <= clkExecMax(c.k)) { clkRecord(W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada"); }
     else msgs.push("execução de " + clkFmt(el) + " não anotada (parecia esquecida)");
   } else if (c.ph === "rest") {
-    if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
+    if (c.nk && c.nk === m && j === c.i + 1) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso do par " + clkFmt(el) + " anotado"); } // 2.5: depois do bi-set, a série seguinte é a do 1º
+    else if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
     else if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
   } else if (c.ph === "warm") {
     // começou a série com o aquecimento rodando: o tempo todo (descanso incluído) fica no aquecimento
@@ -5145,6 +5195,14 @@ function clkAfterExec(c, t0) {
 // Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia)
 function clkToRest(c, t0) {
   const { def, pres } = ctx(c.k, null, c.W);
+  // 2.5 (pedido do dono): bi-set feito junto. Fim do 1º exercício: a execução do 2º começa sozinha, sem descanso. Fim do 2º: o descanso do
+  // par (o do 2º, "2 min após o par"), e a próxima é a série seguinte do 1º. O descanso fica anotado na série do 2º
+  const pr = parLigado(def, c.W);
+  if (pr) {
+    const A = ctx(pr.a.k, null, c.W), B = ctx(pr.b.k, null, c.W), fechado = e => e.st === "feito" || e.st === "nao";
+    if (c.k === pr.a.k && c.i < B.pres.sets.length && !fechado(B.entry)) { const tr = (B.pres.sets[c.i] || {}).tr || 10; app.clk = { W: c.W, day: c.day, k: pr.b.k, i: c.i, side: null, done: [], ph: "exec", exp: Math.max(20, Math.min(75, tr * CLK_SEG_REP)), t0, ack: 0, par: 1 }; return; }
+    if (c.k === pr.b.k && c.i < A.pres.sets.length - 1 && !fechado(A.entry)) { app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "rest", prev: restSec(def), nk: pr.a.k, t0, ack: 0 }; return; }
+  }
   if (c.i < pres.sets.length - 1) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "rest", prev: restSec(def), t0, ack: 0 };
   else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado. Veja a aba Resumo do dia."); }
@@ -5205,7 +5263,7 @@ function clkAct(a) {
   if (a === "side") { if (c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", clkEl()); c.waitSide = false; c.t0 = Date.now(); c.ack = 0; c.ask = false; clkSave(); clkRefresh(); } return; }
   // pular o outro lado: o descanso da série conta desde o fim do lado feito
   if (a === "skip") { if (c.waitSide) { clkToRest(c, c.t0); clkSave(); clkRefresh(); } return; }
-  if (a === "next") { clkGo(c.W, c.k, c.i + 1, uniLados(EXBY[c.k]) ? "e" : null); return; }
+  if (a === "next") { const k2 = c.nk && EXBY[c.nk] ? c.nk : c.k; clkGo(c.W, k2, c.i + 1, uniLados(EXBY[k2]) ? "e" : null); return; } // 2.5: no bi-set, a seguinte é a do 1º
   if (a === "first") { clkGo(c.W, c.k, 0, uniLados(EXBY[c.k]) ? "e" : null); return; }
   if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
   if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
@@ -5286,7 +5344,7 @@ function clkBar() {
   if (!c || !EXBY[c.k]) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
   box.classList.remove("hide"); clkDock();
   const el = clkEl(), lado = c.side ? (c.side === "e" ? " · lado esquerdo" : " · lado direito") : "";
-  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "pre" ? "Descanso · até a série 1" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? "Descanso · após a série " + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
+  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "pre" ? "Descanso · até a série 1" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? (c.nk ? "Descanso · após o bi-set " : "Descanso · após a série ") + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
   const btns = c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Terminei</button>'
     : c.ph === "pre" ? '<button type="button" class="btn small primary" data-clk="first">▶ Série 1</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
@@ -5294,7 +5352,7 @@ function clkBar() {
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
   // 2.4.1: a fase vai com o prefixo "f-", para a barra não herdar o estilo da caixa .rest do cartão do exercício
-  let h = '<div class="clkb f-' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  let h = '<div class="clkb f-' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.ph === "rest" && c.nk && EXBY[c.nk] ? c.nk : c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
   if (c.ask) {
     const plan = c.ph === "exec" ? EXEC_DEF : c.prev || TRANS_DEF;
     h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +
@@ -6629,6 +6687,26 @@ document.addEventListener("click", ev => {
   if (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel) {
     const [pk, pi, pv, ps] = (b.dataset.parcopen || b.dataset.parcadd || b.dataset.parcdel).split("|");
     parcEdit(b.dataset.parcopen ? "open" : b.dataset.parcadd ? "add" : "del", pk, +pi, +pv, ps);
+    return;
+  }
+  // 2.5: bi-set. Desvincular no dia ("Fazer separado hoje") e juntar de novo; a lista fica no registro do dia ("soltos")
+  if (b.dataset.parSolta || b.dataset.parJunta) {
+    const pk = b.dataset.parSolta || b.dataset.parJunta; if (!EXBY[pk]) return;
+    const doc = getDoc(app.week, EXBY[pk].d, true), s = (Array.isArray(doc.soltos) ? doc.soltos : []).filter(x => typeof x === "string" && x !== pk && EXBY[x]);
+    if (b.dataset.parSolta) s.push(pk); doc.soltos = s; touch(EXBY[pk].d); renderWeek(); return;
+  }
+  // Feito ou Não fiz dos dois exercícios do par de uma vez (de novo, desmarca os dois)
+  if (b.dataset.donePar || b.dataset.skipPar) {
+    const feito = !!b.dataset.donePar, ks = (b.dataset.donePar || b.dataset.skipPar).split("|").filter(x => EXBY[x]); if (!ks.length) return;
+    const L = ks.map(x => Object.assign({ k: x }, ctx(x))), alvo = feito ? "feito" : "nao", todos = L.every(x => x.entry.st === alvo);
+    if (feito && todos && L.some(x => Date.now() - Date.parse(x.entry.doneAt || 0) < 1500)) return;
+    L.forEach(({ def, pres, entry }) => {
+      if (todos) { entry.st = null; if (feito) { delete entry.doneAt; (entry.sets || []).forEach(s => { if (s && s.auto) { s.kg = null; s.reps = null; delete s.auto; } }); } }
+      else if (entry.st !== alvo) { entry.st = alvo; if (feito) { entry.doneAt = new Date().toISOString(); fillDone(def, pres, entry); } }
+    });
+    if (feito && !todos) { const kc = app.clk && ks.includes(app.clk.k) ? app.clk.k : ks[ks.length - 1]; clkOnDone(app.week, kc); clkBar(); }
+    touch(EXBY[ks[0]].d); renderWeek();
+    if (feito && !todos) { const cd = document.getElementById("card-" + ks[0]); if (cd && !RM()) cd.classList.add("justdone"); }
     return;
   }
   const k = b.dataset.done || b.dataset.skip || b.dataset.addset;

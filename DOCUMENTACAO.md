@@ -1095,6 +1095,17 @@ Pedidos do dono de 19/nov. **Ficha só da conta:** sem `meta/ficha`, a ficha do 
 | `fichaTetoSeries()` | No máximo 30 séries por dia na ficha gerada |
 | `fichaGera()` | Gera a ficha da pessoa dentro do limite de tempo dela |
 
+### Bi-set num cartão só (2.5, partes `p06`, `p08` e `p09`)
+
+O par é o exercício com "Bi-set" no descanso e o seguinte do dia (`parDe`). `parLigado(d, W)` diz se ele está junto na semana: os dois valem na semana e o registro do dia não tem o 1º em `soltos` ("Fazer separado hoje"). `renderDay` desenha o par com `exCardPar`: os topos dos dois (de `exCardPartes`), uma tabela com as séries intercaladas e o descanso só depois do 2º, as observações de cada um e Feito/Não fiz dos dois (`data-done-par`, `data-skip-par`). `exCard` monta o cartão de sempre com as mesmas partes. No cronômetro, `clkToRest` encadeia: fim do 1º → execução do 2º (`par: 1`); fim do 2º → descanso do par com `nk` (o exercício da próxima série); `clkHandoff` anota esse descanso na série do 2º quando a série seguinte do 1º começa, e `clkAct("next")` começa o `nk`.
+
+| Função | O que faz |
+| --- | --- |
+| `parDe()` | O par do bi-set de um exercício ({ a, b }) ou null |
+| `parLigado()` | O par feito junto na semana (sem "Fazer separado hoje" no dia) ou null |
+| `exCardPar()` | Cartão do par: os dois exercícios, séries intercaladas, descanso depois do par, Feito dos dois |
+| `exCardPartes()` | As partes do cartão do exercício (topo, linhas de cada série, descansos, observações, Feito) |
+
 ## 7. Como fazer as mudanças mais comuns
 
 **Depois de qualquer mudança no programa** (desde 18/nov): `python3 testes/atualiza-csp.py partes`, depois `cat partes/p*.txt > completo/index.html` e `testes/rodar-tudo.sh`. Sem o primeiro passo, a CSP recusa o programa e o app não abre.
