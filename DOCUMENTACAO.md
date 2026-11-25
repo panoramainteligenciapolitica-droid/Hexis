@@ -823,7 +823,7 @@ A aba Hormônios e peptídeos: dados de referência para estudo, substâncias, a
 | `djNum()` | Número escrito à brasileira ("1.234,5" ou "45,2") para número |
 | `djRefTxt()` | Faixa de referência escrita no laudo: prefere o trecho do sexo do Perfil e a faixa na mesma unidade do resultado. Devolve [mínimo, máximo]; um deles pode faltar |
 | `djAcha()` | Procura os marcadores no texto de um laudo. Primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTADO: valor unidade"); o que não veio em bloco é procurado no texto corrido (tabelas, como a do hemograma): o primeiro número depois do nome é o valor |
-| `djPdfArq()` | Baixa um arquivo do leitor, confere a impressão digital e devolve o endereço dele no site. 3ª banca: o arquivo é aberto pelo endereço do próprio site (sem blob:, que saiu da CSP); a conferência pega um arquivo trocado ou corrompido na publicação |
+| `djPdfFonte()` e `djPdfArq()` | 2.6 (bug-2 da 10ª banca): `djPdfFonte` baixa o arquivo do leitor uma vez; `djPdfArq` confere a impressão digital (SHA-384) desses bytes e devolve um endereço `blob:` dos mesmos bytes, que é o que roda. Antes, o arquivo era baixado de novo no `import()`, e o que rodava podia não ser o que foi conferido. A CSP do site libera `blob:` em `script-src` e `worker-src` só por isso |
 | `djPdfTexto()` | Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha) |
 | `djLerHtml()` | Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis |
 | `djLerArquivo()` | Lê o laudo escolhido e mostra a lista de conferência |
