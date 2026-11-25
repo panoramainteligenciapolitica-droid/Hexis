@@ -1,0 +1,33 @@
+# Héxis 2.6 · completo/index.html SHA-256 a75dada9ed5c37772a4554c2dd5b973668943407e793201d14c735c0bc9ac713
+roteiro	confere	funcoes
+testes/banca.js	Roteiros dos achados da 1ª banca (18/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioCsv,ctx,dayEx,djAcha,djAct,dtBusca,dtItens,dtS,hojeClose,hojeOpen,mmss,render,renderDieta,restSec,saveSettings,todayStr
+testes/banca2.js	Roteiros dos achados da 2ª banca (18/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioCsv,ctx,djAct,djEscala,dtForaSalva,dtItens,dtOk,dtS,ex,gravaJa,lgErr,render,renderDieta,savePerfil,todayStr
+testes/banca3.js	Roteiros dos achados da 3ª banca (18/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioCsv,bioImporta,ctx,dayTime,djAct,djEscala,dtItens,dtPoe,dtS,envia,ex,exportaDados,fotoShrink,junta,load,render,renderDieta,saveErr,savePerfil,saveQW,todayStr
+testes/banca4.js	Roteiros dos achados da 4ª banca (19/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	cardioOk,ctx,djAct,djNum,dtForaSalva,dtItens,dtMeus,dtPoe,ex,exportaDados,flush,junta,mondayOf,parseMmss,parseTempo,renderBio
+testes/banca5.js	Roteiros dos achados da 5ª banca (19/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioImporta,djAct,djPdfTexto,dtChange,dtRefs,dtS,ex,flush,fotoShrink,idItens,junta,parseMmss,parseTempo,renderDieta
+testes/banca6.js	Roteiros dos achados da 6ª banca (19/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	cardioEntry,djAct,dtS,ex,parseMmss,renderDieta
+testes/banca7.js	Roteiros dos achados da 7ª banca sobre o modo profissional (2.0). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	acOriCampos,fotoThumbs,recarrega,renderAcomp
+testes/banca9.js	9ª banca (sobre a 2.2): regressão dos altos 2, 4 e 5 (lado do app; os altos 1 e 3 estão em sql-base.sh) e a ficha por semana (2.4,	dayDate,ex,fichaAlternativa,fichaAmanha,fichaAtual,fichaAtualJa,fichaDono,fichaGera,fichaGrava,fichaLimpa,fichaMede,fichaNa,fichaTeto,fichaTroca,isoDate,render,weekOfDateStr,weekStart
+testes/biset.js	Bi-set num cartão só (2.5, pedido do dono): os dois exercícios do par no mesmo cartão, séries intercaladas e descanso depois do par;	clkAct,dayEx,ex,getDoc,junta,render
+testes/bug-1.js	bug-1 (10ª banca, alto 2; 2ª volta do alto 5 da 9ª): o limite de tempo por pessoa não pode depender de treino anotado. Na conta comum vale o	cardioPlan,computeWeeks,dayTime,ex,fichaAmanha,fichaAtual,fichaComDoc,fichaDono,fichaEditorHtml,fichaGera,fichaGrava,fichaLimpa,fichaMede,fichaNoTempo,fichaTeto,geraFicha,render,todayStr
+testes/bug-2.js	bug-2 (10ª banca, ALTO 1): a cópia do artefato no Claude buscava peças em servidor de terceiros (jsDelivr e Google Fonts), e o leitor de PDF	djPdfArq,djPdfTexto,load
+testes/cadastro.js	Ficha só da conta, cadastro obrigatório e bolinha de aviso (2.3, pedidos do dono de 19/nov). Cada roteiro imprime ok ou FALHOU; com falha, sai com 1.	dtMeta,ex,hojeClose,hojeOpen,render,todayStr
+testes/cronometro.js	Barra do cronômetro (2.4.1, pedido do dono): no descanso, igual à da execução (uma linha: nome, anel, tempo e botões), só com outra cor;	clkRefresh,ctx
+testes/fale.js	"Fale com o dev" (2.1, seção 30). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	ctx,faleEnvia,render,renderFale
+testes/ficha.js	Ficha por conta e gerador (2.2, seção 31). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	cardioCard,computeWeeks,dayEx,dayTime,ex,fichaAplica,fichaCardioMin,fichaChega,fichaGrava,fichaLimpa,fichaMin,fichaNa,fichaRestSeg,fichaSugestoes,fichaTroca,fichaTxt,geraFicha,isoDate,maxMin,restSec,weekStart
+testes/func.js	um PDF de laudo de teste, gerado pelo próprio Chromium	dtGasto,ex,largos,poe,render
+testes/largos.js	4ª banca: as três visões da Dieta (Registrar, Por refeição e Por dia), não só a que abre	largos
+testes/niveis.js	Níveis de uso (2.1, seção 29): iniciante, intermediário e avançado. Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	dayTime,nivelAtual
+testes/profissional.js	1.8: modo profissional (seção 28). Supabase falso com as funções do banco (rpc) e linhas de outra conta (o cliente).	ex,isoLocal,saveQW
+testes/qualidade.js	Roteiros da versão 1.7: pontos do guia "5 correções para seu app" que se aplicam ao Hexis. Cada um imprime ok ou FALHOU; com falha, código 1.	ex,flush,fotoAdd
+testes/rodar-tudo.sh	Roda todos os testes contra o index.html indicado (padrão: ../completo/index.html).	largos
+testes/seed.js	Dados de teste com textos maliciosos em todos os campos de texto livre	esc,ex
+testes/sql-base.sh	Testa supabase/base-de-profissionais.sql (2.2) num Postgres local (16+), em cima de supabase/profissional.sql. Não toca no Supabase de verdade.	
+testes/sql-fale.sh	Testa supabase/fale-com-o-dev.sql num Postgres local (16+), sem tocar no Supabase de verdade.	envia
+testes/sql-profissional.sh	Testa as regras de supabase/profissional.sql num Postgres local (16+), sem tocar no Supabase de verdade.	
+testes/suplementos.js	Suplementos proteicos na tabela da dieta (2.6, B7): as 597 linhas da TACO da 2.5 não mudam (a chave dos alimentos anotados é a posição),	dtBusca,dtFood,dtItens,dtPoeItem,dtS,dtSum
+testes/tempo.js		computeWeeks,dayTime
+testes/treinador.js	Abas Treinador, Nutricionista e Endócrino (2.2, seção 32). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	baseEstado,fichaAtual,fichaCardioMin,fichaLimpa,fichaLinha,fichaMin,fichaRestSeg,load,navNivel,render
+testes/unijunto.js	Unilateral com os lados juntos (pedido de 18/nov): uma linha por série, tempo dos dois lados, contado como unilateral. Termina com código 1 se algo falhar	clkExecMax,computeWeeks,daySummaryHtml,dayTime,ex,render,serieUni,uniModo,weekExtras
+testes/xss.js	abre tudo que estiver recolhido	
+testes/xss2.js	Hoje (painel), editar substância, busca na dieta pelos alimentos próprios	djAcha,djAct,djLerHtml,hojeOpen,render

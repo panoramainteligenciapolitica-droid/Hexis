@@ -1,0 +1,538 @@
+# Héxis 2.6 · completo/index.html SHA-256 a75dada9ed5c37772a4554c2dd5b973668943407e793201d14c735c0bc9ac713
+nome	parte	linha_na_parte	linha_no_completo	secao	descricao	chamada_em
+ex	p03	14	1928	2. FICHA: dias, exercícios e semanas do bloco	Monta um exercício da ficha: k = código, d = dia, n = nome, m = músculo. O resto tem padrão: sc ("st" séries iguais, "to	p01,p02,p03,p04,p05,p06,p07,p08,p09,p09b,p09e,p09f,p10
+contaEx	p03	67	1981	2. FICHA: dias, exercícios e semanas do bloco	Conta para o dia e a semana: não é opcional e já estava na ficha naquela semana (exercício novo não vira pendência nas s	p06,p08,p09f
+dayEx	p03	71	1985	2. FICHA: dias, exercícios e semanas do bloco	Exercícios de um dia, na ordem da ficha	p03,p06,p07,p08,p09,p09e,p09f
+exShort	p03	73	1987	2. FICHA: dias, exercícios e semanas do bloco	Nome curto do exercício (sem o que vem entre parênteses)	p06,p08
+isFestas	p03	89	2003	2. FICHA: dias, exercícios e semanas do bloco	Semana com 24, 25 ou 31/dez ou 1º/jan	p03
+blocoDe	p03	110	2024	2. FICHA: dias, exercícios e semanas do bloco	Bloco do plano anual em que a semana cai (só depois do primeiro bloco e para quem segue o plano anual)	p03,p07
+wtAno	p03	117	2031	2. FICHA: dias, exercícios e semanas do bloco	Regras de uma semana dentro de um bloco do plano anual (k = semana do bloco)	p03
+wtCiclo	p03	129	2043	2. FICHA: dias, exercícios e semanas do bloco	Quem não segue o plano anual: depois do primeiro bloco, o ciclo de 9 semanas recomeça a partir das cargas atingidas	p03
+wt	p03	136	2050	2. FICHA: dias, exercícios e semanas do bloco	Regras da semana w: primeiro bloco pela tabela WT (ajustada às festas do calendário); depois, pelo bloco do plano anual	p03,p06,p07
+plusSets	p03	146	2060	2. FICHA: dias, exercícios e semanas do bloco	Séries a mais de um exercício quando o músculo é prioritário no bloco: as n séries da semana são repartidas entre os exe	p03
+rephase	p03	152	2066	2. FICHA: dias, exercícios e semanas do bloco	Mudança de faixa da série pesada entre blocos (ex.: 6–8 → 4–6): ajusta a carga pela força estimada, para o mesmo esforço	p03
+rnd	p03	179	2093	2. FICHA: dias, exercícios e semanas do bloco	----- Ajudantes de número e de data ----- Arredonda x para o múltiplo de step	p03,p04,p06
+fmt	p03	181	2095	2. FICHA: dias, exercícios e semanas do bloco	Número com vírgula, até 2 casas; vazio vira —	p03,p04,p05,p06,p07,p08,p09,p09b,p10
+e1	p03	183	2097	2. FICHA: dias, exercícios e semanas do bloco	Força estimada (1RM pela fórmula de Epley): carga × (1 + repetições ÷ 30)	p03,p04,p06,p07,p08
+wkKey	p03	185	2099	2. FICHA: dias, exercícios e semanas do bloco	Chave da semana nos registros: w01, w02…	p03,p05
+weekStart	p03	187	2101	2. FICHA: dias, exercícios e semanas do bloco	Data da segunda-feira da semana w	p03,p06,p07,p09e
+isoDate	p03	189	2103	2. FICHA: dias, exercícios e semanas do bloco	Data como AAAA-MM-DD	p03,p06,p07,p08,p09e,p10
+weekLabel	p03	193	2107	2. FICHA: dias, exercícios e semanas do bloco	Período da semana por extenso: 9–15/nov	p06,p07,p08
+weekOfDateStr	p03	195	2109	2. FICHA: dias, exercícios e semanas do bloco	Número da semana do plano em que cai uma data	p04,p05,p07,p08,p09e
+dayDate	p03	197	2111	2. FICHA: dias, exercícios e semanas do bloco	Data de um dia de treino (A, B…) na semana w	p06,p08,p10
+baseSets	p03	201	2115	3. MOTOR DE PROGRESSÃO	===== 3. MOTOR DE PROGRESSÃO ===== Séries-base do exercício: 1 pesada (6–8) + 2 back-offs (8–10), ou N séries iguais na	p03
+rirFor	p03	206	2120	3. MOTOR DE PROGRESSÃO	RIR-alvo da série conforme o tipo (pesada, composto ou isolador) e a semana	p03
+prescribe	p03	209	2123	3. MOTOR DE PROGRESSÃO	Prescrição de uma semana a partir do estado	p03
+setsStr	p03	240	2154	3. MOTOR DE PROGRESSÃO	Séries feitas em texto: 52×7, 46×9+1p (p = parciais)	p03
+parcCredit	p03	242	2156	3. MOTOR DE PROGRESSÃO	Parciais valem meia repetição na fração feita (ex.: 50% = 0,25): contam para o progresso, não para a faixa	p03,p07,p08
+transition	p03	245	2159	3. MOTOR DE PROGRESSÃO	Transição: o que a semana w ensinou para a semana w+1	p01,p02,p03,p08
+transitionCore	p03	261	2175	3. MOTOR DE PROGRESSÃO	Regras da progressão, na ordem em que valem: sem registro → não feito → carga nova → semana leve → dor → ajuda → carga f	p03
+belowSet	p03	417	2331	3. MOTOR DE PROGRESSÃO	Série abaixo do previsto: força da série feita < 97,5% da força exigida pelo piso da faixa na carga prevista	p03,p05,p08
+suggestSets	p03	425	2339	3. MOTOR DE PROGRESSÃO	Ajuste fino entre séries do mesmo exercício (autorregulação por RIR, como no powerlifting). A nota aparece sempre que a	p05,p06
+metricOf	p03	464	2378	3. MOTOR DE PROGRESSÃO	Medida de desempenho do exercício: melhor força estimada entre as séries (peso do corpo: total de repetições)	p03
+missed	p03	466	2380	3. MOTOR DE PROGRESSÃO	Exercício não feito: repete a prescrição; na 2ª semana seguida, volta com 5% a menos	p03
+howFor	p03	473	2387	3. MOTOR DE PROGRESSÃO	Texto de como aplicar cada técnica de destrave	p03
+initState	p03	481	2395	3. MOTOR DE PROGRESSÃO	Estado inicial do exercício: carga calculada pelo Perfil (1RM), carga da ficha, ou a definir	p03
+maqTol	p03	491	2405	3. MOTOR DE PROGRESSÃO	Tolerância, em kg, para uma carga contar como a placa vizinha da prevista	p03
+maqMin	p03	493	2407	3. MOTOR DE PROGRESSÃO	Peso base da máquina (a carga com que ela começa, sem nenhuma placa): nenhuma carga prevista fica abaixo dele. 0 = sem p	p03,p06
+maqAll	p03	495	2409	3. MOTOR DE PROGRESSÃO	Cargas conhecidas de cada máquina, por nome do exercício: primeiro as declaradas, depois as anotadas nos registros	p03
+maqPick	p03	518	2432	3. MOTOR DE PROGRESSÃO	Escolhe uma carga conhecida da máquina: a mais próxima de L (dir 0), a seguinte acima de base (dir 1) ou a mais próxima	p03
+maqEntrada	p03	528	2442	3. MOTOR DE PROGRESSÃO	Carga que veio da ficha, de outra faixa ou de outro treino (ou qualquer carga fora de placa, em máquina de placas fixas)	p03
+maqDir	p03	536	2450	3. MOTOR DE PROGRESSÃO	Depois de uma subida ou descida de carga: troca o valor calculado pela placa conhecida seguinte	p03
+maqNotas	p03	543	2457	3. MOTOR DE PROGRESSÃO	Sinal de placa fixa para a progressão: máquina declarada ou reconhecida como fixa, ou carga usada diferente da prevista	p03
+eloSets	p03	557	2471	3. MOTOR DE PROGRESSÃO	Séries de um registro que servem de sinal: com carga e repetições	p03
+eloFonte	p03	559	2473	3. MOTOR DE PROGRESSÃO	A sessão mais recente de um irmão feita depois da última sessão do próprio exercício: nesta semana em dia anterior, ou n	p03
+eloAjuste	p03	572	2486	3. MOTOR DE PROGRESSÃO	Aplica a conversa ao estado do exercício antes de prescrever a semana w: traz a carga (exercício ainda sem carga) ou mov	p03
+replay	p03	607	2521	3. MOTOR DE PROGRESSÃO	Replay de todas as semanas, do início até W	p05
+readNote	p03	645	2559	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Lê o texto livre da observação e devolve os sinais encontrados (dor e onde, equipamento, cansaço, tempo, ajuda, fácil, c	p03,p06
+userTags	p03	686	2600	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Palavras-chave criadas pelo usuário	p03,p06,p09
+applyEf	p03	688	2602	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Aplica o efeito de uma palavra-chave nos sinais da observação	p03
+tagFlags	p03	690	2604	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Blocos marcados → sinais para o motor (dor, forte, ajuda, fixa, fácil, pesada, equip, cansaço, tempo)	p03,p06
+mergeFlags	p03	709	2623	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Junta dois conjuntos de sinais (soma os locais de dor)	p03,p06,p09
+noteFlags	p03	715	2629	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Junta a observação do exercício e a do dia (a do dia vale para dor só quando diz onde dói)	p03,p09,p09e
+noteTxt	p03	731	2645	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	Sinais da observação em texto, para a explicação da semana seguinte	p03
+noteEffect	p03	746	2660	4. OBSERVAÇÕES: o texto e os blocos viram efeitos no treino da semana seguinte	O que a observação muda na semana seguinte (texto para o aviso abaixo do campo)	p06,p09
+restSec	p03	763	2677	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	===== 5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS ===== Descanso previsto em segundos (bi-set: o descanso do par	p03,p06,p08
+mmss	p03	774	2688	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Segundos em minutos, para o selo do campo: 70 → "1:10 min"	p06,p08,p09
+fmtSec	p03	776	2690	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Segundos em texto curto: 45 → "45 s", 90 → "1:30"	p03,p06,p08
+recov	p03	779	2693	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Recuperação entre duas séries: força estimada da seguinte ÷ da anterior (com o RIR, se anotado) (normalizada pelo previs	p03,p06
+recovTxt	p03	789	2703	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Recuperação em texto: 96% · boa	p06
+restFlags	p03	791	2705	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Descanso médio do exercício e se foi curto (abaixo de 75% do previsto)	p03,p06,p08
+warmDone	p03	798	2712	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Quantas séries de aquecimento foram marcadas (null = nenhuma marcação feita)	p03,p08
+warmGap	p03	800	2714	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Pausa em segundos depois de uma série de aquecimento feita com a fração f da carga (tab = WARM_PAUSA ou WARM_ANTES)	p03,p06
+warmTime	p03	802	2716	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Tempo do aquecimento de um exercício: serie = execuções e pausas entre elas; antes = descanso até a 1ª válida. marks = s	p03,p06,p08
+pausaTxt	p03	808	2722	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Pausa curta por extenso: 30 s, 1 min, 1:30, 2 min	p06
+ritmo	p03	811	2725	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Ritmo real do treino: médias do que foi cronometrado (execução por série, segundos de descanso além do previsto, troca d	p02,p03,p04,p05,p06,p07,p08,p09e
+dayTime	p03	824	2738	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Tempo do treino de um dia: previsto (no seu ritmo, ou no padrão com poucos tempos anotados) e registrado; os opcionais f	p02,p06,p08,p09e
+dayOrder	p03	859	2773	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Ordem em que os exercícios foram feitos: hora do "Feito" (ou da 1ª série anotada); empate = ordem da ficha	p03,p06,p08
+recOf	p03	870	2784	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Registro de um exercício em uma semana	p03,p06,p09e
+weekStruggle	p03	872	2786	5. DESCANSO, TEMPO DE TREINO E ORDEM DOS EXERCÍCIOS	Em quantos dias da semana houve série abaixo do previsto (decide o deload automático)	p03
+monthName	p03	905	2819	6. PLANO ANUAL: fases mês a mês	"2027-03" → "mar/27"	p04
+mondayOf	p04	108	2928	7. PERFIL E OBJETIVO: campos e cálculos	Segunda-feira da semana de uma data 4ª banca: data que não é texto AAAA-MM-DD válido (documento com tipo inesperado) val	p04,p07
+dstr	p04	110	2930	7. PERFIL E OBJETIVO: campos e cálculos	Milissegundos → AAAA-MM-DD	p04
+dfmt	p04	112	2932	7. PERFIL E OBJETIVO: campos e cálculos	Milissegundos → 10/jan/27	p04,p07,p08
+ageOf	p04	114	2934	7. PERFIL E OBJETIVO: campos e cálculos	Idade, a partir do Perfil	p04
+cardioSessionKcal	p04	116	2936	7. PERFIL E OBJETIVO: campos e cálculos	Gasto estimado de uma sessão de cardio (esteira, bicicleta ou elíptico)	p04
+bfDobras	p04	123	2943	7. PERFIL E OBJETIVO: campos e cálculos	% de gordura por dobras cutâneas: 7 dobras ou 3 dobras (densidade corporal -> %)	p04
+computePlan	p04	135	2955	7. PERFIL E OBJETIVO: campos e cálculos	Calcula ponto de partida e plano com o que estiver preenchido; marca o que é estimativa	p04
+medidaAtual	p04	273	3093	7. PERFIL E OBJETIVO: campos e cálculos	Medida atual: registro mais recente da aba Corpo que tenha o campo; senão, o perfil	p04,p07
+medidasRef	p04	280	3100	7. PERFIL E OBJETIVO: campos e cálculos	Medidas: atual, referência, sua meta e estimativa na meta	p04
+buildPhases	p04	314	3134	7. PERFIL E OBJETIVO: campos e cálculos	Fases do plano: plano anual (dono) ou geradas pelo objetivo	p04
+phaseAt	p04	335	3155	7. PERFIL E OBJETIVO: campos e cálculos	Fase do plano em uma data	p06,p07,p10
+userPlanPoints	p04	342	3162	7. PERFIL E OBJETIVO: campos e cálculos	Pontos do peso planejado ao longo das fases (linha "Plano" do gráfico)	p07
+loadFromMark	p04	350	3170	7. PERFIL E OBJETIVO: campos e cálculos	Carga da semana 1 a partir da carga máxima e das repetições válidas (1RM estimado)	p04
+markOf	p04	352	3172	7. PERFIL E OBJETIVO: campos e cálculos	Marca do exercício no Perfil: carga máxima e repetições válidas	p04,p06
+computeStartLoads	p04	354	3174	7. PERFIL E OBJETIVO: campos e cálculos	Cargas da semana 1 pelas marcas do Perfil (nada a calcular se a pessoa mantém as cargas da ficha)	p04
+applyProfile	p04	361	3181	7. PERFIL E OBJETIVO: campos e cálculos	Aplica o Perfil: data de início, plano, fases, cargas iniciais e semana atual; depois redesenha	p04,p09e,p10
+obrigDe	p04	389	3209	8. TELAS: PERFIL E OBJETIVO	Campos de cada parte do app: treino = base + treino; dieta = base; metas = base + metas (metas só para perder ou ganhar)	p04,p09e
+obrigTem	p04	394	3214	8. TELAS: PERFIL E OBJETIVO	Campo preenchido? (lista com ao menos um item; número válido, maior que zero onde zero não serve; texto ou data não vazi	p04,p09e
+faltaDados	p04	399	3219	8. TELAS: PERFIL E OBJETIVO	O que falta para uma parte do app funcionar (lista de [campo, nome, aba]); o plano anual do dono já traz as metas e a di	p04,p08,p09e,p09f,p10
+avisoCadastro	p04	407	3227	8. TELAS: PERFIL E OBJETIVO	Bolinha de aviso (fica enquanto faltar dado obrigatório): número na aba Você da barra de baixo e ponto nas subabas Perfi	p08
+obrigCampo	p04	416	3236	8. TELAS: PERFIL E OBJETIVO	Campo é obrigatório em alguma parte? (para a marca no formulário)	p04
+aguardaHtml	p04	418	3238	8. TELAS: PERFIL E OBJETIVO	Aviso "aguardando o preenchimento": o que falta, com link para a aba certa	p04,p07,p08,p09e,p10
+fieldHtml	p04	425	3245	8. TELAS: PERFIL E OBJETIVO		p04
+sectionsHtml	p04	436	3256	8. TELAS: PERFIL E OBJETIVO	Seções do formulário, que abrem e fecham	p04
+cargaRows	p04	440	3260	8. TELAS: PERFIL E OBJETIVO	Linhas da tabela de cargas: um exercício por nome, agrupado pelo treino em que aparece primeiro	p04
+rmCells	p04	451	3271	8. TELAS: PERFIL E OBJETIVO	Células de 1RM estimado e carga da semana 1 de um exercício	p04
+cargasHtml	p04	460	3280	8. TELAS: PERFIL E OBJETIVO	Tabela de cargas máximas e repetições válidas (1RM)	p04,p09f
+renderPerfil	p04	480	3300	8. TELAS: PERFIL E OBJETIVO	Desenha o formulário do Perfil	p04
+renderObjetivo	p04	489	3309	8. TELAS: PERFIL E OBJETIVO	Desenha o formulário do Objetivo	p04
+avisosHtml	p04	498	3318	8. TELAS: PERFIL E OBJETIVO	Lista de avisos (atenção ou informação)	p04
+renderPerfilResult	p04	500	3320	8. TELAS: PERFIL E OBJETIVO	Resultado do Perfil: ponto de partida, medidas e o que falta preencher	p04
+renderObjResult	p04	526	3346	8. TELAS: PERFIL E OBJETIVO	Resultado do Objetivo: meta, prazo, calorias, macros, cardio e fases	p04
+pfConfere	p04	567	3387	8. TELAS: PERFIL E OBJETIVO	Confere o rascunho do Perfil: devolve a mensagem do primeiro campo fora da faixa (ou com data impossível), ou "" se está	p04
+savePerfil	p04	584	3404	8. TELAS: PERFIL E OBJETIVO	Salva Perfil e Objetivo, registra peso e medidas do dia e recalcula tudo	p09
+maxMin	p04	620	3440	8. TELAS: PERFIL E OBJETIVO	Limite de tempo por dia, em minutos	p06,p08
+ownerPlan	p04	622	3442	8. TELAS: PERFIL E OBJETIVO	A pessoa segue o plano anual?	p03,p04,p07
+renderPerfilTab	p04	624	3444	8. TELAS: PERFIL E OBJETIVO	Abre a aba Perfil sem refazer o formulário que já está na tela	p08
+renderObjTab	p04	626	3446	8. TELAS: PERFIL E OBJETIVO	Abre a aba Objetivo sem refazer o formulário que já está na tela	p08
+pfInput	p04	628	3448	8. TELAS: PERFIL E OBJETIVO	Guarda no rascunho o que foi digitado no Perfil ou no Objetivo e atualiza os resultados	p09
+refreshRm	p04	652	3472	8. TELAS: PERFIL E OBJETIVO	Atualiza a coluna de 1RM da tabela de cargas	p04
+infoRaro	p05	198	3674	9. EXPLICAÇÕES: textos dos botões "i"	O termo merece o botão "i"?	p05
+infoBtn	p05	200	3676	9. EXPLICAÇÕES: textos dos botões "i"	Botão "i" que abre a explicação de uma chave (vazio quando o termo é comum)	p04,p05,p06,p07,p08,p10
+glossEntry	p05	202	3678	9. EXPLICAÇÕES: textos dos botões "i"	Explicação de uma chave (inclui as geradas na hora: ações e técnicas)	p05
+openInfo	p05	212	3688	9. EXPLICAÇÕES: textos dos botões "i"	Abre a janela de explicação	p09
+closeInfo	p05	222	3698	9. EXPLICAÇÕES: textos dos botões "i"	Fecha a janela e devolve o foco ao botão que abriu	p09
+todayStr	p05	239	3715	10. ESTADO DO APP E ACESSO AOS REGISTROS	Hoje como AAAA-MM-DD (horário do aparelho)	p04,p05,p06,p07,p08,p09,p09b,p09e,p10
+initDates	p05	241	3717	10. ESTADO DO APP E ACESSO AOS REGISTROS	Define a semana e o dia de hoje	p10
+numBr	p05	251	3727	10. ESTADO DO APP E ACESSO AOS REGISTROS	Número digitado à brasileira, com regra estrita (2ª banca): "72,5", "72.5", "1.000", "1.000,5" e "120" valem; "0x10", "1	p04,p07,p08,p09,p09b,p10
+dataReal	p05	253	3729	10. ESTADO DO APP E ACESSO AOS REGISTROS	Data de registro plausível (2ª banca): existe, é de 2000 em diante e não passa de amanhã. Uma pesagem em 2099 virava o "	p04,p07,p09,p09b,p10
+msgFalha	p05	256	3732	10. ESTADO DO APP E ACESSO AOS REGISTROS	Escreve uma mensagem de falha de gravação e marca o elemento. Com caminhos (paths, 3ª banca), syncEstado troca o texto p	p04,p07,p08,p09,p10
+confirmaToque	p05	259	3735	10. ESTADO DO APP E ACESSO AOS REGISTROS	Botão de apagar com confirmação no próprio botão: o 1º toque troca o texto para "Confirmar"; só um toque 0,6 s depois co	p07,p08,p09,p09b,p09f,p10
+normSemana	p05	266	3742	10. ESTADO DO APP E ACESSO AOS REGISTROS	6ª banca: dia de treino vindo do servidor com tipo inesperado (API, versão antiga, dado adulterado) quebrava as abas Sem	p10
+maisN	p05	273	3749	10. ESTADO DO APP E ACESSO AOS REGISTROS	1.7: lista longa mostra um pedaço e um botão "Mostrar mais" (antes as medidas paravam em 30 e as aplicações em 12, sem c	p05,p07,p08,p09
+maisBtn	p05	275	3751	10. ESTADO DO APP E ACESSO AOS REGISTROS	Botão "Mostrar mais" da lista k (vazio quando já mostra tudo)	p07,p08,p09
+canonJ	p05	277	3753	10. ESTADO DO APP E ACESSO AOS REGISTROS	Texto canônico de um valor (chaves em ordem): o banco (jsonb) devolve as chaves em outra ordem, e isso não é diferença	p05,p07,p09e,p10
+idItens	p05	281	3757	10. ESTADO DO APP E ACESSO AOS REGISTROS	Lista de itens com id (5ª banca): item sem id ganha um id calculado do conteúdo e da ordem entre os iguais, o mesmo em q	p10
+esc	p05	289	3765	10. ESTADO DO APP E ACESSO AOS REGISTROS	Protege um texto antes de colocá-lo no HTML	p02,p04,p05,p06,p07,p08,p09,p09b,p09c,p09e,p09f,p10
+actChip	p05	291	3767	10. ESTADO DO APP E ACESSO AOS REGISTROS	Selo de ação (▲ Subir carga…) com o botão "i"	p06,p07
+rirTxt	p05	293	3769	10. ESTADO DO APP E ACESSO AOS REGISTROS	Faixa de RIR em texto: 2 ou 2–3	p06,p07
+computeWeeks	p05	295	3771	10. ESTADO DO APP E ACESSO AOS REGISTROS	Prescrição de todas as semanas até upTo, refeita a partir dos registros	p06,p08,p09,p09e,p09f
+docId	p05	297	3773	10. ESTADO DO APP E ACESSO AOS REGISTROS	Código do registro de um dia: w01-A	p05,p06,p07,p08,p09
+getDoc	p05	299	3775	10. ESTADO DO APP E ACESSO AOS REGISTROS	Registro do dia (cria, se pedido)	p03,p05,p06,p07,p08,p09
+entryFor	p05	305	3781	10. ESTADO DO APP E ACESSO AOS REGISTROS	Registro de um exercício no dia (cria, se pedido)	p05,p06,p09
+setStatus	p05	312	3788	10. ESTADO DO APP E ACESSO AOS REGISTROS	Situação de cada série feita contra o previsto	p05,p06
+updateHints	p05	322	3798	10. ESTADO DO APP E ACESSO AOS REGISTROS	Atualiza dicas das séries seguintes sem redesenhar o cartão (mantém o foco do teclado)	p09
+fillDone	p05	347	3823	10. ESTADO DO APP E ACESSO AOS REGISTROS	"Feito": completa as séries em branco com o previsto (já ajustado pelas séries anteriores)	p09
+medeQuadros	p06	3	3839	11. TELA: SEMANA (treino do dia)	===== 11. TELA: SEMANA (treino do dia) ===== Quadros das séries com largura fixa: mede a carga e as repetições mais long	p06
+renderWeek	p06	10	3846	11. TELA: SEMANA (treino do dia)	Desenha a aba Semana: título, alvos de RIR, avisos, dias e o treino do dia	p07,p08,p09
+dayBtns	p06	46	3882	11. TELA: SEMANA (treino do dia)	Botões dos dias da semana, com a situação de cada um (usados em Semana e em Resumo)	p06,p08
+dayStatus	p06	53	3889	11. TELA: SEMANA (treino do dia)	Situação do dia: feito, parcial, não feito ou pendente	p06
+renderDay	p06	66	3902	11. TELA: SEMANA (treino do dia)	Treino do dia: cartões dos exercícios, intervalos, cardio, tempo e observações do dia	p06
+warmPlan	p06	100	3936	11. TELA: SEMANA (treino do dia)	Séries de aquecimento do exercício: [fração da carga, repetições]; nenhuma se o músculo já foi aquecido antes	p03,p06,p08,p09
+warmHtml	p06	111	3947	11. TELA: SEMANA (treino do dia)	Aquecimento do cartão, com controle próprio: cada série é um botão de marcar, seguido da pausa indicada; o bloco tem cro	p06
+parcHtml	p06	124	3960	11. TELA: SEMANA (treino do dia)	Repetições parciais da série: chips (toque remove) e botões de 25/50/75%	p06,p07,p09
+tagsHtml	p06	135	3971	11. TELA: SEMANA (treino do dia)	Blocos de observação: tocar seleciona; "+ palavra-chave" cria um bloco novo com efeito escolhido	p06
+exFlags	p06	157	3993	11. TELA: SEMANA (treino do dia)	Sinais das observações do exercício (texto, blocos e descanso)	p06,p08,p09
+dayFlags	p06	159	3995	11. TELA: SEMANA (treino do dia)	Sinais das observações do dia	p06,p09
+refreshTags	p06	161	3997	11. TELA: SEMANA (treino do dia)	Redesenha os blocos de observação e o aviso do que o app entendeu	p09
+restHtml	p06	174	4010	11. TELA: SEMANA (treino do dia)	Descanso entre a série i e a seguinte: tempos fixos; o previsto fica marcado	p05,p06,p09
+dayTimeHtml	p06	184	4020	11. TELA: SEMANA (treino do dia)	Painel "Tempo do treino": previsto, registrado, descanso médio, recuperação e ordem feita	p06
+ritmoHtml	p06	199	4035	11. TELA: SEMANA (treino do dia)	Linha do ritmo real, abaixo dos quadros de tempo: o que o cronômetro mediu, quanto custa descansar além do previsto e qu	p06
+updateDayTime	p06	207	4043	11. TELA: SEMANA (treino do dia)	Atualiza o painel de tempo sem redesenhar a tela	p05,p08,p09
+ordemLine	p06	209	4045	11. TELA: SEMANA (treino do dia)	O que o app aprendeu sobre trocar a ordem deste exercício	p06
+transHtml	p06	217	4053	11. TELA: SEMANA (treino do dia)	Intervalo entre exercícios (troca de máquina, ajuste, água): fica no exercício que começa depois	p06,p08,p09
+setCells	p06	228	4064	11. TELA: SEMANA (treino do dia)	Células de carga, repetições e RIR de uma série (side "e"/"d": um dos lados, no unilateral)	p06,p07
+execField	p06	235	4071	11. TELA: SEMANA (treino do dia)	Campo do tempo de execução, com o selo que converte para minutos	p06,p07
+parDe	p06	239	4075	11. TELA: SEMANA (treino do dia)	2.5 (pedido do dono, 20/nov): bi-set. O par é o exercício com "Bi-set" no descanso e o seguinte do dia. Devolve { a, b }	p06
+parLigado	p06	246	4082	11. TELA: SEMANA (treino do dia)	O par feito junto na semana W (os dois valendo na semana, e não marcado "Fazer separado hoje" no dia). Devolve { a, b }	p06,p08
+exCardPar	p06	252	4088	11. TELA: SEMANA (treino do dia)	Cartão do par: cabeçalho dos dois, uma tabela com as séries intercaladas (1º, 2º, descanso do par), observações de cada	p06
+exCard	p06	265	4101	11. TELA: SEMANA (treino do dia)	Cartão do exercício: prescrição, motivo, aquecimento, séries, observações e Feito / Não fiz	p06
+exCardPartes	p06	272	4108	11. TELA: SEMANA (treino do dia)	As partes do cartão (nome: o nome curto do exercício nas séries e nas observações, no cartão do par)	p06
+keepOpen	p06	330	4166	11. TELA: SEMANA (treino do dia)	Bloco recolhível que lembra se estava aberto (chave em data-keep); "padrao" abre na primeira vez	p06,p09f
+renderNext	p06	334	4170	12. TELA: PRÓXIMA SEMANA	===== 12. TELA: PRÓXIMA SEMANA ===== Desenha a aba Próxima semana: o que muda em cada exercício e por quê	p08
+css	p06	363	4199	13. TELA: PROGRESSO (gráficos)	===== 13. TELA: PROGRESSO (gráficos) ===== Valor de uma cor do tema	p06,p07,p09
+chartBase	p06	365	4201	13. TELA: PROGRESSO (gráficos)	Opções comuns dos gráficos (cores do tema)	p06,p07,p09
+mkChart	p06	377	4213	13. TELA: PROGRESSO (gráficos)	Cria ou recria um gráfico	p06,p07,p09
+actGroup	p06	383	4219	13. TELA: PROGRESSO (gráficos)	Agrupa as ações para o gráfico de prescrições	p06
+weekAgg	p06	385	4221	13. TELA: PROGRESSO (gráficos)	Números de cada semana: séries, volume, exercícios feitos, índice de força, ações, séries por músculo e cardio	p06
+weekExtras	p06	408	4244	13. TELA: PROGRESSO (gráficos)	Números extras de cada semana para os gráficos: execução média por série (s), séries com parciais e diferença entre os l	p06
+nf	p06	430	4266	13. TELA: PROGRESSO (gráficos)	Número inteiro com separador de milhar	p03,p06
+renderProgress	p06	432	4268	13. TELA: PROGRESSO (gráficos)	Desenha a aba Progresso: blocos de número e gráficos	p08,p09
+tile	p06	539	4375	13. TELA: PROGRESSO (gráficos)	Bloco de número: rótulo, valor e detalhe	p01,p02,p04,p06,p07,p08
+renderExChart	p06	541	4377	13. TELA: PROGRESSO (gráficos)	Gráfico da força estimada de um exercício ao longo das semanas	p06,p09
+medIdeal	p07	3	4414	14. TELA: CORPO E DIETA	===== 14. TELA: CORPO E DIETA ===== Meta ou referência de uma medida, para a linha do gráfico	p07
+renderGoal	p07	14	4425	14. TELA: CORPO E DIETA	Desenha a aba Corpo e dieta: fase, calorias e macros, peso, ritmo, gordura e medidas	p07,p08,p09
+initBodyForm	p07	118	4529	14. TELA: CORPO E DIETA	Monta os campos de medidas do formulário de corpo	p10
+weightStats	p07	124	4535	14. TELA: CORPO E DIETA	----- Pesagem diária ----- Pesagens: média de 7 dias, média anterior e ritmo por semana	p04,p07
+dm	p07	133	4544	14. TELA: CORPO E DIETA	"2026-11-10" → "10/nov"	p04,p07,p09
+updateQW	p07	135	4546	14. TELA: CORPO E DIETA	Atualiza a pesagem rápida (média, ritmo e peso do plano hoje)	p04,p07,p08,p09,p10
+saveQW	p07	150	4561	14. TELA: CORPO E DIETA	Salva a pesagem rápida	p09
+bioList	p07	191	4602	14. TELA: CORPO E DIETA	Exames salvos, do mais antigo ao mais novo exame com data impossível fica de fora (ela quebrava os gráficos e as telas)	p07
+bioMes	p07	193	4604	14. TELA: CORPO E DIETA	Mês e ano curtos do exame ("nov/26") e a data por extenso (só mês e ano quando o dia não é conhecido)	p07
+bioDia	p07	195	4606	14. TELA: CORPO E DIETA	Data do exame por extenso: "13/11/2026", ou só "nov/26" quando o laudo traz só o mês	p07
+bioVal	p07	197	4608	14. TELA: CORPO E DIETA	Valor de um campo do exame; o que falta e dá para deduzir é calculado (massa magra = peso − gordura; IMC pela altura do	p07
+bioFaixas	p07	208	4619	14. TELA: CORPO E DIETA	Faixas normais: as do laudo mais recente que as traz; sem laudo, estimadas pela altura e pelo sexo do Perfil	p07
+bioN	p07	215	4626	14. TELA: CORPO E DIETA	Número com casas fixas e vírgula ("22,0"); nos segmentos, três algarismos como no laudo ("3,80", "28,7")	p07
+bioN3	p07	216	4627	14. TELA: CORPO E DIETA		p07
+bioPos	p07	218	4629	14. TELA: CORPO E DIETA	Posição de um valor na barra (0 a 100%): abaixo, dentro e acima da faixa normal ocupam zonas fixas	p07
+bioFig	p07	225	4636	14. TELA: CORPO E DIETA	Figura do corpo (desenho simples) com os segmentos pintados na cor do cartão	p07
+bioHtml	p07	231	4642	14. TELA: CORPO E DIETA	Painel "Evolução corporal": gordura contra a meta, análise músculo-gordura, análise segmentar e histórico	p07
+bioCsvLinha	p07	301	4712	14. TELA: CORPO E DIETA	Divide uma linha do CSV respeitando aspas ("72,5" entre aspas, com vírgula como separador, era cortado em 72)	p07
+bioCsv	p07	303	4714	14. TELA: CORPO E DIETA	Lê o arquivo do InBody e devolve um exame por linha (colunas sem valor ou desconhecidas ficam de fora)	p07
+bioImporta	p07	326	4737	14. TELA: CORPO E DIETA	Importa o arquivo: exame novo entra; exame que já existe é atualizado, guardando o que só o laudo tem (% do padrão e fai	p07
+bioEspelha	p07	344	4755	14. TELA: CORPO E DIETA	O peso e a gordura de um exame do período do plano entram também nas medidas do dia	p07
+bioFormHtml	p07	351	4762	14. TELA: CORPO E DIETA	Formulário do exame: os campos seguem a ordem do laudo	p07
+bioGrava	p07	368	4779	14. TELA: CORPO E DIETA	Grava (ou apaga) um exame	p07
+bioSalva	p07	376	4787	14. TELA: CORPO E DIETA	Lê o formulário e salva o exame; o peso e a gordura do exame entram também nas medidas do dia, quando ele é do período d	p07
+renderBio	p07	403	4814	14. TELA: CORPO E DIETA	Desenha o painel e, se ninguém está digitando nele, o formulário do exame	p07
+cardioPlan	p07	428	4839	15. CARDIO	===== 15. CARDIO ===== Cardio previsto na semana: minutos, vezes, inclinação, velocidade e tipo	p03,p07,p08,p09,p09e
+lastWeight	p07	441	4852	15. CARDIO	Último peso registrado (ou o do Perfil)	p04,p07,p08
+cardioKcal	p07	444	4855	15. CARDIO	Equações de gasto da caminhada e da corrida (VO2 em ml/kg/min, v em m/min, inclinação em fração): caminhada = 0,1·v + 1,	p04,p07
+parseTempo	p07	451	4862	15. CARDIO	Tempo da esteira: "45", "45,5" ou "45:30" -> minutos	p09
+cardioOk	p07	455	4866	15. CARDIO	Valor gravado antes da faixa (ou vindo de outro aparelho): fora dela conta 0 na soma da semana	p07
+cardioEff	p07	457	4868	15. CARDIO	Valores efetivos: o digitado; velocidade = digitada, senão distância ÷ tempo, senão a prevista	p07
+paceOf	p07	466	4877	15. CARDIO	Pace em min/km: tempo ÷ distância; sem distância, 60 ÷ velocidade digitada	p08
+paceFmt	p07	468	4879	15. CARDIO	Pace em min:seg	p06,p07,p08
+cardioCard	p07	470	4881	15. CARDIO	Cartão do cardio do dia	p06
+paceInfo	p07	493	4904	15. CARDIO	Pace automático: tempo ÷ distância; sem distância, pela velocidade digitada; sem nada, o previsto	p07
+cardioOutHtml	p07	499	4910	15. CARDIO	Caixas de pace, velocidade e calorias	p07
+updateCardioOut	p07	510	4921	15. CARDIO	Atualiza as caixas do cardio enquanto a pessoa digita	p09
+cardioEntry	p07	518	4929	15. CARDIO	Registro do cardio do dia (cria, se preciso)	p09
+fillCardio	p07	520	4931	15. CARDIO	"Feito" no cardio: completa os campos em branco com o previsto	p09
+cardioWeek	p07	528	4939	15. CARDIO	Cardio da semana: minutos, dias, distância, pace e calorias	p06
+planAt	p07	536	4947	15. CARDIO	Peso planejado em uma data	p07
+gloHtml	p07	540	4951	16. TELA: PLANO E REGRAS	===== 16. TELA: PLANO E REGRAS ===== Glossário: todos os termos do app, com busca; cada um abre a mesma explicação do bo	p07,p10
+renderPlan	p07	546	4957	16. TELA: PLANO E REGRAS	Desenha a aba Plano e regras: legenda, destraves, semanas do bloco e plano anual	p08
+uniDefault	p07	573	4984	17. EXERCÍCIO UNILATERAL: dados de cada lado	===== 17. EXERCÍCIO UNILATERAL: dados de cada lado ===== Unilateral por padrão? (pelo nome, ou pela observação "cada per	p07
+uniModo	p07	576	4987	17. EXERCÍCIO UNILATERAL: dados de cada lado	Modo do exercício: "bi" (bilateral), "lados" (unilateral, cada lado anotado à parte) ou "junto" (unilateral com os lados	p07
+isUni	p07	578	4989	17. EXERCÍCIO UNILATERAL: dados de cada lado	Unilateral de qualquer jeito (cada lado ou lados juntos): conta no tempo como unilateral	p03,p06,p08
+uniLados	p07	580	4991	17. EXERCÍCIO UNILATERAL: dados de cada lado	Unilateral com cada lado anotado à parte (linhas de esquerdo e direito, cronômetro por lado)	p06,p08,p09
+uniJunto	p07	582	4993	17. EXERCÍCIO UNILATERAL: dados de cada lado	Unilateral com os lados juntos (uma linha por série; o tempo anotado é o dos dois lados)	p06,p07,p08,p09
+serieUni	p07	584	4995	17. EXERCÍCIO UNILATERAL: dados de cada lado	Série feita como unilateral: com os lados anotados, marcada como "lados juntos" ou de um exercício hoje em lados juntos	p03,p06
+uniSum	p07	586	4997	17. EXERCÍCIO UNILATERAL: dados de cada lado	Soma de um campo dos dois lados (ex.: tempo de execução)	p07,p08
+uniKg	p07	588	4999	17. EXERCÍCIO UNILATERAL: dados de cada lado	Carga de um lado; se estiver vazia, a do outro	p05,p07
+uniScore	p07	590	5001	17. EXERCÍCIO UNILATERAL: dados de cada lado	Força estimada de um lado na série	p06,p07
+uniAgg	p07	592	5003	17. EXERCÍCIO UNILATERAL: dados de cada lado	A série vale pelo lado mais fraco (empate: o que você marcou como mais difícil)	p09
+maqBoxHtml	p07	607	5018	17. EXERCÍCIO UNILATERAL: dados de cada lado	Bloco "Cargas da máquina" do cartão: as placas conhecidas, o tipo (automático, placas fixas, carga livre) e o campo para	p07
+maqSet	p07	620	5031	17. EXERCÍCIO UNILATERAL: dados de cada lado	Guarda o tipo ou as placas da máquina (vale para o mesmo exercício em todos os dias)	p09
+uniToggleHtml	p07	633	5044	17. EXERCÍCIO UNILATERAL: dados de cada lado	Botões Bilateral / Unilateral (cada lado) / Unilateral (lados juntos) do cartão	p06
+uniLinkHtml	p07	638	5049	17. EXERCÍCIO UNILATERAL: dados de cada lado	Botãozinho de ligar os lados, à vista no cartão dos unilaterais: com os lados ligados, cada série tem uma linha só e o t	p06
+uniLine	p07	645	5056	17. EXERCÍCIO UNILATERAL: dados de cada lado	Diferença entre os lados no exercício de hoje	p06,p08,p09
+uniDifHtml	p07	663	5074	17. EXERCÍCIO UNILATERAL: dados de cada lado	Botões "Mais difícil: Esquerdo / Igual / Direito"	p07,p09
+uniRows	p07	667	5078	17. EXERCÍCIO UNILATERAL: dados de cada lado	Linhas da série unilateral: esquerdo e direito com carga, reps e RIR; depois cronômetro, execução, parciais e dificuldad	p06
+clkLoad	p08	7	5094	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Lê o cronômetro guardado no aparelho	p10
+clkSave	p08	16	5103	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Guarda o cronômetro no aparelho	p08
+clkEl	p08	18	5105	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Segundos decorridos da fase atual	p06,p08
+clkFmt	p08	20	5107	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Segundos como m:ss	p03,p06,p08
+parseMmss	p08	24	5111	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	"1:30" ou "90" → segundos Tempo em segundos: "90", "1:30" ou "1,30"/"1.30" (minuto e dois dígitos de segundo, como se es	p08,p09
+clkRecord	p08	26	5113	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Anota um tempo no registro: exec (execução), desc (descanso), troca (entre os lados) ou trans (intervalo entre exercício	p08
+clkLeft	p08	38	5125	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Exercícios do dia que ainda faltam (fora o atual)	p08
+clkUnlock	p08	42	5129	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Libera o som no primeiro toque (exigência dos navegadores)	p08
+clkBeep	p08	44	5131	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Aviso sonoro e vibração	p08
+clkToast	p08	49	5136	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Mensagem curta acima da barra do cronômetro	p02,p08
+clkHandoff	p08	54	5141	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Fecha a fase em andamento quando você começa a série (m, j) e anota o que couber	p08
+clkExecMax	p08	89	5176	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Teto da execução cronometrada: nos lados juntos, cabe o tempo dos dois lados e a troca	p08
+clkGo	p08	91	5178	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Começa a cronometrar a execução da série (m = exercício, j = série)	p08
+clkAfterExec	p08	103	5190	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Depois da execução: unilateral → troca de lado (com barra de descanso própria); os dois lados feitos → descanso da série	p08
+clkToRest	p08	109	5196	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Descanso entre séries; depois da última série, intervalo até o próximo exercício (ou fim do dia)	p08
+clkStop	p08	124	5211	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Para a execução, anota o tempo e passa para a fase seguinte	p08
+clkOnDone	p08	140	5227	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	"Feito" no cartão: o intervalo até o próximo exercício começa (do fim da última série, se cronometrada)	p09
+clkOnInput	p08	156	5243	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Anotou carga ou reps em outro exercício durante o intervalo: você já está no próximo	p09
+clkAct	p08	169	5256	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Trata os botões do cronômetro: go, warm, first, stop, side, skip, next, end, see, keep, drop, fix e fixok	p09
+clkRefresh	p08	198	5285	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Redesenha as barras do cronômetro	p08
+clkRing	p08	200	5287	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos	p06,p08
+clkPlan	p08	202	5289	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Tempo previsto da fase atual, para a barra de progresso	p08
+clkWarmRec	p08	204	5291	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Grava o tempo do aquecimento do exercício; quem não marcou nenhuma série fica com todas marcadas. antes = 0 quando o des	p08
+clkPreRec	p08	212	5299	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Grava o descanso entre o fim do aquecimento e a 1ª série válida	p08
+clkWarm	p08	214	5301	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Começa a cronometrar o aquecimento de um exercício (fecha o intervalo ou a fase que estiver rodando)	p08
+clkFrame	p08	225	5312	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Um quadro da animação: enche a barra e gira o ponteiro	p08
+clkAnim	p08	236	5323	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Liga a animação se houver cronômetro rodando	p08,p10
+clkSetHtml	p08	238	5325	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Barra embaixo de cada série (unilateral: um lado, troca de lado com contagem própria, o outro lado, descanso)	p06,p07
+clkBar	p08	254	5341	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Barra fixa embaixo da tela enquanto o cronômetro roda	p08,p09,p10
+clkTick	p08	278	5365	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	A cada meio segundo: atualiza os números e dispara o aviso de 5 minutos	p10
+wakeOn	p08	288	5375	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	A pessoa quer a tela acesa? (padrão: sim)	p08
+wakeSync	p08	290	5377	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Liga ou solta o bloqueio de tela conforme o cronômetro, a preferência e a página visível	p08,p09,p10
+wakeHtml	p08	298	5385	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Botões Sim/Não da preferência, no painel de tempo do treino (só onde o navegador tem o recurso)	p06
+clkDock	p08	304	5391	18. CRONÔMETRO: execução → descanso → intervalo entre exercícios	Mostra a barra de baixo fora da aba Semana enquanto o cronômetro roda	p08
+sumNext	p08	307	5394	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	===== 19. TELA: RESUMO DO DIA (análise do treino contra o planejado) ===== O que o motor prevê para a próxima vez do exe	p08
+sumEx	p08	319	5406	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Números de cada exercício do dia: séries, volume, desempenho, RIR, descanso, execução, sinais, ordem e lados	p08
+pctTxt	p08	350	5437	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Fração como porcentagem com sinal: +2,5%	p08
+kgTxt	p08	352	5439	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Quilos sem casas decimais: 1.240 kg	p08
+dayStats	p08	354	5441	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Números do dia, usados pelo resumo e pela imagem de compartilhar: exercícios, séries, volume, desempenho, tempo e cardio	p08
+recordes	p08	368	5455	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Recordes do dia (como os apps de registro de treino avisam): exercícios em que a melhor série do dia passou da melhor de	p03,p08
+daySummaryHtml	p08	382	5469	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Monta o resumo de um dia: resultado, blocos de número, direcionamentos e exercício por exercício	p08
+renderResumo	p08	468	5555	19. TELA: RESUMO DO DIA (análise do treino contra o planejado)	Desenha a aba Resumo do dia	p08,p09
+todayPlan	p08	478	5565	20. TELA: INÍCIO	===== 20. TELA: INÍCIO ===== Semana e treino de hoje	p08
+homeToday	p08	485	5572	20. TELA: INÍCIO	Card de hoje e números principais	p08
+homeLogo	p08	508	5595	20. TELA: INÍCIO	Logo grande, com os traços animados	p08
+hojeFill	p08	513	5600	20. TELA: INÍCIO	Painel "Hoje": abre, fecha e atualiza (treino do dia, números e pesagem). O rótulo do botão mostra o andamento do dia.	p07,p08
+hojeOpen	p08	522	5609	20. TELA: INÍCIO	Abre o painel Hoje	p09
+hojeClose	p08	524	5611	20. TELA: INÍCIO	Fecha o painel Hoje (com a animação de saída)	p09
+renderHome	p08	530	5617	20. TELA: INÍCIO	Desenha o Início: apresentação do app, o nome, por que registrar, como funciona e atalhos	p02,p08
+setTab	p08	569	5656	21. NAVEGAÇÃO E ANIMAÇÕES	===== 21. NAVEGAÇÃO E ANIMAÇÕES ===== Troca de aba: marca a navegação, mostra a tela e anima a entrada	p08
+renderOnb	p08	584	5671	21. NAVEGAÇÃO E ANIMAÇÕES	Aviso de boas-vindas para quem ainda não preencheu o Perfil	p08
+render	p08	592	5679	21. NAVEGAÇÃO E ANIMAÇÕES	Redesenha a aba atual (espera a pessoa terminar de digitar, se for o caso)	p04,p05,p08,p09,p09b,p09e,p09f,p10
+dicaIcone	p08	625	5712	21. NAVEGAÇÃO E ANIMAÇÕES	1.7: botão só com ícone ou número ("i", "‹", "×", "1:30") ganha a dica (title) igual ao nome lido pelo leitor de tela (a	p08
+routeFromHash	p08	631	5718	21. NAVEGAÇÃO E ANIMAÇÕES	Lê a aba no endereço (#semana, #resumo…)	p09,p09c,p10
+navGroup	p08	650	5737	21. NAVEGAÇÃO E ANIMAÇÕES	Grupo a que uma aba pertence	p08
+renderNav	p08	652	5739	21. NAVEGAÇÃO E ANIMAÇÕES	Desenha a barra de baixo e as subabas	p08,p09c
+subnavInd	p08	671	5758	21. NAVEGAÇÃO E ANIMAÇÕES	Indicador que desliza até a subaba escolhida	p08,p09
+animSwap	p08	683	5770	21. NAVEGAÇÃO E ANIMAÇÕES	Anima a entrada de um bloco	p06,p08
+countUp	p08	685	5772	21. NAVEGAÇÃO E ANIMAÇÕES	Números que contam até o valor (só na entrada da tela)	p08,p09b
+revealAll	p08	698	5785	21. NAVEGAÇÃO E ANIMAÇÕES	Blocos que aparecem ao rolar	p08
+putDoc	p08	707	5794	22. FOTOS E COMPARTILHAR	===== 22. FOTOS E COMPARTILHAR ===== Guarda um documento avulso (diário, fotos): aparece na hora e segue para o armazena	p08,p09,p09b
+subExtras	p08	716	5803	22. FOTOS E COMPARTILHAR	Liga as coleções avulsas ao armazenamento: o diário e os registros das fotos	p10
+isoLocal	p08	723	5810	22. FOTOS E COMPARTILHAR	Data local (AAAA-MM-DD) e data e hora local (AAAA-MM-DDTHH:MM) de um instante	p09,p09b
+nowLocal	p08	725	5812	22. FOTOS E COMPARTILHAR	Data e hora local de agora, no formato dos campos de data e hora	p09
+dCurta	p08	727	5814	22. FOTOS E COMPARTILHAR	"2026-11-12" → "12/nov"	p08,p09
+fotoShrink	p08	730	5817	22. FOTOS E COMPARTILHAR	----- Fotos (só onde há armazenamento de arquivos: app.fotoStore, ligado na conexão) ----- Reduz a foto para no máximo F	p08
+fotoAdd	p08	740	5827	22. FOTOS E COMPARTILHAR	Envia a foto escolhida e guarda o registro: tipo "treino" (com semana e dia) ou "evolucao"	p09
+fotosDe	p08	754	5841	22. FOTOS E COMPARTILHAR	Fotos de um tipo, da mais nova para a mais antiga (f = filtro opcional)	p08
+fotoThumbs	p08	756	5843	22. FOTOS E COMPARTILHAR	Miniaturas. O endereço da imagem é um link temporário que chega depois: fotoFill preenche cada <img>	p08
+fotoUrl	p08	760	5847	22. FOTOS E COMPARTILHAR	Link temporário de uma foto (vale 10 minutos; reaproveitado por 9 e pedido de novo depois)	p08
+fotoFill	p08	767	5854	22. FOTOS E COMPARTILHAR	Preenche as miniaturas que ainda estão sem imagem; os links que faltam vêm num pedido só (1.7)	p06,p08,p10
+fotoDiaHtml	p08	779	5866	22. FOTOS E COMPARTILHAR	Painel "Foto do treino" do dia aberto na aba Semana	p06
+fotoEvoHtml	p08	785	5872	22. FOTOS E COMPARTILHAR	Painel "Fotos de evolução" da aba Corpo e dieta: primeira contra a mais recente, e todas	p08
+fotoDel	p08	794	5881	22. FOTOS E COMPARTILHAR	Apagar foto: o primeiro toque pede confirmação no próprio botão; um segundo toque (não o toque duplo) apaga	p09
+loadImg	p08	809	5896	22. FOTOS E COMPARTILHAR	----- Compartilhar o resumo do dia como imagem ----- Carrega uma imagem para desenhar no canvas	p08
+shareDraw	p08	811	5898	22. FOTOS E COMPARTILHAR	Desenha a imagem (1080 × 1350) com os números do dia e, se houver, a foto do treino no topo	p08
+sharePrep	p08	855	5942	22. FOTOS E COMPARTILHAR	1º toque: prepara a imagem e mostra a prévia. 2º toque (botões da prévia): envia ou salva. O envio precisa de um toque p	p08
+shareAct	p08	867	5954	22. FOTOS E COMPARTILHAR	Botões de compartilhar: preparar a prévia, fechar, enviar e salvar	p09
+djSlug	p09	166	6126	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Anotação do usuário sobre uma substância da referência (posologia, correções): fica na conta dele, não no código. Caminh	p09
+djNota	p09	168	6128	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Anotação gravada para a substância (ou null)	p09
+djNotaSave	p09	170	6130	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Salva a anotação digitada no cartão	p09
+djVia	p09	172	6132	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Via da referência → opção do cadastro	p09
+djDias	p09	174	6134	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Tempo por extenso a partir de dias: 0,43 → "10 h"; 40 → "40 dias"	p09
+djRefHtml	p09	176	6136	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Painel da referência: busca, um bloco recolhível por grupo com um cartão por substância, e as notas de leitura, exames e	p09
+djCtrlHtml	p09	207	6167	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Controle de doses: por substância, a última aplicação, os totais de 7 e 30 dias e o estimado hoje pela meia-vida	p09
+djIntSet	p09	217	6177	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Intervalo do cadastro: a escala fixa ou, em "outro", o número de dias digitado	p09
+djApLimpa	p09	222	6182	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Limpa o formulário da aplicação (depois de gravar; 4ª banca: também quando a fila grava a que tinha falhado)	p09,p10
+djApGuia	p09	224	6184	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Guia da aplicação: unidade da substância, sua posologia anotada, a última aplicação e as doses que você já registrou (to	p02,p09
+djExGuia	p09	234	6194	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Guia do exame: unidade e referência do último exame daquele marcador já vêm preenchidas	p02,p09
+djTipo	p09	241	6201	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Selo do tipo da substância, quando ela veio da lista de referência: hormônio (grupo "t"), anabolizante ou SARM (grupo "a	p09
+djEscala	p09	247	6207	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Exame de contagem em "mil/mm³" (plaquetas): valor e referência sempre nessa escala. Número acima de 1.000 só pode estar	p09
+djFaixaOk	p09	262	6222	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	O exame está dentro da faixa plausível do marcador (DJ_FAIXA)? Unidade diferente da do app não é conferida	p09
+djList	p09	264	6224	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Itens do diário de um tipo ("sub" substância, "ap" aplicação, "ex" exame), em ordem de data (ou de nome)	p09
+djLevel	p09	266	6226	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Quantidade estimada de uma substância no instante t: soma das doses, cada uma caindo pela metade a cada meia-vida inform	p09
+djNext	p09	268	6228	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Próxima aplicação prevista: a última mais o intervalo informado (dias)	p09
+djCalHtml	p09	270	6230	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Calendário do mês: ponto cheio = aplicação feita; ponto vazado = próxima prevista	p09
+djDelBtn	p09	281	6241	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Botão de apagar com confirmação no segundo toque	p09
+renderDiario	p09	283	6243	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Desenha a aba Hormônios e peptídeos: referência, substâncias, calendário, aplicações, controle de doses, curva estimada	p08,p09
+djAct	p09	324	6284	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Ações do diário: trocar o mês do calendário, copiar da referência para o cadastro, apagar (com confirmação) e salvar sub	p09
+djPdfFonte	p09	412	6372	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Os bytes do leitor vêm de UM lugar só (djPdfFonte). No site, é um arquivo da pasta vendor/; a cópia do artefato troca es	p09
+djPdfArq	p09	418	6378	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	10ª banca (bug-2): busca UMA vez, confere a impressão digital e devolve o endereço blob: DESSES MESMOS bytes. Antes devo	p09
+djNum	p09	434	6394	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Número escrito à brasileira ("1.234,5" ou "45,2") para número	p09,p10
+djRefTxt	p09	436	6396	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Faixa de referência escrita no laudo: prefere o trecho do sexo do Perfil e a faixa na mesma unidade do resultado. Devolv	p09
+djAcha	p09	459	6419	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Procura os marcadores no texto de um laudo. Primeiro os laudos em blocos (título do exame, "Método" e uma linha "RESULTA	p09
+djPdfTexto	p09	504	6464	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Texto de um PDF, linha por linha (as palavras de mesma altura na página formam uma linha)	p09
+djLerHtml	p09	518	6478	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Lista de conferência do que foi lido no laudo: cada marcador com valor, unidade e referência editáveis	p09
+djLerArquivo	p09	528	6488	23. HORMÔNIOS E PEPTÍDEOS: referência para estudo, diário de substâncias e exames (o app guarda e mostra, não sugere o que usar nem quanto)	Lê o laudo escolhido e mostra a lista de conferência	p09
+ctx	p09	546	6506	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	===== 24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação ===== Exercício pronto para editar: definição, prescrição d	p08,p09
+snapPrev	p09	553	6513	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Guarda no registro o que estava previsto, enquanto o exercício não foi fechado (force: sempre)	p05,p08,p09
+sideOf	p09	555	6515	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Dados de um lado (e/d) da série unilateral	p08,p09
+currentPres	p09	557	6517	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Prescrição do exercício na semana aberta	p05,p06,p09
+touch	p09	559	6519	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Marca o dia como alterado e agenda o salvamento (1,2 s depois da última mudança)	p01,p02,p08,p09
+flush	p09	567	6527	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Salva o registro de um dia; se falhar, tenta de novo	p09,p10
+saveErr	p09	587	6547	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Mensagem de erro ao salvar (retry: o app tenta de novo sozinho)	p04,p07,p08,p09,p10
+setSaveMsg	p09	590	6550	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Mensagem da barra de salvar Situação do salvamento: aparece na barra de baixo só enquanto importa (salvando, erro); "Sal	p07,p09,p10
+tapSel	p09	598	6558	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Seletor do botão tocado, para reencontrá-lo depois de redesenhar	p09
+playTap	p09	604	6564	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Efeito de toque no botão	p09
+flashBtn	p09	610	6570	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Mostra "✓ Salvo" no botão por um instante	p04,p07,p09
+parcEdit	p09	617	6577	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Parciais de uma série: abre o campo, inclui (pv = % do movimento) ou remove (pv = posição); ps = lado, no unilateral	p09
+saveSettings	p09	871	6831	24. EDIÇÃO E SALVAMENTO: cliques, digitação e gravação	Salva os ajustes (deload escolhido, palavras-chave e exercícios unilaterais)	p07,p09,p09c,p09f,p10
+doseLe	p09b	23	6866	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Dose digitada: número com vírgula decimal opcional ("0,5", "250"). Ponto, milhar, sinal e texto são recusados (null)	p09b
+proRpc	p09b	31	6874	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	----- Servidor ----- Chama uma função do banco (supabase/profissional.sql) e devolve o resultado ou lança o erro	p09b,p09f
+proErr	p09b	38	6881	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Erro em português. Função ausente (SQL ainda não aplicado no painel) tem frase própria	p09b,p09f
+proLimpa	p09b	46	6889	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Uma linha de hexis_meus_vinculos conferida campo a campo (vem do servidor; nada vai cru para a tela)	p09b
+proVinculos	p09b	56	6899	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Meus vínculos (aceitos e pedidos pendentes)	p09b,p09f
+proNome	p09b	58	6901	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Nome para mostrar: o do profissional, ou o começo do e-mail do cliente	p09b,p09f
+proIni	p09b	60	6903	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Iniciais para o avatar	p09b,p10
+proCor	p09b	62	6905	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Cor do avatar a partir do texto (sempre a mesma para a mesma pessoa)	p09b
+proAvatar	p09b	63	6906	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p09b,p09f
+proDias	p09b	65	6908	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Dias entre uma data AAAA-MM-DD e hoje	p09b
+proDataBr	p09b	66	6909	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p09b,p09f
+proModo	p09b	71	6914	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	----- Entrada: Pessoal ou Profissional ----- Chamada por startSession antes de carregar os dados. Devolve null (modo pes	p09b,p10
+proEscolhe	p09b	96	6939	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Tela de escolha ao entrar (só para quem tem o nível profissional)	p09b,p09f
+proTroca	p09b	114	6957	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Troca de modo: grava o que falta (até 4 s), guarda a escolha e recarrega a página (cada modo abre do zero, sem dados do	p09b
+proConfereVinculo	p09b	133	6976	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	7ª banca (bloqueador): vínculo desfeito com o Héxis do cliente aberto. A tela continuava, dizia "Sincronizado" com as te	p10
+proCabecalho	p09b	153	6996	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	----- Cabeçalho e faixa nos modos pessoal (profissional) e cliente aberto ----- Chamada por startSession depois de monta	p10
+proLiga	p09b	173	7016	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Liga a coleção das orientações (chamada por startSession com o db da conta aberta)	p10
+proRedesenha	p09b	182	7025	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	----- Aba Acompanhamento (Você → Profissionais) ----- Guarda o que estava digitado nos campos da aba e devolve depois de	p09b,p09f
+renderAcomp	p09b	190	7033	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p08,p09b
+acCarrega	p09b	197	7040	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p09b
+acPessoa	p09b	206	7049	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Cartão de um vínculo: avatar, nome, tipo e e-mail	p09b,p09f
+acPessoalHtml	p09b	210	7053	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Modo pessoal: meus profissionais, pedidos que chegaram, pedidos que fiz, pedir um novo e as orientações recebidas	p09b
+acClienteHtml	p09b	224	7067	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Modo cliente aberto pelo profissional: registrar orientação, atalhos e orientações já deixadas	p09b
+acOriCampos	p09b	236	7079	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Mostra os campos de substância e dose só no tipo "Ergogênico e dosagem"	p09b
+acOrientacoesHtml	p09b	238	7081	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Lista das orientações (as ativas primeiro, da mais nova para a mais antiga). eProf: quem vê é o profissional (pode encer	p09b
+proAbre	p09b	318	7161	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	----- Modo profissional: a carteira ----- Abre a carteira no lugar das telas pessoais (body.modo-pro esconde o app pesso	p09b
+proCarrega	p09b	329	7172	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Lê os vínculos e os registros recentes dos clientes (o banco só devolve linhas de quem tem vínculo aceito)	p09b,p09f
+proResumo	p09b	354	7197	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Números de um cliente a partir dos registros dele	p09b
+proSelo	p09b	382	7225	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Selo de situação do cliente e o "relógio" (há quanto tempo treinou)	p09b
+pxIc	p09b	398	7241	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p09b,p09f
+pxKpi	p09b	400	7243	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Bloco de número: título pequeno em caixa alta, número fino e selo	p09b
+pxCurva	p09b	402	7245	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Curva suave por pontos (Catmull-Rom em Bézier). mv = começa com M (true) ou continua com L	p09b
+pxOnda	p09b	413	7256	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Onda do vídeo de referência: colunas escuras ao fundo, duas curvas com faixa hachurada entre elas e a coluna escolhida m	p09b
+pxGauge	p09b	439	7282	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Medidor de traços (vídeo de referência): pct em traços acesos, a meta em âmbar, o número no meio	p09b
+pxDiasN	p09b	454	7297	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Dias dos últimos n (do mais antigo para hoje), em AAAA-MM-DD	p09b
+pxRot	p09b	456	7299	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações		p09b
+pxColunas	p09b	458	7301	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Junta os dias em colunas (7D: 1 dia; 30D: 2 dias; 90D: 7 dias)	p09b
+proRender	p09b	460	7303	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Desenha a carteira ou o cliente escolhido	p09b
+pxCarteiraHtml	p09b	481	7324	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Visão geral da carteira	p09b,p09f
+pxPedidosHtml	p09b	515	7358	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Pedidos: os que chegaram (aceitar ou recusar), os que fiz (cancelar) e o convite por e-mail	p09b
+pxClienteHtml	p09b	525	7368	28. PROFISSIONAL: carteira de clientes, vínculo aceito pelos dois lados e orientações	Cliente aberto na carteira	p09b
+nivelAtual	p09c	29	7454	29. NÍVEIS DE USO: iniciante, intermediário e avançado (o que aparece para cada um)	Nível em uso: o escolhido nos ajustes; sem escolha, avançado (o app como sempre foi). Com um cliente aberto, o profissio	p09c,p09d
+nivelTab	p09c	31	7456	29. NÍVEIS DE USO: iniciante, intermediário e avançado (o que aparece para cada um)	A aba aparece no nível em uso? (as abas "Nível de uso" e "Fale com o dev" não aparecem no Héxis de um cliente)	p08,p09c
+navNivel	p09c	33	7458	29. NÍVEIS DE USO: iniciante, intermediário e avançado (o que aparece para cada um)	Grupos e subabas da barra no nível em uso (grupo sem nenhuma aba some)	p08,p09c
+nivelAplica	p09c	35	7460	29. NÍVEIS DE USO: iniciante, intermediário e avançado (o que aparece para cada um)	Põe no <body> a classe do nível (os estilos do bloco 24 escondem os campos) e tira a pessoa de uma aba que o nível escon	p08,p09c
+renderNivel	p09c	43	7468	29. NÍVEIS DE USO: iniciante, intermediário e avançado (o que aparece para cada um)	Aba Você → Nível de uso: os três níveis, o que cada um libera e o que pede para anotar	p08,p09c
+faleLimpa	p09d	13	7500	30. FALE COM O DEV: recado da pessoa para o dono do app (bug, ajuste ou ideia)	Texto como vai para o servidor: sem caracteres de controle (fica a quebra de linha) e sem espaços nas pontas	p09d,p09f
+renderFale	p09d	15	7502	30. FALE COM O DEV: recado da pessoa para o dono do app (bug, ajuste ou ideia)	Aba Você → Fale com o dev	p08
+faleConta	p09d	25	7512	30. FALE COM O DEV: recado da pessoa para o dono do app (bug, ajuste ou ideia)	Contador de caracteres embaixo do campo	p09d
+faleEnvia	p09d	27	7514	30. FALE COM O DEV: recado da pessoa para o dono do app (bug, ajuste ou ideia)	Envia o recado. O botão trava durante o envio; o campo só esvazia quando o servidor confirma	p09d
+fichaTxt	p09e	73	7604	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Texto simples: só letras, números, espaço e pontuação comum. Tudo o que poderia virar HTML ou atributo sai	p09e
+fichaNum	p09e	75	7606	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Número dentro da faixa, ou o padrão	p09e,p09f
+fichaRestSeg	p09e	77	7608	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Descanso em segundos de um texto de ficha ("2 min", "90 s", "1:30"); sem número, 90	p09e
+fichaParOk	p09e	79	7610	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Par de bi-set permitido: um de bíceps e um de tríceps, os dois na polia (regra do dono)	p09e
+fichaLimpa	p09e	81	7612	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Confere uma ficha vinda de meta/ficha. Devolve { dias, ex, meta } pronta para aplicar, ou null se não servir	p09b,p09e
+fichaAplica	p09e	134	7665	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Troca a ficha em uso pelo que veio de meta/ficha (ou volta à do código, se não veio nada que sirva). Devolve true quando	p09e
+fichaChega	p09e	148	7679	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	meta/ficha chegou (ou mudou): aplica, acerta o dia aberto e redesenha tudo o que depende da ficha	p09e,p10
+fichaVersao	p09e	162	7693	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	2.4 (pedido do dono, 20/nov): qual ficha valia em cada dia da semana W. Sem W, a atual (a mais nova). Devolve { chave, d	p08,p09e
+fichaUsaSemana	p09e	181	7712	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Põe em uso a ficha da semana W (render chama a cada desenho: Semana e Resumo mostram a ficha que valia na semana aberta)	p08,p09e
+fichaNa	p09e	189	7720	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Roda fn com a ficha da semana W em uso e volta à que estava	p08,p09e
+fichaComDoc	p09e	191	7722	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Roda fn com um documento de ficha qualquer em uso (para medir) e volta ao que estava	p09e
+fichaAmanha	p09e	193	7724	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Data local de amanhã (AAAA-MM-DD): o início padrão de uma ficha nova (o dono: "mantém os treinos até o dia da troca")	p09e,p09f
+fichaInicioHtml	p09e	195	7726	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Campo "A ficha nova vale a partir de" (aba Treinador e editor do treinador). Só aparece quando já existe uma ficha em us	p09f
+fichaAtual	p09e	201	7732	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	A ficha em uso, no formato de meta/ficha (para ajustar e gravar de novo). 2.4: sempre a ficha atual, mesmo com uma seman	p09e,p09f
+fichaAtualJa	p09e	202	7733	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca		p09e
+fichaGrava	p09e	212	7743	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Grava a ficha da conta (a tela muda quando o registro volta por fichaChega). 2.4 (pedido do dono, 20/nov): a ficha nova	p09e,p09f
+fichaMin	p09e	232	7763	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Minutos previstos de um dia de ficha (sem o cardio): aquecimento geral, séries, descansos e trocas. Conta simples, usada	p09e,p09f
+fichaPalavras	p09e	238	7769	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Palavras que a pessoa escreveu num campo livre do Perfil (com 4 letras ou mais), sem acento	p09e
+fichaServe	p09e	240	7771	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Um exercício do banco serve para esta pessoa? (local, experiência, o que ela não faz, cuidado com a lesão informada)	p09e
+fichaPerfil	p09e	247	7778	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	O que o gerador lê do Perfil	p09e
+fichaPrio	p09e	262	7793	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Músculo prioritário? (o Perfil fala em "Ombros" e "Braços"; a ficha separa em partes)	p09e
+geraFicha	p09e	264	7795	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Monta a ficha a partir do Perfil. cardioMin = minutos de cardio previstos por dia (entram no teto de 2 h). desde = seman	p09e
+fichaContaDono	p09e	329	7860	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	2.6 (10ª banca, alto 2; 2ª volta do alto 5 da 9ª, por isso pela raiz): quem é a conta do dono, para o limite de 2 h, vem	p09e
+fichaTeto	p09e	332	7863	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	2.4 (9ª banca, alto 5; decisão do dono, 20/nov): o limite de tempo por dia, com o cardio e o aquecimento, é o que a pess	p09e,p09f
+fichaMede	p09e	335	7866	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Tempo previsto pelo motor do app (dayTime: aquecimento, séries, descansos e trocas no ritmo da pessoa) mais o cardio do	p09e,p09f
+fichaNoTempo	p09e	346	7877	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Corta a ficha até o pior dia caber no limite: primeiro uma série de um isolador (ficam 2), depois o último exercício do	p09e
+fichaTetoSeries	p09e	360	7891	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Teto de séries por dia (o da conferência): com muitas prioridades, a série a mais passava de 30 e a ficha era recusada (	p09e
+fichaGera	p09e	366	7897	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Gera a ficha da pessoa já dentro do limite de tempo dela	p09e,p09f
+fichaCardioMin	p09e	368	7899	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Minutos de cardio previstos por dia de treino (entra no teto de 2 h)	p09e,p09f
+fichaCadastroOk	p09e	371	7902	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	O cadastro tem o que a ficha precisa? 2.3: os dados obrigatórios do treino (OBRIG, seção 8): sexo, nascimento, altura, p	p09e,p09f
+fichaAuto	p09e	374	7905	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Ficha inicial automática: conta sem ficha própria, sem nenhum treino registrado, com o cadastro completo e sem treinador	p09f,p10
+fichaDono	p09e	385	7916	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	2.3 (20/nov): a ficha do código é a do dono do app e só vale para a conta dele: Perfil com "fichaPadrao" ou com o plano	p09e
+fichaConta	p09e	390	7921	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Decide a cada desenho: ficha da conta (meta/ficha), a do código (só a do dono) ou nenhuma, e põe o aviso certo no lugar	p08,p09e
+fichaAlternativa	p09e	409	7940	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Outro exercício do banco para o lugar de um da ficha: mesmo músculo, de preferência do mesmo tipo e de outro equipamento	p09e
+fichaSugestoes	p09e	418	7949	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Sugestões de troca pelo que foi anotado nas 3 últimas semanas: dor em 2 treinos, pulado em 2 semanas, ou carga parada há	p09e,p09f
+fichaTroca	p09e	440	7971	31. FICHA POR CONTA E GERADOR: cada pessoa com a sua ficha, banco de exercícios e sugestões de troca	Troca um exercício da ficha por outro do banco, no mesmo lugar, com as mesmas séries e repetições. Vale a partir desta s	p09f
+baseEstado	p09f	21	8003	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Estado da base nesta sessão: lista de profissionais, minhas requisições e meus vínculos	p09f
+baseProLimpa	p09f	23	8005	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Uma linha de hexis_base conferida	p09f
+reqLimpa	p09f	25	8007	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Uma linha de hexis_requisicoes conferida	p09f
+reqLista	p09f	33	8015	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Minhas requisições, direto do servidor (lança o erro)	p09f
+baseCarrega	p09f	35	8017	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Carrega vínculos, lista da base e requisições; redesenha a aba aberta	p09f
+baseEmDia	p09f	48	8030	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Mantém vínculos, lista e pedidos em dia (no máximo uma busca a cada 30 s). Chamada pelas três abas a cada desenho	p09f
+baseMeu	p09f	50	8032	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Meu profissional daquele serviço (vínculo aceito), se houver	p09f
+quemCuida	p09f	52	8034	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Quem cuida: "auto" (o Héxis) ou "prof" (profissional da base). Sem escolha gravada, vale "prof" para quem já tem o profi	p09e,p09f
+quemHtml	p09f	54	8036	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Os dois botões da escolha	p09f
+baseHtml	p09f	59	8041	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Bloco "profissional da base" de um serviço: o meu profissional, os pedidos abertos, a lista para escolher e o campo do p	p09f
+fichaResumoHtml	p09f	103	8085	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	A ficha em uso, resumida: de onde veio e, por dia, os exercícios e o tempo previsto	p09f
+sugestoesHtml	p09f	115	8097	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Sugestões de troca (seção 31), com os botões quando quem está na tela pode mudar a ficha	p09f
+trCargasHtml	p09f	124	8106	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	O que o motor de progressão prevê para as cargas da próxima semana (a conta é a de sempre, da seção 3)	p09f
+trPessoalHtml	p09f	131	8113	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Aba Treino → Treinador, na conta da própria pessoa	p09f
+reqDoCliente	p09f	145	8127	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Requisição aberta deste cliente para mim, daquele serviço (quando o profissional está no Héxis do cliente)	p09f
+reqClienteHtml	p09f	147	8129	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Caixa do pedido do cliente, com o botão de marcar como atendido	p09f
+fichaChave	p09f	154	8136	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Código novo para um exercício do banco dentro de uma ficha (único na ficha e diferente dos códigos da ficha do código)	p09e,p09f
+fichaLinha	p09f	156	8138	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Um exercício do banco como linha de ficha	p09f
+bancoOpts	p09f	162	8144	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Opções do seletor de exercícios, agrupadas por músculo	p09f
+feInicio	p09f	165	8147	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Editor da ficha do cliente (só para o treinador, no Héxis do cliente). O rascunho fica em app.fe até salvar 2.3: ponto d	p09f
+fichaEditorHtml	p09f	166	8148	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base		p09f
+trClienteHtml	p09f	182	8164	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Aba Treinador no Héxis de um cliente (quem vê é o profissional)	p09f
+renderTreinador	p09f	189	8171	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Aba Treino → Treinador: a tela da própria pessoa ou, no Héxis de um cliente, a do profissional	p08
+renderNutri	p09f	197	8179	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Aba Dieta → Nutricionista	p08
+renderEndo	p09f	210	8192	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Aba Evolução → Endócrino. Sem lado automático: o Héxis não propõe dose, esquema nem protocolo	p08
+reqFrase	p09f	287	8269	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	----- Aviso ao profissional chamado ----- Texto de uma requisição para o profissional: quem pediu e o quê	p09f
+reqAviso	p09f	289	8271	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Na tela de escolha do modo (logo depois de entrar): avisa que há pedidos esperando. Chamada por proEscolhe	p09b
+reqCarrega	p09f	298	8280	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Na carteira: carrega as requisições junto com os vínculos. Chamada por proCarrega (falha em silêncio: sem o SQL novo, a	p09b
+reqCarteiraHtml	p09f	300	8282	32. TREINADOR, NUTRICIONISTA E ENDÓCRINO: o Héxis automático ou um profissional da base	Na carteira: os pedidos que chegaram, com o que cada pessoa escreveu. Chamada por pxCarteiraHtml	p09b
+makeDb	p10	53	8353	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Mesma interface de coleções e documentos que o app usa: dados carregados de uma vez e gravados um a um. Revisão de 18/no	p09b,p10
+registraConf	p10	78	8378	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	5ª banca: os conflitos (valores que perderam numa junção) ficam no SERVIDOR, no documento meta/conflitos, para TODOS os	p10
+juntaDoc	p10	125	8425	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)		p10
+junta	p10	132	8432	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)		p06,p10
+load	p10	194	8494	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Lê todas as linhas da pessoa (de 1.000 em 1.000), troca o que estava na memória e avisa as telas inscritas. O que ainda	p03,p06,p09,p09b,p10
+envia	p10	225	8525	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Envia a gravação que espera na fila do documento p; em falha de rede, agenda nova tentativa	p02,p08,p10
+recarrega	p10	290	8590	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Outra aba deste aparelho gravou (sinal GK, evento storage): busca de novo o documento dela, para esta aba não trabalhar	p09b,p10
+poe	p10	308	8608	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Grava o documento p: entra na fila (e no aparelho) e sai pela gravação condicional	p10
+lgSay	p10	343	8643	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Mensagem da tela de login	p10
+lgErr	p10	345	8645	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Erro do login em português	p10
+showLogin	p10	358	8658	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Mostra a tela de login	p10
+hideLogin	p10	360	8660	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Esconde a tela de login	p10
+lgGo	p10	362	8662	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Entrar (criar = false) ou criar conta (criar = true) com e-mail e senha	p10
+gravaJa	p10	418	8718	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Ao esconder ou fechar o app (travar a tela, trocar de app): grava na hora o que esperava os 1,2 s e o que está na fila	p09b,p10
+corpoRuimAviso	p10	428	8728	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Aviso no alto quando há registros de corpo com data impossível, com o botão para apagá-los	p10
+exportaDados	p10	445	8745	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Seus dados (Plano e regras): baixa a cópia de segurança (todos os documentos, em JSON) ou as séries em planilha (CSV)	p10
+connect	p10	472	8772	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Liga no Supabase e espera a sessão: com login, abre os dados; sem login, mostra a tela de entrada	p01,p08,p10
+syncEstado	p10	508	8808	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Estado das gravações no cabeçalho (s vem de db.estado()): n = documentos esperando gravação; falhou = alguma já falhou e	p05,p10
+avisoFila	p10	532	8832	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Aviso fixo abaixo do cabeçalho, separado do #conn (que é da carga e do Corpo inválido): html vazio tira o aviso	p09b,p10
+conflitoAviso	p10	552	8852	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Conflitos (db.conflitos, no documento meta/conflitos do servidor desde a 5ª banca): valores que dois aparelhos ou duas a	p10
+outraContaAviso	p10	575	8875	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	4ª banca: registros não enviados de OUTRA conta guardados neste aparelho (a sessão dela expirou sem Sair): quem entra fi	p10
+dataOk	p10	590	8890	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Corpo e exames com data impossível (ex.: "2026-13-45", vinda de um CSV malformado) quebravam Corpo, Objetivo e Hoje: fic	p04,p05,p07,p09b,p09e,p09f
+startSession	p10	592	8892	25. CONEXÃO: login e dados no Supabase (cada pessoa lê e grava as próprias linhas; o profissional com vínculo aceito, as do cliente)	Sessão aberta: carrega os dados da pessoa e liga as telas	p09b,p10
+semAcento	p10	716	9016	26. DIETA: diário de alimentos com a tabela TACO	Texto sem acento e em minúsculas, para a busca	p07,p09e,p10
+dtS	p10	736	9036	26. DIETA: diário de alimentos com a tabela TACO	Estado da aba Dieta: menu aberto, dia mostrado, refeição recebendo alimento, busca e alimento escolhido	p10
+dtRefAgora	p10	738	9038	26. DIETA: diário de alimentos com a tabela TACO	Refeição da hora: a do horário típico mais próximo; nomes sem horário conhecido dividem o dia (5h às 23h) em partes igua	p10
+dtCurto	p10	745	9045	26. DIETA: diário de alimentos com a tabela TACO	Nome curto da refeição para os botões	p10
+dtAdd	p10	747	9047	26. DIETA: diário de alimentos com a tabela TACO	Soma dias a uma data AAAA-MM-DD	p10
+dtDow	p10	749	9049	26. DIETA: diário de alimentos com a tabela TACO	Dia da semana de uma data (0 = segunda)	p10
+dtKc	p10	751	9051	26. DIETA: diário de alimentos com a tabela TACO	Calorias arredondadas, com ponto de milhar	p10
+dtMeta	p10	753	9053	26. DIETA: diário de alimentos com a tabela TACO	Meta do dia pela fase do plano: calorias (primeiro número do texto da fase) e macros	p10
+dtRefs	p10	760	9060	26. DIETA: diário de alimentos com a tabela TACO	Refeições do dia: as que você definiu ou o padrão pelo número de refeições do Perfil	p10
+dtPartes	p10	767	9067	26. DIETA: diário de alimentos com a tabela TACO	Parte de cada refeição no dia, ajustada para as partes somarem 1	p10
+dtMeus	p10	769	9069	26. DIETA: diário de alimentos com a tabela TACO	Alimentos cadastrados por você (fora da tabela)	p10
+dtFood	p10	771	9071	26. DIETA: diário de alimentos com a tabela TACO	Alimento pela chave: número = linha da TACO; texto = alimento seu	p10
+dtCalc	p10	777	9077	26. DIETA: diário de alimentos com a tabela TACO	Calorias e macros de uma quantidade (gramas, ou número de porções quando o alimento é por porção)	p10
+dtSum	p10	780	9080	26. DIETA: diário de alimentos com a tabela TACO	Soma de calorias e macros de uma lista de itens 7ª banca: item que não é objeto (null, número, texto vindo do servidor)	p09b,p10
+dtItens	p10	785	9085	26. DIETA: diário de alimentos com a tabela TACO	Alimentos registrados em um dia 5ª banca: cada alimento tem um id próprio (x.id). O ×, a quantidade e o "Desfazer" apont	p10
+dtNovoId	p10	787	9087	26. DIETA: diário de alimentos com a tabela TACO	Id novo para um alimento lançado agora	p10
+dtBusca	p10	796	9096	26. DIETA: diário de alimentos com a tabela TACO	Busca: todas as palavras digitadas têm de aparecer no nome; seus alimentos vêm primeiro, depois os que começam pela pala	p10
+dtUsados	p10	810	9110	26. DIETA: diário de alimentos com a tabela TACO	Alimentos que você mais registrou (aparecem antes de digitar), cada um com a última quantidade usada	p10
+dtUltQ	p10	816	9116	26. DIETA: diário de alimentos com a tabela TACO	Última quantidade usada de um alimento (ou 100 g / 1 porção)	p10
+dtQtd	p10	818	9118	26. DIETA: diário de alimentos com a tabela TACO	Quantidade com unidade: "150 g" ou "1,5 porção"	p10
+dtGrava	p10	820	9120	26. DIETA: diário de alimentos com a tabela TACO	Grava um registro da dieta (um dia ou a lista dos seus alimentos)	p10
+dtPoe	p10	826	9126	26. DIETA: diário de alimentos com a tabela TACO	Grava a lista de alimentos de um dia	p10
+dtSit	p10	828	9128	26. DIETA: diário de alimentos com a tabela TACO	Situação contra o proposto: dentro (até 10%), acima ou abaixo, com a cor de cada uma	p10
+dtBar	p10	830	9130	26. DIETA: diário de alimentos com a tabela TACO	Barra de progresso: ingerido contra o proposto	p10
+dtDif	p10	832	9132	26. DIETA: diário de alimentos com a tabela TACO	Diferença com sinal e situação: "+120 · acima"	p10
+dtGasto	p10	840	9140	26. DIETA: diário de alimentos com a tabela TACO	Gasto real estimado pelos seus próprios registros: média do que você comeu nos dias anotados menos a energia que virou (	p10
+dtGastoHtml	p10	851	9151	26. DIETA: diário de alimentos com a tabela TACO	Bloco do gasto estimado na visão "Por dia": o número, de onde ele vem e a comparação com a meta da fase	p10
+renderDieta	p10	861	9161	26. DIETA: diário de alimentos com a tabela TACO	Desenha a aba Dieta: meta da fase, menu e a visão escolhida	p08,p10
+dtDiaHtml	p10	871	9171	26. DIETA: diário de alimentos com a tabela TACO	Visão "Registrar": o dia, o total contra a meta e os alimentos de cada refeição	p10
+dtHeroHtml	p10	891	9191	26. DIETA: diário de alimentos com a tabela TACO	Cartão do total do dia: anel das calorias contra a meta, o que falta e os macros	p10
+dtItemHtml	p10	900	9200	26. DIETA: diário de alimentos com a tabela TACO	Linha de um alimento registrado: nome, quantidade (editável), calorias e remover	p10
+dtPrevTxt	p10	904	9204	26. DIETA: diário de alimentos com a tabela TACO	Texto da prévia: calorias e macros da quantidade digitada	p10
+dtResHtml	p10	906	9206	26. DIETA: diário de alimentos com a tabela TACO	Lista da busca (ou os mais usados, antes de digitar)	p10
+dtAddHtml	p10	920	9220	26. DIETA: diário de alimentos com a tabela TACO	Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela	p10
+dtRefHtml	p10	938	9238	26. DIETA: diário de alimentos com a tabela TACO	Visão "Por refeição": média de cada refeição nos dias com registro, contra o proposto	p10
+dtSemHtml	p10	955	9255	26. DIETA: diário de alimentos com a tabela TACO	Visão "Por dia da semana": barras do total de cada dia contra a meta e a tabela refeição × dia	p10
+dtCfgHtml	p10	973	9273	26. DIETA: diário de alimentos com a tabela TACO	Bloco "Refeições e proposto": nomes e parte de cada refeição nas calorias do dia	p10
+dtRefsSalva	p10	982	9282	26. DIETA: diário de alimentos com a tabela TACO	Guarda as refeições definidas (ou volta ao padrão) nos ajustes	p10
+dtOk	p10	988	9288	26. DIETA: diário de alimentos com a tabela TACO	Adiciona o alimento escolhido à refeição aberta	p10
+dtPoeItem	p10	995	9295	26. DIETA: diário de alimentos com a tabela TACO	Põe um alimento na refeição escolhida e deixa a busca pronta para o próximo	p10
+dtForaSalva	p10	1004	9304	26. DIETA: diário de alimentos com a tabela TACO	Cadastra um alimento fora da tabela e já deixa escolhido para informar a quantidade	p10
+dtClick	p10	1023	9323	26. DIETA: diário de alimentos com a tabela TACO	Toques na aba Dieta	p10
+dtInput	p10	1057	9357	26. DIETA: diário de alimentos com a tabela TACO	Digitação: a busca atualiza só a lista; a quantidade atualiza a prévia	p10
+dtChange	p10	1063	9363	26. DIETA: diário de alimentos com a tabela TACO	Campos alterados: dia, quantidade de um item e nomes ou partes das refeições	p10
+numCampos	p10	1099	9399	27. PARTIDA	Campos de número aceitam vírgula. Com type="number", o navegador descartava a vírgula ("72,5" virava 725) sem aviso. Tod	p10
+travaTela	p10	1103	9403	27. PARTIDA	O app fica nos limites da tela: sem zoom de pinça nem de toque duplo, sem zoom ao entrar num campo e sem rolagem para os	p10
+largos	p10	1118	9418	27. PARTIDA	Elementos que passam da largura da tela (conferência)	p09

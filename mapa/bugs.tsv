@@ -1,0 +1,5 @@
+# Héxis 2.6 · completo/index.html SHA-256 a75dada9ed5c37772a4554c2dd5b973668943407e793201d14c735c0bc9ac713
+no	bloco	funcoes	teste
+1	B3, tempo por pessoa	fichaTeto,fichaDono,fichaGera	testes/bug-1.js
+2	B6, cópia no Claude	djPdfArq,djPdfFonte	testes/bug-2.js
+3	B7 com B6		testes/bug-2.js
