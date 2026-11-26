@@ -6,7 +6,7 @@
      (pasta vendor/: Chart.js, Supabase, leitor de PDF e a fonte). Nenhum CDN nem Google Fonts (3ª banca). Só conversa com o Supabase do app.
      Um texto malicioso que escape para a tela não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode
      testes/atualiza-csp.py, senão o app não abre. Os estilos continuam com 'unsafe-inline' porque as telas usam style="" em muitos pontos. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: 'sha256-ZUDG2okgGhVbzbXWKwMIJTCa2xd0mmA9Ztq2E5AZI+k='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: 'sha256-G/WmEVAkrJtGuaaKMXt6OIy5b5LZJZWQLWW37u+Swjo='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Héxis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1499,7 +1499,7 @@ details.pq > summary, details.pq > summary .pqt { font-size: var(--f1); font-wei
 /* 29. Aquecimento (2.8, bug-19 e bug-20): campo da carga de cada série e a barra do cronômetro de cada série de aquecimento */
 .warm .wqs + .wqs { margin-top: 6px; }
 .warm .wkg { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted); }
-.warm .wkg input { width: 64px; min-height: 36px; padding: 4px 6px; text-align: right; }
+.warm .wkg input { width: 64px; min-height: 44px; padding: 4px 6px; text-align: right; }
 .warm .clk.aq { margin: 4px 0 0; }
 /* 30. Barra de baixo em pílula flutuante, que encolhe ao rolar (pedidos do dono de 25 e 26/nov, exceção ao escopo travado; Héxis 2.8, bloco B10). Só estilo,
    vem por último e prevalece. Vale para todos os níveis de uso.
@@ -1537,6 +1537,11 @@ body.nav-mini .bnav a .bn-ic svg { transform: scale(.9); }
 body.nav-mini .savebar { transform: translateY(calc(var(--bn-hf) - var(--bn-hm))); }
 @media (prefers-reduced-motion: no-preference) { .bnav { transition: height .2s ease-out; } .savebar { transition: transform .2s ease-out; } .bnav a::before { transition: inset .2s ease-out, background-color .25s; } }
 @media (prefers-reduced-motion: reduce) { .bnav, .savebar, .bnav a::before { transition: none; } }
+/* 31. Você → Profissionais: lista de seleção da base e o convite por e-mail recolhido (pedido do dono de 26/nov, exceção ao escopo travado; Héxis 2.10,
+   bloco B11, seção 28 do programa). Só espaço entre o pedido pela lista e o convite. Vale para todos os níveis de uso. */
+#acBaseAviso { margin: 14px 0 0; }
+.ac-conv { margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--line); }
+.ac-conv > .ac-pede { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -2011,14 +2016,13 @@ body.nav-mini .savebar { transform: translateY(calc(var(--bn-hf) - var(--bn-hm))
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Versão do programa: sobe a cada rodada de correções (o registro de cada versão está em VERSOES.md). Aparece em Plano e regras e na cópia de segurança
-const APP_VERSAO = "2.9";
+const APP_VERSAO = "2.10";
 const APP_VERSAO_DATA = "26/nov/2026";
 // Plano
 const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
 const BLOCK_W = 9;                 // semanas do primeiro bloco ("Semana N de 9") e de cada bloco de quem não segue o plano anual
 const PLUS_MAX = 2;                // no máximo 2 séries a mais por exercício quando o músculo é prioritário
 const REFASE_MIN = 2;              // a carga é reajustada entre blocos quando o meio da faixa muda 2 repetições ou mais
-const TEMPO_MAX_DEF = 120;         // limite de tempo por dia (min), se o Perfil não disser outro
 const CARDIO_DEF = { min: 40, vezes: 6, incl: 15, vel: 5.5, tipo: "caminhada" }; // cardio quando ainda não há plano
 // Motor de progressão
 const BACKOFF = 0.88;              // back-off = 88% da série pesada (12% a menos)
@@ -3175,7 +3179,6 @@ function computePlan(pf) {
   if (tt == null) R.est.push("tempo de treino não informado: considerei intermediário");
   const dias = Array.isArray(pf.dias) && pf.dias.length ? pf.dias.length : 6;
   R.dias = dias;
-  const tempoMax = num(pf.tempoMax) || TEMPO_MAX_DEF;
   const liftMin = 75;
   const obj = pf.objetivo || "recomp";
   if (!pf.objetivo) R.est.push("objetivo não informado: considerei recomposição");
@@ -3779,7 +3782,7 @@ Object.assign(GLOSS, {
   pf_inicio: ["Início do plano", "<p>A semana 1 começa na segunda-feira da semana desta data. Mudar a data muda as semanas da aba Semana, mas não apaga registros.</p>"],
   pf_tempoTreino: ["Tempo de treino", "<p>Define o nível (iniciante, intermediário, avançado), que ajusta o ritmo de ganho de massa.</p>"],
   pf_dias: ["Dias disponíveis", "<p>A ficha usa 6 dias por semana. Com menos dias, o app continua funcionando: os treinos que ficarem de fora aparecem para repetir na semana seguinte.</p>"],
-  pf_tempoMax: ["Tempo máximo por dia", "<p>Vale só para o treino: aquecimento e musculação. O cardio é opcional e fica fora desse limite.</p><p>A ficha em uso cabe nele. Se passar um pouco (até 10% ou 5 min, o que for maior), o app avisa e você escolhe entre usar assim ou ajustar. Se passar mais, os exercícios do fim do dia que não cabem viram opcionais, sem apagar nada.</p>"],
+  pf_tempoMax: ["Tempo máximo por dia", "<p>Vale só para o treino: aquecimento e musculação. O cardio é opcional e fica fora desse limite.</p><p>A ficha em uso cabe nele. Se passar um pouco (até 10% ou 5 min, o que for maior), o app avisa e você escolhe entre usar assim ou ajustar. Se passar mais, os exercícios do fim do dia que não cabem viram opcionais, sem apagar nada.</p><p>Na conta do dono, o limite é de 2 h só de treino, mesmo que o campo mostre mais.</p>"],
   pf_trabalho: ["Trabalho", "<p>Entra no gasto do dia fora da academia, que pesa mais que o treino na manutenção.</p>"],
   pf_passos: ["Passos por dia", "<p>Média do celular ou relógio. Acima de 10 mil passos o gasto diário sobe.</p>"],
   pf_sono: ["Sono", "<p>Menos de 7 h atrapalha recuperação, força e controle da fome, principalmente em déficit.</p>"],
@@ -3848,7 +3851,7 @@ GLOSS.intervalo = ["Intervalo entre exercícios", "<p>O tempo entre terminar um 
 GLOSS.ordem = ["Ordem dos exercícios", "<p>O app descobre a ordem real pela hora em que você toca em <b>✓ Feito</b> (ou, sem isso, pela hora da primeira série anotada). Por isso, toque em Feito logo ao terminar cada exercício.</p><ul><li>Feito <b>mais tarde</b> que o previsto e com desempenho abaixo: com mais cansaço acumulado, não conta como estagnação; a próxima semana repete na ordem da ficha.</li><li>Em toda troca, o app guarda a variação do desempenho contra o previsto para aquela semana e mostra a média no cartão: “mais tarde 2×: −6%”.</li></ul><p>“Marcar o dia todo como feito” não muda a ordem.</p>"];
 GLOSS.pace = ["Pace (automático)", "<p>Tempo para percorrer 1 km, em minutos:segundos. O app calcula sozinho enquanto você digita:</p><ul><li><b>Tempo e distância</b> da esteira: pace = tempo ÷ distância.</li><li>Só a <b>velocidade</b>: pace = 60 ÷ velocidade.</li><li>Nada anotado: mostra o pace <b>previsto</b> (borda tracejada).</li></ul><p class=\"eg\">Ex.: 45:30 de esteira e 4,2 km = pace de 10:50 /km (5,5 km/h).</p><p>Quanto menor o pace, mais rápido. Na aba Progresso há o pace médio de cada semana.</p>"];
 // Termos de uso comum em prescrição de treino, dieta e medidas: ficam sem o botão "i" (a explicação continua no Glossário, em Plano e regras)
-const INFO_COMUM = new Set(["rir", "faixa", "alvo", "previsto", "series", "descanso", "biset", "carga", "comp", "iso", "core", "top", "backoff", "deload", "aquecimento", "unilateral", "tempoexec", "intervalo", "descanso_reg", "tempotreino", "dias", "diatodo", "opcional", "domingo", "cardio", "cardiodia", "cardiotipo", "cardiokcal", "pace", "kcal", "macros", "livre", "media7", "gordura", "grafpeso", "ritmosem", "gorduratempo", "medidastempo", "pesodiario", "feitos", "seriessem", "tonelagem", "musculo", "musculotempo", "acoessem", "epley", "g_descexec", "volume", "fotos", "registrar", "fichaant", "telaacesa", "dt_diario", "dt_fora", "dj_mv", "dj_int", "dj_ref", "diario", "status", "pf_peso", "pf_altura", "pf_cintura", "pf_quadril", "pf_peito", "pf_bracoRelax", "pf_bracoContr", "pf_coxa", "pf_panturrilha", "pf_metodoGordura", "pf_gordura", "pf_objetivo", "pf_metaPeso", "pf_metaGordura", "pf_dataAlvo", "pf_dias", "pf_tempoMax", "pf_tempoTreino", "pf_sono", "pf_estresse", "pf_passos", "pf_trabalho", "pf_imc", "pf_agua", "pf_inicio", "pf_prioridades", "pf_pressao", "pf_fcRepouso", "pf_kcalAtual", "pf_horasSentado", "pf_condicoes", "pf_liberacao", "pf_metaCintura", "pf_ritmo"]);
+const INFO_COMUM = new Set(["rir", "faixa", "alvo", "previsto", "series", "descanso", "biset", "carga", "comp", "iso", "core", "top", "backoff", "deload", "aquecimento", "unilateral", "tempoexec", "intervalo", "descanso_reg", "tempotreino", "dias", "diatodo", "opcional", "domingo", "cardio", "cardiodia", "cardiotipo", "cardiokcal", "pace", "kcal", "macros", "livre", "media7", "gordura", "grafpeso", "ritmosem", "gorduratempo", "medidastempo", "pesodiario", "feitos", "seriessem", "tonelagem", "musculo", "musculotempo", "acoessem", "epley", "g_descexec", "volume", "fotos", "registrar", "fichaant", "telaacesa", "dt_diario", "dt_fora", "dj_mv", "dj_int", "dj_ref", "diario", "status", "pf_peso", "pf_altura", "pf_cintura", "pf_quadril", "pf_peito", "pf_bracoRelax", "pf_bracoContr", "pf_coxa", "pf_panturrilha", "pf_metodoGordura", "pf_gordura", "pf_objetivo", "pf_metaPeso", "pf_metaGordura", "pf_dataAlvo", "pf_dias", "pf_tempoTreino", "pf_sono", "pf_estresse", "pf_passos", "pf_trabalho", "pf_imc", "pf_agua", "pf_inicio", "pf_prioridades", "pf_pressao", "pf_fcRepouso", "pf_kcalAtual", "pf_horasSentado", "pf_condicoes", "pf_liberacao", "pf_metaCintura", "pf_ritmo"]);
 // Ações óbvias pelo próprio nome (subir, manter, reduzir…) também ficam sem "i"; destrave, nova faixa, conversa entre treinos e festas mantêm
 const INFO_ACT_COMUM = /^act-(start|up|reps|keep|down|repeat|deload|pending)$/;
 // O termo merece o botão "i"?
@@ -4142,8 +4145,8 @@ function warmHtml(d, p, e) {
   const L = warmL(p), c = app.clk, aq = (e && e.aq) || [], antes = warmTime(plan).antes;
   const rows = plan.map(([f, r], i) => {
     const w = L > 0 ? warmKg(d, L, i, f, e, app.week) : null;
-    return '<div class="wqs" id="wqs-' + d.k + "-" + i + '"><div class="wqrow"><button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + warmLbl(L, f, r, w ? w.kg : 0) + "</button>" +
-      (w ? '<label class="wkg">ajustar <input type="text" inputmode="decimal" autocomplete="off" data-aqkg="' + d.k + "|" + i + '" value="' + (w.own ? esc(fmt(w.kg)) : "") + '" placeholder="' + esc(fmt(w.sug)) + '" aria-label="Carga do aquecimento ' + (i + 1) + ' em kg' + (w.lem && !w.own ? " (lembrada da última vez)" : "") + '"> kg</label>' : "") +
+    return '<div class="wqs" id="wqs-' + d.k + "-" + i + '"><div class="wqrow"><button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + ": " + warmLbl(L, f, r, w ? w.kg : 0) + '">' + warmLbl(L, f, r, w ? w.kg : 0) + "</button>" +
+      (w ? '<label class="wkg">ajustar <input type="text" inputmode="decimal" autocomplete="off" data-aqkg="' + d.k + "|" + i + '" value="' + (w.own ? esc(fmt(w.kg)) : "") + '" placeholder="' + esc(fmt(w.sug)) + '" aria-label="Ajustar a carga do aquecimento ' + (i + 1) + ' em kg' + (w.lem && !w.own ? " (lembrada da última vez)" : "") + '"> kg</label>' : "") +
       '<span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span></div>" + clkAqSetHtml(d, i, plan.length) + "</div>";
   }).join("");
   const feito = e && +e.aqT > 0 ? '<p class="wqd muted">⏱ ' + clkFmt(e.aqT) + (+e.aqD > 0 ? " + " + clkFmt(e.aqD) + " de descanso" : "") + " no aquecimento</p>" : "";
@@ -5493,6 +5496,8 @@ function clkAct(a) {
   if (!c) return;
   if (clkFora()) { clkEmFicha(() => clkAct(a)); return; } // 2.8 (bug-16): o resto dos botões também lê e grava na ficha da semana do cronômetro
   if (a === "stop") { clkStop(); return; }
+  // bug-34: o 2º toque de um toque duplo no "Parar" cai no botão que acaba de aparecer ("Série 2", "■"): nos 500 ms depois de a fase mudar, "next" e "end" não valem (aquecimento, série de trabalho e par)
+  if ((a === "next" || a === "end") && clkEl() < 0.5) return;
   if (a === "side") { if (c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", clkEl()); c.waitSide = false; c.t0 = Date.now(); c.ack = 0; c.ask = false; clkSave(); clkRefresh(); } return; }
   // pular o outro lado: o descanso da série conta desde o fim do lado feito
   if (a === "skip") { if (c.waitSide) { clkToRest(c, c.t0); clkSave(); clkRefresh(); } return; }
@@ -5750,6 +5755,8 @@ function daySummaryHtml(W, day) {
   const vtxt = perf == null ? "Desempenho sem base de comparação" : perf >= PERF_ACIMA ? "Acima do previsto" : perf <= PERF_ABAIXO ? "Abaixo do previsto" : "No previsto";
   let h = head + '<div class="verdict ' + vcls + '"><b>' + vtxt + "</b>" + (perf != null ? " · desempenho " + pctTxt(perf) + " contra o planejado" : "") + " · " + setsDone + " de " + setsPrev + " séries" + infoBtn("resumo") + "</div>";
   const totReg = t.reg, totPrev = t.prev; // 2.9 (bug-25): o cardio fica fora do limite
+  // 2.10 (bug-29): com "Usar assim" na faixa do tempo (meta/ajustes.fichaTempo, para esta ficha e este limite), passar até a margem não é "passou do limite"
+  const flim = app.fichaLimInfo, fesc = (app.settings || {}).fichaTempo, dentroMargem = !!(flim && fesc && fesc.escolha === "assim" && fesc.ficha === flim.sig && fesc.teto === flim.teto && totReg <= max + fichaMargem(max));
   const starts = rows.map(r => Date.parse((r.e && r.e.startAt) || "")).filter(x => x > 0), ends = rows.map(r => Date.parse((r.e && r.e.doneAt) || "")).filter(x => x > 0);
   const relogio = starts.length && ends.length ? Math.round((Math.max(...ends) - Math.min(...starts)) / 60000) : null;
   h += '<div class="tiles">' +
@@ -5757,7 +5764,7 @@ function daySummaryHtml(W, day) {
     tile("Séries", setsDone + " de " + setsPrev, setsDone >= setsPrev ? "todas feitas" : "faltaram " + (setsPrev - setsDone)) +
     tile("Volume", tonPrev ? kgTxt(ton) : "—", tonPrev ? Math.round(ton / tonPrev * 100) + "% do previsto (" + kgTxt(tonPrev) + ")" : "carga × repetições", "volume") +
     tile("Desempenho", perf == null ? "—" : pctTxt(perf), perf == null ? "anote carga e reps" : "melhor série contra a prevista, média dos exercícios", "resumo") +
-    tile("Tempo", t.nReg ? "~" + totReg + " min" : "—", "previsto " + totPrev + " min" + (relogio != null && relogio > 0 ? " · relógio " + relogio + " min de musculação" : "") + (totReg > max ? " · passou do limite" : ""), "tempotreino") +
+    tile("Tempo", t.nReg ? "~" + totReg + " min" : "—", "previsto " + totPrev + " min" + (relogio != null && relogio > 0 ? " · relógio " + relogio + " min de musculação" : "") + (totReg > max ? (dentroMargem ? " · um pouco acima do limite, dentro da margem que você aceitou" : " · passou do limite") : ""), "tempotreino") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) : "sem descansos anotados", "descanso_reg") +
     tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular" : "incompleta") : "precisa de 2 séries seguidas", "recuperacao") +
     tile("Cardio", c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : c.st === "nao" ? "não feito" : "—", c.st === "feito" ? (paceOf(c) ? "pace " + paceFmt(paceOf(c)) + " /km · " : "") + "previsto " + pl.min + " min" : "previsto " + pl.min + " min") +
@@ -5795,7 +5802,7 @@ function daySummaryHtml(W, day) {
   if (asym.length) dir.push(["warn", "Diferença entre os lados: " + list(asym, r => nm(r) + " (" + esc(r.uni.split(" · ")[0]) + ")") + ". Comece pelo lado mais fraco e repita no outro o mesmo número de repetições."]);
   const fora = rows.filter(r => r.ord && r.ord.pos !== r.ord.prev && r.perf != null);
   if (fora.length) dir.push(["info", "Fora da ordem da ficha: " + list(fora, r => nm(r) + " (" + r.ord.pos + "º em vez de " + r.ord.prev + "º, " + pctTxt(r.perf) + ")") + ". O app guarda esse efeito para as próximas trocas."]);
-  if (t.nReg && totReg > max) dir.push(["warn", "O treino somou ~" + totReg + " min, acima do seu limite de " + max + " min." + (t.restAvg != null && t.restAvg > t.restPrev * 1.3 ? " O que mais pesou foi o descanso." : "")]);
+  if (t.nReg && totReg > max) dir.push(["warn", "O treino somou ~" + totReg + " min, " + (dentroMargem ? "um pouco acima do seu limite de " + max + " min, dentro da margem que você aceitou." : "acima do seu limite de " + max + " min.") + (t.restAvg != null && t.restAvg > t.restPrev * 1.3 ? " O que mais pesou foi o descanso." : "")]);
   else if (t.nReg && t.reg > t.prev + 15) dir.push(["info", "A musculação levou ~" + (t.reg - t.prev) + " min a mais que o previsto."]);
   if (c.st === "feito" && c.min != null && c.min < pl.min - 2) dir.push(["info", "Cardio: " + fmt(Math.round(c.min)) + " de " + pl.min + " min previstos."]);
   else if (c.st !== "feito" && past && feitos.length) dir.push(["info", c.st === "nao" ? "Cardio marcado como não feito." : "Cardio não registrado. Se fez, anote em Semana para entrar no gasto do dia."]);
@@ -6211,7 +6218,7 @@ async function shareDraw(W, day) {
   g.fillStyle = vc; g.beginPath(); g.roundRect(72, y, vw, 68, 34); g.fill(); T(vt, 100, y + 47, 38, "#fff", { w: 700 });
   y += 108;
   const c = S.c, tiles = [["Exercícios", S.feitos.length + " de " + S.req.length], ["Séries", S.setsDone + " de " + S.setsPrev], ["Volume", S.tonPrev ? kgTxt(S.ton) : "—"],
-    ["Tempo", S.t.nReg ? "~" + (S.t.reg + S.t.cardio) + " min" : "—"], ["Descanso médio", S.t.restAvg != null ? fmtSec(S.t.restAvg) : "—"], ["Cardio" + (c.st === "feito" && paceOf(c) ? " · " + paceFmt(paceOf(c)) + "/km" : ""), c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : "—"]];
+    ["Tempo", S.t.nReg ? "~" + S.t.reg + " min" : "—"], ["Descanso médio", S.t.restAvg != null ? fmtSec(S.t.restAvg) : "—"], ["Cardio" + (c.st === "feito" && paceOf(c) ? " · " + paceFmt(paceOf(c)) + "/km" : ""), c.st === "feito" ? fmt(Math.round(c.min || 0)) + " min" : "—"]];
   tiles.forEach(([k, v], i) => { const x = 72 + (i % 3) * 318, yy = y + Math.floor(i / 3) * 168; g.fillStyle = C.card; g.beginPath(); g.roundRect(x, yy, 300, 150, 22); g.fill(); T(fit(k, 30, 256, { w: 600 }), x + 24, yy + 50, 30, C.mut, { w: 600 }); T(fit(v, 50, 256, { w: 700, d: 1 }), x + 24, yy + 114, 50, C.ink, { w: 700, d: 1 }); });
   y += 2 * 168 + 30;
   const best = S.rows.filter(r => r.sets.length && r.perf != null).sort((a, b) => b.perf - a.perf).slice(0, Math.max(0, Math.min(3, Math.floor((1240 - y - 60) / 62))));
@@ -7332,16 +7339,73 @@ function renderAcomp() {
   const el = document.getElementById("acompView"); if (!el) return;
   if (app.alvo) { proRedesenha(el, acClienteHtml()); return; }
   const ac = app.ac = app.ac || { vs: null, t: 0, msg: "", erro: "" };
-  if (!ac.busy && app.uid && sb && Date.now() - ac.t > 30000) acCarrega(); // só depois de entrar (a primeira tela abre antes da sessão)
+  if (!ac.busy && app.uid && sb && (Date.now() - ac.t > 30000 || !baseEstado().viu)) acCarrega(); // só depois de entrar (a primeira tela abre antes da sessão)
   proRedesenha(el, acPessoalHtml());
+  const s = document.getElementById("acPro"); if (s && s.selectedIndex < 0) s.selectedIndex = 0; // B11: o escolhido saiu da lista: volta a "Escolha o profissional"
 }
 async function acCarrega() {
   const ac = app.ac; ac.busy = true;
+  const base = acBaseEmDia(!ac.t); // B11: a lista da base e os pedidos (seção 32), junto; depois de uma ação (ac.t = 0), de novo
   try { ac.vs = await proVinculos(); ac.erro = ""; ac.t = Date.now(); } catch (e) { ac.erro = proErr(e); ac.t = Date.now() - 20000; } // falha: tenta de novo em 10 s
   // 2.0: nome e tipo de quem assina cada orientação vêm do servidor (hexis_autores), não do que está gravado nela. Sem a função (SQL antigo),
   // fica null e a tela usa o nome gravado, com o aviso de que não foi conferido
   try { const ids = [...new Set(Object.values(app.orientacoes || {}).map(o => o && o.autor).filter(x => PRO_UUID.test(String(x))))]; const d = ids.length ? await proRpc("hexis_autores", { ids }) : []; app.autores = {}; (Array.isArray(d) ? d : []).forEach(r => { if (r && PRO_UUID.test(String(r.id))) app.autores[r.id] = { nome: String(r.nome || "").slice(0, 80), tipo: PRO_TIPOS[r.tipo] ? r.tipo : "outro", registro: String(r.registro || "").slice(0, 40) }; }); } catch (e) { app.autores = null; }
+  await base;
   ac.busy = false; if (app.tab === "acomp") renderAcomp();
+}
+// ----- B11 (26/nov, pedido do dono): pedir acompanhamento escolhendo o profissional numa lista, e não digitando o e-mail -----
+// A lista é a da base (hexis_base, seção 32): cada opção mostra o tipo, o nome e o registro, nunca o e-mail (regra da base: só depois do
+// aceite). "Enviar" chama hexis_requisitar com o serviço do tipo, como as abas Treinador, Nutricionista e Endócrino; o profissional vê
+// "Você foi requisitado" ao entrar e precisa aceitar para ter acesso.
+//   • Fica de fora o que as abas fecham: o tipo cuja aba o nível de uso esconde (nivelTab: iniciante, só treinador; intermediário, treinador
+//     e nutricionista; avançado, os três), o serviço que já tem pedido aberto e o que já tem profissional ligado.
+//   • O convite por e-mail continua, recolhido, para quem não está na base (o dono liga um a um). Sem o SQL da base, com a lista vazia ou
+//     com erro ao carregar, ele fica aberto.
+// Serviço da seção 32 de um tipo de profissional (treinador → treino, nutricionista → dieta, endocrinologista → hormonios), ou null
+function acServico(tipo) { return Object.keys(SERV).find(s => SERV[s].tipo === tipo) || null; }
+// Profissionais da base do nível de uso em uso (todos = com pedido aberto e ligados também)
+function acBaseNivel() { return baseEstado().pros.filter(p => { const s = acServico(p.tipo); return !!s && nivelTab(SERV[s].aba); }); }
+// Os que dá para chamar daqui: do nível, sem pedido aberto do mesmo serviço e sem profissional já ligado nele. Na ordem treino, dieta, hormônios
+function acBaseLista() {
+  const B = baseEstado(), O = Object.keys(SERV), abertos = B.reqs.filter(r => r.papel === "cliente" && r.estado === "aberta").map(r => r.servico);
+  return acBaseNivel().filter(p => { const s = acServico(p.tipo); return !abertos.includes(s) && !baseMeu(s); }).sort((a, b) => O.indexOf(acServico(a.tipo)) - O.indexOf(acServico(b.tipo)));
+}
+// Mantém a lista em dia para a aba: espera a busca que já estiver em curso (aberta por uma das abas da seção 32) e busca de novo se passou
+// de 30 s ou se forca (baseCarrega redesenha só as abas dela; quem redesenha esta é acCarrega)
+async function acBaseEmDia(forca) {
+  const B = baseEstado();
+  for (let i = 0; B.busy && i < 80; i++) await new Promise(r => setTimeout(r, 100));
+  if (forca) B.t = 0;
+  if (!B.busy && Date.now() - B.t > 30000) await baseCarrega();
+}
+// A lista para escolher e o convite por e-mail, recolhido (aberto quando a lista não está disponível)
+function acBaseHtml() {
+  const B = baseEstado(), L = acBaseLista();
+  const aviso = B.semSql ? "A lista de profissionais do Héxis ainda não foi ligada no servidor. Convide o seu profissional pelo e-mail."
+    : !B.viu ? "" : B.erro ? B.erro : L.length ? "" : acBaseNivel().length ? "Você já pediu ou já tem um profissional de cada área da lista. Para outro, convide pelo e-mail."
+    : "Ainda não há profissionais na lista do Héxis. Convide o seu profissional pelo e-mail.";
+  let h = !B.semSql && !B.viu ? '<p class="muted" id="acBaseAviso">Carregando a lista de profissionais…</p>' : aviso ? '<p class="msg" id="acBaseAviso">' + esc(aviso) + "</p>" : "";
+  if (L.length && !B.semSql) h += '<form class="ac-pede" id="acBase" novalidate><div class="field"><label for="acPro">Pedir acompanhamento a um profissional do Héxis</label><select id="acPro"><option value="">Escolha o profissional</option>'
+    + L.map(p => '<option value="' + p.id + '">' + esc([PRO_TIPOS[p.tipo], p.nome, p.registro].filter(Boolean).join(" · ")) + "</option>").join("") + '</select></div><button class="btn primary" type="submit">Enviar pedido</button></form>';
+  const aberto = !!aviso; // sem lista: o convite é o caminho, aberto e sem lembrar (data-keep só no recolhido)
+  return h + '<details class="mais ac-conv"' + (aberto ? " open" : ' data-keep="ac-convite"' + keepOpen("ac-convite")) + "><summary>O profissional não está na lista? Convidar por e-mail</summary>"
+    + '<form class="ac-pede" id="acPede" novalidate><div class="field"><label for="acEmail">E-mail do profissional</label><input id="acEmail" type="email" inputmode="email" autocomplete="off" maxlength="254"></div><button class="btn' + (aberto ? " primary" : "") + '" type="submit">Enviar convite</button></form></details>';
+}
+// Enviar o pedido ao profissional escolhido na lista (hexis_requisitar, com o serviço do tipo dele)
+async function acBaseEnvia(f) {
+  const ac = app.ac || (app.ac = { vs: null, t: 0 }), bt = f.querySelector('button[type="submit"]'), m = document.getElementById("acMsg");
+  if (app.alvo || !bt || bt.disabled) return; // no Héxis de um cliente não se chama profissional em nome dele
+  const s = document.getElementById("acPro"), p = acBaseLista().find(x => x.id === (s ? s.value : "")), servico = p ? acServico(p.tipo) : null;
+  const diz = t => { ac.msg = t; if (m) m.textContent = t; };
+  if (!p || !servico) { diz("Escolha o profissional na lista."); return; } // e só os da lista (nível de uso, pedido aberto, já ligado)
+  if (!sb || !navigator.onLine) { diz("Sem conexão. Tente de novo quando a internet voltar."); return; }
+  bt.disabled = true;
+  try {
+    const r = await proRpc("hexis_requisitar", { prof: p.id, servico, descricao: "" });
+    if (r && r.ok === true) { ac.msg = r.ja ? "Esse pedido já tinha sido enviado e continua esperando a resposta." : "Pedido enviado. O profissional vê o aviso ao entrar e precisa aceitar para ter acesso ao seu Héxis."; if (s) s.value = ""; if (app.settings) { app.settings[SERV[servico].aba] = "prof"; saveSettings(); } } // como nas abas: a aba do serviço passa para o profissional da base
+    else ac.msg = BASE_MOTIVO[r && r.motivo] || "Não deu para enviar agora. Tente de novo daqui a pouco.";
+  } catch (e) { ac.msg = proErr(e); }
+  bt.disabled = false; ac.t = 0; acCarrega();
 }
 // Cartão de um vínculo: avatar, nome, tipo e e-mail
 function acPessoa(v, extra) {
@@ -7358,7 +7422,7 @@ function acPessoalHtml() {
   if (ativos.length) h += '<h3>Acompanham você</h3>' + ativos.map(v => '<div class="ac-item">' + acPessoa(v, v.respondido ? '<span class="ac-q">desde ' + esc(proDataBr(v.respondido)) + "</span>" : "") + '<button type="button" class="btn small" data-ac="desfaz" data-id="' + v.id + '">Desfazer vínculo</button></div>').join("");
   if (fiz.length) h += '<h3>Pedidos que você fez</h3>' + fiz.map(v => '<div class="ac-item">' + acPessoa(v, '<span class="ac-q">esperando a resposta</span>') + '<button type="button" class="btn small" data-ac="cancela" data-id="' + v.id + '">Cancelar</button></div>').join("");
   // 7ª banca: quem pede vê o mesmo aviso de quem recebe (antes lia só "pode acompanhar o seu Héxis")
-  h += '<p class="ac-av">Ao pedir, você autoriza: quando o profissional aceitar, ele vê e edita o seu treino, dieta, corpo, hormônios e exames, vê as suas fotos e deixa orientações, até um de vocês desfazer o vínculo.</p><form class="ac-pede" id="acPede" novalidate><div class="field"><label for="acEmail">Pedir acompanhamento: e-mail do profissional</label><input id="acEmail" type="email" inputmode="email" autocomplete="off" maxlength="254"></div><button class="btn primary" type="submit">Enviar pedido</button></form><p class="muted" id="acMsg" aria-live="polite">' + esc(ac.msg || "") + "</p></div>";
+  h += '<p class="ac-av">Ao pedir, você autoriza: quando o profissional aceitar, ele vê e edita o seu treino, dieta, corpo, hormônios e exames, vê as suas fotos e deixa orientações, até um de vocês desfazer o vínculo.</p>' + acBaseHtml() + '<p class="muted" id="acMsg" aria-live="polite">' + esc(ac.msg || "") + "</p></div>"; // B11: a lista da base e, recolhido, o convite por e-mail
   return h + acOrientacoesHtml(false);
 }
 // Modo cliente aberto pelo profissional: registrar orientação, atalhos e orientações já deixadas
@@ -7417,10 +7481,11 @@ document.addEventListener("click", async ev => {
   } catch (e) { ac.msg = proErr(e); }
   ac.t = 0; acCarrega();
 });
-// Enviar pedido (cliente → profissional) e salvar orientação (profissional, no Héxis do cliente)
+// Enviar pedido (cliente → profissional: da lista da base, B11, ou convite por e-mail) e salvar orientação (profissional, no Héxis do cliente)
 document.addEventListener("submit", async ev => {
-  const f = ev.target; if (!f || (f.id !== "acPede" && f.id !== "acOri")) return;
+  const f = ev.target; if (!f || (f.id !== "acPede" && f.id !== "acOri" && f.id !== "acBase")) return;
   ev.preventDefault();
+  if (f.id === "acBase") { acBaseEnvia(f); return; }
   if (f.id === "acPede") {
     const i = document.getElementById("acEmail"), email = i.value.trim().toLowerCase(), ac = app.ac;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { document.getElementById("acMsg").textContent = "Confira o e-mail: ele precisa ter @ e o domínio."; return; }
@@ -8189,12 +8254,13 @@ function fichaContaDono(pf) { pf = pf || {}; return pf.fichaPadrao !== undefined
 function fichaTeto(pf) { const t = fichaNum((pf || {}).tempoMax, 20, 240, FICHA_TETO_MIN); return fichaContaDono(pf) ? Math.min(FICHA_TETO_MIN, t) : t; }
 // Tempo previsto pelo motor do app (dayTime: aquecimento, séries, descansos e trocas no ritmo da pessoa) (o cardio não entra), em cada
 // semana das 60. Devolve { pior, dia, por } (por = o maior de cada dia), ou null se a ficha não passa na conferência
-function fichaMede(f) { return fichaLimpa(f) ? fichaComDoc(f, fichaMedeJa) : null; }
+// desde: o dia da semana (0 = segunda) a partir do qual medir; sem ele, todos os dias (2.9, bug-31: na semana atual, só de hoje em diante)
+function fichaMede(f, desde) { return fichaLimpa(f) ? fichaComDoc(f, () => fichaMedeJa(desde)) : null; }
 // A mesma medida, da ficha aplicada agora (DAYS e EX), sem trocar de ficha (2.8: fichaCorte mede de novo a cada exercício que vira opcional)
-function fichaMedeJa() {
+function fichaMedeJa(desde) {
   const wk = computeWeeks(MAXW), por = {}; let pior = 0, dia = null;
   for (let W = 1; W <= MAXW; W++) { const cm = 0; /* bug-15: o cardio é opcional e fica fora do limite */
-    DAYS.filter(d => !d.livre).forEach(d => { const t = dayTime(W, d.id, wk[W]).prev + cm; if (t > (por[d.id] || 0)) por[d.id] = t; if (t > pior) { pior = t; dia = d.id; } }); }
+    DAYS.filter(d => !d.livre && (desde == null || d.dow >= desde)).forEach(d => { const t = dayTime(W, d.id, wk[W]).prev + cm; if (t > (por[d.id] || 0)) por[d.id] = t; if (t > pior) { pior = t; dia = d.id; } }); }
   return { pior, dia, por };
 }
 // Corta a ficha até o pior dia caber no limite: primeiro uma série de um isolador (ficam 2), depois o último exercício do dia (ficam 3),
@@ -8264,9 +8330,9 @@ function fichaAssina(s) { let h = 2166136261; for (let i = 0; i < s.length; i++)
 // fichaNoTempo: o gerador abre o dia pelos compostos principais e deixa isoladores, core e acessórios para o fim. Os FICHA_NUCLEO primeiros
 // do dia são os principais e ficam; o par do bi-set vira opcional junto (só um dos dois deixaria o outro com o descanso do par).
 // Devolve { ks, pior }: os códigos que viram opcionais e o dia mais longo depois do corte (acima do limite quando nem os principais cabem)
-function fichaCorte(doc, teto) {
+function fichaCorte(doc, teto, desde) {
   return fichaComDoc(doc, () => {
-    const ks = []; let m = fichaMedeJa();
+    const ks = []; let m = fichaMedeJa(desde);
     for (let volta = 0; volta < FICHA_MAX_DIA && m.pior > teto; volta++) {
       let mexeu = false;
       DAYS.filter(d => !d.livre && m.por[d.id] > teto).forEach(d => {
@@ -8275,33 +8341,42 @@ function fichaCorte(doc, teto) {
         u.forEach(e => { e.opt = true; ks.push(e.k); }); mexeu = true;
       });
       if (!mexeu) break;
-      m = fichaMedeJa();
+      m = fichaMedeJa(desde);
     }
     return { ks, pior: m.pior };
   });
 }
 function fichaLimite() {
   const pf = app.perfil || {}, doc = app.fichaDoc || null, cod = !doc && fichaDono(), esc0 = (app.settings || {}).fichaTempo || null;
-  const chave = doc || cod ? (doc ? app.fichaTxt : "codigo") + "|" + canonJ(pf) + "|" + canonJ(esc0) + "|" + !!app.alvo + "|" + (app.curW || 1) : "";
+  const chave = doc || cod ? (doc ? app.fichaTxt : "codigo") + "|" + canonJ(pf) + "|" + canonJ(esc0) + "|" + !!app.alvo + "|" + (app.curW || 1) + "|" + (new Date(todayStr() + "T12:00:00").getDay()) : ""; // a semana e o dia da semana de hoje: a medida da semana da troca só conta de hoje em diante (bug-31)
   if (chave === app.fichaLimChave) return;
   app.fichaLimChave = chave;
   let txt = "", aj = null; app.fichaLimInfo = null;
   if (chave && (cod || fichaLimpa(doc))) {
-    const docs = [doc]; // 2.9 (bug-24): as fichas em uso de hoje até o início da atual (com o início no futuro, a anterior vale até lá)
-    if (doc) { const ci = fichaLimpa(doc).meta.inicio, Wi = ci ? Math.min(MAXW, weekOfDateStr(ci)) : 0; for (let W = Math.max(1, app.curW || 1); W <= Wi; W++) { const v = fichaVersao(W); if (!docs.includes(v.doc)) docs.push(v.doc); } }
-    const med = docs.map(d => d ? fichaMede(d) : fichaComDoc(null, fichaMedeJa)), pior = Math.round(Math.max(...med.map(x => x ? x.pior : 0))), teto = fichaTeto(pf);
+    const docs = [doc], desde = [null], ate = [""]; // 2.9 (bug-24): as fichas em uso de hoje até o início da atual (com o início no futuro, a anterior vale até lá)
+    // desde: na semana atual, a ficha montada dia a dia só é medida de hoje em diante (2.9, bug-31: os dias que já passaram não entram na faixa nem no corte);
+    // ate: a data em que cada ficha em uso deixa de valer (2.9, bug-32: a faixa diz "A ficha em uso até dd/mm")
+    if (doc) {
+      const M = fichaLimpa(doc).meta, ci = M.inicio, Wi = ci ? Math.min(MAXW, weekOfDateStr(ci)) : 0, cw = Math.max(1, app.curW || 1), hoje = todayStr(), hdow = (new Date(hoje + "T12:00:00").getDay() + 6) % 7, cad = M.anteriores.map(a => a.inicio).concat(ci);
+      for (let W = cw; W <= Wi; W++) { const v = fichaVersao(W); if (docs.includes(v.doc)) continue; const ref = W === cw ? hoje : isoDate(weekStart(W));
+        docs.push(v.doc); desde.push(W === cw && v.doc && Array.isArray(v.doc.diasAtual) ? hdow : null); ate.push(cad.find(x => x > ref) || ci); }
+    }
+    const med = docs.map((d, i) => d ? fichaMede(d, desde[i]) : fichaComDoc(null, () => fichaMedeJa(desde[i]))), pr = med.map(x => x ? x.pior : 0), iw = pr.indexOf(Math.max(...pr)), pior = Math.round(pr[iw]), teto = fichaTeto(pf);
     if (pior > teto) {
       const sig = fichaAssina(doc ? app.fichaTxt : "codigo:" + canonJ(FICHA_PADRAO)), pouco = pior <= teto + fichaMargem(teto);
       const escolha = esc0 && esc0.ficha === sig && esc0.teto === teto ? esc0.escolha : "";
-      const quem = app.alvo ? "A ficha deste cliente passa" : "Esta ficha passa", lim = app.alvo ? " do limite do Perfil dele" : " do seu limite";
+      const velha = iw > 0, dm = velha ? ate[iw].slice(8, 10) + "/" + ate[iw].slice(5, 7) : ""; // bug-32: quando o pior é a ficha em uso até a nova começar, a faixa diz qual é
+      const quem = app.alvo ? (velha ? "A ficha em uso deste cliente até " + dm + " passa" : "A ficha deste cliente passa") : velha ? "A ficha em uso até " + dm + " passa" : "Esta ficha passa", lim = app.alvo ? " do limite do Perfil dele" : " do seu limite";
       const quanto = " (cerca de " + pior + " de " + teto + " min por dia de treino, com o aquecimento; o cardio fica fora).";
       const bt = (v, t) => ' <button type="button" class="btn small alvo44" data-ficha-tempo="' + v + '">' + t + "</button>";
       app.fichaLimInfo = { sig, teto };
       if (pouco && escolha !== "ajusta") {
-        if (escolha !== "assim") txt = quem + " um pouco" + lim + quanto + (app.alvo ? " Ele escolhe, no Héxis dele, entre usar assim e ajustar ao limite."
+        // 2.9 (bug-33): depois de "Usar assim" a faixa continua, curta, com o caminho de volta ("Ajustar ao limite")
+        if (escolha === "assim") txt = app.alvo ? "" : "Você escolheu usar a ficha inteira." + bt("ajusta", "Ajustar ao limite");
+        else txt = quem + " um pouco" + lim + quanto + (app.alvo ? " Ele escolhe, no Héxis dele, entre usar assim e ajustar ao limite."
           : " Você escolhe: usar assim, ou ajustar ao limite (os exercícios do fim do dia que não cabem viram opcionais; a ficha guardada não muda)." + bt("assim", "Usar assim") + bt("ajusta", "Ajustar ao limite"));
       } else {
-        const cs = docs.map((d, i) => med[i] && med[i].pior > teto ? Object.assign({ doc: d }, fichaCorte(d, teto)) : null).filter(Boolean);
+        const cs = docs.map((d, i) => med[i] && med[i].pior > teto ? Object.assign({ doc: d }, fichaCorte(d, teto, desde[i])) : null).filter(Boolean);
         const n = Math.max(0, ...cs.map(c => c.ks.length)), resto = Math.round(Math.max(0, ...cs.map(c => c.pior)));
         aj = cs.map(c => ({ doc: c.doc, ks: new Set(c.ks) }));
         txt = quem + lim + quanto + (n ? " Para caber, " + n + (n === 1 ? " exercício do fim do dia virou opcional" : " exercícios do fim do dia viraram opcionais") + ", com o tempo de cada um no cartão. A ficha guardada não muda e nada foi apagado." : "")
@@ -8319,6 +8394,7 @@ document.addEventListener("click", ev => {
   const b = ev.target.closest && ev.target.closest("[data-ficha-tempo]"), a = app.fichaLimInfo; if (!b || !a || app.alvo) return;
   app.settings = Object.assign({}, app.settings, { fichaTempo: { ficha: a.sig, teto: a.teto, escolha: b.dataset.fichaTempo === "assim" ? "assim" : "ajusta" } });
   saveSettings(); render();
+  const av = document.getElementById("avisoFichaTempo"); if (av) { av.tabIndex = -1; av.focus(); } // 2.9 (bug-33): o botão tocado some do desenho; o foco vai para a própria faixa, que fica
 });
 // Decide a cada desenho: ficha da conta (meta/ficha), a do código (só a do dono) ou nenhuma, e põe o aviso certo no lugar das telas de treino
 function fichaConta() {

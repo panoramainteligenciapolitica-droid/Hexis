@@ -1,4 +1,4 @@
-# Héxis 2.9 · completo/index.html SHA-256 7793ce1b40431582e1b88d440dcdc07c9aae3f4f0adec1bf42f50b5438c5b7b4
+# Héxis 2.10 · completo/index.html SHA-256 0476fd9728b1de0e1cd0cdfaa08ea1510c358a746254c051df66cd80a4b36f40
 no	bloco	funcoes	teste
 1	B3, tempo por pessoa	fichaTeto,fichaDono,fichaGera	testes/bug-1.js
 2	B6, cópia no Claude	djPdfArq,djPdfFonte	testes/bug-2.js
@@ -26,3 +26,12 @@ no	bloco	funcoes	teste
 24	E1, tempo (ALTO 1 da 13ª)	fichaLimite,fichaAplica	testes/bug-24.js
 25	E1, tempo (ALTO 2 da 13ª; completa o bug-15)	daySummaryHtml,maxMin	testes/bug-25.js
 26	Testes		testes/banca2.js
+27	F2, tempo (14ª, item 1)	shareDraw	testes/bug-27.js
+28	F2 (14ª, item 6)		testes/bug-28.js
+29	F2 (14ª, item 7)	daySummaryHtml	testes/bug-29.js
+30	F2 (14ª, item 8; já existia na 2.6)		testes/bug-30.js
+31	F1 (14ª, item 2)	fichaLimite	testes/bug-31.js
+32	F1 (14ª, item 3)	fichaLimite	testes/bug-32.js
+33	E1 (13ª, item 5)		testes/bug-33.js,testes/bug-18.js
+34	E4, cronômetro (13ª, item 4)	clkAct	testes/bug-34.js,testes/bug-5.js,testes/bug-20.js
+35	E4 (13ª, item 6)	warmHtml	testes/bug-35.js,testes/bug-19.js
