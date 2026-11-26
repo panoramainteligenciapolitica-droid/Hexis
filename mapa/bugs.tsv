@@ -1,5 +1,28 @@
-# Héxis 2.6 · completo/index.html SHA-256 a75dada9ed5c37772a4554c2dd5b973668943407e793201d14c735c0bc9ac713
+# Héxis 2.9 · completo/index.html SHA-256 7793ce1b40431582e1b88d440dcdc07c9aae3f4f0adec1bf42f50b5438c5b7b4
 no	bloco	funcoes	teste
 1	B3, tempo por pessoa	fichaTeto,fichaDono,fichaGera	testes/bug-1.js
 2	B6, cópia no Claude	djPdfArq,djPdfFonte	testes/bug-2.js
 3	B7 com B6		testes/bug-2.js
+4	B5, cronômetro	clkHandoff,clkStop,clkAct,clkEmFicha	testes/bug-4.js
+5	B5, bi-set	clkStop	testes/bug-5.js
+6	B5, bi-set	clkHandoff	testes/bug-6.js
+7	B5, toque	exCardPar,exCard,clkBar	testes/bug-7.js
+8	B2, ficha por dia	fichaSomem	testes/bug-8.js
+9	B2, conferência da ficha	fichaLimpa	testes/bug-9.js
+10	B3, tempo por pessoa	fichaLimite,fichaConta	testes/bug-10.js
+11	B7, dieta	dtResHtml,dtSupl	testes/bug-11.js
+12	B4, banco		testes/sql-base.sh
+13	Testes		testes/banca.js
+14	Artefato (build)	djPdfTexto	testes/bug-14.js,testes/bug-2.js
+15	Tempo por pessoa (ALTO 2 da 12ª)	computePlan,cardioPlan,cardioCard,fichaMede,geraFicha,fichaCardioMin,dayTimeHtml	testes/bug-15.js
+16	D1, cronômetro (item 3 da 12ª; 2ª volta do bug-4, corrigido pela raiz)	clkEx,clkFora,clkBar,clkStop,clkAct,clkHandoff,render	testes/bug-16.js
+17	D2, ficha (item 4 da 12ª)	trDesarma	testes/bug-17.js
+18	D2, ficha e tempo (ALTO 1 da 12ª)	fichaLimite,fichaCorte,fichaAplica,optMins,exCardPartes	testes/bug-18.js
+19	B9, aquecimento (pedido do dono)	warmL,warmSug,warmKg,warmHtml	testes/bug-19.js
+20	B9, aquecimento (pedido do dono)	clkAqGo,clkAqStop,clkAqSetHtml,clkBar,clkHandoff,warmHtml	testes/bug-20.js
+21	B8, visual, com o editor do treinador		testes/treinador.js
+22	Descanso (pedido do dono, 01:27)		testes/bug-22.js
+23	B10, barra de baixo (13ª banca, achado do arquiteto)	renderNav	testes/barra.js
+24	E1, tempo (ALTO 1 da 13ª)	fichaLimite,fichaAplica	testes/bug-24.js
+25	E1, tempo (ALTO 2 da 13ª; completa o bug-15)	daySummaryHtml,maxMin	testes/bug-25.js
+26	Testes		testes/banca2.js

@@ -1,4 +1,4 @@
-# Héxis 2.6 · completo/index.html SHA-256 a75dada9ed5c37772a4554c2dd5b973668943407e793201d14c735c0bc9ac713
+# Héxis 2.9 · completo/index.html SHA-256 7793ce1b40431582e1b88d440dcdc07c9aae3f4f0adec1bf42f50b5438c5b7b4
 roteiro	confere	funcoes
 testes/banca.js	Roteiros dos achados da 1ª banca (18/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioCsv,ctx,dayEx,djAcha,djAct,dtBusca,dtItens,dtS,hojeClose,hojeOpen,mmss,render,renderDieta,restSec,saveSettings,todayStr
 testes/banca2.js	Roteiros dos achados da 2ª banca (18/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	bioCsv,ctx,djAct,djEscala,dtForaSalva,dtItens,dtOk,dtS,ex,gravaJa,lgErr,render,renderDieta,savePerfil,todayStr
@@ -8,15 +8,35 @@ testes/banca5.js	Roteiros dos achados da 5ª banca (19/nov). Cada um imprime ok 
 testes/banca6.js	Roteiros dos achados da 6ª banca (19/nov). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	cardioEntry,djAct,dtS,ex,parseMmss,renderDieta
 testes/banca7.js	Roteiros dos achados da 7ª banca sobre o modo profissional (2.0). Cada um imprime ok ou FALHOU; com alguma falha, termina com código 1.	acOriCampos,fotoThumbs,recarrega,renderAcomp
 testes/banca9.js	9ª banca (sobre a 2.2): regressão dos altos 2, 4 e 5 (lado do app; os altos 1 e 3 estão em sql-base.sh) e a ficha por semana (2.4,	dayDate,ex,fichaAlternativa,fichaAmanha,fichaAtual,fichaAtualJa,fichaDono,fichaGera,fichaGrava,fichaLimpa,fichaMede,fichaNa,fichaTeto,fichaTroca,isoDate,render,weekOfDateStr,weekStart
+testes/barra.js	barra (Héxis 2.8, bloco B10, pedidos do dono de 25 e 26/nov): a barra de baixo é uma pílula flutuante, no jeito do app do YouTube no iPhone, com ícone e nome	clkDock,clkRefresh,ctx,largos
 testes/biset.js	Bi-set num cartão só (2.5, pedido do dono): os dois exercícios do par no mesmo cartão, séries intercaladas e descanso depois do par;	clkAct,dayEx,ex,getDoc,junta,render
 testes/bug-1.js	bug-1 (10ª banca, alto 2; 2ª volta do alto 5 da 9ª): o limite de tempo por pessoa não pode depender de treino anotado. Na conta comum vale o	cardioPlan,computeWeeks,dayTime,ex,fichaAmanha,fichaAtual,fichaComDoc,fichaDono,fichaEditorHtml,fichaGera,fichaGrava,fichaLimpa,fichaMede,fichaNoTempo,fichaTeto,geraFicha,render,todayStr
+testes/bug-10.js	bug-10 (10ª banca, médio 9): uma ficha acima do limite de tempo, chegando pronta (de um profissional, pela API) ou ficando velha depois	canonJ,ex,fichaGera,fichaMede,fichaTeto,savePerfil
+testes/bug-11.js	bug-11 (11ª banca, item 1): o atalho "+ 100 g" aparecia nos suplementos em pó e um toque lançava 407 kcal. Agora os 12 suplementos da categoria 15	dtBusca,dtItens,dtS
+testes/bug-14.js	bug-14 (11ª banca, item 2 / H1): no artefato, dentro de um quadro sandbox="allow-scripts" SEM allow-same-origin (origem opaca), o pdf.js caía no	djPdfTexto
+testes/bug-15.js	bug-15 (12ª banca, alto 2; regra do dono de 25/11: "o cardio é opcional, não faz parte do treino, não tem que contar dentro do limite diário").	cardioCard,cardioPlan,computeWeeks,dayTime,dayTimeHtml,ex,fichaAmanha,fichaCardioMin,fichaGera,fichaMede,fichaTeto,geraFicha
+testes/bug-16.js	bug-16 (12ª banca, médio 3; 2ª volta do bug-4): com uma semana ANTIGA aberta (ficha de outra data), a barra do cronômetro sumia já no "Parar" da barra e no	clkAct,clkBar,clkSave,ctx,fichaChega,fichaNa,fichaVersao,geraFicha,getDoc,isoDate,render,weekStart
+testes/bug-17.js	bug-17 (12ª banca, médio 4; sobra do bug-8): o aviso de "quantos treinos somem" era contado no 1º toque de "Refazer a ficha", para a data do campo naquele	dm,ex,fichaAmanha,isoDate,weekStart
+testes/bug-18.js	bug-18 (12ª banca, alto 1; regra do dono de 25/11: "se a pessoa apontar um tempo para fazer o treino isso tem que ser respeitado").	canonJ,computeWeeks,dayEx,dayTime,ex,fichaAtual,fichaCorte,fichaEditorHtml,fichaGera,fichaMede,fichaRestSeg,fichaTeto,isUni,render,restSec,ritmo,savePerfil
+testes/bug-19.js	bug-19 (pedido do dono, 25/11, Héxis 2.8): carga do aquecimento. (a) a sugerida de cada série é uma carga possível do aparelho (placa conhecida, ou o passo do	computeWeeks,ctx,docId,ex,fichaChega,geraFicha,getDoc,maqSet,render,warmL
 testes/bug-2.js	bug-2 (10ª banca, ALTO 1): a cópia do artefato no Claude buscava peças em servidor de terceiros (jsDelivr e Google Fonts), e o leitor de PDF	djPdfArq,djPdfTexto,load
+testes/bug-20.js	bug-20 (pedido do dono, 25/11, Héxis 2.8): as séries de aquecimento passam a ter a mesma barra de cronômetro das séries de trabalho: execução, depois descanso	clkRefresh,clkSave,clkTick,clkWarmRec,computeWeeks,ctx,dayTime,ex,fichaChega,geraFicha,getDoc,isoDate,render,warmGap,warmPlan,weekStart
+testes/bug-22.js	bug-22 · Héxis 2.8 · pedido do dono (26/nov): os botões para anotar o descanso feito vão até 4 min	ctx,ex,getDoc,render
+testes/bug-24.js	bug-24 (13ª banca, alto 1; regra fixa de 25/11: "a ficha em uso cabe no limite"): com a ficha nova começando no futuro, a ficha EM USO	computeWeeks,dayTime,ex,fichaGera,fichaMede,fichaTeto,render
+testes/bug-25.js	bug-25 (13ª banca, alto 2; regra fixa de 25/11: o cardio é opcional e fica fora do limite, e o tempo vem do motor, fichaTeto): o Resumo somava o	computeWeeks,dayEx,dayTime,ex,fichaContaDono,fichaGera,fichaTeto,maxMin,render,restSec
+testes/bug-4.js	bug-4 (10\u00aa banca, M\u00c9DIO 3): cron\u00f4metro guardado com um exerc\u00edcio que a ficha em uso n\u00e3o tem dava TypeError em clkHandoff e clkStop;	clkAct,clkHandoff,clkSave,clkStop,ctx,ex,fichaChega,geraFicha,getDoc,isoDate,render,weekStart
+testes/bug-5.js	bug-5 (10\u00aa banca, M\u00c9DIO 4): dois toques em "Parar" no 1\u00ba exerc\u00edcio do bi-set gravavam execu\u00e7\u00e3o de 0 s no 2\u00ba (E4 s\u00e9rie 1)	clkAct,ctx,ex,getDoc,render
+testes/bug-6.js	bug-6 (10\u00aa banca, M\u00c9DIO 5): no bi-set, com uma s\u00e9rie pulada (feita sem cron\u00f4metro), o descanso do par ia para E3.trans (intervalo) e n\u00e3	clkAct,clkGo,clkSave,ctx,getDoc,render
+testes/bug-7.js	bug-7 (10\u00aa banca, M\u00c9DIO 6): "Fazer separado hoje", "Juntar de novo" e "Parar" tinham 30 px e fonte de 12,5 px, sem aria-label nem title.	clkAct,clkRefresh,clkSave,ctx,junta,render
+testes/bug-8.js	bug-8 (10ª banca, médio 7): refazer a ficha com uma data que já passou escondia de todas as telas os treinos anotados desde ela, sem	dayDate,dm,ex,fichaAmanha,fichaNa,fichaSomem,geraFicha,isoDate,weekStart
+testes/bug-9.js	bug-9 (10ª banca, médio 8): `fichaLimpa` aceitava como código de exercício um nome herdado de Object ("constructor", "toString",	ex,fichaLimpa,render
 testes/cadastro.js	Ficha só da conta, cadastro obrigatório e bolinha de aviso (2.3, pedidos do dono de 19/nov). Cada roteiro imprime ok ou FALHOU; com falha, sai com 1.	dtMeta,ex,hojeClose,hojeOpen,render,todayStr
 testes/cronometro.js	Barra do cronômetro (2.4.1, pedido do dono): no descanso, igual à da execução (uma linha: nome, anel, tempo e botões), só com outra cor;	clkRefresh,ctx
 testes/fale.js	"Fale com o dev" (2.1, seção 30). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	ctx,faleEnvia,render,renderFale
 testes/ficha.js	Ficha por conta e gerador (2.2, seção 31). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	cardioCard,computeWeeks,dayEx,dayTime,ex,fichaAplica,fichaCardioMin,fichaChega,fichaGrava,fichaLimpa,fichaMin,fichaNa,fichaRestSeg,fichaSugestoes,fichaTroca,fichaTxt,geraFicha,isoDate,maxMin,restSec,weekStart
 testes/func.js	um PDF de laudo de teste, gerado pelo próprio Chromium	dtGasto,ex,largos,poe,render
 testes/largos.js	4ª banca: as três visões da Dieta (Registrar, Por refeição e Por dia), não só a que abre	largos
+testes/mapa.js	mapa: o mapa do código (pasta mapa/) tem de bater com o completo/index.html testado. Falha se o SHA-256 do mapa não for o do arquivo (mapa velho),	
 testes/niveis.js	Níveis de uso (2.1, seção 29): iniciante, intermediário e avançado. Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	dayTime,nivelAtual
 testes/profissional.js	1.8: modo profissional (seção 28). Supabase falso com as funções do banco (rpc) e linhas de outra conta (o cliente).	ex,isoLocal,saveQW
 testes/qualidade.js	Roteiros da versão 1.7: pontos do guia "5 correções para seu app" que se aplicam ao Hexis. Cada um imprime ok ou FALHOU; com falha, código 1.	ex,flush,fotoAdd
@@ -29,5 +49,6 @@ testes/suplementos.js	Suplementos proteicos na tabela da dieta (2.6, B7): as 597
 testes/tempo.js		computeWeeks,dayTime
 testes/treinador.js	Abas Treinador, Nutricionista e Endócrino (2.2, seção 32). Cada roteiro imprime ok ou FALHOU; com alguma falha, termina com código 1.	baseEstado,fichaAtual,fichaCardioMin,fichaLimpa,fichaLinha,fichaMin,fichaRestSeg,load,navNivel,render
 testes/unijunto.js	Unilateral com os lados juntos (pedido de 18/nov): uma linha por série, tempo dos dois lados, contado como unilateral. Termina com código 1 se algo falhar	clkExecMax,computeWeeks,daySummaryHtml,dayTime,ex,render,serieUni,uniModo,weekExtras
+testes/visual.js	visual (Héxis 2.8, bloco B8, pedido do dono de 25/nov: "aplique design thinking"): hierarquia visual, botões +15%, relógios maiores.	clkAct,clkRefresh,clkSave,ctx,dayEx,render
 testes/xss.js	abre tudo que estiver recolhido	
 testes/xss2.js	Hoje (painel), editar substância, busca na dieta pelos alimentos próprios	djAcha,djAct,djLerHtml,hojeOpen,render

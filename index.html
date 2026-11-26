@@ -6,7 +6,7 @@
      (pasta vendor/: Chart.js, Supabase, leitor de PDF e a fonte). Nenhum CDN nem Google Fonts (3ª banca). Só conversa com o Supabase do app.
      Um texto malicioso que escape para a tela não roda (a regra de programas não tem 'unsafe-inline'). Ao mudar o programa, rode
      testes/atualiza-csp.py, senão o app não abre. Os estilos continuam com 'unsafe-inline' porque as telas usam style="" em muitos pontos. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: 'sha256-4LEf08PkvhIBUk4eGu/Rt3HfcKU3ysZA7xZuSRAexYg='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: 'sha256-ZUDG2okgGhVbzbXWKwMIJTCa2xd0mmA9Ztq2E5AZI+k='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://urrgxjudwntgoyslsgwe.supabase.co; connect-src 'self' https://urrgxjudwntgoyslsgwe.supabase.co wss://urrgxjudwntgoyslsgwe.supabase.co; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Héxis: ficha de treino que se ajusta toda semana, com cardio, corpo e dieta.">
@@ -1368,11 +1368,175 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 .par-nm { display: inline-block; margin-left: 4px; padding: 0 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); font-size: 11.5px; font-weight: 700; line-height: 18px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: 1px; }
 .card.par table.sets tr.srow:has(.par-nm) td { border-top-color: var(--line); }
 .par-st { margin: 6px 0 0; }
+.btn.small.alvo44 { min-height: 44px; min-width: 44px; font-size: 14px; padding: 8px 14px; } /* 2.7 (bug-7): alvo de toque de 44 px nos botões do bi-set e no Parar */
 .par-volta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; padding: 6px 10px; border: 1px dashed var(--line); border-radius: 12px; font-size: 13.5px; }
 .bn-ic { position: relative; }
 .bdot { position: absolute; top: -3px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5484d; color: #fff; font: 700 11px/18px var(--font-body); text-align: center; box-shadow: 0 0 0 2px var(--glass-strong); pointer-events: none; }
 .sdot { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: #e5484d; vertical-align: 2px; }
 @media (prefers-reduced-motion: no-preference) { .bdot { animation: bdotPulsa 2.4s ease-in-out infinite; } @keyframes bdotPulsa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } } }
+/* 28. Hierarquia visual (25/nov, pedido do dono, exceção ao escopo travado; Héxis 2.8, bloco B8). Só estilo, vem por último e prevalece.
+   Escala de tipos do app: 4 tamanhos (--f1 detalhe 13, --f2 secundário 15, --f3 principal 17, --f4 título 24) e 2 pesos (--w1 400, --w2 700).
+   Fora da escala, de propósito: os números grandes (cronômetro, resumos do Início e do Perfil, marca). Nada abaixo de 13 px.
+   Botões, chips e alvos de toque crescem 15% (--k) em altura mínima, preenchimento e fonte; os relógios usam a largura da barra. Cores e marca não mudam. */
+:root { --f1: 13px; --f2: 15px; --f3: 17px; --f4: 24px; --w1: 400; --w2: 700; --k: 1.15; --bnh: calc(84px * var(--k)); }
+html { scroll-padding-bottom: calc(var(--bnh) + 24px); }
+html:has(body.clk-on) { scroll-padding-bottom: calc(var(--bnh) + 200px); }
+body.clk-on .wrap { padding-bottom: calc(330px + var(--bnh)); }
+.wrap { padding-bottom: calc(130px + var(--bnh)); }
+/* --- cartão do exercício: 1º o nome, 2º a série atual com o alvo, o resto é detalhe --- */
+.card-h h3 { font-size: var(--f4); font-weight: var(--w2); line-height: 1.15; }
+.card-h .mus, .why, .wqp, .wqd, .obsh, .tcard .rl, .rest .rl, .unitg .rl, .unidif .rl, span.clks, table.sets th, .exec, label.exec, span.exec, .maqp, .nv-cap { font-size: var(--f1); font-weight: var(--w1); }
+.why { line-height: 1.35; }
+table.sets th { line-height: 1.2; }
+table.sets td.lbl b { font-size: var(--f3); font-weight: var(--w2); line-height: 22px; color: var(--ink); }
+table.sets .tgt { font-size: var(--f1); font-weight: var(--w1); line-height: 16px; height: 16px; }
+table.sets td.lbl > div.tgt:first-of-type { font-size: var(--f2); font-weight: var(--w2); color: var(--ink); line-height: 19px; height: 19px; }
+table.sets td .side { font-size: var(--f1); font-weight: var(--w2); }
+.vchip, .tchip { font-size: var(--f2); font-weight: var(--w2); }
+.vchip .d, .tchip b { font-weight: var(--w2); }
+.act { font-size: var(--f1); font-weight: var(--w2); }
+.act .sym { font-size: var(--f2); }
+.warm, .banner, .lead, .how, .dayhead .meta, .weektitle .sub, .sub { font-size: var(--f2); }
+.warm b, .warm .wqt { font-weight: var(--w2); }
+.dayhead h2 { font-size: var(--f4); font-weight: var(--w2); }
+.weektitle .wk { font-size: var(--f4); font-weight: var(--w2); }
+h2 { font-weight: var(--w2); }
+h3.subh, h3.biofh, h3.djfh { font-size: var(--f3); font-weight: var(--w2); }
+.optb, .esttag, .obg, .sync, .dw, .par-nm, .par-tag, .par-n, .par-st, .unilk, .muted, small, i, .bdot, .dtfase, .dtfase a, .dtvz, div.s, div.s1, div.k, .daybtn .dn { font-size: var(--f1); }
+.par-tag, .par-nm, .par-n, .bdot, .esttag, .obg, .optb { font-weight: var(--w2); }
+.par-n { width: 26px; height: 26px; line-height: 26px; } .par-ex { padding-left: 34px; }
+.daybtn .dn { white-space: normal; line-height: 1.15; font-weight: var(--w1); } .daybtn.today .dn { font-weight: var(--w2); }
+.info { width: 20px; height: 20px; font-size: var(--f1); font-weight: var(--w2); }
+.djcal .dd { font-size: var(--f1); }
+/* pesos: só 400 e 700 */
+b, strong, th, summary, button, label.exec, span.exec, .rl, .obsh, .tag, .rbtn, .btn, .uniln, .nv-sel, .nv-cap, .dtdw, nav.subnav a, .bnav a, .dtmenu button, .seg button, .daybtn, div.nm, div.k, .tag.cat, .tag[aria-pressed="true"], .tag.on, .rbtn[aria-pressed="true"], a.hm-f, main a:not(.btn):not(.hm-f):not([class]) { font-weight: var(--w2); }
+.muted, .rbtn, .pbtn, .glob, span.muted, label.exec, span.exec, .rl, .obsh, div.k, small, th, .nv-cap, .nv-sel { font-weight: var(--w1); }
+.rbtn[aria-pressed="true"] { font-weight: var(--w2); }
+/* --- piso de 13 px e encaixe na escala nos textos que as regras mais específicas de antes seguravam (!important só aqui) --- */
+.dtmac span, .biolab, .bioseg b, .bioseg span, .cbox .k, .cbox .s, .cbox .v small, td .s1, td span.muted, .biolab, .dtcr span, .brandr .sync, .wqrow .wqp, .djcal .dw, .pfsave .muted, span.rl, small { font-size: var(--f1) !important; }
+.lead, .lead a, .lead span, .chg, .rm, label.biochk, .ac-av, dl dd, dl dt, div.nm, tr.nm td, tr.grp td, table:not(.sets) td, li span, .dtqh b, .hm-f span, .dtdw, .hm-w p, ul li, ol li, main p:not([class]), .nv-p, .nv-r, .acctt b, li b, .hm-f, .dtmac b, .hm-w b { font-size: var(--f2) !important; }
+.hm-tag, .hm-greek span { font-size: var(--f3) !important; }
+div.nm, tr.nm td, tr.grp td, .dtdw, .acctt b, li b, .hm-f, .hm-f span, .lead a, .djcal-h b, .dtqh b { font-weight: var(--w2) !important; }
+.djcal-h b { font-size: var(--f3) !important; }
+small { font-weight: var(--w1) !important; }
+label.ck, th { font-weight: var(--w1) !important; }
+div.k { font-weight: var(--w2) !important; }
+summary, summary h3, details > summary h3, h3 { font-weight: var(--w2) !important; }
+h2, .panel h2 { font-size: var(--f4) !important; }
+h3, summary h3, .nv-h h3, h3.subh, h3.biofh, h3.djfh { font-size: var(--f3) !important; }
+.card-h h3 { font-size: var(--f4) !important; }
+.hm-acoes button, .hm-acoes a, i.hm-seta, .hm-f i { font-weight: var(--w2) !important; }
+.dayhead h2 { font-size: var(--f4) !important; }
+/* --- botões +15%: altura mínima, preenchimento e fonte --- */
+.btn { min-height: calc(41px * var(--k)); padding: calc(9px * var(--k)) calc(16px * var(--k)); font-size: var(--f3); }
+.btn.small, table.plain .btn, a.btn.small { min-height: calc(30px * var(--k)); padding: calc(4px * var(--k)) calc(10px * var(--k)); font-size: var(--f2); }
+.btn.small.alvo44 { min-height: calc(44px * var(--k)); min-width: calc(44px * var(--k)); padding: calc(8px * var(--k)) calc(14px * var(--k)); font-size: var(--f2); }
+.donebar .btn { min-height: calc(46px * var(--k)); font-size: var(--f3); }
+.dtpk .row-btns .btn.primary { min-height: calc(46px * var(--k)); }
+.rbtn { min-height: calc(32px * var(--k)); min-width: calc(44px * var(--k)); padding: calc(2px * var(--k)) calc(6px * var(--k)); font-size: var(--f2); }
+.rgrid { grid-template-columns: repeat(auto-fit, minmax(calc(46px * var(--k)), 1fr)); }
+.rgrid.t7 { grid-template-columns: repeat(auto-fit, minmax(calc(46px * var(--k)), 1fr)); }
+.rgrid .rbtn { min-width: 0; min-height: calc(34px * var(--k)); padding: 0; font-size: var(--f2); letter-spacing: 0; }
+.dtnav .rbtn { min-width: calc(40px * var(--k)); min-height: calc(40px * var(--k)); font-size: var(--f4); }
+.dtqs .rbtn { min-height: calc(36px * var(--k)); }
+.djguia .rbtn { min-height: calc(34px * var(--k)); }
+.tag { min-height: calc(34px * var(--k)); padding: calc(4px * var(--k)) calc(11px * var(--k)); font-size: var(--f2); }
+.tag .tn { font-size: var(--f1); }
+.pbtn, .pchip, .padd { white-space: nowrap; min-height: calc(32px * var(--k)); padding: calc(2px * var(--k)) calc(10px * var(--k)); font-size: var(--f2); }
+.parc .pin { min-height: calc(32px * var(--k)); width: calc(84px * var(--k)); font-size: var(--f2); }
+.uniln { min-height: calc(30px * var(--k)); padding: calc(4px * var(--k)) calc(12px * var(--k)); font-size: var(--f2); }
+.unilk { min-height: calc(32px * var(--k)); }
+.hojebtn { min-height: calc(36px * var(--k)); padding: calc(4px * var(--k)) calc(14px * var(--k)); font-size: var(--f2); }
+.iconbtn { min-width: calc(44px * var(--k)); min-height: calc(44px * var(--k)); }
+.glob { font-size: var(--f2); }
+.dtmenu button, .seg button { min-height: calc(36px * var(--k)); font-size: var(--f2); }
+.ck { min-height: calc(36px * var(--k)); font-size: var(--f2); }
+fieldset.checks .ck { min-height: calc(34px * var(--k)); }
+nav.subnav a { min-height: calc(33.6px * var(--k)); display: flex; align-items: center; justify-content: center; padding: calc(7px * var(--k)) calc(12px * var(--k)); font-size: var(--f2); }
+.daybtn { padding: calc(7px * var(--k)) 0; }
+.daybtn .dl { font-size: var(--f4); }
+.daybtn .ds { font-size: var(--f1); }
+.bnav a { padding: calc(6px * var(--k)) 2px calc(5px * var(--k)); font-size: var(--f1); font-weight: var(--w2); }
+.bn-ic { height: calc(28px * var(--k)); }
+.bn-t { font-size: var(--f1); }
+details.mais > summary, details.pq > summary { min-height: calc(30px * var(--k)); }
+details.mais > summary, summary { font-size: var(--f2); }
+details.pq > summary, details.pq > summary .pqt { font-size: var(--f1); font-weight: var(--w1); }
+/* --- relógios: o tempo usa a largura da barra (algarismos de largura fixa), a barra cresce em altura --- */
+.clkb { flex-wrap: wrap; align-items: center; gap: 2px 10px; padding: 14px 16px 12px; }
+.clkb .clksee { flex: 1 1 calc(100% - 50px); min-width: 0; }
+.clkb .clkring { width: 36px; height: 36px; }
+.clkph { font-size: var(--f1); font-weight: var(--w1); }
+.clknm { font-size: var(--f3); font-weight: var(--w2); }
+.clkbig { flex: 1 1 auto; margin: 0; min-width: 2.85em; text-align: left; font-size: clamp(38px, 12.5vw, 52px); font-weight: var(--w2); line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.clkb .btn.small { font-size: var(--f2); }
+.clkb .btn.small.alvo44 { min-width: calc(44px * var(--k)); }
+.clkask { font-size: var(--f2); }
+.clk { gap: 8px; padding: 8px 10px; }
+.clk .clkn { font-size: calc(19px * 1.6); font-weight: var(--w2); line-height: 1.1; }
+.clk .clkn small { font-size: var(--f1); font-weight: var(--w1); }
+.clk .clkt { font-size: var(--f2); }
+.clk .clkt b, .clk .clks { font-weight: var(--w2); }
+.clk .clks { font-weight: var(--w1); }
+.clk { flex-wrap: wrap; }
+.clk .clkt { flex: 1 1 40%; width: auto; }
+.clk.run .clkn { flex: 1 1 auto; }
+.clk .btn.small { min-height: calc(34px * var(--k)); }
+.clkring { width: 32px; height: 32px; }
+.exmm { font-size: var(--f1); font-weight: var(--w2); }
+.card.par .par-h .btn { font-size: var(--f2); }
+.par-volta { font-size: var(--f2); }
+@media (max-width: 360px) {
+  .clkbig { font-size: clamp(40px, 12.8vw, 44px); }
+  .clkb .btn { padding-left: 9px; padding-right: 9px; }
+  .clkb { gap: 2px 8px; padding-left: 12px; padding-right: 12px; }
+}
+/* Botão de texto longo numa fila de botões (2.8, montagem): com os botões 15% maiores, "Gerar um ponto de
+   partida pelo Perfil" passava 9 px da tela a 390 px. Ele não pode ser mais largo que a tela: quebra em
+   duas linhas, sempre na horizontal. */
+.row-btns > .btn { max-width: 100%; white-space: normal; text-align: center; }
+
+/* 29. Aquecimento (2.8, bug-19 e bug-20): campo da carga de cada série e a barra do cronômetro de cada série de aquecimento */
+.warm .wqs + .wqs { margin-top: 6px; }
+.warm .wkg { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.warm .wkg input { width: 64px; min-height: 36px; padding: 4px 6px; text-align: right; }
+.warm .clk.aq { margin: 4px 0 0; }
+/* 30. Barra de baixo em pílula flutuante, que encolhe ao rolar (pedidos do dono de 25 e 26/nov, exceção ao escopo travado; Héxis 2.8, bloco B10). Só estilo,
+   vem por último e prevalece. Vale para todos os níveis de uso.
+   Normal (26/nov, "como o app do YouTube no iPhone"): pílula de vidro (o do bloco 21), centralizada, com ~85% da largura da tela a 390 px (88% a 320 px,
+   até 440 px), cantos todos redondos e respiro de 14 px do fundo (no iPhone com a barrinha de início, ~20 px). Ícone e nome de cada grupo; a aba atual fica
+   numa pílula interna mais clara (::before do link, para o alvo de toque não mudar). As abas dividem a pílula por igual, seja qual for o número delas
+   (os níveis de uso mostram 4 ou 5), e nenhuma fica mais estreita que o próprio nome.
+   Encolhida (25/nov): rolando para baixo (classe nav-mini no <body>, ligada por navMiniPasso em p08), a pílula cai para ~60% da altura e fica só com os
+   ícones, cada um com alvo de 44 px, no mesmo lugar. O nome não pode ficar abaixo de 13 px (bloco 28): sai só da vista (altura 0, recortado, sem display:none),
+   e cada link tem aria-label com o nome (renderNav, p08), então o leitor de tela anuncia o nome nos dois estados.
+   A barra do cronômetro (.savebar) fica com a largura da pílula, 10 px acima dela, e desce junto (transform); a folga do fim da página (--bnh) segue a pílula.
+   Alturas explícitas nos dois estados, para a troca poder animar (height, 200 ms). */
+:root {
+  --bn-hf: calc(2px + 10px + 11px * var(--k) + 28px * var(--k) + 1px + 18px); /* normal: borda, respiro interno, preenchimento, ícone, nome (~76 px) */
+  --bn-hm: 46px; /* encolhida: ~60% */
+  --bn-w: min(calc(70% + 58px), 440px); /* 85% a 390 px, 88% a 320 px */
+  --bn-b: max(14px, calc(env(safe-area-inset-bottom) - 14px)); /* respiro do fundo */
+  --bn-gap: 10px; /* entre a barra do cronômetro e a pílula */
+  --bnh: calc(var(--bn-b) + var(--bn-hf) + var(--bn-gap));
+}
+.bnav { width: var(--bn-w); max-width: none; bottom: var(--bn-b); height: var(--bn-hf); border-radius: 999px; overflow: hidden; }
+.bnav a { position: relative; isolation: isolate; flex: 1 1 0; min-width: auto; justify-content: center; padding-left: 4px; padding-right: 4px; border-radius: 999px; }
+.bnav a, .bnav a[aria-current="page"] { background: none; box-shadow: none; }
+.bnav a::before { content: ""; position: absolute; inset: 4px -3px; z-index: -1; border-radius: 999px; } /* mais larga que alta, entra 3 px no respiro ao lado */
+.bnav a[aria-current="page"]::before { background: color-mix(in srgb, var(--accent) 13%, var(--glass-strong)); box-shadow: inset 0 1px 0 var(--edge), 0 1px 3px rgba(0, 0, 0, .06); }
+.bn-ic { width: 36px; }
+.bn-t { line-height: 18px; white-space: nowrap; }
+body.nav-mini .bnav { height: var(--bn-hm); }
+body.nav-mini .bn-in { padding-top: 0; padding-bottom: 0; }
+body.nav-mini .bnav a { padding-top: 0; padding-bottom: 0; min-height: 44px; }
+body.nav-mini .bnav a::before { inset: 3px -3px; }
+body.nav-mini .bn-t { height: 0; overflow: hidden; clip-path: inset(50%); } /* sai só da vista: fica na árvore de acessibilidade e segura a largura da aba (os ícones não andam) */
+body.nav-mini .bnav a .bn-ic svg { transform: scale(.9); }
+.savebar { width: var(--bn-w); max-width: none; bottom: var(--bnh); }
+body.nav-mini .savebar { transform: translateY(calc(var(--bn-hf) - var(--bn-hm))); }
+@media (prefers-reduced-motion: no-preference) { .bnav { transition: height .2s ease-out; } .savebar { transition: transform .2s ease-out; } .bnav a::before { transition: inset .2s ease-out, background-color .25s; } }
+@media (prefers-reduced-motion: reduce) { .bnav, .savebar, .bnav a::before { transition: none; } }
 </style>
 </head>
 <body>
@@ -1529,7 +1693,7 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
     <details class="grp mais" data-keep="pg-tempo"><summary><h2>Tempo e execução</h2><span class="muted">duração, execução, parciais e lados</span></summary>
       <div class="panel">
         <h2>Tempo de treino e recuperação</h2>
-        <p class="lead">Duração média dos treinos registrados em cada semana (musculação + cardio) contra o seu limite diário. No toque, a recuperação média entre as séries.</p>
+        <p class="lead">Duração média dos treinos registrados em cada semana (aquecimento e musculação; o cardio fica fora) contra o seu limite diário. No toque, a recuperação média entre as séries.</p>
         <div class="chartbox"><canvas id="chTempo" aria-label="Gráfico: tempo de treino por semana"></canvas></div>
       </div>
       <div class="panel">
@@ -1847,8 +2011,8 @@ body.sem-ficha #v-semana > :not(.semficha), body.sem-ficha #v-resumo > :not(.sem
 // ===== 1. PARÂMETROS AJUSTÁVEIS =====
 // Os números que regulam o app ficam aqui. Mudar um valor muda todos os lugares que o usam.
 // Versão do programa: sobe a cada rodada de correções (o registro de cada versão está em VERSOES.md). Aparece em Plano e regras e na cópia de segurança
-const APP_VERSAO = "2.6";
-const APP_VERSAO_DATA = "25/nov/2026";
+const APP_VERSAO = "2.9";
+const APP_VERSAO_DATA = "26/nov/2026";
 // Plano
 const MAXW = 60;                   // quantas semanas o app calcula (até o fim de 2027)
 const BLOCK_W = 9;                 // semanas do primeiro bloco ("Semana N de 9") e de cada bloco de quem não segue o plano anual
@@ -1884,7 +2048,7 @@ const WARM_EXEC = 20;              // execução de uma série de aquecimento (c
 const WARM_PAUSA = [[0.6, 30], [1, 60]];   // pausa depois de uma série de aquecimento, pela fração da carga do dia: até 60%, só a troca de peso (30 s); acima, 1 min
 const WARM_ANTES = [[0.6, 60], [1, 120]];  // descanso entre a última série de aquecimento e a 1ª válida, pela fração da última: leve 1 min; pesada 2 min
 const CLK_WARM_MAX = 900;          // aquecimento acima de 15 min no cronômetro é tratado como esquecido
-const REST_OPTS = [30, 45, 60, 90, 120]; // botões para anotar o descanso feito entre séries: até 2 min, como a regra (pedido de 18/nov). Tempo maior entra pelo cronômetro
+const REST_OPTS = [30, 45, 60, 90, 120, 150, 180, 210, 240]; // botões para anotar o descanso FEITO entre séries. Até 2 min era a regra (18/nov); o dono pediu até 4 min (26/nov), porque às vezes descansa mais. A prescrição continua com no máximo 2 min
 const TRANS_OPTS = [60, 90, 120, 180, 240, 300, 420];   // botões de intervalo entre exercícios
 const REST_CURTO = 0.75;           // descanso "curto": abaixo de 75% do previsto
 const REST_LONGO = 1.5;            // descanso "longo": acima de 150% do previsto
@@ -2712,6 +2876,25 @@ function restFlags(e, def) {
 function warmDone(e, n) { return e && Array.isArray(e.aq) ? e.aq.slice(0, n).filter(Boolean).length : null; }
 // Pausa em segundos depois de uma série de aquecimento feita com a fração f da carga (tab = WARM_PAUSA ou WARM_ANTES)
 function warmGap(f, tab) { return (tab.find(x => f <= x[0]) || tab[tab.length - 1])[1]; }
+// bug-19 (pedido do dono, 25/11): carga de trabalho que serve de base ao aquecimento (a da 1ª série, ou a do exercício)
+function warmL(p) { return p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load; }
+// bug-19: carga sugerida de uma série de aquecimento com a fração f da carga L: uma carga possível do aparelho (a placa conhecida mais próxima, por
+// maqPick; em máquina de placas fixas, a mais próxima mesmo fora da tolerância); sem placas conhecidas, arredondada ao passo do exercício
+function warmSug(d, L, f) {
+  const st = d.step || 1, raw = L * f, x = MAQ[d.n];
+  let k = maqPick(MAQ, d, raw, 0);
+  if (k == null && x && x.fixa && x.tipo !== "livre" && x.all.length) k = x.all.reduce((a, v) => Math.abs(v - raw) < Math.abs(a - raw) - 0.01 ? v : a);
+  return Math.max(st, maqMin(d), k != null ? k : rnd(raw, st));
+}
+// bug-19: carga da série de aquecimento i na semana W: a digitada no registro (e.aqKg); senão a lembrada da mesma série na semana mais recente que a
+// tem, se a carga de trabalho (aqL) era a mesma; senão a sugerida. Devolve { kg, sug (o que vale sem a digitada), own (digitada hoje), lem (lembrada) }
+function warmKg(d, L, i, f, e, W) {
+  const v = a => a && Array.isArray(a.aqKg) && a.aqKg[i] != null && a.aqKg[i] !== "" && +a.aqKg[i] > 0 && +a.aqKg[i] <= 1000 ? +a.aqKg[i] : null;
+  let sug = warmSug(d, L, f), lem = false;
+  for (let w = W - 1; w >= 1; w--) { const doc = getDoc(w, d.d, false), x = doc && doc.ex && doc.ex[d.k]; if (v(x) != null) { if (Math.abs(+x.aqL - L) < 0.01) { sug = v(x); lem = true; } break; } }
+  const own = v(e);
+  return { kg: own != null ? own : sug, sug, own: own != null, lem };
+}
 // Tempo do aquecimento de um exercício: serie = execuções e pausas entre elas; antes = descanso até a 1ª válida. marks = séries marcadas (null = todas)
 function warmTime(plan, marks) {
   let serie = 0, last = null;
@@ -2850,7 +3033,7 @@ const PF_PERFIL = [
     ["tempoTreino", "Há quanto tempo treina sem parar", "select", OPT(0, [["0", "Menos de 6 meses"], ["1", "6 a 12 meses"], ["2", "1 a 3 anos"], ["3", "3 a 5 anos"], ["4", "Mais de 5 anos"]])],
     ["tecnica", "Técnica nos exercícios básicos", "select", OPT(0, [["aprendendo", "Ainda aprendendo"], ["boa", "Boa"], ["avancada", "Domino bem"]])],
     ["dias", "Dias disponíveis para treinar", "checks", ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]],
-    ["tempoMax", "Tempo máximo por dia, com cardio (min)", "number"],
+    ["tempoMax", "Tempo máximo por dia de treino, sem o cardio (min)", "number"],
     ["horario", "Horário de treino", "select", OPT(0, [["manha", "Manhã"], ["tarde", "Tarde"], ["noite", "Noite"]])],
     ["local", "Onde treina", "select", OPT(0, [["academia", "Academia completa"], ["condominio", "Academia de condomínio"], ["casa", "Em casa"]])],
     ["divisaoAtual", "Divisão de treino atual", "text"],
@@ -3000,14 +3183,13 @@ function computePlan(pf) {
   const fr = { conservador: 0.75, moderado: 1, agressivo: 1.3 }[pf.ritmo] || 1;
   // cardio planejado
   const tipo = pf.cardioTipo && pf.cardioTipo !== "nenhum" ? pf.cardioTipo : "caminhada";
-  const livre = Math.max(0, tempoMax - liftMin - 5);
   const defMin = { perder: 30, recomp: 25, ganhar: 20, forca: 20, saude: 30 }[obj];
   const defVezes = { perder: dias, recomp: 4, ganhar: 3, forca: 3, saude: 4 }[obj];
   let cMin = num(pf.cardioMin) || defMin;
   if (obj === "perder" && pf.cardioPref === "cardio") cMin += 10;
   if (obj === "perder" && pf.cardioPref === "dieta") cMin -= 10;
   if (obj === "ganhar" || obj === "forca") cMin = Math.min(cMin, 20);
-  cMin = Math.max(0, Math.min(cMin, livre, 60));
+  cMin = Math.max(0, Math.min(cMin, 60)); // bug-15 (regra do dono, 25/11): o cardio é opcional e vem do objetivo, não do limite de tempo do treino
   const cVezes = Math.min(dias, num(pf.cardioVezes) || defVezes, 7);
   R.cardio = { tipo, min: cMin, vezes: cVezes, incl: num(pf.cardioIncl) != null ? num(pf.cardioIncl) : (tipo === "caminhada" ? 10 : 1), vel: num(pf.cardioVel) || (tipo === "corrida" ? 8.5 : 5.5) };
   const cardioDia = cardioSessionKcal(tipo, cMin, R.cardio.incl, R.cardio.vel, peso) * cVezes / 7;
@@ -3074,7 +3256,6 @@ function computePlan(pf) {
   if (pf.lesoes) R.avSaude.push("Há lesões ou dores registradas: evite os movimentos que provocam dor e troque o exercício por uma variação que não doa.");
   if (pf.tecnica === "aprendendo") R.avSaude.push("Técnica em desenvolvimento: nas primeiras semanas, deixe 1 repetição a mais sobrando nos exercícios compostos.");
   if (dias < 6) R.avSaude.push("A ficha usa 6 dias por semana. Com " + dias + " dias, os treinos que ficarem de fora aparecem para repetir na semana seguinte.");
-  if (tempoMax < 90) R.avMeta.push("Com menos de 90 min por dia, o cardio fica curto: o déficit vem mais da dieta.");
   const restr = Array.isArray(pf.restricoes) ? pf.restricoes : [];
   if (restr.includes("Vegano") || restr.includes("Vegetariano")) R.notas.push("Proteína vegetal: combine leguminosas, soja, ovos ou laticínios (se consome) e, se precisar, proteína em pó vegetal para chegar a " + R.p + " g.");
   if (num(pf.proteinaAtual) && num(pf.proteinaAtual) < R.p * 0.8) R.notas.push("Você come ~" + num(pf.proteinaAtual) + " g de proteína; a meta é " + R.p + " g. Suba aos poucos, uma porção por refeição.");
@@ -3437,7 +3618,7 @@ async function savePerfil(from) {
 // Campo do formulário pela chave
 const PFBY = Object.fromEntries(PF_PERFIL.concat(PF_OBJ).flatMap(x => x.f).map(f => [f[0], f]));
 // Limite de tempo por dia, em minutos
-function maxMin() { return num((app.perfil || {}).tempoMax) || TEMPO_MAX_DEF; }
+function maxMin() { return fichaTeto(app.perfil); }
 // A pessoa segue o plano anual?
 function ownerPlan() { return !!(app.perfil && app.perfil.usaPlanoAnual); }
 // Abre a aba Perfil sem refazer o formulário que já está na tela
@@ -3598,7 +3779,7 @@ Object.assign(GLOSS, {
   pf_inicio: ["Início do plano", "<p>A semana 1 começa na segunda-feira da semana desta data. Mudar a data muda as semanas da aba Semana, mas não apaga registros.</p>"],
   pf_tempoTreino: ["Tempo de treino", "<p>Define o nível (iniciante, intermediário, avançado), que ajusta o ritmo de ganho de massa.</p>"],
   pf_dias: ["Dias disponíveis", "<p>A ficha usa 6 dias por semana. Com menos dias, o app continua funcionando: os treinos que ficarem de fora aparecem para repetir na semana seguinte.</p>"],
-  pf_tempoMax: ["Tempo máximo por dia", "<p>Inclui musculação e cardio. A musculação leva ~75 min; o que sobra limita o cardio.</p>"],
+  pf_tempoMax: ["Tempo máximo por dia", "<p>Vale só para o treino: aquecimento e musculação. O cardio é opcional e fica fora desse limite.</p><p>A ficha em uso cabe nele. Se passar um pouco (até 10% ou 5 min, o que for maior), o app avisa e você escolhe entre usar assim ou ajustar. Se passar mais, os exercícios do fim do dia que não cabem viram opcionais, sem apagar nada.</p>"],
   pf_trabalho: ["Trabalho", "<p>Entra no gasto do dia fora da academia, que pesa mais que o treino na manutenção.</p>"],
   pf_passos: ["Passos por dia", "<p>Média do celular ou relógio. Acima de 10 mil passos o gasto diário sobe.</p>"],
   pf_sono: ["Sono", "<p>Menos de 7 h atrapalha recuperação, força e controle da fome, principalmente em déficit.</p>"],
@@ -3629,7 +3810,7 @@ Object.assign(GLOSS, {
   pesoprev: ["Peso previsto hoje", "<p>O peso que o plano espera para hoje, interpolado entre o início e o fim de cada fase.</p>"],
   gorduratempo: ["Gordura corporal ao longo do tempo", "<p>Suas medidas de gordura (%) e a meta definida na aba Objetivo. Meça sempre nas mesmas condições: a bioimpedância oscila alguns pontos de um dia para outro.</p>"],
   indice: ["Índice de força", "<p>Média da força estimada (1RM) dos exercícios feitos na semana, em porcentagem do 1RM das cargas máximas do seu Perfil. 100% = suas marcas.</p><p>Em déficit, ficar estável já é bom resultado. Queda de mais de ~5% por 2 semanas pede atenção a sono, dieta e deload.</p>"],
-  cardio: ["Cardio", "<p>Esteira, nos minutos e vezes por semana da fase. Só aumente se o peso médio parar de cair, e nunca na mesma semana em que cortar comida.</p>"],
+  cardio: ["Cardio", "<p>Esteira, nos minutos e vezes por semana da fase. É opcional e fica fora do limite de tempo do treino. Só aumente se o peso médio parar de cair, e nunca na mesma semana em que cortar comida.</p>"],
   fase: ["Fases do plano", "<p>Etapas do plano: <b>cutting</b> (perder gordura), <b>manutenção</b>, <b>ganho lento</b> (ganhar massa com pouco ganho de gordura), <b>recomposição</b> e <b>pausa de dieta</b>. Cada uma tem calorias, macros, cardio e refeição livre próprios.</p><p>Vêm do plano anual ou são geradas pelo seu Objetivo.</p>"]
 });
 
@@ -3654,9 +3835,9 @@ GLOSS.unilateral = ["Unilateral", "<p>Há dois jeitos de anotar um exercício fe
 GLOSS.tempoexec = ["Tempo de execução", "<p>Quanto tempo a série durou, do início da primeira repetição ao fim da última, em segundos, ou pelo cronômetro ▶ logo acima. Ao lado, o app converte para minutos (70 s = 1:10 min).</p><p>Entra no tempo total do treino. Sem registro, o app considera 40 s por série. Séries de 8–12 repetições costumam levar 30–50 s.</p>"];
 GLOSS.descanso_reg = ["Descanso entre as séries", "<p>Toque no tempo que você descansou entre uma série e a seguinte. O tracejado verde marca o previsto do exercício.</p><ul><li><b>Curto</b>: menos de 75% do previsto. Se o desempenho caiu, a semana não conta como estagnação e o app pede para descansar o previsto.</li><li><b>Longo</b>: mais de 1,5 vez o previsto. Alonga o treino sem ganho claro.</li></ul><p>Os tempos entram no tempo total do treino e na recuperação entre as séries.</p>"];
 GLOSS.recuperacao = ["Recuperação entre as séries", "<p>Compara a força estimada da série seguinte com a da anterior (carga, repetições e as que sobraram; sem anotação, vale a folga prevista) e divide pelo que o plano esperava. Assim, um back-off mais leve ou com mais folga não aparece como queda.</p><ul><li><b>95% ou mais</b>: boa.</li><li><b>90–95%</b>: regular.</li><li><b>Abaixo de 90%</b>: incompleta; descanse mais.</li></ul>"];
-GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos, trocas de exercício e o cardio do dia. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil.</p>"];
+GLOSS.tempotreino = ["Tempo do treino", "<p><b>Previsto</b>: aquecimento (5 min + séries de aquecimento, com as pausas entre elas e o descanso antes da 1ª série válida), séries, descansos e trocas de exercício. Enquanto há poucos tempos cronometrados, vale o padrão (40 s por série, descanso da ficha, 1:30 entre exercícios); depois, o <b>seu ritmo</b>. Os exercícios opcionais ficam fora do previsto.</p><p><b>Registrado</b>: o mesmo com os seus tempos de execução e descanso; o que faltar entra pelo previsto (aí aparece “parte estimada”). O limite vem do tempo máximo do Perfil (na conta do dono, 2 h) e vale só para o treino: o cardio do dia é opcional, aparece à parte e não entra nele.</p>"];
 GLOSS.ritmo = ["Seu ritmo", "<p>O app mede como você treina de verdade e usa isso para prever o tempo do dia.</p><ul><li><b>Execução</b>: média do tempo cronometrado de uma série.</li><li><b>Descanso</b>: quantos segundos, em média, você descansa além do previsto na ficha (30 s acima = 2:30 onde a ficha pede 2:00).</li><li><b>Troca de exercício</b>: média do intervalo entre um exercício e o seguinte.</li></ul><p>Vale a partir de 8 tempos anotados de cada tipo (4 trocas) e olha os 60 mais recentes. Se o descanso real passa do previsto em mais de 10 s, o painel mostra quantos minutos isso custa no treino.</p>"];
-GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O painel <b>Tempo do treino</b> mostra quantos minutos os opcionais somam e se cabem no limite.</p>"];
+GLOSS.opcional = ["Exercício opcional", "<p>Fica no fim do treino e só entra se sobrar tempo dentro do limite do dia.</p><ul><li>Não conta no tempo previsto nem na lista do que falta fazer.</li><li>Não fazer não gera queda de carga nem aviso.</li><li>Se fizer, anote normalmente: a carga é guardada e conversa com os outros dias.</li></ul><p>O cartão de cada opcional mostra quanto tempo ele leva (<b>opcional · +N min</b>), e o painel <b>Tempo do treino</b>, quantos minutos os opcionais somam e se cabem no limite.</p><p>Quando a ficha passa do limite do dia, os exercícios do fim do dia que não cabem aparecem como opcionais. A ficha guardada não muda, e o que você anotou neles continua à vista.</p>"];
 GLOSS.dj_ler = ["Ler laudo em PDF", "<p>O app abre o PDF do laboratório, procura o nome de cada marcador que acompanha e pega o primeiro número que vem depois dele.</p><ul><li>Funciona com PDF que tem texto. Foto e PDF digitalizado não têm texto para ler.</li><li>Cada laboratório monta o laudo de um jeito: confira valor, unidade e referência antes de salvar.</li><li>Nada é salvo sem você tocar em <b>Salvar os marcados</b>.</li></ul>"];
 GLOSS.bio = ["Exame de bioimpedância", "<p>O painel <b>Evolução corporal</b> é montado com os exames que você registra (InBody ou parecido).</p><ul><li><b>Gordura e meta</b>: a gordura do último exame contra a meta do Perfil. A barra mostra quanto do caminho já foi feito desde o <b>pico</b>, que é o exame com a maior gordura.</li><li><b>Análise músculo-gordura</b>: cada barra fica numa escala com as zonas abaixo, normal e acima. O contorno tracejado é o exame do pico.</li><li><b>Faixas normais</b>: as de peso, massa magra e massa de gordura vêm do laudo, quando você preenche. Sem elas, o app estima pela altura. Gordura (%) e IMC usam a referência padrão.</li><li><b>Análise segmentar</b>: massa magra de cada braço, tronco e perna, com o percentual do padrão que o laudo informa.</li><li><b>Histórico</b>: um ponto por exame. O pico e o último ficam destacados.</li></ul><p>Um exame do período do plano também entra nas medidas do dia (peso e gordura). Bioimpedância varia com hidratação, horário e aparelho: compare exames feitos em condições parecidas.</p>"];
 GLOSS.domingo = ["Domingo: dia livre", "<p>Não há musculação prevista no domingo.</p><ul><li>Se fizer cardio ou outra atividade, registre o tempo (e a distância, se tiver) e toque em <b>Feito</b>.</li><li>O que for registrado entra no cardio da semana.</li><li>Não registrar nada não conta como falta.</li></ul>"];
@@ -3909,7 +4090,7 @@ function renderDay(wk) {
   let h = '<div class="dayhead"><h2>' + esc(D.titulo) + '</h2><span class="meta">' + D.nome + " " + dayDate(W, day).getUTCDate() + "/" + MES[dayDate(W, day).getUTCMonth()] + infoBtn("dias") + "</span></div>";
   if (!D.livre) h += '<div class="summary">' + Object.keys(counts).map(a => actChip(a, ACT[a].txt + " · " + counts[a])).join("") + "</div>";
   h += D.livre ? '<div class="warm day"><b>Dia livre</b>: registre o cardio ou outra atividade abaixo e toque em Feito. Não conta como treino faltando.</div>' : '<div class="warm day"><b>Antes</b>: 5 min leves de esteira ou bike; depois, o aquecimento de cada exercício.</div>';
-  app.dayOrd = dayOrder(doc, day);
+  app.dayOrd = dayOrder(doc, day); app.dayOpt = optMins(W, day, wk); // 2.8 (bug-18): o tempo de cada opcional, para o cartão
   defs.forEach((d, idx) => {
     // 2.5: o par do bi-set num cartão só (o 2º exercício entra no cartão do 1º, sem intervalo entre os dois)
     const pr = parLigado(d, W), junto = pr && defs.includes(pr.a) && defs.includes(pr.b);
@@ -3930,6 +4111,15 @@ function renderDay(wk) {
   const dk = W + "|" + day;
   if (app.dayKey !== dk) { if (app.dayKey) animSwap(dv); app.dayKey = dk; }
 }
+// 2.8 (bug-18; regra do dono, 25/11: "naqueles exercícios opcionais, deve-se colocar uma observação indicando quanto tempo demoraria"):
+// minutos de cada opcional do dia (os da ficha e os que viraram opcionais pelo limite de tempo) pela conta do app: o dayTime soma os
+// opcionais à parte (opt: séries, descansos e a troca, no ritmo da pessoa); com um opcional de cada vez no dia, o opt é o tempo dele.
+// Devolve { código: minutos }
+function optMins(W, day, wk) {
+  const L = dayEx(day).filter(d => d.opt), out = {};
+  try { L.forEach(x => { L.forEach(d => { d.opt = d === x; }); out[x.k] = dayTime(W, day, wk).opt; }); } finally { L.forEach(d => { d.opt = true; }); }
+  return out;
+}
 // Aquecimento: séries leves antes da primeira válida (não contam para volume nem progressão)
 const WARM_BY = { "Panturrilha": ["Quadríceps", "Posteriores de coxa", "Glúteos"], "Tríceps": ["Peito", "Ombro anterior"], "Ombro lateral": ["Peito", "Ombro anterior"], "Bíceps": ["Costas"], "Ombro posterior": ["Costas"], "Glúteos": ["Quadríceps", "Posteriores de coxa"], "Adutores": ["Quadríceps", "Glúteos"], "Lombar": ["Posteriores de coxa", "Glúteos"], "Peito": ["Ombro anterior"] };
 // Séries de aquecimento do exercício: [fração da carga, repetições]; nenhuma se o músculo já foi aquecido antes
@@ -3943,18 +4133,22 @@ function warmPlan(d) {
   if (groups.includes(d.m) || (WARM_BY[d.m] || []).some(g => groups.includes(g))) return null;
   return d.t === "comp" ? [[0.5, 8], [0.75, 4]] : [[0.5, 12]];
 }
-// Aquecimento do cartão, com controle próprio: cada série é um botão de marcar, seguido da pausa indicada; o bloco tem cronômetro e a contagem do descanso antes da 1ª válida
+// bug-19: texto do botão de marcar de uma série de aquecimento: carga × repetições (sem carga de trabalho, a porcentagem)
+function warmLbl(L, f, r, kg) { return L > 0 ? fmt(kg) + " kg × " + r : Math.round(f * 100) + "% × " + r; }
+// Aquecimento do cartão, com controle próprio: cada série tem o botão de marcar, o campo da carga (bug-19: a sugerida é uma carga do aparelho; a pessoa ajusta)
+// e a mesma barra de cronômetro das séries de trabalho (bug-20), seguida da pausa indicada; a última leva ao descanso até a 1ª série válida
 function warmHtml(d, p, e) {
   const plan = warmPlan(d); if (!plan) return "";
-  const L = p.sets[0] && p.sets[0].kg != null ? p.sets[0].kg : p.load, st = d.step || 1, c = app.clk;
-  const mine = c && c.W === app.week && c.k === d.k, run = mine && c.ph === "warm", pre = mine && c.ph === "pre", aq = (e && e.aq) || [], antes = warmTime(plan).antes;
-  const chips = plan.map(([f, r], i) => '<button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + (L > 0 ? fmt(Math.max(st, maqMin(d), rnd(L * f, st))) + " kg × " + r : Math.round(f * 100) + "% × " + r) + '</button><span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span>").join("");
-  const feito = e && +e.aqT > 0 ? "⏱ " + clkFmt(e.aqT) + (+e.aqD > 0 ? " + " + clkFmt(e.aqD) + " de descanso" : "") + " · de novo" : "Cronometrar";
-  const tm = run ? '<span class="clk run rs clkanim wq"><span class="clkfill"></span>' + clkRing() + '<span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + '</span></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Terminei o aquecimento: anotar e contar o descanso">⏸ Terminei</button></span>'
-    : pre ? '<span class="clk run rs clkanim wq pre' + (clkEl() >= c.prev ? " ok" : "") + '" style="--p:' + Math.min(1, clkEl() / c.prev).toFixed(3) + '"><span class="clkfill"></span><span class="clkt"><b>Descanso</b></span><span class="clkn"><span data-clkt>' + clkFmt(clkEl()) + "</span><small> / " + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="first" aria-label="Anotar o descanso e começar a 1ª série">▶ 1ª série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></span>'
-    : '<button type="button" class="btn small clkgo" data-clk="warm|' + d.k + '" aria-label="Cronometrar o aquecimento">▶ ' + feito + "</button>";
+  const L = warmL(p), c = app.clk, aq = (e && e.aq) || [], antes = warmTime(plan).antes;
+  const rows = plan.map(([f, r], i) => {
+    const w = L > 0 ? warmKg(d, L, i, f, e, app.week) : null;
+    return '<div class="wqs" id="wqs-' + d.k + "-" + i + '"><div class="wqrow"><button type="button" class="rbtn" aria-pressed="' + !!aq[i] + '" data-aq="' + d.k + "|" + i + '" aria-label="Aquecimento ' + (i + 1) + '">' + warmLbl(L, f, r, w ? w.kg : 0) + "</button>" +
+      (w ? '<label class="wkg">ajustar <input type="text" inputmode="decimal" autocomplete="off" data-aqkg="' + d.k + "|" + i + '" value="' + (w.own ? esc(fmt(w.kg)) : "") + '" placeholder="' + esc(fmt(w.sug)) + '" aria-label="Carga do aquecimento ' + (i + 1) + ' em kg' + (w.lem && !w.own ? " (lembrada da última vez)" : "") + '"> kg</label>' : "") +
+      '<span class="wqp">' + (i < plan.length - 1 ? "› " + pausaTxt(warmGap(f, WARM_PAUSA)) + " ›" : "› " + pausaTxt(antes) + " › 1ª série") + "</span></div>" + clkAqSetHtml(d, i, plan.length) + "</div>";
+  }).join("");
+  const feito = e && +e.aqT > 0 ? '<p class="wqd muted">⏱ ' + clkFmt(e.aqT) + (+e.aqD > 0 ? " + " + clkFmt(e.aqD) + " de descanso" : "") + " no aquecimento</p>" : "";
   const dica = plan.length > 1 ? "Uma atrás da outra, só trocando o peso; " + pausaTxt(antes) + " antes da 1ª série." : "Leve, longe da falha; " + pausaTxt(antes) + " antes da 1ª série.";
-  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b></div><div class="wqrow">' + chips + '</div><p class="wqd muted">' + dica + '</p><div class="wqrow">' + tm + "</div></div>";
+  return '<div class="warm" id="wq-' + d.k + '"><div><b>Aquecimento</b></div>' + rows + '<p class="wqd muted">' + dica + (L > 0 ? " Ajuste a carga se o aparelho não tem o peso sugerido." : "") + "</p>" + feito + "</div>";
 }
 // Repetições parciais da série: chips (toque remove) e botões de 25/50/75%
 function parcHtml(k, i, arr, side) {
@@ -4021,10 +4215,12 @@ function dayTimeHtml(W, day, wk) {
   const t = dayTime(W, day, wk), max = maxMin();
   const ord = Object.entries(dayOrder(getDoc(W, day, false), day)).sort((a, b) => a[1].pos - b[1].pos);
   const trocas = ord.filter(([, o]) => o.pos !== o.prev).length;
-  const totPrev = t.prev + t.cardioPrev, totReg = t.reg + t.cardio;
+  // bug-15 (regra do dono, 25/11): o limite vale só para o treino (aquecimento e musculação); o cardio é opcional e aparece à parte, com o total, só como informação
+  const totPrev = t.prev, totReg = t.reg, totAll = t.prev + t.cardioPrev, regAll = t.reg + t.cardio;
   return '<summary><h2>Tempo do treino</h2><span class="muted">' + (t.nReg ? "~" + esc(totReg) + " de " : "previsto ") + esc(totPrev) + " min · limite " + max + "</span></summary><div class=\"tiles\">" +
-    tile("Previsto", totPrev + " min", "musculação " + t.prev + " + cardio " + t.cardioPrev + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
-    tile("Registrado", t.nReg ? "~" + esc(totReg) + " min" : "—", t.nReg ? "musculação " + t.reg + " + cardio " + esc(t.cardio) + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
+    tile("Previsto", totPrev + " min", "treino (aquecimento e musculação)" + (totPrev > max ? " · passa " + (totPrev - max) + " do limite" : " · limite " + max), "tempotreino") +
+    tile("Registrado", t.nReg ? "~" + esc(totReg) + " min" : "—", t.nReg ? "treino" + (t.regEst ? " · parte estimada" : "") : "anote séries e descansos", "tempotreino") +
+    tile("Cardio", t.cardioPrev + " min", "opcional, fora do limite · total com o treino " + totAll + " min" + (t.nReg ? " (feito: " + esc(regAll) + " min)" : ""), "cardiodia") +
     tile("Descanso médio", t.restAvg != null ? fmtSec(t.restAvg) : "—", t.restAvg != null ? "previsto " + fmtSec(t.restPrev) + (t.restAvg < t.restPrev * REST_CURTO ? " · curto" : t.restAvg > t.restPrev * REST_LONGO ? " · longo" : " · no previsto") : "toque nos tempos entre as séries", "descanso_reg") +
     tile("Recuperação", t.rec != null ? Math.round(t.rec * 100) + "%" : "—", t.rec != null ? (t.rec >= REC_BOA ? "boa entre as séries" : t.rec >= REC_REGULAR ? "regular entre as séries" : "incompleta: descanse mais") : "precisa de 2 séries seguidas", "recuperacao") +
     (t.aqN ? tile("Aquecimento", t.nReg ? "~" + Math.max(1, Math.round(t.aqReg / 60)) + " min" : "—", t.aqDone + " de " + t.aqN + " séries marcadas · previsto " + Math.round(t.aqPrev / 60) + " min, com pausas", "aquecimento") : "") + "</div>" +
@@ -4092,7 +4288,7 @@ function exCardPar(pr, pa, pb, ea, eb, W) {
   const sa = ea ? ea.st : null, sb = eb ? eb.st : null, os2 = sa === "feito" && sb === "feito", nao2 = sa === "nao" && sb === "nao";
   const estado = os2 || nao2 || (!sa && !sb) ? "" : '<p class="muted par-st">' + esc(exShort(pr.a)) + ": " + (sa === "feito" ? "feito" : sa === "nao" ? "não fiz" : "falta") + " · " + esc(exShort(pr.b)) + ": " + (sb === "feito" ? "feito" : sb === "nao" ? "não fiz" : "falta") + "</p>";
   return '<article class="card par' + (os2 ? " done" : nao2 ? " skip" : "") + '" style="--act:var(' + A.cor + ')" id="card-' + pr.a.k + '">' +
-    '<div class="par-h"><span class="par-tag">Bi-set · séries intercaladas, descanso depois do par</span><button type="button" class="btn small" data-par-solta="' + pr.a.k + '">Fazer separado hoje</button></div>' +
+    '<div class="par-h"><span class="par-tag">Bi-set · séries intercaladas, descanso depois do par</span><button type="button" class="btn small alvo44" data-par-solta="' + pr.a.k + '" aria-label="Fazer separado hoje: os dois exercícios voltam a ter cartão próprio só neste dia" title="Vale só para este dia">Fazer separado hoje</button></div>' +
     '<div class="par-ex"><span class="par-n">1</span>' + A.topo + '</div><div class="par-ex" id="card-' + pr.b.k + '"><span class="par-n">2</span>' + B.topo + "</div>" +
     A.tabAbre + linhas + A.extra + B.extra + A.tabFecha + A.ajustes + B.ajustes + estado +
     '<div class="row-btns donebar"><button class="btn ok" data-done-par="' + pr.a.k + "|" + pr.b.k + '" aria-pressed="' + os2 + '">✓ Feito (os dois)</button><button class="btn no" data-skip-par="' + pr.a.k + "|" + pr.b.k + '" aria-pressed="' + nao2 + '">✗ Não fiz</button></div></article>';
@@ -4101,7 +4297,7 @@ function exCardPar(pr, pa, pb, ea, eb, W) {
 function exCard(d, p, entry, W) {
   const P = exCardPartes(d, p, entry, W), pr = parDe(d);
   // 2.5: bi-set desvinculado no dia: o 1º cartão oferece juntar de novo
-  const volta = pr && pr.a === d && !parLigado(d, W) && contaEx(pr.b, W) ? '<div class="par-volta"><span class="muted">Bi-set feito separado hoje.</span><button type="button" class="btn small" data-par-junta="' + d.k + '">Juntar de novo</button></div>' : "";
+  const volta = pr && pr.a === d && !parLigado(d, W) && contaEx(pr.b, W) ? '<div class="par-volta"><span class="muted">Bi-set feito separado hoje.</span><button type="button" class="btn small alvo44" data-par-junta="' + d.k + '" aria-label="Juntar de novo os dois exercícios do bi-set neste dia" title="Juntar de novo o bi-set">Juntar de novo</button></div>' : "";
   return P.abre + volta + P.topo + P.tabAbre + P.linhas.map((x, i) => x + P.desc[i]).join("") + P.extra + P.tabFecha + P.ajustes + P.feito + "</article>";
 }
 // As partes do cartão (nome: o nome curto do exercício nas séries e nas observações, no cartão do par)
@@ -4156,7 +4352,7 @@ function exCardPartes(d, p, entry, W, nome) {
     '<div class="nhint" id="nh-' + d.k + '">' + esc(noteEffect(exFlags(entry, d), "ex")) + "</div>" +
     uniToggleHtml(d) + '<div class="row-btns"><button class="btn small" data-addset="' + d.k + '">+ série extra</button></div></details>';
   return { cor: A.c, abre: '<article class="card' + (st === "feito" ? " done" : st === "nao" ? " skip" : "") + '" style="--act:var(' + A.c + ')" id="card-' + d.k + '">', topo:
-    '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional</span>' : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave" : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
+    '<div class="card-h"><div><h3>' + esc(d.n) + (d.opt ? ' <span class="optb">opcional' + ((app.dayOpt || {})[d.k] > 0 ? " · +" + app.dayOpt[d.k] + " min" : "") + "</span>" : "") + '</h3><div class="mus">' + esc(d.m) + (d.obs ? " · " + esc(d.obs) : "") + "</div></div>" + actChip(p.action, p.mode && p.mode !== "normal" ? "Destrave" : null, p.mode && p.mode !== "normal" ? "mode-" + p.mode : null) + "</div>" +
     '<div class="pres">' + loadChip + setsChip + rirChip + restChip + modeChip + stallChip + "</div>" + whyBox +
     (p.how ? '<div class="how">' + esc(p.how) + infoBtn(p.mode && p.mode !== "normal" ? "mode-" + p.mode : "destrave", "técnica") + "</div>" : "") + (st === "nao" ? "" : warmHtml(d, p, entry)) + uniLinkHtml(d) + '<div id="ul-' + d.k + '">' + (lados ? uniLine(entry) : "") + "</div>",
     tabAbre: '<table class="sets"><colgroup><col><col class="c-kg"><col class="c-rp"><col class="c-rir"></colgroup><thead><tr><th>Série · previsto</th><th>kg</th><th>Reps</th><th>RIR' + infoBtn("rir") + '</th></tr></thead><tbody>', linhas: rows.map(r => r.linha), desc: rows.map(r => r.desc), extra: extraRows, tabFecha: "</tbody></table>", ajustes,
@@ -4339,7 +4535,7 @@ function renderProgress() {
   for (let w2 = 1; w2 <= lastW; w2++) {
     const ds = DAYS.map(dd => dayTime(w2, dd.id, weeks[w2])).filter(t => t.nReg > 0);
     const recs = ds.map(t => t.rec).filter(r => r != null);
-    tw.push({ min: ds.length ? Math.round(ds.reduce((a, t) => a + t.reg + t.cardio, 0) / ds.length) : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, rest: ds.map(t => t.restAvg).filter(x => x != null) });
+    tw.push({ min: ds.length ? Math.round(ds.reduce((a, t) => a + t.reg, 0) / ds.length) : null, rec: recs.length ? recs.reduce((a, b) => a + b, 0) / recs.length : null, rest: ds.map(t => t.restAvg).filter(x => x != null) });
   }
   const cTm = chartBase();
   cTm.scales.y.beginAtZero = true; cTm.scales.y.ticks.callback = v => v + " min";
@@ -4840,7 +5036,9 @@ function cardioPlan(w) {
   const pc = (app.plan && app.plan.cardio) || CARDIO_DEF;
   // campo vazio no Perfil cai no padrão (CARDIO_DEF): sem isso o tempo previsto do dia virava "NaN min" para quem não preencheu o cardio
   const num = (v, d) => +v > 0 ? +v : d;
-  const base = { min: num(pc.min, CARDIO_DEF.min), vezes: num(pc.vezes, CARDIO_DEF.vezes), incl: pc.incl != null && pc.incl !== "" && +pc.incl >= 0 ? +pc.incl : CARDIO_DEF.incl, vel: num(pc.vel, CARDIO_DEF.vel), tipo: pc.tipo === "corrida" ? "corrida" : "caminhada" };
+  // bug-15: um 0 que vem do plano (a pessoa não faz cardio) vale 0; só campo vazio ou inválido cai no padrão
+  const zero = (v, d) => v != null && v !== "" && isFinite(+v) && +v >= 0 ? +v : d;
+  const base = { min: zero(pc.min, CARDIO_DEF.min), vezes: num(pc.vezes, CARDIO_DEF.vezes), incl: pc.incl != null && pc.incl !== "" && +pc.incl >= 0 ? +pc.incl : CARDIO_DEF.incl, vel: num(pc.vel, CARDIO_DEF.vel), tipo: pc.tipo === "corrida" ? "corrida" : "caminhada" };
   const F = app.fases || [];
   if (!F.length) return base;
   if (ownerPlan() ? w <= BLOCK_W : weekStart(w).getTime() <= F[0].fim) return base;
@@ -4888,7 +5086,7 @@ function cardioCard(W, day) {
   const tipo = c.tipo || pl.tipo;
   const tbtn = (v, label) => '<button class="btn small" data-cardiotipo="' + v + '" aria-pressed="' + (tipo === v) + '">' + label + "</button>";
   return '<article class="card' + (c.st === "feito" ? " done" : c.st === "nao" ? " skip" : "") + '" style="--act:var(--deload)" id="card-cardio">' +
-    '<div class="card-h"><div><h3>' + (livre ? "Atividade do dia" : "Cardio na esteira") + infoBtn(livre ? "domingo" : "cardiodia") + '</h3><div class="mus">' + (livre ? "Cardio ou outra atividade, no horário que quiser" : legDay ? "Dia de perna: faça depois da musculação" : "Depois da musculação ou em outro horário") + "</div></div></div>" +
+    '<div class="card-h"><div><h3>' + (livre ? "Atividade do dia" : "Cardio na esteira") + infoBtn(livre ? "domingo" : "cardiodia") + '</h3><div class="mus">' + (livre ? "Cardio ou outra atividade, no horário que quiser" : "opcional · " + fmt(pl.min) + " min · fora do limite do treino. " + (legDay ? "Dia de perna: faça depois da musculação" : "Depois da musculação ou em outro horário")) + "</div></div></div>" +
     '<div class="row-btns" style="margin-top:8px" role="group" aria-label="Tipo de cardio">' + tbtn("caminhada", "Caminhada") + tbtn("corrida", "Corrida") + infoBtn("cardiotipo") + "</div>" +
     (livre ? '<div class="pres"><span class="vchip">Sem meta: dia livre</span></div>' : "") + '<div class="pres"' + (livre ? ' style="display:none"' : "") + '><span class="vchip">Previsto: <b>' + pl.min + " min</b> · " + pl.tipo + " · " + fmt(pl.incl) + "% · " + fmt(pl.vel) + " km/h · pace " + paceFmt(60 / pl.vel) + (pl.vezes < 6 ? " · " + pl.vezes + "x na semana" : "") + infoBtn("cardio") + "</span></div>" +
     '<table class="sets"><thead><tr><th>Tempo</th><th>Distância (km)</th><th>Inclinação (%)</th><th>Velocidade (km/h)</th></tr></thead><tbody><tr>' +
@@ -5141,6 +5339,13 @@ function clkToast(t) {
 function clkHandoff(W, m, j, side) {
   const c = app.clk, msgs = [];
   if (!c) return msgs;
+  // 2.7 (bug-4): o exercício do cronômetro guardado não existe na ficha em uso (ficha nova valendo de hoje): sem ele não há onde anotar, e o
+  // cronômetro velho é encerrado em vez de dar TypeError (antes, "Iniciar série" falhava e a barra sumia)
+  // Com uma semana antiga aberta (ficha de outra data), o exercício do cronômetro de hoje pode não estar na ficha em uso: confere na ficha da semana do cronômetro
+  if (clkFora()) { // 2.8 (bug-16): a ficha em uso não é a da semana do cronômetro (ou não tem o exercício)
+    if (clkEx(c.k)) return fichaNa(c.W, () => clkHandoff(W, m, j, side));
+    app.clk = null; clkSave(); msgs.push("o cronômetro do treino anterior foi encerrado"); return msgs;
+  }
   const el = clkEl();
   // outra semana ou outro dia (2ª banca: o tempo era descartado sem aviso): a execução em curso é anotada no treino de onde veio
   if (c.W !== W || EXBY[c.k].d !== EXBY[m].d) {
@@ -5154,13 +5359,19 @@ function clkHandoff(W, m, j, side) {
     if (el <= clkExecMax(c.k)) { clkRecord(W, c.k, c.i, "exec", el, c.side); msgs.push("execução " + clkFmt(el) + " anotada"); }
     else msgs.push("execução de " + clkFmt(el) + " não anotada (parecia esquecida)");
   } else if (c.ph === "rest") {
-    if (c.nk && c.nk === m && j === c.i + 1) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso do par " + clkFmt(el) + " anotado"); } // 2.5: depois do bi-set, a série seguinte é a do 1º
+    if (c.nk && c.nk === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso do par " + clkFmt(el) + " anotado"); } // 2.5: depois do bi-set, a série seguinte é a do 1º
     else if (c.k === m && j > c.i) { clkRecord(W, c.k, c.i, "desc", el); msgs.push("descanso " + clkFmt(el) + " anotado"); }
     else if (c.k !== m) { clkRecord(W, m, null, "trans", el); msgs.push("intervalo " + clkFmt(el) + " anotado"); }
   } else if (c.ph === "warm") {
     // começou a série com o aquecimento rodando: o tempo todo (descanso incluído) fica no aquecimento
     if (el <= CLK_WARM_MAX) { clkWarmRec(W, c.k, el, c.k === m ? 0 : null); msgs.push("aquecimento " + clkFmt(el) + " anotado"); }
     else msgs.push("aquecimento de " + clkFmt(el) + " não anotado (parecia esquecido)");
+    if (c.k === m) return msgs;
+  } else if (c.ph === "aqx" || c.ph === "aqr") {
+    // bug-20: começou outra coisa com o aquecimento por séries rodando: o tempo todo (descanso incluído) fica no aquecimento
+    const tot = (c.aw || 0) + el;
+    if (tot <= CLK_WARM_MAX) { clkWarmRec(W, c.k, tot, c.k === m ? 0 : null); msgs.push("aquecimento " + clkFmt(tot) + " anotado"); }
+    else msgs.push("aquecimento de " + clkFmt(tot) + " não anotado (parecia esquecido)");
     if (c.k === m) return msgs;
   } else if (c.ph === "pre") {
     if (c.k === m && j === 0) { clkPreRec(W, c.k, el); msgs.push("descanso antes da 1ª série " + clkFmt(el) + " anotado"); }
@@ -5173,6 +5384,7 @@ function clkHandoff(W, m, j, side) {
   return msgs;
 }
 // Teto da execução cronometrada: nos lados juntos, cabe o tempo dos dois lados e a troca
+const CLK_PAR_TOQUE = 1; // 2.7: segundos mínimos do 2º exercício do bi-set antes de aceitar "Parar"
 function clkExecMax(k) { const d = EXBY[k]; return d && uniJunto(d) ? 2 * CLK_EXEC_MAX + UNI_TROCA : CLK_EXEC_MAX; }
 // Começa a cronometrar a execução da série (m = exercício, j = série)
 function clkGo(W, m, j, side) {
@@ -5207,9 +5419,23 @@ function clkToRest(c, t0) {
   else if (clkLeft(c.W, c.day, c.k)) app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   else { app.clk = null; clkToast("Última série do dia: cronômetro encerrado. Veja a aba Resumo do dia."); }
 }
+// 2.8 (bug-16, raiz do bug-4): tudo o que o cronômetro lê sobre o exercício vem da ficha da semana dele (c.W), e não da semana aberta na tela.
+// clkEx(k) é o ponto de acesso (o exercício do cronômetro); clkFora() diz se a ficha em uso não é a da semana do cronômetro (ou não tem o exercício)
+function clkEx(k) { const c = app.clk; return k == null ? undefined : c ? fichaNa(c.W, () => EXBY[k]) : EXBY[k]; }
+function clkFora() { const c = app.clk; return !!c && (fichaVersao(c.W).chave !== (app.fichaVer || "atual") || !EXBY[c.k]); }
+// Se o exercício do cronômetro está na ficha da semana do cronômetro (o dono olha uma semana antiga no meio do treino), roda fn com essa ficha
+// e redesenha depois (com a ficha aberta, e clkBar lê da semana do cronômetro); se não está em nenhuma, o cronômetro é encerrado sem erro
+function clkEmFicha(fn) {
+  const c = app.clk; if (!c) return;
+  if (!clkEx(c.k)) { app.clk = null; clkSave(); clkRefresh(); return; }
+  app.clkSemRedesenho = true;
+  try { fichaNa(c.W, fn); } finally { app.clkSemRedesenho = false; }
+  clkRefresh();
+}
 // Para a execução, anota o tempo e passa para a fase seguinte
 function clkStop() {
   const c = app.clk; if (!c) return;
+  if (clkFora()) { clkEmFicha(clkStop); return; } // 2.8 (bug-16): a ficha do cronômetro é a da semana dele
   if (c.ph === "warm") {
     // fim do aquecimento: anota o bloco e conta o descanso até a 1ª série válida (se ela ainda não foi feita)
     clkWarmRec(c.W, c.k, clkEl());
@@ -5217,7 +5443,11 @@ function clkStop() {
     app.clk = s0 && +s0.reps > 0 ? null : { W: c.W, day: c.day, k: c.k, i: 0, side: null, ph: "pre", prev: warmTime(warmPlan(def)).antes, t0: Date.now(), ack: 0 };
     clkSave(); clkRefresh(); return;
   }
+  if (c.ph === "aqx") { clkAqStop(c, clkEl()); clkSave(); clkRefresh(); return; } // bug-20: fim de uma série de aquecimento
   if (c.ph !== "exec" || c.waitSide) return;
+  // 2.7 (bug-5): no bi-set, o 1º exercício passa sozinho ao 2º; um 2º toque em "Parar" logo depois (menos de 1 s) é o mesmo toque repetido e
+  // não pode gravar execução de 0 s no 2º
+  if (c.par && clkEl() < CLK_PAR_TOQUE) return;
   const el = clkEl();
   clkRecord(c.W, c.k, c.i, "exec", el, c.side);
   clkAfterExec(c, Date.now());
@@ -5233,6 +5463,7 @@ function clkOnDone(W, k) {
     let t0 = Date.now();
     if (c.ph === "exec") { if (c.waitSide) t0 = c.t0; else { const el = clkEl(); if (el <= clkExecMax(k)) clkRecord(W, k, c.i, "exec", el, c.side); } }
     if (c.ph === "warm" && clkEl() <= CLK_WARM_MAX) clkWarmRec(W, k, clkEl());
+    if ((c.ph === "aqx" || c.ph === "aqr") && (c.aw || 0) + clkEl() <= CLK_WARM_MAX) clkWarmRec(W, k, (c.aw || 0) + clkEl());
     app.clk = { W, day: def.d, k, i: c.i, side: null, ph: "trans", prev: TRANS_DEF, t0, ack: 0 };
   } else if (!c && live) app.clk = { W, day: def.d, k, i: null, side: null, ph: "trans", prev: TRANS_DEF, t0: Date.now(), ack: 0 };
   else return;
@@ -5256,16 +5487,19 @@ function clkOnInput(W, k) {
 function clkAct(a) {
   const c = app.clk;
   if (a.startsWith("go|")) { const [, k, i, sd] = a.split("|"); clkGo(app.week, k, +i, sd || null); return; }
+  if (a.startsWith("wgo|")) { const [, k, i] = a.split("|"); clkAqGo(app.week, k, +i); return; }
   if (a.startsWith("warm|")) { clkWarm(app.week, a.split("|")[1]); return; }
-  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; app.weekTouched = true; /* 5ª banca: a releitura não troca a semana da tela */ if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" || c.ph === "pre" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
+  if (a === "see") { if (!c) return; app.week = c.W; app.day = c.day; app.weekTouched = true; /* 5ª banca: a releitura não troca a semana da tela */ if (app.tab !== "semana") location.hash = "#semana"; else renderWeek(); setTimeout(() => { const el = document.getElementById(c.ph === "trans" ? "card-" + c.k : c.ph === "warm" || c.ph === "pre" || c.ph === "aqx" || c.ph === "aqr" ? "wq-" + c.k : "tb-" + c.k + "-" + c.i) || document.getElementById("card-" + c.k); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); return; }
   if (!c) return;
+  if (clkFora()) { clkEmFicha(() => clkAct(a)); return; } // 2.8 (bug-16): o resto dos botões também lê e grava na ficha da semana do cronômetro
   if (a === "stop") { clkStop(); return; }
   if (a === "side") { if (c.waitSide) { clkRecord(c.W, c.k, c.i, "troca", clkEl()); c.waitSide = false; c.t0 = Date.now(); c.ack = 0; c.ask = false; clkSave(); clkRefresh(); } return; }
   // pular o outro lado: o descanso da série conta desde o fim do lado feito
   if (a === "skip") { if (c.waitSide) { clkToRest(c, c.t0); clkSave(); clkRefresh(); } return; }
-  if (a === "next") { const k2 = c.nk && EXBY[c.nk] ? c.nk : c.k; clkGo(c.W, k2, c.i + 1, uniLados(EXBY[k2]) ? "e" : null); return; } // 2.5: no bi-set, a seguinte é a do 1º
+  if (a === "next" && c.ph === "aqr") { clkAqGo(c.W, c.k, c.i + 1); return; } // bug-20: próxima série do aquecimento
+  if (a === "next") { const k2 = c.nk && clkEx(c.nk) ? c.nk : c.k; clkGo(c.W, k2, c.i + 1, uniLados(EXBY[k2]) ? "e" : null); return; } // 2.5: no bi-set, a seguinte é a do 1º
   if (a === "first") { clkGo(c.W, c.k, 0, uniLados(EXBY[c.k]) ? "e" : null); return; }
-  if (a === "end") { if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
+  if (a === "end") { if (c.ph === "aqr") { clkWarmRec(c.W, c.k, (c.aw || 0) + clkEl()); clkToast("Aquecimento " + clkFmt((c.aw || 0) + clkEl()) + " anotado."); } else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } else if (c.ph === "pre") { clkPreRec(c.W, c.k, clkEl()); clkToast("Descanso " + clkFmt(clkEl()) + " anotado."); } app.clk = null; clkSave(); clkRefresh(); return; }
   if (a === "keep") { c.ask = false; c.fixOpen = false; c.ack = Math.floor(clkEl() / CLK_ALERT); clkSave(); clkBar(); return; }
   if (a === "drop") { app.clk = null; clkSave(); clkRefresh(); clkToast("Tempo descartado."); return; }
   if (a === "fix") { c.fixOpen = true; clkSave(); clkBar(); const i = document.getElementById("clkFixIn"); if (i) { i.focus(); i.select(); } return; }
@@ -5276,13 +5510,15 @@ function clkAct(a) {
     else if (c.ph === "exec") { clkRecord(c.W, c.k, c.i, "exec", s, c.side); clkAfterExec(c, c.t0 + s * 1000); if (app.clk) app.clk.ack = Math.floor(clkEl() / CLK_ALERT); }
     else if (c.ph === "rest") { clkRecord(c.W, c.k, c.i, "desc", s); app.clk = null; }
     else if (c.ph === "warm") { clkWarmRec(c.W, c.k, s); app.clk = null; }
+    else if (c.ph === "aqx") clkAqStop(c, s);
+    else if (c.ph === "aqr") { clkWarmRec(c.W, c.k, (c.aw || 0) + s); app.clk = null; }
     else if (c.ph === "pre") { clkPreRec(c.W, c.k, s); app.clk = null; }
     else { c.fixed = s; c.ask = false; c.fixOpen = false; }
     clkSave(); clkRefresh(); clkToast("Tempo corrigido para " + clkFmt(s) + "."); return;
   }
 }
 // Redesenha as barras do cronômetro
-function clkRefresh() { clkBar(); if (app.tab === "semana") renderWeek(); clkAnim(); }
+function clkRefresh() { if (app.clkSemRedesenho) return; clkBar(); if (app.tab === "semana") renderWeek(); clkAnim(); }
 // Animação do tempo passando: barra enchendo até o previsto e ponteiro de segundos
 function clkRing() { return '<svg class="clkring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rb" cx="18" cy="18" r="15"/><circle class="rf" cx="18" cy="18" r="15" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 18 18)"/><line class="rh" x1="18" y1="18" x2="18" y2="7"/><circle class="rc" cx="18" cy="18" r="2"/></svg>'; }
 // Tempo previsto da fase atual, para a barra de progresso
@@ -5305,6 +5541,34 @@ function clkWarm(W, k) {
   app.clk = { W, day: def.d, k, i: 0, side: null, ph: "warm", prev: warmTime(warmPlan(def)).serie, t0: Date.now(), ack: 0 };
   clkSave(); clkRefresh();
   if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
+}
+// bug-20: começa a execução da série i do aquecimento do exercício k. Com o aquecimento do mesmo exercício já rodando, o tempo segue somando (aw)
+function clkAqGo(W, k, i) {
+  clkUnlock();
+  const c0 = app.clk, seg = !!c0 && (c0.ph === "aqx" || c0.ph === "aqr") && c0.W === W && c0.k === k, aw = seg ? (c0.aw || 0) + clkEl() : 0;
+  const msgs = seg ? [] : clkHandoff(W, k, 0, null), { def, entry } = ctx(k, null, W);
+  if (!entry.startAt) { entry.startAt = new Date().toISOString(); touch(def.d, W); }
+  app.clk = { W, day: def.d, k, i, side: null, ph: "aqx", prev: WARM_EXEC, aw, t0: Date.now(), ack: 0 };
+  clkSave(); clkRefresh();
+  if (msgs.length) clkToast(msgs.join(" · ").replace(/^./, x => x.toUpperCase()) + ".");
+}
+// bug-20: fim da execução (el s) da série c.i do aquecimento: marca a série; depois dela vem a pausa de warmGap, e depois da última o descanso até a 1ª válida
+function clkAqStop(c, el) {
+  const { def, entry } = ctx(c.k, null, c.W), plan = warmPlan(def) || [], n = plan.length, aw = (c.aw || 0) + el;
+  entry.aq = Array.from({ length: n }, (x, i) => !!(entry.aq || [])[i]); if (c.i < n) entry.aq[c.i] = true;
+  touch(def.d, c.W);
+  if (c.i < n - 1) { app.clk = { W: c.W, day: c.day, k: c.k, i: c.i, side: null, ph: "aqr", prev: warmGap(plan[c.i][0], WARM_PAUSA), aw, t0: Date.now(), ack: 0 }; return; }
+  clkWarmRec(c.W, c.k, aw);
+  const s0 = (entry.sets || [])[0];
+  app.clk = s0 && +s0.reps > 0 ? null : { W: c.W, day: c.day, k: c.k, i: 0, side: null, ph: "pre", prev: warmTime(plan).antes, t0: Date.now(), ack: 0 };
+}
+// bug-20: barra de uma série de aquecimento (mesmo motor das séries de trabalho): execução, descanso da pausa e, na última, o descanso até a 1ª série
+function clkAqSetHtml(d, i, n) {
+  const c = app.clk, mine = c && c.W === app.week && c.k === d.k, id = "tw-" + d.k + "-" + i, el = clkEl();
+  if (mine && c.ph === "aqx" && c.i === i) return '<div class="clk run ex aq clkanim" id="' + id + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Execução</b> · aquecimento</span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ~' + clkFmt(WARM_EXEC) + '</small></span><button type="button" class="btn small primary" data-clk="stop" aria-label="Parar a série de aquecimento ' + (i + 1) + '">⏸ Parar</button></div>';
+  if (mine && c.ph === "aqr" && c.i === i) return '<div class="clk run rs aq clkanim' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Descanso</b> · aquecimento</span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="next" aria-label="Começar a série ' + (i + 2) + ' do aquecimento">▶ Série ' + (i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o aquecimento">■</button></div>';
+  if (mine && c.ph === "pre" && i === n - 1) return '<div class="clk run rs aq clkanim' + (el >= c.prev ? " ok" : "") + '" id="' + id + '" style="--p:' + Math.min(1, el / c.prev).toFixed(3) + '"><span class="clkfill"></span>' + clkRing() + '<span class="clkt"><b>Descanso</b> · até a 1ª série</span><span class="clkn"><span data-clkt>' + clkFmt(el) + '</span><small> / ' + clkFmt(c.prev) + '</small></span><button type="button" class="btn small primary" data-clk="first" aria-label="Anotar o descanso e começar a 1ª série">▶ 1ª série</button><button type="button" class="btn small" data-clk="end" aria-label="Parar o cronômetro e anotar o descanso">■</button></div>';
+  return '<div class="clk aq" id="' + id + '"><span class="clks muted">cronometra execução e descanso</span><button type="button" class="btn small clkgo" data-clk="wgo|' + d.k + "|" + i + '" aria-label="Iniciar o cronômetro da série ' + (i + 1) + ' do aquecimento">▶ Iniciar</button></div>';
 }
 // Pedido de quadro da animação em andamento (null = parada)
 let clkRaf = null;
@@ -5341,18 +5605,21 @@ function clkSetHtml(d, i, v, uni) {
 function clkBar() {
   const box = document.getElementById("clkbar"); if (!box) return;
   const c = app.clk;
-  if (!c || !EXBY[c.k]) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
+  const dc = c && clkEx(c.k); // 2.8 (bug-16): o exercício vem da ficha da semana do cronômetro, não da semana aberta
+  if (!c || !dc) { box.innerHTML = ""; box.classList.add("hide"); clkDock(); return; }
   box.classList.remove("hide"); clkDock();
   const el = clkEl(), lado = c.side ? (c.side === "e" ? " · lado esquerdo" : " · lado direito") : "";
-  const lbl = c.ph === "warm" ? "Aquecimento" : c.ph === "pre" ? "Descanso · até a série 1" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? (c.nk ? "Descanso · após o bi-set " : "Descanso · após a série ") + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
-  const btns = c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Terminei</button>'
+  const lbl = c.ph === "aqx" ? "Aquecimento · série " + (c.i + 1) : c.ph === "aqr" ? "Aquecimento · descanso após a série " + (c.i + 1) : c.ph === "warm" ? "Aquecimento" : c.ph === "pre" ? "Descanso · até a série 1" : c.ph === "exec" ? (c.waitSide ? "Troca de lado" : "Execução") + " · série " + (c.i + 1) + lado : c.ph === "rest" ? (c.nk ? "Descanso · após o bi-set " : "Descanso · após a série ") + (c.i + 1) : c.fixed != null ? "Intervalo corrigido · vai para o próximo exercício" : "Intervalo até o próximo exercício";
+  const btns = c.ph === "aqx" ? '<button type="button" class="btn small primary alvo44" data-clk="stop" aria-label="Parar a série de aquecimento e anotar o tempo">⏸ Parar</button>'
+    : c.ph === "aqr" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o aquecimento">■</button>'
+    : c.ph === "warm" ? '<button type="button" class="btn small primary" data-clk="stop">⏸ Terminei</button>'
     : c.ph === "pre" ? '<button type="button" class="btn small primary" data-clk="first">▶ Série 1</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
-    : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary" data-clk="stop">⏸ Parar</button>')
+    : c.ph === "exec" ? (c.waitSide ? '<button type="button" class="btn small primary" data-clk="side">▶ Lado ' + (c.side === "e" ? "esq." : "dir.") + "</button>" : '<button type="button" class="btn small primary alvo44" data-clk="stop" aria-label="Parar a execução e anotar o tempo" title="Parar a execução e anotar o tempo">⏸ Parar</button>')
     : c.ph === "rest" ? '<button type="button" class="btn small primary" data-clk="next">▶ Série ' + (c.i + 2) + '</button><button type="button" class="btn small" data-clk="end" aria-label="Parar e anotar o descanso">■</button>'
     : '<button type="button" class="btn small" data-clk="end">■ Encerrar</button>';
   const pl0 = clkPlan(c);
   // 2.4.1: a fase vai com o prefixo "f-", para a barra não herdar o estilo da caixa .rest do cartão do exercício
-  let h = '<div class="clkb f-' + (c.waitSide ? "rest" : c.ph) + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(EXBY[c.ph === "rest" && c.nk && EXBY[c.nk] ? c.nk : c.k])) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
+  let h = '<div class="clkb f-' + (c.waitSide || c.ph === "aqr" ? "rest" : c.ph === "aqx" ? "exec" : c.ph) + (c.ph === "aqx" || c.ph === "aqr" ? " aq" : "") + (c.ask ? " ask" : "") + '"><span class="clkline clkanim" style="--p:' + (pl0 ? Math.min(1, el / pl0) : 0).toFixed(3) + '"><span class="clkfill"></span></span><button type="button" class="clksee" data-clk="see"><span class="clkph">' + esc(lbl) + '</span><span class="clknm">' + esc(exShort(c.ph === "rest" && c.nk && clkEx(c.nk) ? clkEx(c.nk) : dc)) + '</span></button>' + clkRing() + '<span class="clkbig" data-clkt>' + clkFmt(el) + "</span>" + btns + "</div>";
   if (c.ask) {
     const plan = c.ph === "exec" ? EXEC_DEF : c.prev || TRANS_DEF;
     h += '<div class="clkask" role="alert"><b>⏰ O cronômetro está rodando há ' + Math.floor(el / 60) + " min.</b> Esqueceu de parar?" +
@@ -5482,7 +5749,7 @@ function daySummaryHtml(W, day) {
   const vcls = perf == null ? "mid" : perf >= PERF_ACIMA ? "up" : perf <= PERF_ABAIXO ? "lo" : "mid";
   const vtxt = perf == null ? "Desempenho sem base de comparação" : perf >= PERF_ACIMA ? "Acima do previsto" : perf <= PERF_ABAIXO ? "Abaixo do previsto" : "No previsto";
   let h = head + '<div class="verdict ' + vcls + '"><b>' + vtxt + "</b>" + (perf != null ? " · desempenho " + pctTxt(perf) + " contra o planejado" : "") + " · " + setsDone + " de " + setsPrev + " séries" + infoBtn("resumo") + "</div>";
-  const totReg = t.reg + t.cardio, totPrev = t.prev + t.cardioPrev;
+  const totReg = t.reg, totPrev = t.prev; // 2.9 (bug-25): o cardio fica fora do limite
   const starts = rows.map(r => Date.parse((r.e && r.e.startAt) || "")).filter(x => x > 0), ends = rows.map(r => Date.parse((r.e && r.e.doneAt) || "")).filter(x => x > 0);
   const relogio = starts.length && ends.length ? Math.round((Math.max(...ends) - Math.min(...starts)) / 60000) : null;
   h += '<div class="tiles">' +
@@ -5528,7 +5795,7 @@ function daySummaryHtml(W, day) {
   if (asym.length) dir.push(["warn", "Diferença entre os lados: " + list(asym, r => nm(r) + " (" + esc(r.uni.split(" · ")[0]) + ")") + ". Comece pelo lado mais fraco e repita no outro o mesmo número de repetições."]);
   const fora = rows.filter(r => r.ord && r.ord.pos !== r.ord.prev && r.perf != null);
   if (fora.length) dir.push(["info", "Fora da ordem da ficha: " + list(fora, r => nm(r) + " (" + r.ord.pos + "º em vez de " + r.ord.prev + "º, " + pctTxt(r.perf) + ")") + ". O app guarda esse efeito para as próximas trocas."]);
-  if (t.nReg && totReg > max) dir.push(["warn", "Treino e cardio somaram ~" + totReg + " min, acima do seu limite de " + max + " min." + (t.restAvg != null && t.restAvg > t.restPrev * 1.3 ? " O que mais pesou foi o descanso." : "")]);
+  if (t.nReg && totReg > max) dir.push(["warn", "O treino somou ~" + totReg + " min, acima do seu limite de " + max + " min." + (t.restAvg != null && t.restAvg > t.restPrev * 1.3 ? " O que mais pesou foi o descanso." : "")]);
   else if (t.nReg && t.reg > t.prev + 15) dir.push(["info", "A musculação levou ~" + (t.reg - t.prev) + " min a mais que o previsto."]);
   if (c.st === "feito" && c.min != null && c.min < pl.min - 2) dir.push(["info", "Cardio: " + fmt(Math.round(c.min)) + " de " + pl.min + " min previstos."]);
   else if (c.st !== "feito" && past && feitos.length) dir.push(["info", c.st === "nao" ? "Cardio marcado como não feito." : "Cardio não registrado. Se fez, anote em Semana para entrar no gasto do dia."]);
@@ -5656,6 +5923,7 @@ function renderHome() {
 function setTab(tab) {
   const prev = app.tab;
   app.tab = tab;
+  navMiniSolta(); // B10: a tela trocou, a barra de baixo volta ao tamanho normal
   renderNav(tab);
   document.querySelectorAll("section.view").forEach(s => s.classList.toggle("on", s.id === "v-" + tab));
   if (prev !== tab || !app.navOnce) {
@@ -5700,6 +5968,7 @@ function render() {
   else if (app.tab === "objetivo") renderObjTab();
   else if (app.tab === "acomp") renderAcomp(); // 1.8: seção 28
   else renderPlan();
+  clkBar(); // 2.8 (bug-16): a barra do cronômetro lê da ficha da semana dele, e acompanha qualquer redesenho
 }
 // 1.7: "Mostrar mais" de qualquer lista (maisBtn): soma um passo e redesenha a aba; o foco volta para o botão (ou para a lista, se acabou)
 document.addEventListener("click", ev => {
@@ -5735,13 +6004,13 @@ const NAVG = [
 const TABS = NAVG.flatMap(g => g.tabs.map(t => t[0]));
 // Grupo a que uma aba pertence
 function navGroup(tab) { return NAVG.find(g => g.tabs.some(t => t[0] === tab)) || NAVG[0]; }
-// Desenha a barra de baixo e as subabas
+// Desenha a barra de baixo e as subabas (B10, 26/nov: cada link da barra leva o nome do grupo em aria-label, porque na pílula encolhida o nome sai da vista)
 function renderNav(tab) {
   // 2.1: a barra e as subabas mostram só o que o nível de uso libera (navNivel, seção 29)
   const NAVG = navNivel(), g = NAVG.find(x => x.id === navGroup(tab).id) || NAVG[0];
   app.navLast = app.navLast || {}; app.navLast[g.id] = tab;
   const bn = document.getElementById("bnav");
-  if (bn) bn.innerHTML = '<div class="bn-in">' + NAVG.map(x => '<a href="#' + (app.navLast[x.id] && nivelTab(app.navLast[x.id]) ? app.navLast[x.id] : x.tabs[0][0]) + '" data-grp="' + x.id + '" aria-current="' + (x.id === g.id ? "page" : "false") + '"><span class="bn-ic"><svg viewBox="0 0 24 24" aria-hidden="true">' + x.ic + "</svg></span><span class=\"bn-t\">" + x.t + "</span></a>").join("") + "</div>";
+  if (bn) bn.innerHTML = '<div class="bn-in">' + NAVG.map(x => '<a href="#' + (app.navLast[x.id] && nivelTab(app.navLast[x.id]) ? app.navLast[x.id] : x.tabs[0][0]) + '" data-grp="' + x.id + '" aria-label="' + x.t + '" aria-current="' + (x.id === g.id ? "page" : "false") + '"><span class="bn-ic"><svg viewBox="0 0 24 24" aria-hidden="true">' + x.ic + "</svg></span><span class=\"bn-t\">" + x.t + "</span></a>").join("") + "</div>";
   avisoCadastro(); // 2.3: a barra foi refeita; a bolinha volta
   const sn = document.getElementById("subnav");
   if (!sn) return;
@@ -5755,6 +6024,23 @@ function renderNav(tab) {
   avisoCadastro();
 }
 // Indicador que desliza até a subaba escolhida
+// B10 (25/nov, pedido do dono): a barra de baixo encolhe ao rolar para baixo e volta ao rolar para cima (classe nav-mini no <body>; o visual está no estilo 30).
+// Só liga depois de NAV_MINI_PX px seguidos para o mesmo lado (não reage a tremida); no topo fica normal; com campo de texto em foco (teclado aberto), não muda.
+const NAV_MINI_PX = 10;
+function navMiniSolta() { document.body.classList.remove("nav-mini"); app.nmY = Math.max(0, window.scrollY || 0); app.nmAcc = 0; }
+function navMiniCampo() { const e = document.activeElement, t = e && e.tagName; return !!e && (t === "TEXTAREA" || t === "SELECT" || e.isContentEditable || (t === "INPUT" && !/^(checkbox|radio|button|submit|reset|range|file|color|image)$/i.test(e.type))); }
+function navMiniPasso() {
+  app.nmRaf = 0;
+  const de = document.documentElement, y = Math.min(Math.max(0, window.scrollY || 0), Math.max(0, de.scrollHeight - window.innerHeight)); // sem o "elástico" do fim e do topo
+  const d = y - (app.nmY == null ? y : app.nmY); app.nmY = y;
+  if (navMiniCampo()) { app.nmAcc = 0; return; } // teclado aberto: a barra fica como está
+  if (y <= 2) { document.body.classList.remove("nav-mini"); app.nmAcc = 0; return; } // no topo: tamanho normal
+  if (!d) return;
+  app.nmAcc = (app.nmAcc || 0) * d > 0 ? app.nmAcc + d : d; // soma só na mesma direção
+  if (app.nmAcc >= NAV_MINI_PX) document.body.classList.add("nav-mini");
+  else if (app.nmAcc <= -NAV_MINI_PX) document.body.classList.remove("nav-mini");
+}
+window.addEventListener("scroll", () => { if (!app.nmRaf) app.nmRaf = requestAnimationFrame(navMiniPasso); }, { passive: true });
 function subnavInd(fromTab) {
   const sn = document.getElementById("subnav"), ind = sn && sn.querySelector(".sn-ind"), a = sn && sn.querySelector('a[aria-current="page"]');
   if (!ind || !a) return;
@@ -6733,6 +7019,18 @@ document.addEventListener("input", ev => {
   if (el.id === "djRefQ") { document.getElementById("djRef").innerHTML = djRefHtml(el.value); return; }
   if (el.dataset && (el.dataset.pf || el.dataset.pfc || el.dataset.pfb || el.dataset.pfk)) { pfInput(el); return; }
   if (el.id === "clkFixIn") { const m = document.getElementById("clkFixMm"); if (m) m.textContent = mmss(parseMmss(el.value)); return; }
+  if (el.dataset.aqkg) { // bug-19: carga ajustada de uma série de aquecimento (vazio volta ao sugerido; texto, negativo, zero e acima de 1000 são recusados)
+    const [ak, ai] = el.dataset.aqkg.split("|"), i = +ai, { def, pres, entry } = ctx(ak), plan = warmPlan(def) || [], vazio = el.value.trim() === "", v = vazio ? null : numBr(el.value);
+    const ruim = !vazio && (v == null || !isFinite(v) || !(v > 0) || v > 1000);
+    const a = Array.from({ length: plan.length }, (x, j) => (entry.aqKg || [])[j] != null ? entry.aqKg[j] : null);
+    a[i] = vazio || ruim ? null : v;
+    if (a.some(x => x != null)) { entry.aqKg = a; entry.aqL = warmL(pres); } else { delete entry.aqKg; delete entry.aqL; }
+    el.classList.toggle("bad", ruim); touch(def.d);
+    const L = warmL(pres), w = plan[i] && L > 0 ? warmKg(def, L, i, plan[i][0], entry, app.week) : null, chip = document.querySelector('[data-aq="' + ak + "|" + i + '"]');
+    if (w && chip) chip.textContent = warmLbl(L, plan[i][0], plan[i][1], w.kg); // a recusada deixa o chip na sugerida
+    if (ruim) { setSaveMsg("Confira o valor: aceito de 0 a 1000 (use vírgula para decimal: 72,5)."); return; }
+    updateDayTime(); return;
+  }
   if (el.dataset.set) {
     const [k, i, f, sd] = el.dataset.set.split("|");
     const { def, pres, entry, set } = ctx(k, +i);
@@ -7537,7 +7835,7 @@ document.addEventListener("input", ev => { if (ev.target && ev.target.id === "fa
 //   • O que vem de meta/ficha é conferido campo a campo (fichaLimpa): nomes só com letras, números e pontuação simples (nada vira HTML),
 //     números dentro de faixas, descanso de no máximo 2 min, bi-set só de bíceps com tríceps, os dois na polia. Ficha inválida é ignorada.
 //   • O gerador (geraFicha) monta a ficha por regras, sem servidor: dias disponíveis, tempo máximo, local, experiência, objetivo, prioridades
-//     e o que a pessoa disse que não faz. Regras do dono: no máximo 2 h por dia com o cardio, descanso de no máximo 2 min, e o bi-set acima.
+//     e o que a pessoa disse que não faz. Regras do dono: no máximo 2 h de treino por dia (o cardio é opcional e fica de fora), descanso de no máximo 2 min, e o bi-set acima.
 //   • Sugestões (fichaSugestoes): com o que a pessoa anotou no treino (dor, exercício pulado, carga parada), propõe trocar o exercício por outro
 //     do mesmo músculo. A carga continua com o motor de progressão de sempre (seção 3).
 //   • Limite conhecido: a ficha vale para todas as semanas. Ao trocar de ficha, as semanas passadas passam a mostrar a ficha nova; os registros
@@ -7549,7 +7847,7 @@ const FICHA_MUSC_CODIGO = ["Adutores", "Lombar"]; // 2.4 (9ª banca, alto 4): m�
 const FICHA_MAX_VERSOES = 15; // 2.4: fichas anteriores guardadas em meta/ficha (cada uma vale nas semanas em que estava em uso)
 const FICHA_DOW = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const FICHA_MAX_DIA = 12, FICHA_MAX_SERIES = 30; // exercícios e séries por dia que uma ficha pode ter
-const FICHA_TETO_MIN = 120; // regra do dono: no máximo 2 h por dia, com o cardio
+const FICHA_TETO_MIN = 120; // regra do dono: no máximo 2 h de treino por dia (musculação e aquecimento; o cardio é opcional e fica fora, 25/11)
 // Banco de exercícios: [código, nome, músculo, tipo (c composto, i isolador, k core), equipamento (m máquina, p polia, h halter, b barra,
 // w peso do corpo), onde dá para fazer (a academia completa, c condomínio, d em casa), experiência mínima (0 a 2), cuidado (O ombro, J joelho, L lombar)]
 const FICHA_M = { PE: "Peito", CO: "Costas", OA: "Ombro anterior", OL: "Ombro lateral", OP: "Ombro posterior", BI: "Bíceps", TR: "Tríceps", QU: "Quadríceps", PO: "Posteriores de coxa", GL: "Glúteos", PA: "Panturrilha", CR: "Core" };
@@ -7622,12 +7920,14 @@ function fichaLimpa(f) {
   const treino = new Set(dias.filter(d => !d.livre).map(d => d.id)), keys = new Set(), porDia = {}, out = [];
   if (!treino.size) return null;
   for (const e of f.ex) {
-    if (!e || typeof e !== "object" || typeof e.k !== "string" || !/^[A-Za-z0-9]{1,24}$/.test(e.k) || keys.has(e.k) || !treino.has(e.d) || !(FICHA_MUSC.includes(e.m) || FICHA_MUSC_CODIGO.includes(e.m))) return null;
+    // 2.7 (10ª banca, médio 8; bug-9): o código vira chave de objeto (EXBY, o registro do dia). "constructor", "toString", "valueOf",
+    // "hasOwnProperty" e os outros nomes herdados de Object passavam na expressão, e o "✓ Feito" desse exercício dava TypeError: são recusados
+    if (!e || typeof e !== "object" || typeof e.k !== "string" || !/^[A-Za-z0-9]{1,24}$/.test(e.k) || e.k in Object.prototype || keys.has(e.k) || !treino.has(e.d) || !(FICHA_MUSC.includes(e.m) || FICHA_MUSC_CODIGO.includes(e.m))) return null;
     const n = fichaTxt(e.n, 60); if (n.length < 2) return null;
     keys.add(e.k);
     const sets = fichaNum(e.sets, 1, 6, 3) | 0, lo = fichaNum(e.lo, 1, 30, 8) | 0, hi = Math.max(lo, fichaNum(e.hi, 1, 40, lo + 2) | 0);
     const seg = Math.max(30, Math.min(120, fichaRestSeg(e.rest))); // regra do dono: descanso de no máximo 2 min
-    const o = { k: e.k, d: e.d, n, m: e.m, b: typeof e.b === "string" && FICHA_BY[e.b] ? e.b : "", sc: e.sc === "top" ? "top" : "st", sets, lo, hi,
+    const o = { k: e.k, d: e.d, n, m: e.m, b: typeof e.b === "string" && Object.prototype.hasOwnProperty.call(FICHA_BY, e.b) ? e.b : "", sc: e.sc === "top" ? "top" : "st", sets, lo, hi, // 2.7 (bug-9): o código do banco também, só os próprios
       kg: e.kg == null ? null : fichaNum(e.kg, 0, 1000, null), inc: fichaNum(e.inc, 0.25, 20, 2.5), mic: fichaNum(e.mic, 0.25, 10, 1.25), step: fichaNum(e.step, 0.25, 5, 0.5),
       t: e.t === "comp" || e.t === "core" ? e.t : "iso", rest: seg === 120 ? "2 min" : seg % 60 === 0 ? seg / 60 + " min" : seg + " s", obs: fichaTxt(e.obs, 160),
       bw: e.bw === true, opt: e.opt === true, junto: e.junto === true ? true : typeof e.junto === "number" && e.junto > 0 ? Math.min(600, e.junto) : false, semPlus: e.semPlus === true, desde: fichaNum(e.desde, 1, MAXW, 1) | 0, biset: e.biset === true };
@@ -7661,13 +7961,19 @@ function fichaLimpa(f) {
   return { dias, ex: out, meta: { origem, inicio, anteriores, criado: typeof f.criado === "string" && dataOk(f.criado.slice(0, 10)) ? f.criado.slice(0, 10) : "", autor: PRO_UUID.test(String(f.autor)) ? f.autor : "", autorNome: fichaTxt(f.autorNome, 80),
     notas: (Array.isArray(f.notas) ? f.notas : []).slice(0, 8).map(x => fichaTxt(x, 200)).filter(Boolean) } };
 }
-// Troca a ficha em uso pelo que veio de meta/ficha (ou volta à do código, se não veio nada que sirva). Devolve true quando a ficha da conta entrou
-function fichaAplica(f) {
+// Troca a ficha em uso pelo que veio de meta/ficha (ou volta à do código, se não veio nada que sirva). Devolve true quando a ficha da conta entrou.
+// cru: o documento como ele é, sem o corte pelo limite de tempo (fichaComDoc, para medir)
+function fichaAplica(f, cru) {
   const c = f ? fichaLimpa(f) : null, src = c || FICHA_PADRAO;
   app.ficha = c ? c.meta : null; app.fichaAplicado = f || null; // 2.4: o documento em uso (para medir uma ficha e voltar)
   DAYS.length = 0; src.dias.forEach(d => DAYS.push(Object.assign({}, d)));
   EX.length = 0; src.ex.forEach(e => EX.push(c ? ex(e.k, e.d, e.n, e.m, e) : Object.assign({}, e)));
   Object.keys(EXBY).forEach(k => { delete EXBY[k]; }); EX.forEach(e => { EXBY[e.k] = e; });
+  // 2.8 (bug-18): na ficha em uso (a atual, ou os dias dela na semana da troca: diasAtual, de fichaVersao), o que não cabe no limite de tempo
+  // vira opcional só aqui, na cópia aplicada (optTempo marca quem virou); o documento meta/ficha não muda (fichaLimite decide, fichaCorte escolhe)
+  const aj = !cru && app.fichaAj, fd = f || null, a = aj && aj.find(x => x.doc === fd), a0 = !a && aj && aj.find(x => x.doc === (app.fichaDoc || null)), dias = a0 && fd && Array.isArray(fd.diasAtual) ? fd.diasAtual : null;
+  const ksA = a ? a.ks : dias ? a0.ks : null; // 2.9 (bug-24): o corte de cada ficha em uso de hoje em diante (a atual, a anterior que vale hoje, a da semana da troca)
+  if (ksA) EX.forEach(e => { if (ksA.has(e.k) && !e.opt && (a || dias.includes(e.d))) { e.opt = true; e.optTempo = true; } });
   CORE_BASE = EX.filter(e => e.t === "core" && !e.opt).reduce((a, e) => a + e.sets, 0);
   const g = {}; EX.forEach(d => (g[d.n] = g[d.n] || []).push(d));
   Object.keys(ELOS).forEach(k => { delete ELOS[k]; }); EX.forEach(d => { ELOS[d.k] = g[d.n].filter(x => x.k !== d.k); });
@@ -7698,15 +8004,15 @@ function fichaVersao(W) {
   const ws = weekStart(W).getTime(), porDow = [0, 1, 2, 3, 4, 5, 6].map(i => { const dt = isoDate(new Date(ws + i * 864e5)); let v = V[0]; V.forEach(x => { if (x.inicio <= dt) v = x; }); return v; });
   const chave = v => v.atual ? "atual" : "v" + v.inicio;
   if (porDow.every(v => v === porDow[0])) return (cache[W] = { chave: chave(porDow[0]), doc: porDow[0].doc });
-  const dias = [], ex = [], ids = new Set();
+  const dias = [], ex = [], ids = new Set(), diasAtual = [];
   for (let i = 0; i < 7; i++) {
     const v = porDow[i], src = v.doc ? fichaLimpa(v.doc) : FICHA_PADRAO, day = src && src.dias.find(x => x.dow === i);
     if (!day || ids.has(day.id)) return (cache[W] = { chave: chave(porDow[6]), doc: porDow[6].doc }); // dias com o mesmo código: fica a ficha do fim da semana
-    ids.add(day.id); dias.push(Object.assign({}, day));
+    ids.add(day.id); dias.push(Object.assign({}, day)); if (v.atual) diasAtual.push(day.id);
     const L = src.ex.filter(e => e.d === day.id); L.forEach((e, j) => ex.push(Object.assign({}, e, { biset: /bi-set/i.test(e.rest || "") && fichaParOk(e, L[j + 1]) })));
   }
   const base = porDow[6].doc || {};
-  return (cache[W] = { chave: "s" + W + ":" + porDow.map(v => v.inicio).join(","), doc: { v: 1, origem: base.origem, criado: base.criado, autor: base.autor, autorNome: base.autorNome, dias, ex } });
+  return (cache[W] = { chave: "s" + W + ":" + porDow.map(v => v.inicio).join(","), doc: { v: 1, origem: base.origem, criado: base.criado, autor: base.autor, autorNome: base.autorNome, dias, ex, diasAtual } });
 }
 // Põe em uso a ficha da semana W (render chama a cada desenho: Semana e Resumo mostram a ficha que valia na semana aberta)
 function fichaUsaSemana(W) {
@@ -7719,7 +8025,7 @@ function fichaUsaSemana(W) {
 // Roda fn com a ficha da semana W em uso e volta à que estava
 function fichaNa(W, fn) { const antes = app.fichaAplicado, ver = app.fichaVer, dia = app.day; fichaUsaSemana(W); try { return fn(); } finally { if (app.fichaVer !== ver) { fichaAplica(antes); app.fichaVer = ver; } app.day = dia; } }
 // Roda fn com um documento de ficha qualquer em uso (para medir) e volta ao que estava
-function fichaComDoc(doc, fn) { const antes = app.fichaAplicado, ver = app.fichaVer; fichaAplica(doc); try { return fn(); } finally { fichaAplica(antes); app.fichaVer = ver; } }
+function fichaComDoc(doc, fn) { const antes = app.fichaAplicado, ver = app.fichaVer; fichaAplica(doc, true); try { return fn(); } finally { fichaAplica(antes); app.fichaVer = ver; } }
 // Data local de amanhã (AAAA-MM-DD): o início padrão de uma ficha nova (o dono: "mantém os treinos até o dia da troca")
 function fichaAmanha() { return isoDate(new Date(Date.parse(todayStr() + "T00:00:00Z") + 864e5)); }
 // Campo "A ficha nova vale a partir de" (aba Treinador e editor do treinador). Só aparece quando já existe uma ficha em uso
@@ -7728,11 +8034,31 @@ function fichaInicioHtml(id) {
   const v = app.fichaInicio && dataOk(app.fichaInicio) ? app.fichaInicio : fichaAmanha();
   return '<div class="field tr-ini"><label for="' + id + '">A ficha nova vale a partir de</label><input type="date" id="' + id + '" data-tr-ini value="' + v + '" min="' + isoDate(weekStart(1)) + '"><p class="muted">Os dias antes dessa data continuam com a ficha que valia neles, com o que foi anotado. Escolhendo um dia que já passou, os treinos anotados desde então deixam de aparecer na tela (continuam guardados).</p></div>';
 }
-// A ficha em uso, no formato de meta/ficha (para ajustar e gravar de novo). 2.4: sempre a ficha atual, mesmo com uma semana antiga aberta
+// 2.7 (10ª banca, médio 7; bug-8): quantos treinos anotados (dias com um exercício marcado ou com série anotada) deixam de aparecer, no todo
+// ou em parte, se a ficha f passar a valer no dia ini. Conta só os que estão à vista hoje (o exercício está no dia, na ficha que valia na
+// semana dele), com a data desse dia em ini ou depois, e em que algum exercício anotado não fica na ficha nova (o dia da semana dele ganha
+// outro código, ou o exercício sai). O registro continua guardado na conta; só a tela deixa de mostrá-lo
+function fichaSomem(f, ini) {
+  if (!f || !Array.isArray(f.dias) || !Array.isArray(f.ex) || !dataOk(ini)) return 0;
+  const W0 = Math.max(1, weekOfDateStr(ini)), anotado = e => e && (e.st || (Array.isArray(e.sets) && e.sets.some(x => x && (x.kg != null || x.reps != null))));
+  let n = 0;
+  Object.keys(app.records || {}).forEach(id => {
+    const m = /^w(\d+)-(\w+)$/.exec(id), r = app.records[id], W = m ? +m[1] : 0;
+    if (W < W0 || W > MAXW || !r || !r.ex || typeof r.ex !== "object") return;
+    const ks = Object.keys(r.ex).filter(k => anotado(r.ex[k])); if (!ks.length) return;
+    const v = fichaNa(W, () => { const d = DAYS.find(x => x.id === m[2]); return d && { dow: d.dow, ks: ks.filter(k => EXBY[k] && EXBY[k].d === d.id) }; });
+    if (!v || !v.ks.length || isoDate(new Date(weekStart(W).getTime() + v.dow * 864e5)) < ini) return; // já fora da tela, ou de antes da data
+    const nd = f.dias.find(x => x.dow === v.dow), fica = k => !!nd && nd.id === m[2] && !nd.livre && f.ex.some(e => e.k === k && e.d === nd.id);
+    if (!v.ks.every(fica)) n++;
+  });
+  return n;
+}
+// A ficha em uso, no formato de meta/ficha (para ajustar e gravar de novo). 2.4: sempre a ficha atual, mesmo com uma semana antiga aberta.
+// 2.8 (bug-18): sem o corte pelo tempo (optTempo é só da tela): gravar uma troca não leva os opcionais do corte para a ficha
 function fichaAtual() { return fichaNa(null, fichaAtualJa); }
 function fichaAtualJa() {
   return { v: 1, dias: DAYS.map(d => Object.assign({ id: d.id, dow: d.dow, titulo: d.titulo }, d.livre ? { livre: true } : {})),
-    ex: EX.map((e, i) => { const L = dayEx(e.d), j = L.indexOf(e), prox = L[j + 1]; return { k: e.k, d: e.d, n: e.n, m: e.m, b: e.b || "", sc: e.sc, sets: e.sets, lo: e.lo, hi: e.hi, kg: e.kg, inc: e.inc, mic: e.mic, step: e.step, t: e.t, rest: e.rest, obs: e.obs, bw: e.bw, opt: e.opt, junto: e.junto, semPlus: e.semPlus, desde: e.desde, biset: /bi-set/i.test(e.rest) && fichaParOk(e, prox) }; }) };
+    ex: EX.map((e, i) => { const L = dayEx(e.d), j = L.indexOf(e), prox = L[j + 1]; return { k: e.k, d: e.d, n: e.n, m: e.m, b: e.b || "", sc: e.sc, sets: e.sets, lo: e.lo, hi: e.hi, kg: e.kg, inc: e.inc, mic: e.mic, step: e.step, t: e.t, rest: e.rest, obs: e.obs, bw: e.bw, opt: e.opt && !e.optTempo, junto: e.junto, semPlus: e.semPlus, desde: e.desde, biset: /bi-set/i.test(e.rest) && fichaParOk(e, prox) }; }) };
 }
 // Grava a ficha da conta (a tela muda quando o registro volta por fichaChega).
 // 2.4 (pedido do dono, 20/nov): a ficha nova vale do dia "inicio" para frente (o padrão é amanhã; a pessoa escolhe no campo "A ficha nova
@@ -7791,10 +8117,10 @@ function fichaPerfil(pf) {
 }
 // Músculo prioritário? (o Perfil fala em "Ombros" e "Braços"; a ficha separa em partes)
 function fichaPrio(P, m) { return P.prio.some(x => x === m || (x === "Ombros" && /^Ombro/.test(m)) || (x === "Braços" && (m === "Bíceps" || m === "Tríceps"))); }
-// Monta a ficha a partir do Perfil. cardioMin = minutos de cardio previstos por dia (entram no teto de 2 h). desde = semana em que ela passa a valer
+// Monta a ficha a partir do Perfil. cardioMin = minutos de cardio (bug-15: fora do limite, não é descontado). desde = semana em que ela passa a valer
 function geraFicha(pf, cardioMin, desde, teto) {
   const P = fichaPerfil(pf), n = P.dias.length, div = FICHA_DIV[n === 3 && P.exp >= 2 ? "3x" : n] || FICHA_DIV[3];
-  const orc = Math.max(20, Math.min(P.tempo, +teto > 0 ? +teto : FICHA_TETO_MIN) - Math.max(0, Math.min(90, +cardioMin || 0))); // minutos que sobram para a musculação
+  const orc = Math.max(20, Math.min(P.tempo, +teto > 0 ? +teto : FICHA_TETO_MIN)); // minutos para o treino (o cardio é opcional e não entra na conta)
   const usados = {}, ex = [], dias = [], notas = [], LET = "ABCDEF";
   const eqPref = P.nv === 0 ? "mphbw" : "bhmpw"; // quem está começando vai primeiro na máquina e na polia
   const escolhe = (mus, tipo, noDia) => {
@@ -7858,19 +8184,18 @@ function geraFicha(pf, cardioMin, desde, teto) {
 // o limite de 180 min por 120 depois do primeiro "Feito". Também não vale `anteriores: [{ codigo: true }]` nem `app.fichaEstado === "codigo"`:
 // `fichaGrava` escreve o primeiro e `fichaConta` deduz o segundo de `fichaDono()`, ou seja, também nascem de treino anotado
 function fichaContaDono(pf) { pf = pf || {}; return pf.fichaPadrao !== undefined || pf.usaPlanoAnual !== undefined; }
-// 2.4 (9ª banca, alto 5; decisão do dono, 20/nov): o limite de tempo por dia, com o cardio e o aquecimento, é o que a pessoa pôs no Perfil
-// ("Tempo máximo por dia"); regra fixa: na conta do dono (fichaContaDono), no máximo 2 h por dia, com o cardio. Sem o campo, 2 h
+// 2.4 (9ª banca, alto 5; decisão do dono, 20/nov): o limite de tempo por dia, para a musculação e o aquecimento (o cardio é opcional e fica fora, regra de 25/11), é o que a pessoa pôs no Perfil
+// ("Tempo máximo por dia"); regra fixa: na conta do dono (fichaContaDono), no máximo 2 h de treino por dia. Sem o campo, 2 h
 function fichaTeto(pf) { const t = fichaNum((pf || {}).tempoMax, 20, 240, FICHA_TETO_MIN); return fichaContaDono(pf) ? Math.min(FICHA_TETO_MIN, t) : t; }
-// Tempo previsto pelo motor do app (dayTime: aquecimento, séries, descansos e trocas no ritmo da pessoa) mais o cardio do plano, em cada
+// Tempo previsto pelo motor do app (dayTime: aquecimento, séries, descansos e trocas no ritmo da pessoa) (o cardio não entra), em cada
 // semana das 60. Devolve { pior, dia, por } (por = o maior de cada dia), ou null se a ficha não passa na conferência
-function fichaMede(f) {
-  if (!fichaLimpa(f)) return null;
-  return fichaComDoc(f, () => {
-    const wk = computeWeeks(MAXW), por = {}; let pior = 0, dia = null;
-    for (let W = 1; W <= MAXW; W++) { const cm = +cardioPlan(W).min || 0;
-      DAYS.filter(d => !d.livre).forEach(d => { const t = dayTime(W, d.id, wk[W]).prev + cm; if (t > (por[d.id] || 0)) por[d.id] = t; if (t > pior) { pior = t; dia = d.id; } }); }
-    return { pior, dia, por };
-  });
+function fichaMede(f) { return fichaLimpa(f) ? fichaComDoc(f, fichaMedeJa) : null; }
+// A mesma medida, da ficha aplicada agora (DAYS e EX), sem trocar de ficha (2.8: fichaCorte mede de novo a cada exercício que vira opcional)
+function fichaMedeJa() {
+  const wk = computeWeeks(MAXW), por = {}; let pior = 0, dia = null;
+  for (let W = 1; W <= MAXW; W++) { const cm = 0; /* bug-15: o cardio é opcional e fica fora do limite */
+    DAYS.filter(d => !d.livre).forEach(d => { const t = dayTime(W, d.id, wk[W]).prev + cm; if (t > (por[d.id] || 0)) por[d.id] = t; if (t > pior) { pior = t; dia = d.id; } }); }
+  return { pior, dia, por };
 }
 // Corta a ficha até o pior dia caber no limite: primeiro uma série de um isolador (ficam 2), depois o último exercício do dia (ficam 3),
 // depois uma série de qualquer um. Se nem o mínimo cabe, avisa nas notas da ficha
@@ -7882,7 +8207,7 @@ function fichaNoTempo(f, teto) {
     if (iso) { iso.sets--; continue; }
     if (L.length > 3) { const x = L[L.length - 1], a = L[L.length - 2]; if (a && a.biset) a.biset = false; f.ex.splice(f.ex.indexOf(x), 1); continue; }
     const qq = fim.find(e => e.sets > 2); if (qq) { qq.sets--; if (qq.biset) { const p = L[L.indexOf(qq) + 1]; if (p && p.sets > 2) p.sets--; } continue; }
-    f.notas = (f.notas || []).concat(["Com " + teto + " min por dia, nem o treino mínimo cabe junto com o aquecimento e o cardio: o dia mais longo fica em cerca de " + Math.round(m.pior) + " min."]);
+    f.notas = (f.notas || []).concat(["Com " + teto + " min por dia, nem o treino mínimo cabe junto com o aquecimento: o dia mais longo fica em cerca de " + Math.round(m.pior) + " min."]);
     return f;
   }
   return f;
@@ -7895,8 +8220,8 @@ function fichaTetoSeries(f) {
 }
 // Gera a ficha da pessoa já dentro do limite de tempo dela
 function fichaGera(pf, desde) { const teto = fichaTeto(pf); return fichaNoTempo(fichaTetoSeries(geraFicha(pf, fichaCardioMin(), desde, teto)), teto); }
-// Minutos de cardio previstos por dia de treino (entra no teto de 2 h)
-function fichaCardioMin() { try { return Math.max(0, Math.min(90, +cardioPlan(app.curW || 1).min || 0)); } catch (e) { return 20; } }
+// Minutos de cardio que entram no limite do dia: nenhum (bug-15, regra do dono de 25/11: o cardio é opcional e não conta no limite do treino)
+function fichaCardioMin() { return 0; }
 // O cadastro tem o que a ficha precisa? 2.3: os dados obrigatórios do treino (OBRIG, seção 8): sexo, nascimento, altura, peso, objetivo,
 // há quanto tempo treina, dias disponíveis, tempo máximo, local e início do plano
 function fichaCadastroOk(pf) { return !!pf && typeof pf === "object" && obrigDe("treino", pf).every(([c]) => obrigTem(pf, c)); }
@@ -7917,9 +8242,88 @@ function fichaDono() {
   const pf = app.perfil || {};
   return pf.fichaPadrao !== undefined || pf.usaPlanoAnual !== undefined || Object.values(app.records || {}).some(r => r && r.ex && Object.values(r.ex).some(e => e && (e.st || (Array.isArray(e.sets) && e.sets.some(x => x && (x.kg != null || x.reps != null))))));
 }
+// 2.7 (10ª banca, médio 9; bug-10): o app mede e corta o que ele mesmo gera e salva, mas a ficha pode chegar pronta (de um profissional,
+// pela API) ou ficar velha quando a pessoa baixa o "Tempo máximo por dia" no Perfil. Aqui a ficha em uso é medida pelo motor do app
+// (fichaMede, com o aquecimento; sem o cardio) contra o limite (fichaTeto: na conta do dono, 2 h) quando ela chega e quando o Perfil muda.
+// 2.8 (12ª banca, alto 1; bug-18; regra do dono de 25/11: "se a pessoa apontar um tempo para fazer o treino isso tem que ser respeitado"):
+// a 2.7 só avisava. Agora, em todas as contas (a ficha da conta e a do código, na do dono) e também no artefato:
+//   • passou um pouco (até 10% ou 5 min acima do limite, o que for maior: fichaMargem): a faixa pergunta, e a pessoa escolhe "Usar assim" ou
+//     "Ajustar ao limite". A escolha fica em meta/ajustes (fichaTempo: { ficha: assinatura da ficha, teto, escolha }) e vale até a ficha ou o
+//     limite mudar; com "Usar assim", a faixa não volta;
+//   • passou mais que isso (ou a pessoa escolheu ajustar): o que não cabe vira opcional só na ficha aplicada (fichaCorte escolhe, fichaAplica
+//     marca), sem mudar meta/ficha e sem apagar nada; o cartão continua com as séries e as anotações e mostra "opcional · +N min" (p06).
+// Chamada por fichaConta, a cada desenho; só mede de novo quando a ficha, o Perfil ou a escolha mudam. A chave vem de app.fichaDoc, e não da
+// ficha aplicada (app.ficha), para a faixa não sumir ao abrir uma semana antiga (12ª banca, item 13)
+const FICHA_NUCLEO = 3; // os 3 primeiros exercícios de cada dia são os principais: o corte pelo tempo não os torna opcionais (o mesmo mínimo do fichaNoTempo)
+// Quanto a ficha pode passar do limite e ainda ser "um pouco" (a pessoa decide): 10% do limite ou 5 min, o que for maior
+function fichaMargem(teto) { return Math.max(5, teto * 0.1); }
+// Assinatura curta de um texto (FNV-1a de 32 bits e o tamanho): identifica a ficha na escolha guardada sem guardar a ficha inteira
+function fichaAssina(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36) + "." + s.length; }
+// Quais exercícios viram opcionais para a ficha doc (null = a do código) caber em teto. Critério: em cada dia que passa do limite, do último
+// exercício para trás, um de cada vez e medindo de novo a cada volta (pelo motor, fichaMedeJa), até o dia caber. É a ordem de corte do
+// fichaNoTempo: o gerador abre o dia pelos compostos principais e deixa isoladores, core e acessórios para o fim. Os FICHA_NUCLEO primeiros
+// do dia são os principais e ficam; o par do bi-set vira opcional junto (só um dos dois deixaria o outro com o descanso do par).
+// Devolve { ks, pior }: os códigos que viram opcionais e o dia mais longo depois do corte (acima do limite quando nem os principais cabem)
+function fichaCorte(doc, teto) {
+  return fichaComDoc(doc, () => {
+    const ks = []; let m = fichaMedeJa();
+    for (let volta = 0; volta < FICHA_MAX_DIA && m.pior > teto; volta++) {
+      let mexeu = false;
+      DAYS.filter(d => !d.livre && m.por[d.id] > teto).forEach(d => {
+        const L = dayEx(d.id).filter(e => !e.opt), x = L[L.length - 1], a = L[L.length - 2], u = a && /bi-set/i.test(a.rest || "") ? [a, x] : [x];
+        if (!x || L.length - u.length < FICHA_NUCLEO) return;
+        u.forEach(e => { e.opt = true; ks.push(e.k); }); mexeu = true;
+      });
+      if (!mexeu) break;
+      m = fichaMedeJa();
+    }
+    return { ks, pior: m.pior };
+  });
+}
+function fichaLimite() {
+  const pf = app.perfil || {}, doc = app.fichaDoc || null, cod = !doc && fichaDono(), esc0 = (app.settings || {}).fichaTempo || null;
+  const chave = doc || cod ? (doc ? app.fichaTxt : "codigo") + "|" + canonJ(pf) + "|" + canonJ(esc0) + "|" + !!app.alvo + "|" + (app.curW || 1) : "";
+  if (chave === app.fichaLimChave) return;
+  app.fichaLimChave = chave;
+  let txt = "", aj = null; app.fichaLimInfo = null;
+  if (chave && (cod || fichaLimpa(doc))) {
+    const docs = [doc]; // 2.9 (bug-24): as fichas em uso de hoje até o início da atual (com o início no futuro, a anterior vale até lá)
+    if (doc) { const ci = fichaLimpa(doc).meta.inicio, Wi = ci ? Math.min(MAXW, weekOfDateStr(ci)) : 0; for (let W = Math.max(1, app.curW || 1); W <= Wi; W++) { const v = fichaVersao(W); if (!docs.includes(v.doc)) docs.push(v.doc); } }
+    const med = docs.map(d => d ? fichaMede(d) : fichaComDoc(null, fichaMedeJa)), pior = Math.round(Math.max(...med.map(x => x ? x.pior : 0))), teto = fichaTeto(pf);
+    if (pior > teto) {
+      const sig = fichaAssina(doc ? app.fichaTxt : "codigo:" + canonJ(FICHA_PADRAO)), pouco = pior <= teto + fichaMargem(teto);
+      const escolha = esc0 && esc0.ficha === sig && esc0.teto === teto ? esc0.escolha : "";
+      const quem = app.alvo ? "A ficha deste cliente passa" : "Esta ficha passa", lim = app.alvo ? " do limite do Perfil dele" : " do seu limite";
+      const quanto = " (cerca de " + pior + " de " + teto + " min por dia de treino, com o aquecimento; o cardio fica fora).";
+      const bt = (v, t) => ' <button type="button" class="btn small alvo44" data-ficha-tempo="' + v + '">' + t + "</button>";
+      app.fichaLimInfo = { sig, teto };
+      if (pouco && escolha !== "ajusta") {
+        if (escolha !== "assim") txt = quem + " um pouco" + lim + quanto + (app.alvo ? " Ele escolhe, no Héxis dele, entre usar assim e ajustar ao limite."
+          : " Você escolhe: usar assim, ou ajustar ao limite (os exercícios do fim do dia que não cabem viram opcionais; a ficha guardada não muda)." + bt("assim", "Usar assim") + bt("ajusta", "Ajustar ao limite"));
+      } else {
+        const cs = docs.map((d, i) => med[i] && med[i].pior > teto ? Object.assign({ doc: d }, fichaCorte(d, teto)) : null).filter(Boolean);
+        const n = Math.max(0, ...cs.map(c => c.ks.length)), resto = Math.round(Math.max(0, ...cs.map(c => c.pior)));
+        aj = cs.map(c => ({ doc: c.doc, ks: new Set(c.ks) }));
+        txt = quem + lim + quanto + (n ? " Para caber, " + n + (n === 1 ? " exercício do fim do dia virou opcional" : " exercícios do fim do dia viraram opcionais") + ", com o tempo de cada um no cartão. A ficha guardada não muda e nada foi apagado." : "")
+          + (resto > teto ? " Os exercícios principais (os " + FICHA_NUCLEO + " primeiros de cada dia) levam cerca de " + resto + " min: mude a ficha em Treinador ou o limite no Perfil." : "")
+          + (pouco && !app.alvo ? bt("assim", "Usar assim") : "") + ' <a class="btn small alvo44" href="#treinador">Abrir Treinador</a>';
+      }
+    }
+  }
+  app.fichaAj = aj;
+  const ver = app.fichaVer; fichaAplica(app.fichaAplicado); app.fichaVer = ver; // a ficha aplicada ganha (ou perde) os opcionais do corte
+  avisoFila("avisoFichaTempo", txt);
+}
+// 2.8 (bug-18): "Usar assim" ou "Ajustar ao limite" na faixa do tempo. A escolha vale para esta ficha e este limite (meta/ajustes); só a própria pessoa escolhe
+document.addEventListener("click", ev => {
+  const b = ev.target.closest && ev.target.closest("[data-ficha-tempo]"), a = app.fichaLimInfo; if (!b || !a || app.alvo) return;
+  app.settings = Object.assign({}, app.settings, { fichaTempo: { ficha: a.sig, teto: a.teto, escolha: b.dataset.fichaTempo === "assim" ? "assim" : "ajusta" } });
+  saveSettings(); render();
+});
 // Decide a cada desenho: ficha da conta (meta/ficha), a do código (só a do dono) ou nenhuma, e põe o aviso certo no lugar das telas de treino
 function fichaConta() {
   const pronto = !!app.db && (!app.db.pronto || app.db.pronto()) && !!app.fichaVista && !!app.perfilLoaded;
+  if (pronto) fichaLimite(); // 2.7 (bug-10) e 2.8 (bug-18): a ficha em uso dentro do limite de tempo (faixa, escolha e corte)
   const estado = !pronto ? "carregando" : app.ficha ? "conta" : fichaDono() ? "codigo" : app.fichaDoc ? "invalida" : "nenhuma";
   app.semFicha = estado !== "conta" && estado !== "codigo"; app.fichaEstado = estado;
   const falta = app.semFicha && pronto ? faltaDados("treino") : [], quem = app.alvo ? "cliente" : quemCuida("treino");
@@ -8150,7 +8554,7 @@ function fichaEditorHtml() {
   const fe = app.fe || (app.fe = feInicio()), cm = fichaCardioMin(), teto = fichaTeto(app.perfil), med = fichaMede(fe); // 2.4: medido pelo motor do app
   // 2.6 (10ª banca, alto 2): o limite é o do Perfil do cliente (2 h só na conta do dono), e a frase diz o valor que vale de verdade
   const tetoTxt = teto === 120 ? "2 h" : teto + " min";
-  let h = '<h3>Ficha de ' + esc(app.alvo.nome) + '</h3><p class="lead">Troque exercícios, séries e repetições. As regras do Héxis valem aqui também: no máximo ' + tetoTxt + ' por dia com o cardio, descanso de até 2 min e bi-set só de bíceps com tríceps na polia.</p><div class="row-btns"><button type="button" class="btn small" data-tr="fegera">Gerar um ponto de partida pelo Perfil do cliente</button><button type="button" class="btn small" data-tr="fereset">Desfazer o que não foi salvo</button></div>';
+  let h = '<h3>Ficha de ' + esc(app.alvo.nome) + '</h3><p class="lead">Troque exercícios, séries e repetições. As regras do Héxis valem aqui também: no máximo ' + tetoTxt + ' de treino por dia, descanso de até 2 min e bi-set só de bíceps com tríceps na polia.</p><div class="row-btns"><button type="button" class="btn small" data-tr="fegera">Gerar um ponto de partida pelo Perfil do cliente</button><button type="button" class="btn small" data-tr="fereset">Desfazer o que não foi salvo</button></div>';
   fe.dias.filter(d => !d.livre).forEach(d => {
     const L = fe.ex.filter(e => e.d === d.id), tot = med ? Math.round(med.por[d.id] || 0) : fichaMin(L) + cm, passou = tot > teto;
     h += '<fieldset class="fe-dia"><legend>' + esc(FICHA_DOW[d.dow]) + " · " + esc(d.titulo) + '</legend><p class="' + (passou ? "msg err" : "muted") + '">Cerca de ' + tot + " min no dia mais longo do plano, com o aquecimento" + (cm ? " e o cardio" : "") + (passou ? ": passa do limite de " + teto + " min por dia do Perfil. Tire um exercício ou séries." : ".") + "</p>";
@@ -8222,9 +8626,19 @@ document.addEventListener("click", async ev => {
   const iniEl = document.querySelector("[data-tr-ini]"), ini = iniEl && dataOk(iniEl.value) ? iniEl.value : app.fichaInicio && dataOk(app.fichaInicio) ? app.fichaInicio : fichaAmanha(); // 2.4: a data escolhida
   if (op === "gera" && !app.alvo) {
     if (!fichaCadastroOk(app.perfil)) return;
-    if ((app.fichaDoc || Object.keys(app.records || {}).length) && !confirmaToque(b)) return;
+    let f; try { f = fichaGera(app.perfil, app.fichaDoc || Object.keys(app.records || {}).length ? app.curW || 1 : 1); } catch (e) { falhou(e); return; }
+    if (b.dataset.sure && b.dataset.iniSure !== ini) trDesarma(b); // 2.8 (bug-17): o botão armado vale para a data do 1º toque; outra data, outro 1º toque
+    if ((app.fichaDoc || Object.keys(app.records || {}).length) && !confirmaToque(b)) {
+      // 2.7 (10ª banca, médio 7; bug-8): antes de confirmar, diz quantos treinos anotados deixam de aparecer com a ficha nova valendo da data escolhida
+      b.dataset.iniSure = ini; setTimeout(() => { if (!b.dataset.sure) { const q = document.getElementById("trSomem"); if (q) q.remove(); } }, 4100); // 2.8 (bug-17): o aviso some quando o botão desarma
+      const n = fichaSomem(f, ini), row = b.closest(".row-btns"); let p = document.getElementById("trSomem");
+      if (!n || !row) { if (p) p.remove(); return; }
+      if (!p) { p = document.createElement("p"); p.id = "trSomem"; p.className = "msg"; p.setAttribute("role", "status"); row.after(p); }
+      p.textContent = n + (n > 1 ? " treinos anotados" : " treino anotado") + " desde " + proDataBr(ini).slice(0, 5) + (n > 1 ? " deixam" : " deixa") + " de aparecer na tela, no todo ou em parte, com a ficha nova (" + (n > 1 ? "continuam guardados" : "continua guardado") + " na conta).";
+      return;
+    }
     b.disabled = true;
-    try { const W = await fichaGrava(fichaGera(app.perfil, app.fichaDoc || Object.keys(app.records || {}).length ? app.curW || 1 : 1), "gerador", null, ini); app.trMsg = "Ficha montada com o seu Perfil." + apartir(W); render(); } catch (e) { falhou(e); }
+    try { const W = await fichaGrava(f, "gerador", null, ini); app.trMsg = "Ficha montada com o seu Perfil." + apartir(W); render(); } catch (e) { falhou(e); }
     return;
   }
   if (op === "troca" || op === "mantem") {
@@ -8243,15 +8657,17 @@ document.addEventListener("click", async ev => {
   if (op === "fesalva") {
     const cm = fichaCardioMin(), dias = fe.dias.filter(d => !d.livre);
     if (dias.some(d => !fe.ex.some(e => e.d === d.id))) { app.trMsg = "Cada dia de treino precisa de pelo menos um exercício."; render(); return; }
-    // 2.4 (9ª banca, alto 5): medido pelo motor do app, com o aquecimento e o maior cardio do plano, contra o limite do Perfil do cliente
+    // 2.4 (9ª banca, alto 5): medido pelo motor do app, com o aquecimento (2.8: sem o cardio, que é opcional), contra o limite do Perfil do cliente
     const teto = fichaTeto(app.perfil), med = fichaMede(fe);
-    if (med ? med.pior > teto : dias.some(d => fichaMin(fe.ex.filter(e => e.d === d.id)) + cm > teto)) { app.trMsg = "Algum dia passa do limite de " + teto + " min por dia do Perfil do cliente (com o aquecimento e o cardio). Tire um exercício ou séries antes de salvar."; render(); return; }
+    if (med ? med.pior > teto : dias.some(d => fichaMin(fe.ex.filter(e => e.d === d.id)) + cm > teto)) { app.trMsg = "Algum dia passa do limite de " + teto + " min de treino por dia do Perfil do cliente (com o aquecimento). Tire um exercício ou séries antes de salvar."; render(); return; }
     b.disabled = true;
     try { const W = await fichaGrava(fe, "profissional", assina, ini); app.fe = null; app.trMsg = "Ficha salva na conta de " + app.alvo.nome + "." + apartir(W); render(); } catch (e) { app.trMsg = e && e.code === "ficha_conflito" ? "Outra ficha chegou antes à conta de " + app.alvo.nome + " e ficou valendo. Confira e salve de novo." : "A ficha não passou na conferência (confira séries e repetições) ou a gravação falhou."; render(); }
   }
 });
 // 2.4: a data escolhida fica guardada enquanto a tela é redesenhada
-document.addEventListener("change", ev => { const el = ev.target.closest && ev.target.closest("[data-tr-ini]"); if (el && dataOk(el.value)) app.fichaInicio = el.value; });
+// 2.8 (bug-17): trocar a data desarma o "Confirmar" da ficha montada e apaga o aviso de "quantos treinos somem", que era da data velha
+function trDesarma(b) { delete b.dataset.sure; delete b.dataset.iniSure; if (b.dataset.rot) b.textContent = b.dataset.rot; const q = document.getElementById("trSomem"); if (q) q.remove(); }
+document.addEventListener("change", ev => { const el = ev.target.closest && ev.target.closest("[data-tr-ini]"); if (el && dataOk(el.value)) app.fichaInicio = el.value; if (el) document.querySelectorAll('#treinadorView [data-tr="gera"]').forEach(trDesarma); });
 // Campos do editor: trocar o exercício, mudar séries e repetições, adicionar exercício
 document.addEventListener("change", ev => {
   const x = ev.target; if (!x || !x.dataset || !x.dataset.fe || !x.closest("#treinadorView") || !app.alvo || !app.fe) return;
@@ -9073,6 +9489,8 @@ function dtFood(key) {
   const m = dtMeus().find(x => x.id === key);
   return m ? { key, n: m.n, kcal: +m.kcal || 0, p: +m.p || 0, c: +m.c || 0, g: +m.g || 0, por: m.por === "porcao" ? "porcao" : "100g", meu: true } : null;
 }
+// 2.7 (bug-11): o alimento é da categoria dos suplementos proteicos (índice 15 de TACO_CAT)? Vale pela categoria da linha da tabela, nunca pelo nome
+function dtSupl(f) { return typeof f.key === "number" && !!TACO[f.key - 1] && TACO[f.key - 1][1] === 15; }
 // Calorias e macros de uma quantidade (gramas, ou número de porções quando o alimento é por porção)
 function dtCalc(f, q) { const k = f.por === "porcao" ? q : q / 100, r1 = v => Math.round(v * k * 10) / 10; return { kcal: Math.round(f.kcal * k), p: r1(f.p), c: r1(f.c), g: r1(f.g) }; }
 // Soma de calorias e macros de uma lista de itens
@@ -9214,7 +9632,8 @@ function dtResHtml() {
   if (!L.length) return '<p class="muted dtvz">Nada encontrado. Tente outra palavra ou use "Fora da tabela".</p>';
   return (av ? '<p class="muted dtvz">' + esc(av) + "</p>" : "") + L.map(f => { const q = dtUltQ(f); return '<div class="dtrr"><button class="dtr" type="button" data-dt="pick|' + esc(f.key) + '" aria-pressed="' + (S.pick === f.key) + '"><b>' + esc(f.n) + (f.meu ? ' <span class="optb">seu</span>' : "") + "</b><span>" + dtKc(f.kcal) + " kcal · P " + fmt(f.p) + " · C " + fmt(f.c) + " · G " + fmt(f.g) + (f.por === "porcao" ? " / porção" : " / 100 g") + "</span></button>" +
     // 3ª banca: alimento em pó da tabela (o leite em pó vem no topo de "leite") não tem o atalho de um toque: 100 g de pó são umas 5 vezes as calorias do líquido
-    (/,\s*pó(,|$)/.test(f.n) && !f.meu ? "" : '<button class="dtqk" type="button" data-dt="rapido|' + esc(f.key) + "|" + q + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, q) + '">+ ' + dtQtd(f, q) + "</button>") + "</div>"; }).join("");
+    // 2.7 (bug-11, 11ª banca): suplemento em pó (categoria 15, pela categoria e não pelo nome) não tem o atalho de 100 g (407 kcal num toque): o atalho é de 30 g, uma dose
+    (/,\s*pó(,|$)/.test(f.n) && !f.meu && !dtSupl(f) ? "" : '<button class="dtqk" type="button" data-dt="rapido|' + esc(f.key) + "|" + (dtSupl(f) ? 30 : q) + '" aria-label="Adicionar ' + esc(f.n) + " " + dtQtd(f, dtSupl(f) ? 30 : q) + '">+ ' + dtQtd(f, dtSupl(f) ? 30 : q) + "</button>") + "</div>"; }).join("");
 }
 // Caixa de adicionar alimento: busca, escolha e quantidade; ou o formulário de alimento fora da tabela
 function dtAddHtml() {
